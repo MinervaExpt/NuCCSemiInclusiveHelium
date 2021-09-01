@@ -36,4 +36,11 @@
 *.exe
 *.out
 *.appeinclude "../includes/common_functions.h"
-
+Helium_runEventLoopForDATA
+Helium_runEventLoopForDATA_SmearingStudy
+Helium_runEventLoop_EfficiencyStudy
+Helium_runEventLoop_SmearingStudy
+Helium_runTRUTHLoop
+Helium_runTRUTHLoop_EfficiencyStudy
+Helium_runTRUTHLoop_NXLE_Validation
+Helium_runTRUTHLoop_SmearingStudy
