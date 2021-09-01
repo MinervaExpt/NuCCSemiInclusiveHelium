@@ -242,7 +242,7 @@ bool is_mc= true;
   //======================================================================
 //std::map< std::string, std::vector<HeliumCVUniverse*> > error_bands = GetErrorBands(chw_FullMC);
 std::map<std::string, std::vector<HeliumCVUniverse*> > error_bands= GetErrorBands(chw_MC);
-std::map<const std::string, const int> error_name;
+std::map<const std::string, int> error_name;
 std::map<std::string, std::vector<HeliumCVUniverse*> >::iterator itr;
 for(itr = error_bands.begin(); itr != error_bands.end(); ++itr) error_name.insert(std::pair<std::string, const int>((itr->second)[0]->ShortName(), (itr->second).size()));
 HeliumPlayListInfo Playlist_Info(playlist);
