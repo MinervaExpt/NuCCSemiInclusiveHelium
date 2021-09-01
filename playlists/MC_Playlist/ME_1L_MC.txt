@@ -1,0 +1,15 @@
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117000_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117001_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117002_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117003_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117004_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117005_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117006_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117007_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117008_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117009_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117010_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117011_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117012_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117013_Playlist.root
+root://fndca1.fnal.gov:1094/pnfs/fnal.gov/usr/minerva/persistent/users/cnguyen/ME_playlist_1L_Merg/HeAnaTupleTool_mc_AnaTuple_run00117014_Playlist.root

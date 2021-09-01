@@ -1,0 +1,30 @@
+\begin{table}[h]
+\adjustbox{max height=\dimexpr\textheight-4.5cm\relax,max width=\textwidth}{
+\begin{tabular}{||l|l|l|l|l||} 
+\hline 
+\hline 
+ Cut Name (Playlist ME1F ) &  NEvents & Loss & \% loss & Prev \% loss \\
+\hline 
+No Cuts & 28125283.0000 & 0.0000 & 100.0000 & 0.0000 \\
+\hline 
+Neutrino interaction & 27262289.0000 & 862994.0000 & 96.9316 & 3.0684 \\
+\hline 
+Charge Current (CC) Interaction & 20642873.0000 & 6619416.0000 & 73.3961 & 24.2805 \\
+\hline 
+True Helium Target & 607391.0000 & 20035482.0000 & 2.1596 & 97.0576 \\
+\hline 
+ 2 [GeV] $<$ True $E_{\mu}$ $<$ 50 [Gev] & 443347.0000 & 164044.0000 & 1.5763 & 27.0080 \\
+\hline 
+True $\theta_{\mu}$ $<$ 12  & 281645.0000 & 161702.0000 & 1.0014 & 36.4730 \\
+\hline 
+True Vertex in Fiduical & 261676.0000 & 19969.0000 & 0.9304 & 7.0901 \\
+\hline 
+More than one TRUE FS particle & 261676.0000 & 0.0000 & 0.9304 & 0.0000 \\
+\hline 
+At least one Non Neutral Recoil Particle with $\theta_{wrtb}$ $<$ 60 [Deg]  & 210725.0000 & 50951.0000 & 0.7492 & 19.4710 \\
+\hline 
+All True Cuts applied & 210725.0000 & 0.0000 & 0.7492 & 0.0000 \\
+\hline 
+\hline 
+\end{tabular}} 
+\end{table} 

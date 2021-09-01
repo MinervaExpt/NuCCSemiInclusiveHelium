@@ -1,0 +1,50 @@
+\begin{table}[]
+\adjustbox{max height=\dimexpr\textheight-4.5cm\relax, max width=\textwidth}{
+\begin{tabular}{||l|l|l|l|l||l|l|l|l|} 
+\hline 
+\hline 
+ Cut Name (Playlist ME1F )& NEvents(Data) & Loss(Data)&  \% loss (Data) & Pre \% loss (Data) &  NEvents(MC) & Loss(MC) &  \% loss (MC) & Pre \% loss (MC)  \\
+\hline 
+No Cuts & 72908.000 & 0.000 & 100.000 & 0.000 & 21713.037 & 0.000 & 100.000 & 0.000 \\
+\hline 
+2 [GeV] $<$ $E_{\mu}$ $<$ 50 [GeV] & 69993.000 & 2915.000 & 96.002 & 3.998 & 21500.808 & 212.228 & 99.023 & 0.977 \\
+\hline 
+Usable Muon Track with $E_{\mu}$ $>$ 0  & 69993.000 & 0.000 & 96.002 & 0.000 & 21500.808 & 0.000 & 99.023 & 0.000 \\
+\hline 
+Minos Fiducal Coil cut 210 [mm] $<$ R $<$ 2500 [mm] & 63015.000 & 6978.000 & 86.431 & 9.970 & 19004.538 & 2496.271 & 87.526 & 11.610 \\
+\hline 
+Muon matched MINOS to Minerva & 63015.000 & 0.000 & 86.431 & 0.000 & 19004.538 & 0.000 & 87.526 & 0.000 \\
+\hline 
+Curvature Significance $\frac{(q/p)}{\sigma(q/p)}$ $<$ -5  & 55945.000 & 7070.000 & 76.734 & 11.220 & 17220.910 & 1783.627 & 79.311 & 9.385 \\
+\hline 
+Muon Charge (-) & 54231.000 & 1714.000 & 74.383 & 3.064 & 16784.593 & 436.317 & 77.302 & 2.534 \\
+\hline 
+$\theta_{\mu}$ $<$ 12 [Degs] & 53599.000 & 632.000 & 73.516 & 1.165 & 16273.705 & 510.888 & 74.949 & 3.044 \\
+\hline 
+Muon is Plausible (Overlay Check)  & 53599.000 & 0.000 & 73.516 & 0.000 & 13710.940 & 2562.765 & 63.146 & 15.748 \\
+\hline 
+NTracks $>$ 1  & 53599.000 & 0.000 & 73.516 & 0.000 & 13710.940 & 0.000 & 63.146 & 0.000 \\
+\hline 
+Vertex Converged & 17962.000 & 35637.000 & 24.637 & 66.488 & 7170.090 & 6540.850 & 33.022 & 47.705 \\
+\hline 
+Vertex Converged using All tracks & 16747.000 & 1215.000 & 22.970 & 6.764 & 6623.747 & 546.343 & 30.506 & 7.620 \\
+\hline 
+Maximum Vertex $\chi^{2}$ by Track type & 14955.000 & 1792.000 & 20.512 & 10.700 & 5981.132 & 642.616 & 27.546 & 9.702 \\
+\hline 
+Fiducial Volume & 6775.000 & 8180.000 & 9.293 & 54.697 & 2327.447 & 3653.685 & 10.719 & 61.087 \\
+\hline 
+No Veto Wall Matches & 2497.000 & 4278.000 & 3.425 & 63.144 & 1943.871 & 383.576 & 8.953 & 16.481 \\
+\hline 
+SixPush(VetoWall Dead time) & 2345.000 & 152.000 & 3.216 & 6.087 & 1875.105 & 68.766 & 8.636 & 3.538 \\
+\hline 
+Muon Track not Match to off Voltage Veto paddle & 2345.000 & 0.000 & 3.216 & 0.000 & 1875.105 & 0.000 & 8.636 & 0.000 \\
+\hline 
+Tracks are Going Foward in Time & 2297.000 & 48.000 & 3.151 & 2.047 & 1869.806 & 5.299 & 8.611 & 0.283 \\
+\hline 
+$\theta_{Recoil}$ $<$ 60 [Deg]  & 2296.000 & 1.000 & 3.149 & 0.044 & 1868.796 & 1.009 & 8.607 & 0.054 \\
+\hline 
+All cuts applied  & 2296.000 & 0.000 & 3.149 & 0.000 & 1868.796 & 0.000 & 8.607 & 0.000 \\
+\hline 
+\hline 
+\end{tabular}} 
+\end{table} 

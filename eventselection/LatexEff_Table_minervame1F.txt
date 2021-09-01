@@ -1,0 +1,27 @@
+\resizebox{\textwidth}{!}{
+\begin{table}[]
+\begin{tabular}{||l|l|l|l|l|l||} 
+Cut name (Playlist minervame1F) & NEvents & total percent loss & loss & Efficiency &  He Purity & Al Containation \\
+No Cuts & 1.721e+05 & 100 & 0 & 1 & 0.3463 & 0.6537 \\
+Good Muon Energy & 1.704e+05 & 99.02 & 0.009775 & 0.9926 & 0.3437 & 0.6465 \\
+Is a usable Muon & 1.704e+05 & 99.02 & 0 & 0.9926 & 0.3437 & 0.6465 \\
+MINOS Fiducal Coil cut & 1.506e+05 & 87.53 & 0.1161 & 0.8717 & 0.3018 & 0.5734 \\
+muon matched MINOS to Minerva & 1.506e+05 & 87.53 & 0 & 0.8717 & 0.3018 & 0.5734 \\
+MINOS SigCurature & 1.365e+05 & 79.31 & 0.09385 & 0.7903 & 0.2737 & 0.5195 \\
+Minos charge Type & 1.33e+05 & 77.3 & 0.02534 & 0.7711 & 0.267 & 0.506 \\
+Muon Angle < 12 Degs & 1.29e+05 & 74.95 & 0.03044 & 0.7558 & 0.2617 & 0.4878 \\
+Muon is plausible  & 1.087e+05 & 63.15 & 0.1575 & 0.7048 & 0.244 & 0.3874 \\
+Tracks > 1  & 1.087e+05 & 63.15 & 0 & 0.7048 & 0.244 & 0.3874 \\
+Vertex converged & 5.683e+04 & 33.02 & 0.4771 & 0.347 & 0.1202 & 0.2101 \\
+Vertex Converged using All (Muon and nonMuon) tracks & 5.25e+04 & 30.51 & 0.0762 & 0.3388 & 0.1173 & 0.1877 \\
+Maxium Vertex Chi sqrt BY Track type & 4.74e+04 & 27.55 & 0.097 & 0.3148 & 0.109 & 0.1665 \\
+Fiducial Volume & 1.845e+04 & 10.72 & 0.6109 & 0.2666 & 0.09231 & 0.01488 \\
+Veto wall & 1.541e+04 & 8.953 & 0.1648 & 0.2257 & 0.07816 & 0.01137 \\
+SixPush & 1.486e+04 & 8.636 & 0.03539 & 0.2178 & 0.0754 & 0.01096 \\
+Muon Track Match to dead paddle & 1.486e+04 & 8.636 & 0 & 0.2178 & 0.0754 & 0.01096 \\
+Track is going foward in time & 1.482e+04 & 8.612 & 0.002836 & 0.2174 & 0.07528 & 0.01084 \\
+Second trk less than Max Angle & 1.481e+04 & 8.607 & 0.0005591 & 0.2173 & 0.07524 & 0.01083 \\
+All cuts applied  & 1.481e+04 & 8.607 & 0 & 0.2173 & 0.07524 & 0.01083 \\
+\hline 
+\end{tabular} 
+\end{table}} 

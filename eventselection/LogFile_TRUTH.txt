@@ -1,0 +1,114 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Helium Anaylsis Log File ~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~Created By ~~~~~~~~~~~~~~
+~~~~~~~~~~~Christian Nguyen ~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DateRan(min-hour-month-day-year): (44-13-8- 30-2020)
+EnergyType: LE
+Playlist: Minerva ME1F
+Data TYPE : Truth
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~Truth CUTS Applied for Efficiency Study ~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 TRUTHCUT name: No Cuts
+2 TRUTHCUT name: Neutrino interaction
+3 TRUTHCUT name: Charge Current Type
+4 TRUTHCUT name: True Helium Target
+5 TRUTHCUT name:  2Gev <  true Muon Energy < 50Gev
+6 TRUTHCUT name: True Muon Angle < 12 
+7 TRUTHCUT name: True Vertex in Fiduical
+8 TRUTHCUT name: More than one TRUE FS particle
+9 TRUTHCUT name: No Neutral Particle and angle Threshold
+10 TRUTHCUT name: All True Cuts applied
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~WEIGHTS~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Weights Applied on Event by event
+  Weights type: Flux Reweigher
+  Weights type: ERROR: Unknown weight name 
+  Weights type: Genie Weight
+  Weights type: 2p2h Tune
+  Weights type: RPA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Helium Anaylsis Log File ~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~Created By ~~~~~~~~~~~~~~
+~~~~~~~~~~~Christian Nguyen ~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DateRan(min-hour-month-day-year): (12-14-8- 30-2020)
+EnergyType: LE
+Playlist: Minerva ME1F
+Data TYPE : Truth
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~Truth CUTS Applied for Efficiency Study ~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 TRUTHCUT name: No Cuts
+2 TRUTHCUT name: Neutrino interaction
+3 TRUTHCUT name: Charge Current Type
+4 TRUTHCUT name: True Helium Target
+5 TRUTHCUT name:  2Gev <  true Muon Energy < 50Gev
+6 TRUTHCUT name: True Muon Angle < 12 
+7 TRUTHCUT name: True Vertex in Fiduical
+8 TRUTHCUT name: More than one TRUE FS particle
+9 TRUTHCUT name: No Neutral Particle and angle Threshold
+10 TRUTHCUT name: All True Cuts applied
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~WEIGHTS~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Weights Applied on Event by event
+  Weights type: Flux Reweigher
+  Weights type: ERROR: Unknown weight name 
+  Weights type: Genie Weight
+  Weights type: 2p2h Tune
+  Weights type: RPA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~Helium Anaylsis Log File ~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~Created By ~~~~~~~~~~~~~~
+~~~~~~~~~~~Christian Nguyen ~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+DateRan(min-hour-month-day-year): (22-9-9- 1-2020)
+EnergyType: LE
+Playlist: Minerva ME1G
+Data TYPE : Truth
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~Truth CUTS Applied for Efficiency Study ~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 TRUTHCUT name: No Cuts
+2 TRUTHCUT name: Neutrino interaction
+3 TRUTHCUT name: Charge Current Type
+4 TRUTHCUT name: True Helium Target
+5 TRUTHCUT name:  2Gev <  true Muon Energy < 50Gev
+6 TRUTHCUT name: True Muon Angle < 12 
+7 TRUTHCUT name: True Vertex in Fiduical
+8 TRUTHCUT name: More than one TRUE FS particle
+9 TRUTHCUT name: No Neutral Particle and angle Threshold
+10 TRUTHCUT name: All True Cuts applied
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~WEIGHTS~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Weights Applied on Event by event
+  Weights type: Flux Reweigher
+  Weights type: ERROR: Unknown weight name 
+  Weights type: Genie Weight
+  Weights type: 2p2h Tune
+  Weights type: RPA
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
