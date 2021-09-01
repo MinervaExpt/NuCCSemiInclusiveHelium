@@ -1,0 +1,39 @@
+# Prerequisites
+*.d
+
+# file system getting stuck for a while when you try to delete a file.
+*.nfs*
+
+#pdf shouldn't be commited 
+*.pdf
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.appeinclude "../includes/common_functions.h"
+
