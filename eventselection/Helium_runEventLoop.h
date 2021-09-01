@@ -39,7 +39,6 @@
 #include "../includes/Helium_TargetMassSystematics.h"
 
 #include "../includes/HeliumCuts.h"
-//#include "../includes/POTCounter.h"
 #include "../includes/HeliumUtils.h"
 #include "../includes/loadLibs.h"
 #include "../includes/CryoTankUtils.h"

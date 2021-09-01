@@ -42,15 +42,10 @@
 #include "../includes/HeliumUtils.h"
 #include "../includes/loadLibs.h"
 #include "../includes/CryoTankUtils.h"
-//#include <PlotUtils/POTCounter.h>
+
 #include "TChain.h"
 #include "EventCounting.h"
-
-//#include "../src/loadLibs.h"
-//#include "../src/Catgorized.h"
-
 #include "PlotUtils/MnvH1D.h"
-//#include "PlotUtils/MnvH2D.h"
 #include <PlotUtils/MnvH2D.h>
 #include <iostream>
 

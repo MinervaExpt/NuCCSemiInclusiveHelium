@@ -15,39 +15,53 @@
 #include "PlotUtils/ChainWrapper.h"
 #include "PlotUtils/makeChainWrapper.h"
 #include "PlotUtils/HistWrapper.h"
+#include "PlotUtils/HistFolio.h"
+#include "PlotUtils/MnvColors.h"
+#include "PlotUtils/NamedCategory.h"
+
+//Systematics lib
 #include "PlotUtils/GenieSystematics.h"
 #include "PlotUtils/FluxSystematics.h"
 #include "PlotUtils/MnvTuneSystematics.h"
-#include "../includes/CVUniverse.h"
-//#include "../includes/LateralSystematics.h"
-#include "../includes/Cuts.h"
-//#include "../includes/POTCounter.h"
-#include "../includes/common_stuff.h"
-#include "../includes/common_functions.h"
-#include "../includes/common_2Dfunctions.h"
+#include "PlotUtils/AngleSystematics.h"
+#include "PlotUtils/MuonResolutionSystematics.h"
+#include "PlotUtils/MinosEfficiencySystematics.h"
+#include "PlotUtils/PlotUtilsPhysicalConstants.h"
+#include "PlotUtils/ResponseSystematics.h"
+#include "PlotUtils/MuonSystematics.h"
+#include "PlotUtils/FluxReweighter.h"
+#include "../includes/Helium_VertexSmearing_LateralSystematics_2XY_2Z.h"
+#include "../includes/Helium_TargetMassSystematics.h"
+
+
+//local Helium Tools
+#include "../includes/HeliumDefaults.h"
+#include "../includes/HeliumCVUniverse.h"
+#include "../includes/HeliumCuts.h"
+#include "../includes/HeliumUtils.h"
 #include "../includes/loadLibs.h"
-#include "../includes/CryoTankGeometry.h"
+#include "../includes/CryoTankUtils.h"
+#include "../includes/Helium2DUtils.h"
+#include "../includes/loadLibs.h"
+
 #include <PlotUtils/POTCounter.h>
 #include "TChain.h"
 #include "../eventselection/EventCounting.h"
-
-//#include "../src/loadLibs.h"
-
-
 #include "PlotUtils/MnvH1D.h"
 #include <PlotUtils/MnvH2D.h>
 #include <iostream>
 
+/*
 #ifndef __CINT__
-#include "../includes/plotting_functions.h"
+#include "../includes/HeliumPlotUtils.cxx"
 #endif
+*/
 
 #include "TSystem.h"
 #include <TROOT.h>
 #include <TFile.h>
+#include <algorithm>
 
-//class MnvH1D;
-//class MnvH2D;
 
 struct Vertex{
 //Vertex_Plots(const std::string& name, const std::string& title);
@@ -77,45 +91,6 @@ MnvH2D* fMigration_MuonP_Z;
 MnvH2D* fMigration_MuonP_E;
 
 };
-
-
-
-
-
-
-
-
-//class TFile;
-//class MnvH1D;
-/*
-class Helium_Analysis {
-public:
-  Helium_Analysis( const std::string& prefix, TFile& file);
-
-  virtual ~Helium_Analysis() = default;
-
-  template <class HIST, class ...ARGS>
-       HIST* make(const std::string& name, ARGS... args)
-       {
-         DirSentry sentry(fParentFile);
-         auto obj = new HIST(SafeROOTName(fPrefix + " " + name).c_str(), args...);
-         return obj;
-       }
-     private:
-       TFile& fParentFile; //All histograms created by make<>() will end up
-                           //in this TFile
-     protected:
-       const std::string fPrefix; //This prefix will be added to the names of all histograms Fill()ed by
-                                  //this Analysis
-
-};//end of class
-*/
-
-
-
-
-
-
 
 
 

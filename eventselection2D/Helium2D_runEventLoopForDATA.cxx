@@ -21,7 +21,7 @@ std::vector<ME_helium_Playlists> GetTRUEPlayListVector();
 // Get container of systematics
 
 //======================================================================
-//void EventCounter(const CVUniverse& , std::vector<ECuts> cuts, EventCount_RECO &Event_map ,bool isNOT_mc,HeliumPlayListInfo Info );
+//void EventCounter(const HeliumCVUniverse& , std::vector<ECuts> cuts, EventCount_RECO &Event_map ,bool isNOT_mc,HeliumPlayListInfo Info );
 
 // Main
 void runEventLoop(bool &m_debugOn, ME_helium_Playlists &PlayList_iterator, bool &Run_EventLoopOnGid) {
@@ -68,7 +68,7 @@ double Mev_to_GeV=.001;
 //std::cout << "MC_POT_full = "<< MC_POT_full<< " MC_POT_empty = "<< MC_POT_empty << "  Data_POT_full = " << Data_POT_full << "  Data_POT_empty = " << Data_POT_empty<< std::endl;
 
   // Make a map of systematic universes
-//  std::map< std::string, std::vector<CVUniverse*> > DATAerror_bands = GetErrorBands(chw_Data);
+//  std::map< std::string, std::vector<HeliumCVUniverse*> > DATAerror_bands = GetErrorBands(chw_Data);
 std::vector<double> Ebin_vector = GetBinMuonVector(kE);
 std::vector<double> Pzbin_vector= GetBinMuonVector(kP_Z);
 std::vector<double> PTbin_vector= GetBinMuonVector(kP_T);
@@ -182,10 +182,10 @@ std::cout<<"Pathway of Root files = "<< Playlist_txtFILEPath<<std::endl;
 //PlotUtils::ChainWrapper* chw_Data  = makeChainWrapperPtr("../playlists/Data_Playlist/ME_1P_DATA.txt", "Muon");
 PlotUtils::ChainWrapper* chw_Data  = makeChainWrapperPtr(Playlist_txtFILEPath.c_str(), "HeAnaTupleTool");
 //PlotUtils::ChainWrapper* datachainPOT = makeChainWrapperPtr(Playlist_txtFILEPath.c_str(), "Meta");
-//std::map< std::string, std::vector<CVUniverse*> > data_error_bands = GetErrorBands(chw_Data);
+//std::map< std::string, std::vector<HeliumCVUniverse*> > data_error_bands = GetErrorBands(chw_Data);
 auto dataPOT = 1.0;//GetPOT(datachainPOT);
 //std::cout << "POT of MC = "<< dataPOT<<std::endl;
-CVUniverse* dataEvt = new CVUniverse(chw_Data);
+HeliumCVUniverse* dataEvt = new HeliumCVUniverse(chw_Data);
 //const std::string RootName = GetPlaylist_ROOT_path("1D_BranchesADDED", isNOT_mc );
 auto intial_playlist = GetPlaylist_InitialName(PlayList_iterator);
 const std::string RootName = GetPlaylist_ROOT_path(intial_playlist, isNOT_mc );
@@ -196,7 +196,7 @@ std::cout << "rootName =" << RootName<<std::endl;
 //double POTFULLDATA = dataEvt->GetBatchPOT();
 
 //std::cout << "POT = " << dataPOT<<std::endl;
-//CVUniverse* universe = data_error_bands["CV"][0];
+//HeliumCVUniverse* universe = data_error_bands["CV"][0];
 std::cout << "*** Starting Data Loop ***" << std::endl;
 
 for(Long64_t ievent=0; ievent < chw_Data->GetEntries(); ++ievent){

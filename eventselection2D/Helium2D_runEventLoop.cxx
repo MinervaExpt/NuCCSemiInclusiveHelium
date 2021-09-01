@@ -98,67 +98,67 @@ std::vector<int> Helium9_colorScheme = {
 
 
 
-std::map< std::string, std::vector<CVUniverse*> >
+std::map< std::string, std::vector<HeliumCVUniverse*> >
   GetErrorBands(PlotUtils::ChainWrapper* chain) {
-    typedef std::map< std::string, std::vector<CVUniverse*> > SystMap;
+    typedef std::map< std::string, std::vector<HeliumCVUniverse*> > SystMap;
 
     SystMap error_bands;
 
     // CV
-    error_bands[std::string("cv")].push_back( new CVUniverse(chain) );
+    error_bands[std::string("cv")].push_back( new HeliumCVUniverse(chain) );
 
     //Detector systematics, lateral sh
 
 if(m_RunCodeWithSystematics){
 
-//    SystMap muonP_systematics = PlotUtils::GetMuonSystematicsMap<CVUniverse>(chain,NSFDefaults::KludgedMinosMuonMomentum_Err);
+//    SystMap muonP_systematics = PlotUtils::GetMuonSystematicsMap<HeliumCVUniverse>(chain,NSFDefaults::KludgedMinosMuonMomentum_Err);
   //  error_bands.insert(muonP_systematics.begin(), muonP_systematics.end());
     //std::cout << "C++ make muon resolution systematics" << std::endl;
 
     ///// MINOS ERROR systems
-    SystMap MinervaMuon_systematics = PlotUtils::GetMinervaMuonSystematicsMap<CVUniverse>(chain);
+    SystMap MinervaMuon_systematics = PlotUtils::GetMinervaMuonSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(MinervaMuon_systematics.begin(), MinervaMuon_systematics.end());
     // Minerva Error System
 
     // MINOS efficiency
-    SystMap MinosMuon_systematics = PlotUtils::GetMinosMuonSystematicsMap<CVUniverse>(chain);
+    SystMap MinosMuon_systematics = PlotUtils::GetMinosMuonSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(MinosMuon_systematics.begin(), MinosMuon_systematics.end());
 
     // Muon match efficiency
-    SystMap MinosEff_systematics = PlotUtils::GetMinosEfficiencySystematicsMap<CVUniverse>(chain);
+    SystMap MinosEff_systematics = PlotUtils::GetMinosEfficiencySystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(MinosEff_systematics.begin(), MinosEff_systematics.end());
 
-    SystMap flux_systematics = PlotUtils::GetFluxSystematicsMap<CVUniverse>(chain,n_flux_universes);
+    SystMap flux_systematics = PlotUtils::GetFluxSystematicsMap<HeliumCVUniverse>(chain,n_flux_universes);
     error_bands.insert(flux_systematics.begin(), flux_systematics.end());
 
-    SystMap angle_systematics = PlotUtils::GetAngleSystematicsMap<CVUniverse>(chain,NSFDefaults::beamThetaX_Err,NSFDefaults::beamThetaY_Err);
+    SystMap angle_systematics = PlotUtils::GetAngleSystematicsMap<HeliumCVUniverse>(chain,NSFDefaults::beamThetaX_Err,NSFDefaults::beamThetaY_Err);
     error_bands.insert(angle_systematics.begin(), angle_systematics.end());
     //GENIE
-    SystMap genie_systematics = PlotUtils::GetGenieSystematicsMap<CVUniverse>(chain);
+    SystMap genie_systematics = PlotUtils::GetGenieSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(genie_systematics.begin(), genie_systematics.end());
 
-    SystMap a2p2h_systematics = PlotUtils::Get2p2hSystematicsMap<CVUniverse>(chain);
+    SystMap a2p2h_systematics = PlotUtils::Get2p2hSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(a2p2h_systematics.begin(), a2p2h_systematics.end());
 
-    SystMap RPA_systematics = PlotUtils::GetRPASystematicsMap<CVUniverse>(chain);
+    SystMap RPA_systematics = PlotUtils::GetRPASystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(RPA_systematics.begin(), RPA_systematics.end());
 
-    //SystMap LowQ2Pi_systematics = PlotUtils::GetLowQ2PiSystematicsMap<CVUniverse>(chain);
+    //SystMap LowQ2Pi_systematics = PlotUtils::GetLowQ2PiSystematicsMap<HeliumCVUniverse>(chain);
     //error_bands.insert(LowQ2Pi_systematics.begin(), LowQ2Pi_systematics.end());
-    SystMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<CVUniverse>(chain);
+    SystMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
 
-    SystMap HeliumTargetMass_systematics = GetHeliumTargetMassSystematicsMap<CVUniverse>(chain);
+    SystMap HeliumTargetMass_systematics = GetHeliumTargetMassSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(HeliumTargetMass_systematics.begin(), HeliumTargetMass_systematics.end());
 
     // Muon resolution
-    //SystMap muonR_systematics = PlotUtils::GetMuonResolutionSystematicsMap<CVUniverse>(chain,NSFDefaults::muonResolution_Err);
+    //SystMap muonR_systematics = PlotUtils::GetMuonResolutionSystematicsMap<HeliumCVUniverse>(chain,NSFDefaults::muonResolution_Err);
     //error_bands.insert(muonR_systematics.begin(), muonR_systematics.end());
     //std::cout << "C++ make minos efficiency systematics" << std::endl;
 
     // Non-res pi
     //SystMap nonrespi_systematics =
-    //  PlotUtils::GetNonResPiSystematicsMap<CVUniverse>(chain);
+    //  PlotUtils::GetNonResPiSystematicsMap<HeliumCVUniverse>(chain);
     //error_bands.insert(nonrespi_systematics.begin(), nonrespi_systematics.end());
 
 
@@ -170,9 +170,11 @@ if(m_RunCodeWithSystematics){
   return error_bands;
 }
 //======================================================================
-//void EventCounter(const CVUniverse& , std::vector<ECuts> cuts, EventCount_RECO &Event_map ,bool is_mc,HeliumPlayListInfo Info );
+//void EventCounter(const HeliumCVUniverse& , std::vector<ECuts> cuts, EventCount_RECO &Event_map ,bool is_mc,HeliumPlayListInfo Info );
   // Make a chain of events
-  loadLibs();
+void runEventLoop(bool &m_debugOn, ME_helium_Playlists &PlayList_iterator) {
+loadLibs();
+TH1::AddDirectory(kFALSE);
 //std::vector<ECuts> kCutsVector;
 int Study_cap=50;
 int Study_count=0;
@@ -194,9 +196,8 @@ EventPlaylist_RecoCount EventCountMap;
 const std::vector<Particle_type> kSecondary_particle_vector = GetParicle_type();
 
 
-TH1::AddDirectory(kFALSE);
 
-const double toDegs = 180.0/TMath::Pi();
+
 //======================================================================
 ////////////////////ADDING TO CHAIN wrapper ///////////////////////////
 //======================================================================
@@ -239,10 +240,10 @@ bool is_mc= true;
   //======================================================================
   ///////////////////Making/adding to error bands  ///////////////////////////
   //======================================================================
-//std::map< std::string, std::vector<CVUniverse*> > error_bands = GetErrorBands(chw_FullMC);
-std::map<std::string, std::vector<CVUniverse*> > error_bands= GetErrorBands(chw_MC);
+//std::map< std::string, std::vector<HeliumCVUniverse*> > error_bands = GetErrorBands(chw_FullMC);
+std::map<std::string, std::vector<HeliumCVUniverse*> > error_bands= GetErrorBands(chw_MC);
 std::map<const std::string, const int> error_name;
-std::map<std::string, std::vector<CVUniverse*> >::iterator itr;
+std::map<std::string, std::vector<HeliumCVUniverse*> >::iterator itr;
 for(itr = error_bands.begin(); itr != error_bands.end(); ++itr) error_name.insert(std::pair<std::string, const int>((itr->second)[0]->ShortName(), (itr->second).size()));
 HeliumPlayListInfo Playlist_Info(playlist);
 
@@ -345,23 +346,23 @@ std::cout<<"bins"<<std::endl;
 ////////////////
 //muon Varibles///
 ////////////////
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_PT_PZ("h_Muon_PT_PZ", "h_Muon_PT_PZ", PTbin_vector , Pzbin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_PT_theta("h_Muon_PT_theta", "h_Muon_PT_theta", PTbin_vector , MuonThetabin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_PZ_theta("h_Muon_PZ_theta", "h_Muon_PZ_theta", Pzbin_vector , MuonThetabin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_E_theta("h_Muon_E_theta", "h_Muon_E_theta",  Ebin_vector , MuonThetabin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_E_PZ("h_Muon_E_PZ", "h_Muon_E_PZ",  Ebin_vector ,  Pzbin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_E_PT("h_Muon_E_PT", "h_Muon_E_PT",  Ebin_vector , PTbin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_cryoVertex_Z_R("h_cryoVertex_Z_R", "h_cryoVertex_Z_R", Vertex_Zbin_vector, Vertex_Rbin_vector , error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_PT_PZ("h_Muon_PT_PZ", "h_Muon_PT_PZ", PTbin_vector , Pzbin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_PT_theta("h_Muon_PT_theta", "h_Muon_PT_theta", PTbin_vector , MuonThetabin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_PZ_theta("h_Muon_PZ_theta", "h_Muon_PZ_theta", Pzbin_vector , MuonThetabin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_E_theta("h_Muon_E_theta", "h_Muon_E_theta",  Ebin_vector , MuonThetabin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_E_PZ("h_Muon_E_PZ", "h_Muon_E_PZ",  Ebin_vector ,  Pzbin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_E_PT("h_Muon_E_PT", "h_Muon_E_PT",  Ebin_vector , PTbin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_cryoVertex_Z_R("h_cryoVertex_Z_R", "h_cryoVertex_Z_R", Vertex_Zbin_vector, Vertex_Rbin_vector , error_bands);
 
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_PT_PZ_TRUE_RECO("h_Muon_PT_PZ_TRUE_RECO", "h_Muon_PT_PZ_TRUE_RECO", PTbin_vector , Pzbin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_PT_theta_TRUE_RECO("h_Muon_PT_theta_TRUE_RECO", "h_Muon_PT_theta_TRUE_RECO", PTbin_vector , MuonThetabin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_PZ_theta_TRUE_RECO("h_Muon_PZ_theta_TRUE_RECO", "h_Muon_PZ_theta_TRUE_RECO", Pzbin_vector , MuonThetabin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_E_theta_TRUE_RECO("h_Muon_E_theta", "h_Muon_E_theta",  Ebin_vector , MuonThetabin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_E_PZ_TRUE_RECO("h_Muon_E_PZ_TRUE_RECO", "h_Muon_E_PZ_TRUE_RECO",  Ebin_vector ,  Pzbin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_Muon_E_PT_TRUE_RECO("h_Muon_E_PT_TRUE_RECO", "h_Muon_E_PT_TRUE_RECO",  Ebin_vector , PTbin_vector, error_bands);
-PlotUtils::Hist2DWrapper<CVUniverse> h_cryoVertex_Z_R_TRUE_RECO("h_cryoVertex_Z_R_TRUE_RECO", "h_cryoVertex_Z_R_TRUE_RECO", Vertex_Zbin_vector, Vertex_Rbin_vector , error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_PT_PZ_TRUE_RECO("h_Muon_PT_PZ_TRUE_RECO", "h_Muon_PT_PZ_TRUE_RECO", PTbin_vector , Pzbin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_PT_theta_TRUE_RECO("h_Muon_PT_theta_TRUE_RECO", "h_Muon_PT_theta_TRUE_RECO", PTbin_vector , MuonThetabin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_PZ_theta_TRUE_RECO("h_Muon_PZ_theta_TRUE_RECO", "h_Muon_PZ_theta_TRUE_RECO", Pzbin_vector , MuonThetabin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_E_theta_TRUE_RECO("h_Muon_E_theta", "h_Muon_E_theta",  Ebin_vector , MuonThetabin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_E_PZ_TRUE_RECO("h_Muon_E_PZ_TRUE_RECO", "h_Muon_E_PZ_TRUE_RECO",  Ebin_vector ,  Pzbin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_Muon_E_PT_TRUE_RECO("h_Muon_E_PT_TRUE_RECO", "h_Muon_E_PT_TRUE_RECO",  Ebin_vector , PTbin_vector, error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_cryoVertex_Z_R_TRUE_RECO("h_cryoVertex_Z_R_TRUE_RECO", "h_cryoVertex_Z_R_TRUE_RECO", Vertex_Zbin_vector, Vertex_Rbin_vector , error_bands);
 
-PlotUtils::Hist2DWrapper<CVUniverse> h_2ndtrkangle_2ndTrkE_TRUE_RECO("h_2ndtrkangle_2ndTrkE_TRUE_RECO", "h_2ndtrkangle_2ndTrkE_TRUE_RECO", Vertex_secondTrkEbin_vector, SecTrk_Theta_TRUEbin_vector , error_bands);
+PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_2ndtrkangle_2ndTrkE_TRUE_RECO("h_2ndtrkangle_2ndTrkE_TRUE_RECO", "h_2ndtrkangle_2ndTrkE_TRUE_RECO", Vertex_secondTrkEbin_vector, SecTrk_Theta_TRUEbin_vector , error_bands);
 
 
 
@@ -612,7 +613,8 @@ int PDG_match=0;
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
   std::cout<<"MC LOOP  "<<std::endl;
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
-  double Pi = 3.14159265358979323846;
+
+
   for(int i=0; i<chw_MC->GetEntries(); ++i){
 
     if(i%1000==0) std::cout << (i/100) << " k " << std::flush;
@@ -625,7 +627,7 @@ int PDG_match=0;
     for (auto band : error_bands){
         //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
         int unv_count = 0;
-      std::vector<CVUniverse*> error_band_universes = band.second;
+      std::vector<HeliumCVUniverse*> error_band_universes = band.second;
       for (auto universe : error_band_universes){
 
         // Tell the Event which entry in the TChain it's looking at
@@ -727,14 +729,15 @@ int PDG_match=0;
         double Pmu = universe -> GetPmu()/1000;
         double Emu = universe->GetEmu()*.001;
         double theta_degs = Theta*(180.0/3.1415926);
-        double wtg = universe->GetWeight(kWeights_v1tune);
-        h_Muon_PT_PZ.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), wtg);
-        h_Muon_PT_theta.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,wtg);
-        h_Muon_PZ_theta.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,wtg);
-        h_Muon_E_theta.univHist(universe)->Fill(Emu,theta_degs , wtg);
-        h_Muon_E_PZ.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), wtg);
-        h_Muon_E_PT.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), wtg);
-        h_cryoVertex_Z_R.univHist(universe)->Fill(universe->GetVertex_z(),universe->GetVertex_r() , wtg);
+        double mvn1wgt = universe->GetWeight(kWeights_v1tune);
+
+        h_Muon_PT_PZ.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
+        h_Muon_PT_theta.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
+        h_Muon_PZ_theta.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,mvn1wgt);
+        h_Muon_E_theta.univHist(universe)->Fill(Emu,theta_degs , mvn1wgt);
+        h_Muon_E_PZ.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), mvn1wgt);
+        h_Muon_E_PT.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), mvn1wgt);
+        h_cryoVertex_Z_R.univHist(universe)->Fill(universe->GetVertex_z(),universe->GetVertex_r() , mvn1wgt);
 
 
 
@@ -758,16 +761,18 @@ int PDG_match=0;
                 ///////Truth + RECO Cuts
                 ///////////////////////////////////
           if(PassesCutsRECO(*universe,  is_mc , kCutsVector) ){
-            double Theta = universe->GetThetamu();
-            double Pmu = universe -> GetPmu()/1000;
-            double Emu = universe->GetEmu()*.001;
-            double theta_degs = Theta*(180.0/3.1415926);
-            double wtg = universe->GetWeight(kWeights_v1tune);
 
+
+            double Theta = universe->GetTRUE_muANGLE_WRTB_rad();
+            double Pmu = universe->GetTRUE_Pmu();
+            double Emu = universe->GetTRUE_Emu();
+            double mvn1wgt = universe->GetWeight(kWeights_v1tune);
+            double theta_degs = Theta * TMath::RadToDeg();
             auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
             auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
             auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
-            unsigned int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
+            auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+           int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
 
             if(secondTrk==-999|| secondTrk==-9999 )continue;
 
@@ -776,23 +781,23 @@ int PDG_match=0;
             double secTrkAngle  = Angle_trklist.at(secondTrk);
             double secTrkKE = Energy_trklist.at(secondTrk);
 
-            h_Muon_PT_PZ_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), wtg);
-            h_Muon_PT_theta_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,wtg);
-            h_Muon_PZ_theta_TRUE_RECO.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,wtg);
-            h_Muon_E_theta_TRUE_RECO.univHist(universe)->Fill(Emu,theta_degs , wtg);
-            h_Muon_E_PZ_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), wtg);
-            h_Muon_E_PT_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), wtg);
-            h_cryoVertex_Z_R_TRUE_RECO.univHist(universe)->Fill(universe->GetVertex_z(),universe->GetVertex_r() , wtg);
-            h_2ndtrkangle_2ndTrkE_TRUE_RECO.univHist(universe)->Fill(secTrkAngle, secTrkKE, wtg);
+            h_Muon_PT_PZ_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
+            h_Muon_PT_theta_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
+            h_Muon_PZ_theta_TRUE_RECO.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,mvn1wgt);
+            h_Muon_E_theta_TRUE_RECO.univHist(universe)->Fill(Emu,theta_degs , mvn1wgt);
+            h_Muon_E_PZ_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), mvn1wgt);
+            h_Muon_E_PT_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), mvn1wgt);
+            h_cryoVertex_Z_R_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r() , mvn1wgt);
+            h_2ndtrkangle_2ndTrkE_TRUE_RECO.univHist(universe)->Fill(secTrkAngle, secTrkKE, mvn1wgt);
 
 
-            MnvR_Muon_PT_PZ->Fill(Pmu*std::sin(Theta),Pmu*std::cos(Theta),universe->GetPmuTransverseTrue(),universe->GetPmuLongitudinalTrue(),universe->ShortName(),unv_count,wtg);
-            MnvR_Muon_PT_theta->Fill(Pmu*std::sin(Theta),theta_degs,universe->GetPmuTransverseTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,wtg);
-            MnvR_Muon_PZ_theta->Fill(Pmu*std::cos(Theta),theta_degs,universe->GetPmuLongitudinalTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,wtg);
-            MnvR_Muon_E_theta->Fill(Emu, theta_degs, universe->GetTRUE_Emu(), universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,wtg);
-            MnvR_Muon_E_PZ->Fill(Emu,Pmu*std::cos(Theta),universe->GetTRUE_Emu() ,universe->GetPmuLongitudinalTrue(),universe->ShortName(),unv_count,wtg);
-            MnvR_Muon_E_PT->Fill(Emu,Pmu*std::sin(Theta),universe->GetTRUE_Emu() ,universe->GetPmuTransverseTrue(),universe->ShortName(),unv_count,wtg);
-            MnvR_cryoVertex_Z_R->Fill(universe->GetVertex_z(),universe->GetVertex_r(),universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r() ,universe->ShortName(), unv_count, wtg);
+            MnvR_Muon_PT_PZ->Fill(Pmu*std::sin(Theta),Pmu*std::cos(Theta),universe->GetPmuTransverseTrue(),universe->GetPmuLongitudinalTrue(),universe->ShortName(),unv_count,mvn1wgt);
+            MnvR_Muon_PT_theta->Fill(Pmu*std::sin(Theta),theta_degs,universe->GetPmuTransverseTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,mvn1wgt);
+            MnvR_Muon_PZ_theta->Fill(Pmu*std::cos(Theta),theta_degs,universe->GetPmuLongitudinalTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,mvn1wgt);
+            MnvR_Muon_E_theta->Fill(Emu, theta_degs, universe->GetTRUE_Emu(), universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,mvn1wgt);
+            MnvR_Muon_E_PZ->Fill(Emu,Pmu*std::cos(Theta),universe->GetTRUE_Emu() ,universe->GetPmuLongitudinalTrue(),universe->ShortName(),unv_count,mvn1wgt);
+            MnvR_Muon_E_PT->Fill(Emu,Pmu*std::sin(Theta),universe->GetTRUE_Emu() ,universe->GetPmuTransverseTrue(),universe->ShortName(),unv_count,mvn1wgt);
+            MnvR_cryoVertex_Z_R->Fill(universe->GetVertex_z(),universe->GetVertex_r(),universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r() ,universe->ShortName(), unv_count, mvn1wgt);
 
           }// END OF TRUTH + RECO CUTS
 
@@ -953,7 +958,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
     MnvH2D *h_truth = NULL;
     bool check = cat->GetMigrationObjects(migrationH, h_reco, h_truth );
     //mresp
-    PlotUtils::Hist2DWrapper<CVUniverse> mresp = PlotUtils::Hist2DWrapper<CVUniverse>(migrationH, error_bands, clear_bands);
+    PlotUtils::Hist2DWrapper<HeliumCVUniverse> mresp = PlotUtils::Hist2DWrapper<HeliumCVUniverse>(migrationH, error_bands, clear_bands);
     mresp.SyncCVHistos();
     mresp.hist->Write();
     h_reco->Write();
@@ -1127,7 +1132,7 @@ std::cout<<" PDG_notmatch = " << PDG_notmatch<< "  PDG_match = "<< PDG_match<< s
 
 
   for(auto band : error_bands){
-    std::vector<CVUniverse*> band_universes = band.second;
+    std::vector<HeliumCVUniverse*> band_universes = band.second;
     for(unsigned int i_universe = 0; i_universe < band_universes.size(); ++i_universe){ delete band_universes[i_universe];}
   }
 
