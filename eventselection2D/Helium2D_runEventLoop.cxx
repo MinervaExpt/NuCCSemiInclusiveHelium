@@ -726,7 +726,6 @@ std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
 
       }// End of Group Loop
     }// if Cuts
-
     ///////////////////////////////////////////
     ////
     ////  Apply TRUTH + RECO CUTS to each universe
