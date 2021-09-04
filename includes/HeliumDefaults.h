@@ -498,9 +498,10 @@ PlotUtils::MnvH2D* h_Mig;
 
 };
 
-
-
-
+typedef std::map< std::string, std::vector<HeliumCVUniverse*> > UniverseMap;
+typedef std::map<const std::string, int> error_name_Map;
+typedef std::map<std::string,  std::vector<int>> MnvReponse_ErrorUniv_Hist_numbers;
+typedef std::map<int, int> error_name_Univ_MvnHistMap;
 
 typedef std::map<ME_helium_Playlists, EventCount_RECO > EventPlaylist_RecoCount;
 typedef std::map< ME_helium_Status ,std::vector<ME_helium_Playlists>> FullAndEmptyPlaylistMap;

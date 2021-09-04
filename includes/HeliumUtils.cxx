@@ -5904,3 +5904,17 @@ void  MakeEventCut_Rate_STRUCT_fromTFiles(EventCut_Rate_STRUCT &RETURN_Event_STR
 
 
 }
+
+void Fill_MnvReponse_ErrorUniv_Hist_numbers(error_name_Univ_MvnHistMap MnvReponse_Hist_N_Map, error_name_Map  Universe_map_input){
+int count=0;
+  for(auto Universe_Band :Universe_map_input){
+    auto Universe_vector_size = Universe_Band.second;
+    for(int i = 0; i < Universe_vector_size; i++){
+       MnvReponse_Hist_N_Map.insert(std::pair<int ,int >( count, i) );
+      count++;
+    }
+  }
+
+
+
+}//

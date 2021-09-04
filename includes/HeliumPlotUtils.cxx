@@ -2984,7 +2984,7 @@ void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const ch
         sprintf(hist_Title , "%s [Fiducial Cut to Edge %.1f ]",Title , Hist_index.first);
         DrawCVAndError_FromHIST_withFit(Hist_index.second, hist_Title ,xaxislabel_string,yaxislabel_string,
           pdf,  Setgrid , sigma_return , TotalN_return, chi_sq_return, NDF_return,
-          Mean_return,  Constant_return , printerrors, PrintAllgroups);
+          Mean_return,  Constant_return , printerrors, PrintAllgroups); // need no pdf format
 
           GaussianResolutionFits Fits;
 
@@ -9090,6 +9090,7 @@ void Draw_TGraphs_fitParams(std::vector<GaussianResolutionFits> GaussianFits_val
     TGraphErrors  *TG_Sigma = MakeTGraph_from_VectorsNoErrors(Y_axis_Sigma,  X_axis_CutValue);
     TGraphErrors  *TG_Mean = MakeTGraph_from_VectorsNoErrors(Y_axis_Mean,  X_axis_CutValue);
 
+// need pdf format
 
     DrawTGraph(TG_TotalN,"Fiducial Cut to Edge [mm]","NEvnets", "NEvents Pass Fiducial Cut", "Nevents",pdf_label, cE, mnvPlotter, false, false );
 

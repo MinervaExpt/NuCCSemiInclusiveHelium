@@ -11,12 +11,13 @@ std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_MC_EventSection
 // Functions
 //=====================================================
 std::vector<ECuts> GetRECOCutsVector();
+std::vector<ECuts> GetRECOCutsForEffVector();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector();
 std::vector<MuonVar> GetMUONVaribles();
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector();
 std::vector<CryoVertex> GetCryoVertexVaribles();
-std::vector<ME_helium_Playlists> GetPlayListVector();
-std::vector<ME_helium_Playlists> GetTRUEPlayListVector();
+
+
 std::vector<Particle_type>  GetParicle_type();
 std::vector<Weights> GetWeightVector();
 std::vector<Weights> GetWeightVector_v2();
@@ -80,23 +81,7 @@ ParticleGroup_categories = {
                                    NamedCategory<int>({8},   "EighthTrack")
 
                                  };*/
-const int n_flux_universes = 10;
-std::vector<int> Helium9_colorScheme = {
-    TColor::GetColor("#BBCCEE"),  // paleBlue
-    TColor::GetColor("#CCEEFF"),  // pale cyan
-    TColor::GetColor("#CCDDAA"),  // pale greeen
-    TColor::GetColor("#EEEEBB"),  // pale yellow
-    TColor::GetColor("#FFCCCC"), // pale red
-    TColor::GetColor("#DDDDDD"),  // pale grey
-    TColor::GetColor("#222255"),  // dark Blue
-    TColor::GetColor("#225555"),  // dark cyan
-    TColor::GetColor("#225522"),  // dark green
-    TColor::GetColor("#666633"),  // dark yellow
-    TColor::GetColor("#66333"),  // dark red
-    TColor::GetColor("#555555")  // dark grey
-};
-
-
+const int n_flux_universes = 100;
 
 std::map< std::string, std::vector<HeliumCVUniverse*> >
   GetErrorBands(PlotUtils::ChainWrapper* chain) {
@@ -104,85 +89,107 @@ std::map< std::string, std::vector<HeliumCVUniverse*> >
 
     SystMap error_bands;
 
+    //========================================================================
     // CV
+    //========================================================================
+
     error_bands[std::string("cv")].push_back( new HeliumCVUniverse(chain) );
 
-    //Detector systematics, lateral sh
+    if(m_RunCodeWithSystematics){
 
-if(m_RunCodeWithSystematics){
+      //========================================================================
+      ///// Minerva Muon Energy
+      //========================================================================
 
-//    SystMap muonP_systematics = PlotUtils::GetMuonSystematicsMap<HeliumCVUniverse>(chain,NSFDefaults::KludgedMinosMuonMomentum_Err);
-  //  error_bands.insert(muonP_systematics.begin(), muonP_systematics.end());
-    //std::cout << "C++ make muon resolution systematics" << std::endl;
-
-    ///// MINOS ERROR systems
-    SystMap MinervaMuon_systematics = PlotUtils::GetMinervaMuonSystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(MinervaMuon_systematics.begin(), MinervaMuon_systematics.end());
-    // Minerva Error System
-
-    // MINOS efficiency
-    SystMap MinosMuon_systematics = PlotUtils::GetMinosMuonSystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(MinosMuon_systematics.begin(), MinosMuon_systematics.end());
-
-    // Muon match efficiency
-    SystMap MinosEff_systematics = PlotUtils::GetMinosEfficiencySystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(MinosEff_systematics.begin(), MinosEff_systematics.end());
-
-    SystMap flux_systematics = PlotUtils::GetFluxSystematicsMap<HeliumCVUniverse>(chain,n_flux_universes);
-    error_bands.insert(flux_systematics.begin(), flux_systematics.end());
-
-    SystMap angle_systematics = PlotUtils::GetAngleSystematicsMap<HeliumCVUniverse>(chain,NSFDefaults::beamThetaX_Err,NSFDefaults::beamThetaY_Err);
-    error_bands.insert(angle_systematics.begin(), angle_systematics.end());
-    //GENIE
-    SystMap genie_systematics = PlotUtils::GetGenieSystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(genie_systematics.begin(), genie_systematics.end());
-
-    SystMap a2p2h_systematics = PlotUtils::Get2p2hSystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(a2p2h_systematics.begin(), a2p2h_systematics.end());
-
-    SystMap RPA_systematics = PlotUtils::GetRPASystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(RPA_systematics.begin(), RPA_systematics.end());
-
-    //SystMap LowQ2Pi_systematics = PlotUtils::GetLowQ2PiSystematicsMap<HeliumCVUniverse>(chain);
-    //error_bands.insert(LowQ2Pi_systematics.begin(), LowQ2Pi_systematics.end());
-    SystMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
-
-    SystMap HeliumTargetMass_systematics = GetHeliumTargetMassSystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(HeliumTargetMass_systematics.begin(), HeliumTargetMass_systematics.end());
-
-    // Muon resolution
-    //SystMap muonR_systematics = PlotUtils::GetMuonResolutionSystematicsMap<HeliumCVUniverse>(chain,NSFDefaults::muonResolution_Err);
-    //error_bands.insert(muonR_systematics.begin(), muonR_systematics.end());
-    //std::cout << "C++ make minos efficiency systematics" << std::endl;
-
-    // Non-res pi
-    //SystMap nonrespi_systematics =
-    //  PlotUtils::GetNonResPiSystematicsMap<HeliumCVUniverse>(chain);
-    //error_bands.insert(nonrespi_systematics.begin(), nonrespi_systematics.end());
+      SystMap MinervaMuon_systematics = PlotUtils::GetMinervaMuonSystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(MinervaMuon_systematics.begin(), MinervaMuon_systematics.end());
 
 
+      //========================================================================
+      // MINOS efficiency
+      //========================================================================
 
-}
+      SystMap MinosMuon_systematics = PlotUtils::GetMinosMuonSystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(MinosMuon_systematics.begin(), MinosMuon_systematics.end());
 
+      //========================================================================
+      // Muon match efficiency
+      //========================================================================
+
+      SystMap MinosEff_systematics = PlotUtils::GetMinosEfficiencySystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(MinosEff_systematics.begin(), MinosEff_systematics.end());
+
+      //========================================================================
+      //Flux
+      //========================================================================
+
+      SystMap flux_systematics = PlotUtils::GetFluxSystematicsMap<HeliumCVUniverse>(chain,n_flux_universes);
+      error_bands.insert(flux_systematics.begin(), flux_systematics.end());
+
+      //========================================================================
+      // Beam Angle
+      //========================================================================
+
+      SystMap angle_systematics = PlotUtils::GetAngleSystematicsMap<HeliumCVUniverse>(chain,NSFDefaults::beamThetaX_Err,NSFDefaults::beamThetaY_Err);
+      error_bands.insert(angle_systematics.begin(), angle_systematics.end());
+
+      //========================================================================
+      // GENIE FSI + CrossSection
+      //========================================================================
+
+      SystMap genie_systematics = PlotUtils::GetGenieSystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(genie_systematics.begin(), genie_systematics.end());
+
+      //========================================================================
+       // MnvTunes
+       //========================================================================
+       // 2p2h
+
+      SystMap a2p2h_systematics = PlotUtils::Get2p2hSystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(a2p2h_systematics.begin(), a2p2h_systematics.end());
+
+      //========================================================================
+      // random phase appox , long range Nuclear correlations modeling
+      //========================================================================
+
+      SystMap RPA_systematics = PlotUtils::GetRPASystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(RPA_systematics.begin(), RPA_systematics.end());
+
+      //SystMap LowQ2Pi_systematics = PlotUtils::GetLowQ2PiSystematicsMap<HeliumCVUniverse>(chain);
+      //error_bands.insert(LowQ2Pi_systematics.begin(), LowQ2Pi_systematics.end());
+
+      //========================================================================
+      // Helium
+      //========================================================================
+
+
+      SystMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
+
+      SystMap HeliumTargetMass_systematics = GetHeliumTargetMassSystematicsMap<HeliumCVUniverse>(chain);
+      error_bands.insert(HeliumTargetMass_systematics.begin(), HeliumTargetMass_systematics.end());
+
+    }
 
 
   return error_bands;
 }
 //======================================================================
-//void EventCounter(const HeliumCVUniverse& , std::vector<ECuts> cuts, EventCount_RECO &Event_map ,bool is_mc,HeliumPlayListInfo Info );
-  // Make a chain of events
+// End of Error Universe
+//======================================================================
+
+
+//======================================================================
+// Event Loop
+//======================================================================
+
 void runEventLoop(bool &m_debugOn, ME_helium_Playlists &PlayList_iterator) {
-loadLibs();
+  loadLibs();
 TH1::AddDirectory(kFALSE);
-//std::vector<ECuts> kCutsVector;
-int Study_cap=50;
-int Study_count=0;
-double POT[4];
+
 const std::vector<ECuts> kCutsVector = GetRECOCutsVector();
+const std::vector<ECuts> kCutsVector_Eff = GetRECOCutsForEffVector();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector = GetTRUTHCutsVector();
-const std::vector<ME_helium_Playlists> kPlayListVector = GetPlayListVector();
-const std::vector<ME_helium_Playlists> kTRUEPlayListVector = GetTRUEPlayListVector();
 
 const std::vector<Weights> kWeights_v1tune= GetWeightVector();
 const std::vector<Weights> kWeights_v2tune= GetWeightVector_v2();
@@ -191,7 +198,19 @@ const std::vector<MuonVar> kMuonVaribles_vector = GetMUONVaribles();
 const std::vector<SecondTrkVar> kSecTrkVaribles_vector = GetPlayListSecondTrkVector();
 
 const std::vector<CryoVertex> kCryoVertexVaribles_vector = GetCryoVertexVaribles();
-EventPlaylist_RecoCount EventCountMap;
+
+RECO_Cut_Map CountMap_RECO;// = ConstuctRecoCountingMap(kCutsVector);
+RECO_Cut_Map CountMap_RECO_Helium ;//= ConstuctRecoCountingMap(kCutsVector);
+RECO_Cut_Map CountMap_RECO_nonHelium;// = ConstuctRecoCountingMap(kCutsVector);
+RECO_Cut_Map CountMap_TRUE_RECO;
+TRUE_Cut_Map Truth_Cut_Map;
+
+FillingRecoCountingMap(kCutsVector, CountMap_RECO);
+FillingRecoCountingMap(kCutsVector, CountMap_RECO_Helium);
+FillingRecoCountingMap(kCutsVector, CountMap_RECO_nonHelium);
+FillingRecoCountingMap(kCutsVector_Eff, CountMap_TRUE_RECO);
+FillingTruthCountingMap(kTRUTHCutsVector, Truth_Cut_Map);
+
 
 const std::vector<Particle_type> kSecondary_particle_vector = GetParicle_type();
 
@@ -202,11 +221,13 @@ const std::vector<Particle_type> kSecondary_particle_vector = GetParicle_type();
 ////////////////////ADDING TO CHAIN wrapper ///////////////////////////
 //======================================================================
 bool is_mc= true;
+
 //PlotUtils::ChainWrapper* chw_FullMC = makeChainWrapperPtr("../playlists/playlist_MC_Mvn13C_ecoicaPlus_8_23_19.txt", "Muon");//
 //PlotUtils::ChainWrapper* chw_MC = makeChainWrapperPtr("../playlists/MC_Playlist/ME_1G_MC.txt", "Muon");//
-//PlotUtils::ChainWrapper* chw_MC = makeChainWrapperPtr("../playlists/MC_Playlist/ME_1A_MC.txt", "Muon");//
-//PlotUtils::ChainWrapper* chw_MC = makeChainWrapperPtr("../playlists/MC_Playlist/ME_1A_MC.txt", "Muon");//
 
+//======================================================================
+// SET MINERVA Analysis Type and Universes
+//======================================================================
   MinervaUniverse::SetDeuteriumGeniePiTune(false);
   MinervaUniverse::SetNuEConstraint(true);
   MinervaUniverse::SetZExpansionFaReweight(false);
@@ -216,6 +237,9 @@ bool is_mc= true;
   std::string playlist = GetPlaylist(PlayList_iterator);
   MinervaUniverse::SetPlaylist(playlist);
 
+  //======================================================================
+  // SET Flux Parameters for Intergrated Flux hist
+  //======================================================================
   int nu_pdg = MinervaUniverse::GetAnalysisNuPDG();
   std::string playlist_fluxreweighter = MinervaUniverse::GetPlaylist();
   bool useNuEconstraint = MinervaUniverse::UseNuEConstraint();
@@ -223,8 +247,10 @@ bool is_mc= true;
   bool useMuonCorrelations = true;
   double Min_NuFluxEnergy = 0.0;
   double Max_NuFluxEnergy = 120.0;
-  //MinervaUniverse::Set_Multiple_resetPlaylist(true);
 
+  //======================================================================
+  //
+  //======================================================================
 
 
   auto Playlist_txtFILEPath = GetPlaylist_txtFILE_path(PlayList_iterator, is_mc );
@@ -242,10 +268,27 @@ bool is_mc= true;
   //======================================================================
 //std::map< std::string, std::vector<HeliumCVUniverse*> > error_bands = GetErrorBands(chw_FullMC);
 std::map<std::string, std::vector<HeliumCVUniverse*> > error_bands= GetErrorBands(chw_MC);
-std::map<const std::string, const int> error_name;
+error_name_Map error_name;
+error_name_Univ_MvnHistMap MnvReponse_Hist_N_Map;
+//std::map<const std::string,  int> error_Number;
+std::vector<std::vector<HeliumCVUniverse*>> Error_Band_Universe_GROUPS = groupCompatibleUniverses(error_bands); // Group Vertical and Laterial bands together
+
+
+
 std::map<std::string, std::vector<HeliumCVUniverse*> >::iterator itr;
 for(itr = error_bands.begin(); itr != error_bands.end(); ++itr) error_name.insert(std::pair<std::string, const int>((itr->second)[0]->ShortName(), (itr->second).size()));
 HeliumPlayListInfo Playlist_Info(playlist);
+Fill_MnvReponse_ErrorUniv_Hist_numbers( MnvReponse_Hist_N_Map, error_name);
+std::cout<<"checking Error Names "<< std::endl;
+
+for(auto cat : error_bands ){
+
+std::cout<<"Universe Name = " <<cat.first << std::endl;
+
+}
+
+
+int unv_count = 0;
 
 std::map<std::string, const int>::iterator itr_m;
 
@@ -277,9 +320,11 @@ std::cout<<"The Playlist Root = "<< RootName<<std::endl;
 
 
 
-    std::cout<<"Working with Playlist =  "<<  Playlist_Info.GetPlaylistname()<<std::endl;
-//Bins for varibles //
-//Muons ///////////////////
+  std::cout<<"Working with Playlist =  "<<  Playlist_Info.GetPlaylistname()<<std::endl;
+
+  //======================================================================
+  // SET Binning for Hist
+  //======================================================================
 std::vector<double> Ebin_vector = GetBinMuonVector(kE);
 std::vector<double> Pzbin_vector= GetBinMuonVector(kP_Z);
 std::vector<double> PTbin_vector= GetBinMuonVector(kP_T);
@@ -567,35 +612,13 @@ MnvH2D *h_2d_2ndtrkangle_2ndTrkE_dimuon_TRUE_RECO    =    new MnvH2D("h_2d_2ndtr
   // Entry Loop For MC
   //=========================================
 
-  //std::std::vector<ECuts> kCutsVector;
-  std::vector<Arachne_alltracks> Arachne_alltrks;
-  std::vector<Trajector> All_True_trajectors;
-  std::vector<Trajector> All_RECO_trajectors;
-  std::vector<TRUE_RECO_Energies_Trajectors> True_Reco_Energies;
-
-  EventCount_RECO EventCounter_EFF;
-  EventCount_RECO EventCounter_EFF_TRUTH;
-  EventCount_RECO EventCounter_RECO;
-
-
-  std::cout << "size of vector " << kCutsVector.size()<<std::endl;
-  for (auto cut : kCutsVector){
-  std::cout<<" count= "<<cut<<std::endl;
-
-  EventCounter_RECO[cut]=0.0;
-   EventCounter_EFF[cut]=0.0;
-   EventCounter_EFF_TRUTH[cut]=0.0;
-
-
-  }
-
-
   ProcInfo_t procInfo;
   gSystem->GetProcInfo(&procInfo);
 
 std::string sysmatics_status;
 if(m_RunCodeWithSystematics==true){sysmatics_status= "Systematics On";}
 else if (m_RunCodeWithSystematics==false){sysmatics_status= "Systematics Off";}
+
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
 std::cout<<"~~~~~~~~~ Systematic are =   "<< sysmatics_status <<" ~~~~~~~~~ "<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
@@ -604,10 +627,6 @@ std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
 std::cout<<"~~~~~~~~~  THIS IS RECO 2D ~~~~~~~~~ "<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
 
-
-int PDG_notmatch=0;
-int PDG_match=0;
-
   std::cout << "Memory/time used so Far: " << procInfo.fMemResident/1000<< " MB" <<" time = "<<  procInfo.fCpuSys <<  " Sec"<<"\n";
 
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
@@ -615,210 +634,176 @@ int PDG_match=0;
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
 
-  for(int i=0; i<chw_MC->GetEntries(); ++i){
+  for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
 
-    if(i%1000==0) std::cout << (i/100) << " k " << std::flush;
+    if(ii%1000==0) std::cout << (ii/100) << " k " << std::flush;
 
     //=========================================
-    // For every systematic, loop over the universes, and fill the
+    // For every Laterial and grouped  Vertical systematic, apply cuts ,
+    // then loop over individiual  universes, and fill the
     // appropriate histogram in the MnvH1D
     //=========================================
 
-    for (auto band : error_bands){
-        //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
-        int unv_count = 0;
-      std::vector<HeliumCVUniverse*> error_band_universes = band.second;
-      for (auto universe : error_band_universes){
+        for ( auto  Universe_GROUP: Error_Band_Universe_GROUPS){
 
-        // Tell the Event which entry in the TChain it's looking at
-        universe->SetEntry(i);
+         Universe_GROUP.front()->SetEntry(ii);
 
-//std::cout<<"Angle = "<< universe->GetThetaYmu()*180/Pi<<std::endl;
+         if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector,kWeights_v1tune, CountMap_RECO, CountMap_RECO_Helium, CountMap_RECO_nonHelium)){
+
+           for (auto universe : Universe_GROUP){
+             universe->SetEntry(ii);
+             ///////////////////////////////////////////
+             ////
+             ////  RECO CUTs all other Universes
+             ////
+             ////
+             ///////////////////////////////////////////
+
+             double Theta = universe->GetThetamu();
+             double Pmu = universe -> GetPmu()*.001;
+             double Emu = universe->GetEmu()*.001;
+             double theta_degs = Theta*TMath::RadToDeg();
+             double mvn1wgt = universe->GetWeight(kWeights_v1tune);
+
+             h_Muon_PT_PZ.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
+             h_Muon_PT_theta.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
+             h_Muon_PZ_theta.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,mvn1wgt);
+             h_Muon_E_theta.univHist(universe)->Fill(Emu,theta_degs , mvn1wgt);
+             h_Muon_E_PZ.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), mvn1wgt);
+             h_Muon_E_PT.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), mvn1wgt);
+             h_cryoVertex_Z_R.univHist(universe)->Fill(universe->GetVertex_z(),universe->GetVertex_r() , mvn1wgt);
+
+             ///////////////////////////////////////////
+             ////
+             ////  FILL CV
+             ////
+             ////
+             ///////////////////////////////////////////
+
+             if( isCV(*universe)){
+
+               int secondTrk = universe->Getindex2ndTrackhighestKE();
+               Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
+               Material_type Material_type_Event = universe->Get_MaterialStackType();
+               Particle_type Particle_type_Event =  universe->Get_NonParticleStackType(secondTrk);
+
+               h_Muon_PT_PZ_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
+               h_Muon_PT_PZ_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
+               h_Muon_PT_PZ_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
+
+               h_Muon_PT_theta_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
+               h_Muon_PT_theta_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
+               h_Muon_PT_theta_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
+
+               h_Muon_PZ_theta_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::cos(Theta), theta_degs,mvn1wgt);
+               h_Muon_PZ_theta_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::cos(Theta), theta_degs,mvn1wgt);
+               h_Muon_PZ_theta_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::cos(Theta), theta_degs,mvn1wgt);
+
+               h_Muon_E_theta_Material.GetComponentHist(Material_type_Event)->Fill(Emu,theta_degs,mvn1wgt);
+               h_Muon_E_theta_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu,theta_degs,mvn1wgt);
+               h_Muon_E_theta_Particle.GetComponentHist(Particle_type_Event)->Fill(Emu,theta_degs,mvn1wgt);
+
+               h_Muon_E_PZ_Material.GetComponentHist(Material_type_Event)->Fill(Emu, Pmu*std::cos(Theta),mvn1wgt);
+               h_Muon_E_PZ_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu, Pmu*std::cos(Theta),mvn1wgt);
+               h_Muon_E_PZ_Particle.GetComponentHist(Particle_type_Event)->Fill(Emu, Pmu*std::cos(Theta),mvn1wgt);
+
+               h_Muon_E_PT_Material.GetComponentHist(Material_type_Event)->Fill(Emu, Pmu*std::sin(Theta),mvn1wgt);
+               h_Muon_E_PT_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu, Pmu*std::sin(Theta),mvn1wgt);
+               h_Muon_E_PT_Particle.GetComponentHist(Particle_type_Event)->Fill(Emu, Pmu*std::sin(Theta),mvn1wgt);
+
+               h_cryoVertex_Z_R_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_z(),universe->GetVertex_r(), mvn1wgt);
+               h_cryoVertex_Z_R_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_z(),universe->GetVertex_r(), mvn1wgt);
+               h_cryoVertex_Z_R_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_z(),universe->GetVertex_r(), mvn1wgt);
+
+             }//
+             ///////////////////////////////////////////
+             ////
+             ////  END CV
+             ////
+             ////
+             ///////////////////////////////////////////
 
 
+      }// End of Group Loop
+    }// if Cuts
+
+    ///////////////////////////////////////////
+    ////
+    ////  Apply TRUTH + RECO CUTS to each universe
+    ////
+    ///////////////////////////////////////////
+
+    if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector, kWeights_v1tune , Truth_Cut_Map)){
+
+      if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_Eff ,kWeights_v1tune ,CountMap_TRUE_RECO ) ){
+        unv_count = 0; // I want a better way to have the Universe Counter , im not sure if this works
+        for (auto universe : Universe_GROUP){
+          //std::cout<<"universe->ShortName() = " << universe->ShortName()<<std::endl;
+          // Tell the Event which entry in the TChain it's looking at
+          universe->SetEntry(ii);
+          double Theta = universe->GetTRUE_muANGLE_WRTB_rad();
+          double Pmu = universe->GetTRUE_Pmu();
+          double Emu = universe->GetTRUE_Emu();
+          double mvn1wgt = universe->GetWeight(kWeights_v1tune);
+          double theta_degs = Theta * TMath::RadToDeg();
+          auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+          auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+          auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+          auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+          int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
+
+          if(secondTrk==-999|| secondTrk==-9999 )continue;
+
+
+          int secTrk_PDG = PDG_trklist.at(secondTrk);
+          double secTrkAngle  = Angle_trklist.at(secondTrk);
+          double secTrkKE = Energy_trklist.at(secondTrk);
+
+          h_Muon_PT_PZ_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
+          h_Muon_PT_theta_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
+          h_Muon_PZ_theta_TRUE_RECO.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,mvn1wgt);
+          h_Muon_E_theta_TRUE_RECO.univHist(universe)->Fill(Emu,theta_degs , mvn1wgt);
+          h_Muon_E_PZ_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), mvn1wgt);
+          h_Muon_E_PT_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), mvn1wgt);
+          h_cryoVertex_Z_R_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r() , mvn1wgt);
+          h_2ndtrkangle_2ndTrkE_TRUE_RECO.univHist(universe)->Fill(secTrkAngle, secTrkKE, mvn1wgt);
+
+          const int  unvHist_count = MnvReponse_Hist_N_Map[unv_count];
+          MnvR_Muon_PT_PZ->Fill(Pmu*std::sin(Theta),Pmu*std::cos(Theta),universe->GetPmuTransverseTrue(),universe->GetPmuLongitudinalTrue(),universe->ShortName(),unvHist_count,mvn1wgt);
+          MnvR_Muon_PT_theta->Fill(Pmu*std::sin(Theta),theta_degs,universe->GetPmuTransverseTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unvHist_count,mvn1wgt);
+          MnvR_Muon_PZ_theta->Fill(Pmu*std::cos(Theta),theta_degs,universe->GetPmuLongitudinalTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unvHist_count,mvn1wgt);
+          MnvR_Muon_E_theta->Fill(Emu, theta_degs, universe->GetTRUE_Emu(), universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unvHist_count,mvn1wgt);
+          MnvR_Muon_E_PZ->Fill(Emu,Pmu*std::cos(Theta),universe->GetTRUE_Emu() ,universe->GetPmuLongitudinalTrue(),universe->ShortName(),unvHist_count,mvn1wgt);
+          MnvR_Muon_E_PT->Fill(Emu,Pmu*std::sin(Theta),universe->GetTRUE_Emu() ,universe->GetPmuTransverseTrue(),universe->ShortName(),unvHist_count,mvn1wgt);
+          MnvR_cryoVertex_Z_R->Fill(universe->GetVertex_z(),universe->GetVertex_r(),universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r() ,universe->ShortName(), unvHist_count, mvn1wgt);
+
+          unv_count++;
+        } // end of Universe  single Loop
+      }// End of Reco Cuts
+    }// End of Truth Cuts
+
+  } // Loop  by Vertical and Laterial error
+  ///////////////////////////////////////////
+////
+////  GROUPED Vertical and Laterialuniverse loop
+////
+///////////////////////////////////////////
+} //End entries loop
 ///////////////////////////////////////////
 ////
-////  FILL CV
-////
+////  End entries loop
 ////
 ///////////////////////////////////////////
-        if( universe->ShortName() == "cv"){
-          EventCounter(*universe, kCutsVector, EventCounter_RECO, is_mc, Playlist_Info );
-          EventCounter_RECO_TRUTHApplied(*universe, kTRUTHCutsVector,
-            kCutsVector, EventCounter_EFF_TRUTH,
-            EventCounter_EFF ,is_mc, kWeights_v1tune);
-            if(  PassesCutsRECO(*universe,  is_mc , kCutsVector) ){
 
 
 
-
-
-              int secondTrk = universe->Getindex2ndTrackhighestKE();
-              Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
-              Material_type Material_type_Event = universe->Get_MaterialStackType();
-              Particle_type Particle_type_Event =  universe->Get_NonParticleStackType(secondTrk);
-
-              double Theta = universe->GetThetamu();
-              double Pmu = universe -> GetPmu()/1000;
-              double theta_degs = Theta*(180.0/3.1415926);
-              double Emu = universe->GetEmu()*.001;
-
-
-              h_Muon_PT_PZ_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), universe->GetWeight(kWeights_v1tune));
-              h_Muon_PT_PZ_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), universe->GetWeight(kWeights_v1tune));
-              h_Muon_PT_PZ_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), universe->GetWeight(kWeights_v1tune));
-
-              h_Muon_PT_theta_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::sin(Theta), theta_degs,universe->GetWeight(kWeights_v1tune));
-              h_Muon_PT_theta_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::sin(Theta), theta_degs,universe->GetWeight(kWeights_v1tune));
-              h_Muon_PT_theta_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::sin(Theta), theta_degs,universe->GetWeight(kWeights_v1tune));
-
-              h_Muon_PZ_theta_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::cos(Theta), theta_degs,universe->GetWeight(kWeights_v1tune));
-              h_Muon_PZ_theta_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::cos(Theta), theta_degs,universe->GetWeight(kWeights_v1tune));
-              h_Muon_PZ_theta_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::cos(Theta), theta_degs,universe->GetWeight(kWeights_v1tune));
-
-              h_Muon_E_theta_Material.GetComponentHist(Material_type_Event)->Fill(Emu,theta_degs,universe->GetWeight(kWeights_v1tune));
-              h_Muon_E_theta_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu,theta_degs,universe->GetWeight(kWeights_v1tune));
-              h_Muon_E_theta_Particle.GetComponentHist(Particle_type_Event)->Fill(Emu,theta_degs,universe->GetWeight(kWeights_v1tune));
-
-              h_Muon_E_PZ_Material.GetComponentHist(Material_type_Event)->Fill(Emu, Pmu*std::cos(Theta),universe->GetWeight(kWeights_v1tune));
-              h_Muon_E_PZ_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu, Pmu*std::cos(Theta),universe->GetWeight(kWeights_v1tune));
-              h_Muon_E_PZ_Particle.GetComponentHist(Particle_type_Event)->Fill(Emu, Pmu*std::cos(Theta),universe->GetWeight(kWeights_v1tune));
-
-              h_Muon_E_PT_Material.GetComponentHist(Material_type_Event)->Fill(Emu, Pmu*std::sin(Theta),universe->GetWeight(kWeights_v1tune));
-              h_Muon_E_PT_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu, Pmu*std::sin(Theta),universe->GetWeight(kWeights_v1tune));
-              h_Muon_E_PT_Particle.GetComponentHist(Particle_type_Event)->Fill(Emu, Pmu*std::sin(Theta),universe->GetWeight(kWeights_v1tune));
-
-              h_cryoVertex_Z_R_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_z(),universe->GetVertex_r(), universe->GetWeight(kWeights_v1tune));
-              h_cryoVertex_Z_R_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_z(),universe->GetVertex_r(), universe->GetWeight(kWeights_v1tune));
-              h_cryoVertex_Z_R_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_z(),universe->GetVertex_r(), universe->GetWeight(kWeights_v1tune));
-
-
-              ///////////////////////////////////
-              //END of RECO CUTs/////
-              ///////////////////////////////////
-            }
-
-            ///////////////////////////////////
-            //END of RECO CUTs/////
-            //////////////////////////////////
-
-
-            ///////////////////////////////////////////
-            ////
-            ////  END OF CV
-            ////
-            ////
-            ///////////////////////////////////////////
-          }
-        ///////////////////////////////////////////
-        ////
-        ////  END OF CV
-        ////
-        ////
-        ///////////////////////////////////////////
-        //=========================================
-        // CUTS in each universe
-        //==========================PlayList_iteratorPlayList_iterator===============
-
-      if(PassesCutsRECO(*universe,  is_mc , kCutsVector) ){
-
-      //  double weight_forMK = 1.0; //universe->GetWeight(kWeights_forMK);
-        //double MK_Weight = universe->GetMKmodelWeight_local(weight_MK);
-
-        double Theta = universe->GetThetamu();
-        double Pmu = universe -> GetPmu()/1000;
-        double Emu = universe->GetEmu()*.001;
-        double theta_degs = Theta*(180.0/3.1415926);
-        double mvn1wgt = universe->GetWeight(kWeights_v1tune);
-
-        h_Muon_PT_PZ.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
-        h_Muon_PT_theta.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
-        h_Muon_PZ_theta.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,mvn1wgt);
-        h_Muon_E_theta.univHist(universe)->Fill(Emu,theta_degs , mvn1wgt);
-        h_Muon_E_PZ.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), mvn1wgt);
-        h_Muon_E_PT.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), mvn1wgt);
-        h_cryoVertex_Z_R.univHist(universe)->Fill(universe->GetVertex_z(),universe->GetVertex_r() , mvn1wgt);
-
-
-
-      }
-      //=========================================
-      // each universe
-      //=========================================
-
-      // End if passed RECO cuts
-
-      //=========================================
-      // each universe
-      //=========================================
-
-        ////////////
-        ///TRUTH + RECO Cuts for Universes
-        ///////////
-
-        if(PassesCutsTRUTH(*universe, kTRUTHCutsVector)){
-                ///////////////////////////////////
-                ///////Truth + RECO Cuts
-                ///////////////////////////////////
-          if(PassesCutsRECO(*universe,  is_mc , kCutsVector) ){
-
-
-            double Theta = universe->GetTRUE_muANGLE_WRTB_rad();
-            double Pmu = universe->GetTRUE_Pmu();
-            double Emu = universe->GetTRUE_Emu();
-            double mvn1wgt = universe->GetWeight(kWeights_v1tune);
-            double theta_degs = Theta * TMath::RadToDeg();
-            auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
-            auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
-            auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
-            auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
-           int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
-
-            if(secondTrk==-999|| secondTrk==-9999 )continue;
-
-
-            int secTrk_PDG = PDG_trklist.at(secondTrk);
-            double secTrkAngle  = Angle_trklist.at(secondTrk);
-            double secTrkKE = Energy_trklist.at(secondTrk);
-
-            h_Muon_PT_PZ_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), Pmu*std::cos(Theta), mvn1wgt);
-            h_Muon_PT_theta_TRUE_RECO.univHist(universe)->Fill(Pmu*std::sin(Theta), theta_degs,mvn1wgt);
-            h_Muon_PZ_theta_TRUE_RECO.univHist(universe)->Fill( Pmu*std::cos(Theta), theta_degs,mvn1wgt);
-            h_Muon_E_theta_TRUE_RECO.univHist(universe)->Fill(Emu,theta_degs , mvn1wgt);
-            h_Muon_E_PZ_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::cos(Theta), mvn1wgt);
-            h_Muon_E_PT_TRUE_RECO.univHist(universe)->Fill(Emu, Pmu*std::sin(Theta), mvn1wgt);
-            h_cryoVertex_Z_R_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r() , mvn1wgt);
-            h_2ndtrkangle_2ndTrkE_TRUE_RECO.univHist(universe)->Fill(secTrkAngle, secTrkKE, mvn1wgt);
-
-
-            MnvR_Muon_PT_PZ->Fill(Pmu*std::sin(Theta),Pmu*std::cos(Theta),universe->GetPmuTransverseTrue(),universe->GetPmuLongitudinalTrue(),universe->ShortName(),unv_count,mvn1wgt);
-            MnvR_Muon_PT_theta->Fill(Pmu*std::sin(Theta),theta_degs,universe->GetPmuTransverseTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,mvn1wgt);
-            MnvR_Muon_PZ_theta->Fill(Pmu*std::cos(Theta),theta_degs,universe->GetPmuLongitudinalTrue(),universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,mvn1wgt);
-            MnvR_Muon_E_theta->Fill(Emu, theta_degs, universe->GetTRUE_Emu(), universe->GetTRUE_muANGLE_WRTB_DEG(),universe->ShortName(),unv_count,mvn1wgt);
-            MnvR_Muon_E_PZ->Fill(Emu,Pmu*std::cos(Theta),universe->GetTRUE_Emu() ,universe->GetPmuLongitudinalTrue(),universe->ShortName(),unv_count,mvn1wgt);
-            MnvR_Muon_E_PT->Fill(Emu,Pmu*std::sin(Theta),universe->GetTRUE_Emu() ,universe->GetPmuTransverseTrue(),universe->ShortName(),unv_count,mvn1wgt);
-            MnvR_cryoVertex_Z_R->Fill(universe->GetVertex_z(),universe->GetVertex_r(),universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r() ,universe->ShortName(), unv_count, mvn1wgt);
-
-          }// END OF TRUTH + RECO CUTS
-
-        }//END OF TRUTH PASS CUTS
-
-
-
-        unv_count++;
-      } // End band's universe loop
-    } // End Band loop
-  } //End entries loop
 
   gSystem->GetProcInfo(&procInfo);
   std::cout << " Done with loop Mem1: " << procInfo.fMemResident/1000 << " MB" << " time = "<<  procInfo.fCpuSys  <<  " sec""\n";
 ///////////////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////////////
-//EventCountMap[kPlayListVector[0]] = EventCounter_MCFull;
-EventCountMap[kPlayListVector[0]] = EventCounter_RECO;
-//EventCountMap[kPlayListVector[2]] = EventCounter_dataFull;
-//EventCountMap[kPlayListVector[3]] = EventCounter_dataEmpty;
+
 //////////////////////////////////////////////////////////////////////////
 //End of Empty data
 //////////////////////////////////////////////////////////////////////////
@@ -844,7 +829,7 @@ h_Muon_E_PT_TRUE_RECO.SyncCVHistos();
 h_cryoVertex_Z_R_TRUE_RECO.SyncCVHistos();
 //MnvR_Muon_PT_PZ->SyncCVHistos();
 //////////////////////////////////
-//////////////////////////////////
+
   //=========================================
   // Plot stuff
   //=========================================
@@ -867,24 +852,34 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   strcpy(c, playlist_name.c_str());
   strcpy(d, datatype.c_str());
   strcpy(ErrorStatus, sysmatics_status.c_str());
-  PrintCutstoScreen( kCutsVector , EventCounter_RECO, c, mcscale );
-  MakeEfficiencyCutCVS(EventCounter_EFF_TRUTH, EventCounter_EFF , kCutsVector,c,mcPOT);
-  Make_cvsOfCutsRate( kCutsVector , EventCounter_RECO, c, true, mcscale, mcPOT);
 
 
-  //outFileName = "Histograms_test.root";
-  //auto outFile = TFile::Open(outFileName);
+
+  TGraph  *RECO_2DCuts           = Make_RECOCut_Tgraph_fromCutMap("RECO_2DCuts"          , CountMap_RECO);
+  TGraph  *RECO_Helium_2DCuts    = Make_RECOCut_Tgraph_fromCutMap("RECO_Helium_2DCuts"   , CountMap_RECO_Helium);
+  TGraph  *RECO_nonHelium_2DCuts = Make_RECOCut_Tgraph_fromCutMap("RECO_nonHelium_2DCuts", CountMap_RECO);
+  TGraph  *TRUE_RECO_2DCuts      = Make_RECOCut_Tgraph_fromCutMap("TRUE_RECO_2DCuts"     , CountMap_TRUE_RECO);
+  TGraph  *Truth_2DCuts          = Make_TruthCut_Tgraph_fromCutMap("Truth_2DCuts"        , Truth_Cut_Map);
+
   sprintf(outFileName, "%s/%s_2D%s_%s_%s.root",rootpathway, "Histograms",c,d,ErrorStatus);
-
   std::cout << "Writing output file to: " <<outFileName << std::endl;
 
-  //TFile *outFile(outFileName, "RECREATE");
   TFile *outFile = new TFile(outFileName,"RECREATE");
+
   TChain POT_branch("Meta");
   POT_branch.Add(RootName.c_str());
   //TTree *oldtree = (TTree*)file->Get("Meta");
   TTree *clone = POT_branch.CloneTree();
   clone->Write();
+  //////////////
+  /// Cut rates
+  ///////////////
+
+  RECO_2DCuts->Write();
+  TRUE_RECO_2DCuts->Write();
+  RECO_Helium_2DCuts->Write();
+  RECO_nonHelium_2DCuts->Write();
+  Truth_2DCuts->Write();
 
   h_Muon_PT_PZ.hist->Write();
   PlotUtils::MnvH2D* h_MuonE_PT_PZ_FluxIntegrated = PlotUtils::flux_reweighter(playlist_fluxreweighter, nu_pdg, useNuEconstraint, NFlux_universe).GetIntegratedFluxReweighted(nu_pdg, h_Muon_PT_PZ.hist, Min_NuFluxEnergy, Max_NuFluxEnergy, useMuonCorrelations);
@@ -893,8 +888,8 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
   PlotUtils::MnvH2D* h_Muon_PT_theta_FluxIntegrated = PlotUtils::flux_reweighter(playlist_fluxreweighter, nu_pdg, useNuEconstraint, NFlux_universe).GetIntegratedFluxReweighted(nu_pdg, h_Muon_PT_theta.hist, Min_NuFluxEnergy, Max_NuFluxEnergy, useMuonCorrelations);
   h_Muon_PT_theta_FluxIntegrated->Clone()->Write("h_Muon_PT_theta_FluxIntegrated");
-
   h_Muon_PZ_theta.hist->Write();
+
   PlotUtils::MnvH2D* h_Muon_PZ_theta_FluxIntegrated = PlotUtils::flux_reweighter(playlist_fluxreweighter, nu_pdg, useNuEconstraint, NFlux_universe).GetIntegratedFluxReweighted(nu_pdg, h_Muon_PZ_theta.hist, Min_NuFluxEnergy, Max_NuFluxEnergy, useMuonCorrelations);
   h_Muon_PZ_theta_FluxIntegrated->Clone()->Write("h_Muon_PZ_theta_FluxIntegrated");
 
@@ -923,8 +918,6 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_Muon_E_PT_TRUE_RECO.hist->Write();
   h_cryoVertex_Z_R_TRUE_RECO.hist->Write();
 
-
-
   h_Muon_PT_PZ_Material.WriteToFile(*outFile);
   h_Muon_PT_PZ_Interaction.WriteToFile(*outFile);
   h_Muon_PT_PZ_Particle.WriteToFile(*outFile);
@@ -948,8 +941,9 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_cryoVertex_Z_R_Particle.WriteToFile(*outFile);
 
 
-  ///2d
-
+//////////////////////
+//Write 2D migrationss
+//////////////////////
 
   const bool clear_bands = true;
   for (auto cat: MnvR_vector){
@@ -965,191 +959,37 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
     h_truth->Write();
   }
 
-  //MnvR_Muon_PT_PZ.hist->Write();
+///////////////////////////////////////////////
+// Finshied Writing Closing
+//////////////////////////////////////////////
+outFile->Close();
 
-////////////////////////////////////////////////
+TCanvas *can = new TCanvas("can", "can",1800,1600);
+MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
 
+char  pdfName[1024];
+char pdf_start[1024];
+char pdf_end[1024];
+sprintf(pdfName, "MuonVars");
 
-/////2D hists////
-///
-  outFile->Close();
+for(auto band : error_bands){
+  std::vector<HeliumCVUniverse*> band_universes = band.second;
+  for(unsigned int i_universe = 0; i_universe < band_universes.size(); ++i_universe){ delete band_universes[i_universe];}
+}
 
-
-
-  TCanvas *can = new TCanvas("can", "can",1800,1600);
-  //PlotUtils::MnvPlotter *Plotter();
-  MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
-//MakeTrue_interactionPlots(All_True_trajectors,"ME1F" ,5.0 ,"TRUE_interactions_cryotank", can,mnv_plotter);
-// Bin width Norm
-  //h_MuonPZ.hist->Scale(1,"width");
-
-  //h_MuonPT.hist->Scale(1,"width");
-  //h_MuonE.hist->Scale(1,"width");
-  //h_CryoVertex_Z.hist->Scale(1,"width");
-  //h_CryoVertex_X.hist->Scale(1,"width");
-  //h_CryoVertex_Y.hist->Scale(1,"width");
-  //h_CryoVertex_R.hist->Scale(1,"width");
-
-
-  //h_secTrk_Energy_PROTON_TRUE.hist->Scale(1,"width");
-  //h_secTrk_Energy_PROTON_TRUE_RECO.hist->Scale(1,"width");
-  //h_secTrk_Energy_PION_TRUE.hist->Scale(1,"width");
-  //h_secTrk_Energy_PION_TRUE_RECO.hist->Scale(1,"width");
-
-  //h_secTrk_MidTheta_PROTON_TRUE.hist->Scale(1,"width");
-  //h_secTrk_MidTheta_PROTON_TRUE_RECO.hist->Scale(1,"width");
-  //h_secTrk_MidTheta_PION_TRUE.hist->Scale(1,"width");
-  //h_secTrk_MidTheta_PION_TRUE_RECO.hist->Scale(1,"width");
-
-  //h_secTrk_Openangle_PROTON_TRUE.hist->Scale(1,"width");
-  //h_secTrk_Openangle_PROTON_TRUE_RECO.hist->Scale(1,"width");
-  //h_secTrk_Openangle_PION_TRUE.hist->Scale(1,"width");
-  //h_secTrk_Openangle_PION_TRUE_RECO.hist->Scale(1,"width");
-
-std::cout<<" PDG_notmatch = " << PDG_notmatch<< "  PDG_match = "<< PDG_match<< std::endl;
-
-
-  char  pdfName[1024];
-  char pdf_start[1024];
-  char pdf_end[1024];
-  char XaxisName[1024];
-  sprintf(pdfName, "MuonVars");
-  //sprintf(pdf_start, "Optimization_figures.pdf(");
-  //sprintf(pdf_end, "Optimization_figures.pdf)");
-
-  //TCanvas *can = new TCanvas("", "");
-  //dPlotUtils::MnvPlotter mvnPlotter(PlotUtils::kCCInclusiveHeliumStyle);
-
-
-    //PlotCVAndError(h_MuonPZ.hist, "h_MuonPZ");
-  //  PlotErrorSummary(h_MuonPZ.hist, "h_MuonPZ_ERROR_SUMMARY" ,"Energy (GeV)",can);
-  //  PlotCVAndError(h_MuonPT.hist, "h_MuonPT");
-  //  PlotErrorSummary(h_MuonPT.hist, "h_MuonPT_ERROR_SUMMARY", "Energy (GeV)",can);
-  //  PlotCVAndError(h_MuonE.hist, "h_MuonE");
-    //PlotErrorSummary(h_MuonE.hist,"h_MuonE_ERROR_SUMMARY" ,"h_MuonE_ERROR_SUMMARY", "Energy (GeV)",can);
-    //PlotVertBand("BeamAngleX", "BeamAngleX_MuonE_ERROR", h_MuonE.hist);
-    //PlotVertBand("BeamAngleY", "BeamAngleY_MuonE_ERROR", h_MuonE.hist);
-
-    //PlotCVAndError(h_CryoVertex_Z.hist, "h_CryoVertex_Z");
-  //  PlotCVAndError(h_CryoVertex_X.hist, "h_CryoVertex_X");
-  //  PlotCVAndError(h_CryoVertex_Y.hist, "h_CryoVertex_Y");
-  //  PlotCVAndError(h_CryoVertex_R.hist, "h_CryoVertex_R");
-
-
-    //PlotCVAndError(h_secTrk_Energy_PROTON_TRUE.hist, "h_secTrk_Energy_PROTON_TRUE");
-    //PlotCVAndError(h_secTrk_Energy_PROTON_TRUE_RECO.hist, "h_secTrk_Energy_PROTON_TRUE_RECO");
-    //PlotErrorSummary(h_secTrk_Energy_PROTON_TRUE.hist, "h_secTrk_Energy_PROTON_TRUE_ERRORSummary", "Energy (GeV)",can);
-    //PlotErrorSummary(h_secTrk_Energy_PROTON_TRUE_RECO.hist, "h_secTrk_Energy_PROTON_TRUE_RECO_ERRORSUMMARY", "Energy (GeV)",can);
-
-    //h_secTrk_Energy_PROTON_TRUE_RECO.hist ->Divide(h_secTrk_Energy_PROTON_TRUE_RECO.hist ,h_secTrk_Energy_PROTON_TRUE.hist,1.0,1.0,"");
-    //PlotCVAndError(h_secTrk_Energy_PROTON_TRUE_RECO.hist , "Efficiency_secTrkEnergy_PROTON");
-    //PlotErrorSummary(h_secTrk_Energy_PROTON_TRUE_RECO.hist , "Efficiency_secTrkEnergy_PROTON_ERRORSUMMARY", "vertex Z(mm)",can);
-
-    //PlotCVAndError(h_secTrk_Energy_PION_TRUE.hist, "h_secTrk_Energy_PION_TRUE");
-    //PlotCVAndError(h_secTrk_Energy_PION_TRUE_RECO.hist, "h_secTrk_Energy_PION_TRUE_RECO");
-    //PlotErrorSummary(h_secTrk_Energy_PION_TRUE.hist, "h_secTrk_Energy_PION_TRUE_ERRORSummary", "Energy (GeV)",can);
-    //PlotErrorSummary(h_secTrk_Energy_PION_TRUE_RECO.hist, "h_secTrk_Energy_PION_TRUE_RECO_ERRORSUMMARY", "Energy (GeV)",can);
-
-  //  h_secTrk_Energy_PION_TRUE_RECO.hist->Divide(h_secTrk_Energy_PION_TRUE_RECO.hist ,h_secTrk_Energy_PION_TRUE.hist,1.0,1.0,"");
-  //  PlotCVAndError(h_secTrk_Energy_PION_TRUE_RECO.hist, "Efficiency_secTrkEnergy_PION");
-  //  PlotErrorSummary(h_secTrk_Energy_PION_TRUE_RECO.hist, "Efficiency_secTrkEnergy_PION_ERRORSUMMARY", "vertex Z(mm)",can);
-
-    ///////////
-  //  PlotCVAndError(h_secTrk_MidTheta_PROTON_TRUE.hist, "h_secTrk_MidTheta_PROTON_TRUE");
-  //  PlotCVAndError(h_secTrk_MidTheta_PROTON_TRUE_RECO.hist, "h_secTrk_MidTheta_PROTON_TRUE_RECO");
-  //  PlotErrorSummary(h_secTrk_MidTheta_PROTON_TRUE.hist, "h_secTrk_MidTheta_PROTON_TRUE_ERRORSummary", "Angle (Deg)",can);
-  //  PlotErrorSummary(h_secTrk_MidTheta_PROTON_TRUE_RECO.hist, "h_secTrk_MidTheta_PROTON_TRUE_RECO_ERRORSUMMARY", "Angle (Deg)",can);
-
-//    h_secTrk_MidTheta_PROTON_TRUE_RECO.hist ->Divide(h_secTrk_MidTheta_PROTON_TRUE_RECO.hist ,h_secTrk_MidTheta_PROTON_TRUE.hist,1.0,1.0,"");
-//    PlotCVAndError(h_secTrk_MidTheta_PROTON_TRUE_RECO.hist , "Efficiencyh_secTrk_MidTheta_PROTON");
-//    PlotErrorSummary(h_secTrk_MidTheta_PROTON_TRUE_RECO.hist , "Efficiencyh_secTrk_MidTheta_PROTON_ERRORSUMMARY", "Angle (Deg)",can);
-
-//    PlotCVAndError(h_secTrk_MidTheta_PION_TRUE.hist, "h_secTrk_MidTheta_PION_TRUE");
-//    PlotCVAndError(h_secTrk_MidTheta_PION_TRUE_RECO.hist, "h_secTrk_MidTheta_PION_TRUE_RECO");
-//    PlotErrorSummary(h_secTrk_MidTheta_PION_TRUE.hist, "h_secTrk_MidTheta_PION_TRUE_ERRORSummary", "Angle (Deg)",can);
-//    PlotErrorSummary(h_secTrk_MidTheta_PION_TRUE_RECO.hist, "h_secTrk_MidTheta_PION_TRUE_RECO_ERRORSUMMARY", "Angle (Deg)",can);
-
-  //  h_secTrk_MidTheta_PION_TRUE_RECO.hist->Divide(h_secTrk_MidTheta_PION_TRUE_RECO.hist ,h_secTrk_MidTheta_PION_TRUE.hist,1.0,1.0,"");
-  //  PlotCVAndError(h_secTrk_MidTheta_PION_TRUE_RECO.hist, "Efficiencyh_secTrk_MidTheta_PION");
-  //  PlotErrorSummary(h_secTrk_MidTheta_PION_TRUE_RECO.hist, "Efficiencyh_secTrk_MidTheta_PION_ERRORSUMMARY", "Angle (Deg)",can);
-    ////////////////////
-
-    ///////////
-  //  PlotCVAndError(h_secTrk_Openangle_PROTON_TRUE.hist, "h_secTrk_Openangle_PROTON_TRUE");
-  //  PlotCVAndError(h_secTrk_Openangle_PROTON_TRUE_RECO.hist, "h_secTrk_Openangle_PROTON_TRUE_RECO");
-  //  PlotErrorSummary(h_secTrk_Openangle_PROTON_TRUE.hist, "h_secTrk_Openangle_PROTON_TRUE_ERRORSummary", "Angle (Deg)",can);
-  //  PlotErrorSummary(h_secTrk_Openangle_PROTON_TRUE_RECO.hist, "h_secTrk_Openangle_PROTON_TRUE_RECO_ERRORSUMMARY", "Angle (Deg)",can);
-
-  //  h_secTrk_Openangle_PROTON_TRUE_RECO.hist ->Divide(h_secTrk_Openangle_PROTON_TRUE_RECO.hist ,h_secTrk_Openangle_PROTON_TRUE.hist,1.0,1.0,"");
-  //  PlotCVAndError(h_secTrk_Openangle_PROTON_TRUE_RECO.hist , "Efficiency_h_secTrk_Openangle_PROTON");
-  //  PlotErrorSummary(h_secTrk_Openangle_PROTON_TRUE_RECO.hist , "Efficiency_h_secTrk_Openangle_PROTON_ERRORSUMMARY", "Angle (Deg)",can);
-
-  //  PlotCVAndError(h_secTrk_Openangle_PION_TRUE.hist, "h_secTrk_Openangle_PION_TRUE");
-  //  PlotCVAndError(h_secTrk_Openangle_PION_TRUE_RECO.hist, "h_secTrk_Openangle_PION_TRUE_RECO");
-  //  PlotErrorSummary(h_secTrk_Openangle_PION_TRUE.hist, "h_secTrk_Openangle_PION_TRUE_ERRORSummary", "Angle (Deg)",can);
-  //  PlotErrorSummary(h_secTrk_Openangle_PION_TRUE_RECO.hist, "h_secTrk_Openangle_PION_TRUE_RECO_ERRORSUMMARY", "Angle (Deg)",can);
-
-//    h_secTrk_Openangle_PION_TRUE_RECO.hist->Divide(h_secTrk_Openangle_PION_TRUE_RECO.hist ,h_secTrk_Openangle_PION_TRUE.hist,1.0,1.0,"");
-//    PlotCVAndError(h_secTrk_Openangle_PION_TRUE_RECO.hist, "Efficiency_h_secTrk_Openangle_PION");
-//    PlotErrorSummary(h_secTrk_Openangle_PION_TRUE_RECO.hist, "Efficiency__secTrkopenangle_PION_ERRORSUMMARY", "Angle (Deg)",can);
-    ////////////////////
-
-
-
-
-
-  //  PlotCVAndError(Muon_PZ_FULLMC.hist, "Muon_PZ_FULLMC");
-    // Plot Error Summary
-   //PlotErrorSummary(h_CryoVertex_Z.hist, "h_CryoVertex_Z_ERROR_SUMMARY", "vertex Z(mm)",can);
-
-  //Plot individual universes
-
-    //PlotVertUniverse("EmuRangeCurve", universe, "TEST_E 0", h_MuonE.hist);
-  //  PlotVertUniverse("EmuRangeCurve", universe, "TEST_Pz", Muon_PZ_FULLMC.hist);
-
-    //PlotVertUniverse("EmuRangeCurve", universe, "TEST", Muon_PZ_FULLMC.hist);
-  //  PlotVertUniverse("EmuRangeCurve", universe, "TEST_E 1", h_MuonE.hist);
-  //  PlotVertUniverse("EmuRangeCurve", universe, "TEST_Pz", Muon_PZ_FULLMC.hist);
-
-
-
-    //for (int i = 0; i < 5; ++i){ PlotVertUniverse("Flux", 1, "TEST", Muon_E_FULLMC.hist);}
-
-    //Plot the Bands
-  //  PlotVertBand("EmuRangeCurve", "TEST", Muon_PZ_FULLMC.hist);
-  //  PlotVertBand("Flux", "TEST", Muon_PZ_FULLMC.hist);
-
-    //PlotTotalError(Muon_PZ_FULLMC.hist, "TEST");
-
-
-  //PlotVertBand("EmuRangeCurve", "EmuRangeCurve", h_MuonE.hist);
-  //PlotVertBand("Flux", "Flux", h_MuonE.hist);
-  //PlotTotalError(Muon_E_EmptyMC.hist, "Muon_E_EmptyMC");
-
-    std::cout << "END OF Plotting" << std::endl;
-
-
-
-
-  for(auto band : error_bands){
-    std::vector<HeliumCVUniverse*> band_universes = band.second;
-    for(unsigned int i_universe = 0; i_universe < band_universes.size(); ++i_universe){ delete band_universes[i_universe];}
-  }
-
-  std::cout << "Success" << std::endl;
-
-
-
-//TCanvas *can = new TCanvas("can", "can",1800,1600);
+std::cout << "Success" << std::endl;
 can -> Print("Test.pdf");
 
-}//END of Event Loop
+}
+
+///////////////////
+//END of Event Loop
+///////////////////
+
 
 //=========================================
+// Functions
 //=========================================
-//////////////////////////////////////////////////////////////
-
-
 std::vector<ECuts> GetRECOCutsVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECuts> ret_vec;
@@ -1184,7 +1024,40 @@ std::vector<ECuts> GetRECOCutsVector() {
 //#endif
 }
 
+std::vector<ECuts> GetRECOCutsForEffVector() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts  );
+  ret_vec.push_back(kGoodEnergy );
+  //ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMu_is_Plausible);
+  ret_vec.push_back(kNonMu_is_Plausible);
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
 
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
+
+  ret_vec.push_back(kVertexConverge);
+  ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kTrackForwardGoing );
+  ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+  //ret_vec.push_back(kMaxChiSqrt);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+  ret_vec.push_back(kAllCuts );
+
+  //int n = sizeof(kCutsArray) / sizeof(kCutsArray[0]);
+  //static std::vector<ECuts> ret_vec(kCutsArray, kCutsArray + n);
+  return ret_vec;
+//#endif
+}
 
 std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
@@ -1264,43 +1137,6 @@ std::vector<CryoVertex> GetCryoVertexVaribles() {
 //#endif
 }
 
-
-
-
-std::vector<ME_helium_Playlists> GetPlayListVector() {
-//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
-  std::vector<ME_helium_Playlists> Playlist;
-
-
-
-
-  //EMPTY
-    //Playlist.push_back(kME1G);
-    //Playlist.push_back(kME1A);
-    //Playlist.push_back(kME1L);
-    //Playlist.push_back(kME1M);
-    //Playlist.push_back(kME1N);
-  //Full
-    //Playlist.push_back(kME1P);
-    //Playlist.push_back(kME1C);
-    //Playlist.push_back(kME1D);
-    Playlist.push_back(kME1F);
-    //Playlist.push_back(kME1E);
-  return Playlist;
-//#endif
-}
-
-std::vector<ME_helium_Playlists> GetTRUEPlayListVector() {
-//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
-  std::vector<ME_helium_Playlists> Playlist;
-
-  Playlist.push_back(kME1G_Truth);
-
-  return Playlist;
-//#endif
-}
-
-
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<SecondTrkVar> Playlist;
@@ -1312,6 +1148,9 @@ std::vector<SecondTrkVar> GetPlayListSecondTrkVector() {
 //#endif
 }
 
+//////////////////////////
+///Weight Functions
+/////////////////////////
 
 std::vector<Weights> GetWeightVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
@@ -1353,10 +1192,6 @@ std::vector<Weights> GetWeightVector_mk() {
   return weight_vec;
 //#endif
 }
-//////////////////////////////////////////////////////////////////////////
-//GET CryoTank Varibles
-//////////////////////////////////////////////////////////////////////////
-
 
 //////////////////////////
 ///Main

@@ -1648,8 +1648,7 @@ int PDG_match=0;
         ////
         ////
         ///////////////////////////////////////////
-        if( universe->ShortName() == "cv"){
-
+        if( isCV(*universe)){
 
 
             auto PDG_trklist_nonparent = universe->GetVector_nonMuonTk_PDG();
@@ -2175,7 +2174,7 @@ int PDG_match=0;
             //Particle_type Particle_type_Event =  universe->Get_NonParticleStackType(secondTrk);
             Particle_type GroupType = GetParticlegroup_type(secTrk_PDG);
 
-        if(universe->ShortName() == "cv"){
+        if(isCV(*universe)){
 
           //int secondTrk_true = universe->Getindex2ndTrack_TRUE_highestKE();
           //auto input_type =  universe->GetNon_muon_PDG(secondTrk_true);

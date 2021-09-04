@@ -340,6 +340,6 @@ TGraphErrors *MakeForwardIntergrationEfficiency_TGraphError(MnvH1D *hist_Helium)
 TGraphErrors *MakeForwardIntergrationEfficiency_times_Purity_TGraphError(MnvH1D *hist_Helium, MnvH1D *hist_Other );
 std::string  GetNameVertexOption(VertexOptions playlist_name);
 std::string  GetName_boolNTrack(boolNTrack playlist_name);
-
+void Fill_MnvReponse_ErrorUniv_Hist_numbers(error_name_Univ_MvnHistMap MnvReponse_Hist_N_Map, error_name_Map  Universe_map_input);
 
 #endif // common_functions_h

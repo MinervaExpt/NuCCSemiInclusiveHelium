@@ -19,7 +19,7 @@ void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,Pla
 
 void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayList_INFO FULL_playlist_TRUTHDEM,
     PlayList_INFO EMPTY_playlist_nom, PlayList_INFO EMPTY_playlist_TRUTHDEM , const char *histoName,
-    int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name, double Vline_OnXaxis );
+    int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name, double Vline_OnXaxis,  bool print_all_errors = false );
 
 void Draw_Efficiency_2D_FULL_EMPTY(PlayList_INFO FULL_playlist,PlayList_INFO EMPTY_playlist , const char *histoName,const char *Xaxis_title,const char *Yaxis_title,
   int logScale,const char* title ,const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf  );
@@ -342,7 +342,7 @@ Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F
   //  0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] );
 
     Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Energy_PROTON",
-        0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0], 0.105 /*[GeV]*/);
+        0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0], 0.105 /*[GeV]*/, true);
 
   Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk Energy [Proton]" ,"[GeV]", Vertex_secondTrkEbin_Proton_vector);
   start=start+spacing;
@@ -350,7 +350,8 @@ Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F
 //      0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] );
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Energy_PION",
-0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] , 0.060 /*[GeV]*/ );
+0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] , 0.060 /*[GeV]*/ , true);
+
       Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf5,start, 4, "Leading Non-muon Trk Energy [#pi^{#pm}]" ,"[GeV]", Vertex_secondTrkEbin_Proton_vector);
   start=start+spacing;
 //Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1D, Efficiency_Playlist[1] ,PlaylistTRUTH_1A, "h_secTrk_Energy_Dimuon",
@@ -376,7 +377,7 @@ start=start+spacing;
 //0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] );
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta_PROTON",
-0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] );
+0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 60 , true  );
 
 Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk [Proton] Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
@@ -385,8 +386,9 @@ start=start+spacing;
 //0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] );
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta_PION",
-0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] );
-Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf2, start, 4, "Leading Non-muon Trk [#pi^{#pm}] Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
+0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1], 60 , true );
+
+Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk [#pi^{#pm}] Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
 
 
@@ -455,19 +457,27 @@ Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_P
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
   "h_cryoVertex_Z_secTrkTheta", "Vertex Z [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Vertex Z vs #theta_{2ndtrk}" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
-/*
+
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
   "h_cryoVertex_R_secTrkTheta", "Vertex R [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Vertex R vs #theta_{2ndtrk}" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
-*/
-/*
+
+
 Draw_Resolution_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1],
   "h_resolutionZ_FidiucalCut", "Fiducial Cut Distance to Cryotank Edge [mm]", "True - Reco Vertex Z [mm]",
-  "Resolution Vertex Z [mm] Vs Fiducial Cut" ,"", mnv_plot, can2, text_title_pdf5, 500.0);
+  "Resolution Vertex Z [mm] Vs Fiducial Cut" ,"", mnv_plot, can2, text_title_pdf5, 500.0); // no pdf tag format
 
 Draw_Resolution_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1],
     "h_resolutionR_FidiucalCut", "Fiducial Cut Distance to Cryotank Edge [mm]", "True - Reco Vertex R [mm]",
     "Resolution Vertex R [mm] Vs Fiducial Cut" ,"", mnv_plot, can2, text_title_pdf5 , 800.0);
 
+
+    Draw_Resolution_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1],
+      "h_resolutionZ_FidiucalCut", "Fiducial Cut Distance to Cryotank Edge [mm]", "True - Reco Vertex Z [mm]",
+      "Resolution Vertex Z [mm] Vs Fiducial Cut" ,"", mnv_plot, can2, text_title_pdf5, 500.0); // no pdf tag format
+
+    Draw_Resolution_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1],
+        "h_resolutionR_FidiucalCut", "Fiducial Cut Distance to Cryotank Edge [mm]", "True - Reco Vertex R [mm]",
+        "Resolution Vertex R [mm] Vs Fiducial Cut" ,"", mnv_plot, can2, text_title_pdf5 , 800.0);
 
 
   Draw2DHist_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_resolutionZ_FidiucalCut", "Resolution Vertex Z [mm] Vs Fiducial Cut [Full ME1F]", "Fiducial Cut Distance to Cryotank Edge [mm]","True - Reco Vertex Z [mm]", text_title_pdf2, can2, mnv_plot);
@@ -484,7 +494,7 @@ DrawPie_Figures_EventCutRate(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST,  "Truth_C
 Hist_phyiscs_map MAP_stack_TRUTH_F_MFP_pi =  Make_Physics_distribution_map_FromTFile(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST, "h_MuonE_MFP_pi_TRUE" , false, 1.0, kPlayListVector_MC.at(0), false );
 DrawPieFigures(MAP_stack_TRUTH_F_MFP_pi ,  text_title_pdf5, can2, mnv_plot, true, false, "MuonE");
 
-Draw2DHist_TFILE(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST, "h_2d_vertexR_Z_MFP_pi_TRUE", " Vertex R vs Vertex Z for GENIE_MFP_pi wgt > 10", "Vertex Z [mm]","Vertex R [mm]", text_title_pdf2, can2, mnv_plot);
+//Draw2DHist_TFILE(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST, "h_2d_vertexR_Z_MFP_pi_TRUE", " Vertex R vs Vertex Z for GENIE_MFP_pi wgt > 10", "Vertex Z [mm]","Vertex R [mm]", text_title_pdf2, can2, mnv_plot);
 Pot_MapStatusList POT_MC_Status, POT_DATA_Status;
  POT_MC_Status[kFULL] = PlaylistTRUTH_1F_piePlots.Get_Pot();
  POT_MC_Status[kEMPTY] = PlaylistMC_1G.Get_Pot();
@@ -567,7 +577,7 @@ Draw2DHist_NumberFigures_TFILE(PlaylistME_1G_TFile, "h_2d_Track_Fraction_Energy"
 Draw2DHist_NumberFigures_TFILE(PlaylistME_1G_TFile, "h_2d_Track_Fraction_Energy_Cuts", "True Energy Fraction Vs Recoil Tracks (After Reco Cuts)[1G]", "Tracks N","True Energy Fraction", text_title_pdf2, can2, mnv_plot);
 //Draw2DHist_NumberFigures_TFILE(PlaylistME_1G_TFile, "h_2d_Track_Fraction_Energy_Second", "True Energy Fraction Vs Recoil Tracks (After Reco Cuts)(leading Recoil)[1G]", "Tracks N","True Energy Fraction", text_title_pdf2, can2, mnv_plot);
 
-*/
+
 
 
 /*
@@ -852,7 +862,7 @@ void Draw_Efficiency_2ndTrk_FULL_EMPTY(PlayList_INFO FULL_playlist,PlayList_INFO
 
 void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayList_INFO FULL_playlist_TRUTHDEM,
   PlayList_INFO EMPTY_playlist_nom, PlayList_INFO EMPTY_playlist_TRUTHDEM , const char *histoName,
-  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name, double Vline_OnXaxis ){
+  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name, double Vline_OnXaxis, bool print_all_errors ){
 
       char histoName_TRUE[1024];
       char histoName_TRUE_RECO[1024];
@@ -924,13 +934,13 @@ void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,Pla
       strcpy( playlistEmpty_char,  playlistEmpty.c_str());
 
       sprintf(Title_His, "%s (%s) (True) (%s)(F) ", title_type_char,title,playlistFull_char);
-      DrawCVAndError_FromTFile(FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, Title_His  , Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(print_all_errors, FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, Title_His  , Xaxis_title, pdf );
       sprintf(Title_His, "%s (%s) (True+RECO) (%s)(F)", title_type_char,title,playlistFull_char);
-      DrawCVAndError_FromTFile(FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, Title_His , Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(print_all_errors, FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, Title_His , Xaxis_title, pdf );
       sprintf(Title_His, "%s (%s) (True) (%s)(E)", title_type_char,title,playlistEmpty_char);
-      DrawCVAndError_FromTFile(EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE,Title_His, Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(print_all_errors, EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE,Title_His, Xaxis_title, pdf );
       sprintf(Title_His, "%s (%s) (True+RECO) (%s)(E)", title_type_char,title,playlistEmpty_char);
-      DrawCVAndError_FromTFile(EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO,  Title_His , Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(print_all_errors, EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO,  Title_His , Xaxis_title, pdf );
 
 
       hist_TRUE_RECO_FULL->Divide(hist_TRUE_RECO_FULL, hist_TRUE_FULL, 1.0,1.0,"");
@@ -1313,27 +1323,27 @@ void Draw_Efficiency_CryoVertex_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom
       strcpy( playlistEmpty_char,  playlistEmpty.c_str());
 
       sprintf(Title_His, "%s (%s) (True) (%s)(F) ", title_type_char,title,playlistFull_char);
-      DrawCVAndError_FromTFile(FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, Title_His  , Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, Title_His  , Xaxis_title, pdf ); //no pdf format
       sprintf(Title_His, "%s (%s) (True+RECO) (%s)(F)", title_type_char,title,playlistFull_char);
-      DrawCVAndError_FromTFile(FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, Title_His , Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, Title_His , Xaxis_title, pdf ); //no pdf format
       sprintf(Title_His, "%s (%s) (True) (%s)(E)", title_type_char,title,playlistEmpty_char);
-      DrawCVAndError_FromTFile(EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE,Title_His, Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE,Title_His, Xaxis_title, pdf ); //no pdf format
       sprintf(Title_His, "%s (%s) (True+RECO) (%s)(E)", title_type_char,title,playlistEmpty_char);
-      DrawCVAndError_FromTFile(EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO,  Title_His , Xaxis_title, pdf );
+      DrawCVAndError_FromTFile(EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO,  Title_His , Xaxis_title, pdf ); //no pdf format
 
 
       hist_TRUE_RECO_FULL->Divide(hist_TRUE_RECO_FULL, hist_TRUE_FULL, 1.0,1.0,"");
       hist_TRUE_RECO_EMPTY->Divide(hist_TRUE_RECO_EMPTY, hist_TRUE_EMPTY, 1.0,1.0,"");
 
       sprintf(Title_His, "Eff(FULL) %s (%s)  (%s)(F) ", title_type_char,title,playlistFull_char);
-      DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Efficiency", pdf,true);
+      DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Efficiency", pdf,true); //no pdf format
       sprintf(Title_His, "Eff(Empty) %s (%s)  (%s)(E) ", title_type_char,title,playlistEmpty_char);
-      DrawCVAndError_FromHIST(hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true);
+      DrawCVAndError_FromHIST(hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true); //no pdf format
 
       sprintf(Title_His, "%s (%s) (%s-%s)", title_type_char,title,playlistFull_char,playlistEmpty_char);
-      DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true);
+      DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true); //no pdf format
 
-      DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true,true);
+      DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true,true); //no pdf format
 
 
 }//endl;
@@ -1685,12 +1695,12 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayLis
       MnvH2D *hist_TRUE_FULL = Get2DHist(*FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isfull);
       MnvH2D *hist_TRUE_RECO_FULL = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
       MnvH2D *hist_TRUE_EMPTY = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isempty);
-      MnvH2D *hist_TRUE_RECO_EMPTY = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
+      MnvH2D *hist_TRUE_RECO_EMPTY = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
 
       MnvH2D* hist_TRUE_FULL_clone = Get2DHist(*FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isfull);
       MnvH2D* hist_TRUE_RECO_FULL_clone = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
       MnvH2D* hist_TRUE_EMPTY_clone = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isempty);
-      MnvH2D* hist_TRUE_RECO_EMPTY_clone = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
+      MnvH2D* hist_TRUE_RECO_EMPTY_clone = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
 
 
       //MnvH2D *hist_TRUE_FULL = (MnvH2D*)FULL_playlist_DemTRUE.TFILE_PLAYLIST -> Get(histoName_TRUE);
@@ -1727,7 +1737,7 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayLis
 
       char playlistEmpty_char[ playlistEmpty.length()+1];
       strcpy( playlistEmpty_char,  playlistEmpty.c_str());
-
+      // .pdf
       sprintf(Title_His, "%s (True) (%s)(F) ", title,   playlistFull_char);
       Draw2DHist_TFILE(FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, Title_His  , Xaxis_title,Yaxis_title, pdf,can, plot,false );
       sprintf(Title_His, "%s (True+RECO) (%s)(F)", title, playlistFull_char);
@@ -1744,7 +1754,7 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayLis
       sprintf(Title_His, "%s %s (%s)(Full) ", title_type_char, title, playlistFull_char);
       //DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Efficiency", pdf,true);
       //DrawMagration_heatMap(hist_TRUE_RECO_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
-      DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
+      DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot); // need .pdf
       sprintf(Title_His, "%s %s (%s)(Empty) ", title_type_char, title, playlistEmpty_char);
     //  DrawCVAndError_FromHIST(hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true);
       //DrawMagration_heatMap(hist_TRUE_RECO_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
@@ -1762,20 +1772,26 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayLis
 void Draw_Resolution_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist,
   PlayList_INFO EMPTY_playlist, const char *histoName, const char *Xaxis_title, const char *Yaxis_title,
   const char* title ,const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf, Double_t ymax)
-  {char Title_His[1024];
-    char pdf_withTag[1024];
-    sprintf(pdf_withTag, "%s.pdf", pdf);
-
-
+  {
+    char Title_His[1024];
+    bool isFull = true;
+    bool isEmpty= false;
     double FULL_POT = FULL_playlist.Get_Pot();
     double EMPTY_POT = EMPTY_playlist.Get_Pot();
     double Scale_MC = FULL_POT / EMPTY_POT;
 
-    MnvH2D *hist_FULL = (MnvH2D*)FULL_playlist.TFILE_PLAYLIST -> Get(histoName);
-    MnvH2D *hist_EMPTY = (MnvH2D*)EMPTY_playlist.TFILE_PLAYLIST -> Get(histoName);
+    MnvH2D *hist_FULL = Get2DHist(*FULL_playlist.TFILE_PLAYLIST, histoName, isFull);
+    MnvH2D *hist_EMPTY = Get2DHist(*EMPTY_playlist.TFILE_PLAYLIST, histoName, isEmpty);
 
-    MnvH2D *hist_FULL_clone = (MnvH2D*)FULL_playlist.TFILE_PLAYLIST -> Get(histoName);
-    MnvH2D *hist_EMPTY_clone = (MnvH2D*)EMPTY_playlist.TFILE_PLAYLIST -> Get(histoName);
+    MnvH2D *hist_FULL_clone = Get2DHist(*FULL_playlist.TFILE_PLAYLIST, histoName, isFull);
+    MnvH2D *hist_EMPTY_clone = Get2DHist(*EMPTY_playlist.TFILE_PLAYLIST, histoName, isEmpty);
+
+
+    //MnvH2D *hist_FULL = (MnvH2D*)FULL_playlist.TFILE_PLAYLIST -> Get(histoName);
+    //MnvH2D *hist_EMPTY = (MnvH2D*)EMPTY_playlist.TFILE_PLAYLIST -> Get(histoName);
+
+    //MnvH2D *hist_FULL_clone = (MnvH2D*)FULL_playlist.TFILE_PLAYLIST -> Get(histoName);
+    //MnvH2D *hist_EMPTY_clone = (MnvH2D*)EMPTY_playlist.TFILE_PLAYLIST -> Get(histoName);
 
     ///Calculation FOR FINAL Eff
     hist_EMPTY_clone->Scale(Scale_MC);
@@ -1798,24 +1814,36 @@ void Draw_Resolution_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist,
     char playlistEmpty_char[ playlistEmpty.length()+1];
     strcpy( playlistEmpty_char,  playlistEmpty.c_str());
 
+    char pdf_withTag[1024];
+    sprintf(pdf_withTag, "%s.pdf", pdf);
 
     sprintf(Title_His, "(Resolution) %s (%s)(Full)", title, playlistFull_char);
     //DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Efficiency", pdf,true);
-    DrawMagration_heatMap(hist_FULL, Xaxis_title, Yaxis_title, Title_His, pdf_withTag, can, plot);
-    Draw2DHist_hist(hist_FULL,Title_His, Xaxis_title ,Yaxis_title, pdf, can, plot);
-    Draw2DHist_histWithTProfile(hist_FULL,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot);
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->DrawMagration_heatMap "<<std::endl;
+    DrawMagration_heatMap(hist_FULL, Xaxis_title, Yaxis_title, Title_His, pdf_withTag, can, plot); //pdf
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->Draw2DHist_hist "<<std::endl;
+    Draw2DHist_hist(hist_FULL,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot); //pdf
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->Draw2DHist_histWithTProfile "<<std::endl;
+    Draw2DHist_histWithTProfile(hist_FULL,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot); //pdf
     sprintf(Title_His, "(Resolution) %s (%s)(Empty)", title, playlistEmpty_char);
     //  DrawCVAndError_FromHIST(hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true);
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->Draw2DHist_hist "<<std::endl;
     Draw2DHist_hist(hist_EMPTY,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot);
-    DrawMagration_heatMap(hist_EMPTY, Xaxis_title, Yaxis_title, Title_His, pdf_withTag, can, plot);
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->DrawMagration_heatMap "<<std::endl;
+    DrawMagration_heatMap(hist_EMPTY, Xaxis_title, Yaxis_title, Title_His, pdf_withTag, can, plot); //pdf
 
     sprintf(Title_His, "%s (%s-%s)", title, playlistFull_char,playlistEmpty_char);
     //DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true);
-    Draw2DHist_hist(hist_FULL_clone,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot);
-    Draw2DHist_histWithTProfile(hist_FULL_clone,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot);
-    DrawMagration_heatMap(hist_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf_withTag, can, plot);
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->Draw2DHist_hist "<<std::endl;
 
-    Draw_XDistribution_PerBinWithGaussFit_2DHist(hist_FULL_clone, Title_His, Xaxis_title ,Yaxis_title,pdf, can, plot,false, ymax);
+    Draw2DHist_hist(hist_FULL_clone,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot);
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->Draw2DHist_histWithTProfile "<<std::endl;
+    Draw2DHist_histWithTProfile(hist_FULL_clone,Title_His, Xaxis_title ,Yaxis_title, pdf_withTag, can, plot); //pdf
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->DrawMagration_heatMap "<<std::endl;
+    DrawMagration_heatMap(hist_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf_withTag, can, plot); //pdf
+    std::cout<<"inside:Draw_Resolution_2D_FULL_EMPTY_TRUTH:->Draw_XDistribution_PerBinWithGaussFit_2DHist"<<std::endl;
+    Draw_XDistribution_PerBinWithGaussFit_2DHist(hist_FULL_clone, Title_His, Xaxis_title ,Yaxis_title, pdf, can, plot,false, ymax); //needs no pdf format
+
 
 
 
