@@ -171,7 +171,7 @@ std::ofstream output("LogFile_TRUTH.txt",std::ofstream::app);
 ////////////////////ADDING TO CHAIN wrapper ///////////////////////////
 //======================================================================
 bool is_mc= true;
-
+  MinervaUniverse::SetTruth(true);
   MinervaUniverse::SetNuEConstraint(true);
   MinervaUniverse::SetAnalysisNuPDG(14);
   MinervaUniverse::SetNFluxUniverses(n_flux_universes);

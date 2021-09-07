@@ -1,10 +1,10 @@
-// Loop entries, make cuts, fill histograms.
-// * Uses the New Systematics Framework and "Universe" objects.
-// * loop universes, make cuts and fill histograms with the correct lateral
-// shifts and weights for each universe.
-// * TChain --> PlotUtils::ChainWrapper.
-// * MnvHXD --> PlotUtils::HistWrapper.
-// * Genie, flux, non-resonant pion, and some detector systematics calculated.
+//File: Helium2D_runEventLoopForDATA.cxx
+//Brief: Given ntuple files from HeAnaTupleTool.cpp , extracts 2D Data EventSelction for Helium Nu interactions
+//Writes a .root file Event Selection histograms.
+//
+//Usage: 2D DATA 2DEventSelection  =
+//
+//Author: Christian Nguyen  christian2nguyen@ufl.edu
 #include "Helium2D_runEventLoopForDATA.h"
 
 std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles";
@@ -12,41 +12,40 @@ std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_DATA_EventSecti
 // Functions
 //=====================================================
 std::vector<ECuts> GetRECOCutsVector();
-std::vector<ECutsTRUTH> GetTRUTHCutsVector();
+
 std::vector<MuonVar> GetMUONVaribles();
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector();
 std::vector<CryoVertex> GetCryoVertexVaribles();
-std::vector<ME_helium_Playlists> GetPlayListVector();
-std::vector<ME_helium_Playlists> GetTRUEPlayListVector();
+
+
 // Get container of systematics
 
 //======================================================================
-//void EventCounter(const HeliumCVUniverse& , std::vector<ECuts> cuts, EventCount_RECO &Event_map ,bool isNOT_mc,HeliumPlayListInfo Info );
-
 // Main
+//======================================================================
+
 void runEventLoop(bool &m_debugOn, ME_helium_Playlists &PlayList_iterator, bool &Run_EventLoopOnGid) {
   // Make a chain of events
   loadLibs();
   TH1::AddDirectory(false);
-//std::vector<ECuts> kCutsVector;
-bool isNOT_mc= false;
-bool is_counter = true;
-double POT[4];
-const std::vector< ECuts > kCutsVector = GetRECOCutsVector();
-const std::vector<ECutsTRUTH> kTRUTHCutsVector = GetTRUTHCutsVector();
-const std::vector< ME_helium_Playlists> kPlayListVector = GetPlayListVector();
-const std::vector< ME_helium_Playlists> kTRUEPlayListVector = GetTRUEPlayListVector();
 
-const std::vector<MuonVar> kMuonVaribles_vector = GetMUONVaribles();
-const std::vector<SecondTrkVar> kSecTrkVaribles_vector = GetPlayListSecondTrkVector();
+  bool isNOT_mc= false;
+  bool is_counter = true;
 
-const std::vector<CryoVertex> kCryoVertexVaribles_vector = GetCryoVertexVaribles();
-EventPlaylist_RecoCount EventCountMap;
+  const std::vector< ECuts > kCutsVector = GetRECOCutsVector();
+
+  const std::vector<MuonVar> kMuonVaribles_vector = GetMUONVaribles();
+  const std::vector<SecondTrkVar> kSecTrkVaribles_vector = GetPlayListSecondTrkVector();
+
+  const std::vector<CryoVertex> kCryoVertexVaribles_vector = GetCryoVertexVaribles();
+  EventPlaylist_RecoCount EventCountMap;
+
 
 MinervaUniverse::SetNuEConstraint(false);
 MinervaUniverse::SetDeuteriumGeniePiTune(false);
 std::string playlist = GetPlaylist(PlayList_iterator);
 MinervaUniverse::SetPlaylist(playlist);
+MinervaUniverse::SetTruth(false);
 
 
 //======================================================================
@@ -61,8 +60,6 @@ POTCounter pot_counter;
 
 
   auto mcscale = 1.0; //Data_POT_full/ MC_POT_full;
-
-double Mev_to_GeV=.001;
 
 
 //std::cout << "MC_POT_full = "<< MC_POT_full<< " MC_POT_empty = "<< MC_POT_empty << "  Data_POT_full = " << Data_POT_full << "  Data_POT_empty = " << Data_POT_empty<< std::endl;
@@ -242,17 +239,9 @@ EventCountMap[PlayList_iterator] = EventCounter_data;
 
 PrintCutstoScreen( kCutsVector , EventCounter_data, "Full Data",1.0 );
 
-
-
-double countdata= 0.0;
-double countmc= 0.0;
-//double countmcscaled= 0.0;
-
-
- //PrintCutstoScreenF_E(  kCutsVector,  kPlayListVector , EventCountMap, POT );
-  //=========================================
-  // Plot stuff
-  //=========================================
+//=========================================
+// Plot stuff
+//=========================================
 
 
 char  pdfName[1024];
@@ -355,25 +344,6 @@ std::vector<ECuts> GetRECOCutsVector() {
 }
 
 
-
-std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
-//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
-  std::vector<ECutsTRUTH> True_vec;
-  True_vec.push_back(kTRUTHNoCuts   );
-  True_vec.push_back(kTRUTHMuonEnergy );
-  True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHneutrino);
-  True_vec.push_back(kTRUTHCCInteraction );
-  True_vec.push_back(kTRUTHtarget);
-  True_vec.push_back(kTRUTHFiduical );
-  True_vec.push_back(kAllTRUTHCuts);
-
-
-  //int n = sizeof(kCutsArray) / sizeof(kCutsArray[0]);
-  //static std::vector<ECuts> ret_vec(kCutsArray, kCutsArray + n);
-  return True_vec;
-}
-
 //////////////////////////////////////////////////////////////////////////
 //GET MUON Varibles
 //////////////////////////////////////////////////////////////////////////
@@ -412,33 +382,6 @@ std::vector<CryoVertex> GetCryoVertexVaribles() {
   CryoVertexVars.push_back(kTRUTH_R);
 
   return CryoVertexVars;
-}
-
-
-std::vector<ME_helium_Playlists> GetPlayListVector() {
-  std::vector<ME_helium_Playlists> Playlist;
-  //EMPTY
-    Playlist.push_back(kME1G);
-    //Playlist.push_back(kME1A);
-  //  Playlist.push_back(kME1L);
-    //Playlist.push_back(kME1M);
-    //Playlist.push_back(kME1N);
-  //Full
-    //Playlist.push_back(kME1P);
-    //Playlist.push_back(kME1C);
-    //Playlist.push_back(kME1D);
-    //Playlist.push_back(kME1F);
-    //Playlist.push_back(kME1E);
-
-  return Playlist;
-}
-
-std::vector<ME_helium_Playlists> GetTRUEPlayListVector() {
-  std::vector<ME_helium_Playlists> Playlist;
-
-  Playlist.push_back(kME1G_Truth);
-
-  return Playlist;
 }
 
 

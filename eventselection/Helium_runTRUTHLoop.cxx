@@ -186,6 +186,7 @@ std::vector <ALL_True_Event_info> ALL_EventInfoNu_mu_secTrkParticle;
 
 //or(auto PlayList_iterator:kPlayListVector ){
 
+  MinervaUniverse::SetTruth(true);
   MinervaUniverse::SetNuEConstraint(true);
   MinervaUniverse::SetAnalysisNuPDG(14);
   MinervaUniverse::SetNFluxUniverses(n_flux_universes);

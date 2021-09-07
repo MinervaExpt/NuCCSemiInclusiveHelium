@@ -213,7 +213,7 @@ if(!m_RunCodeWithSystematics){
 void runEventLoop(bool &m_debugOn, ME_helium_Playlists &PlayList_iterator) {
   // Make a chain of events
   loadLibs();
-//std::vector<ECuts> kCutsVector;
+
 int Study_cap=50;
 int Study_count=0;
 double POT[4];
@@ -245,6 +245,7 @@ const double toDegs = 180.0/TMath::Pi();
 bool is_mc= true;
 TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
 
+MinervaUniverse::SetTruth(false);
 MinervaUniverse::SetDeuteriumGeniePiTune(false);
 MinervaUniverse::SetNuEConstraint(true);
 MinervaUniverse::SetZExpansionFaReweight(false);

@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+#text files 
+*.txt
+
 # file system getting stuck for a while when you try to delete a file.
 *.nfs*
 

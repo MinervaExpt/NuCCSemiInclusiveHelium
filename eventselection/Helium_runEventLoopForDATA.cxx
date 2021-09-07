@@ -65,6 +65,7 @@ const std::vector<SecondTrkVar> ksecTrkVaribles_vector = GetPlayListSecondTrkVec
 
 const std::vector<CryoVertex> kCryoVertexVaribles_vector = GetCryoVertexVaribles();
 EventPlaylist_RecoCount EventCountMap;
+MinervaUniverse::SetTruth(false);
 MinervaUniverse::SetNuEConstraint(false);
 MinervaUniverse::SetDeuteriumGeniePiTune(false);
 
@@ -72,6 +73,7 @@ std::string playlist = GetPlaylist(PlayList_iterator);
 MinervaUniverse::SetPlaylist(playlist);
 int trackcount=0;
 int trackcount_track=0;
+
 std::vector<SliceID_vertex_info> SliceID_vertex_info_vector;
 std::vector<Trajector_DATA> Trajector_DATA_vector;
 std::vector<SliceID_vertex_info> SliceID_vertex_info_length_vector;

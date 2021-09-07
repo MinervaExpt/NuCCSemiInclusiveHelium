@@ -1,9 +1,11 @@
-// * Uses the New Systematics Framework and "Universe" objects.
-// * loop universes, make cuts and fill histograms with the correct lateral
-// shifts and weights for each universe.
-// * TChain --> PlotUtils::ChainWrapper.
-// * MnvHXD --> PlotUtils::HistWrapper.
-// * Genie, flux, non-resonant pion, and some detector systematics calculated.
+//File: Helium2D_runEventLoop.cxx
+//Brief: Given ntuple files from HeAnaTupleTool.cpp , extracts 2D RECO EventSelction for 4Helium-Nu interactions
+//Writes a .root file Event Selection histograms.
+//
+//Usage: RECO 2DEventSelection
+//
+//Author: Christian Nguyen  christian2nguyen@ufl.edu
+
 #include "Helium2D_runEventLoop.h"
 
 std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles";
@@ -149,7 +151,7 @@ std::map< std::string, std::vector<HeliumCVUniverse*> >
       error_bands.insert(a2p2h_systematics.begin(), a2p2h_systematics.end());
 
       //========================================================================
-      // random phase appox , long range Nuclear correlations modeling
+      // (RPA)random phase appox , long range Nuclear correlations modeling
       //========================================================================
 
       SystMap RPA_systematics = PlotUtils::GetRPASystematicsMap<HeliumCVUniverse>(chain);
@@ -236,6 +238,7 @@ bool is_mc= true;
   MinervaUniverse::SetNFluxUniverses(n_flux_universes);
   std::string playlist = GetPlaylist(PlayList_iterator);
   MinervaUniverse::SetPlaylist(playlist);
+  MinervaUniverse::SetTruth(false);
 
   //======================================================================
   // SET Flux Parameters for Intergrated Flux hist
@@ -282,12 +285,8 @@ Fill_MnvReponse_ErrorUniv_Hist_numbers( MnvReponse_Hist_N_Map, error_name);
 std::cout<<"checking Error Names "<< std::endl;
 
 for(auto cat : error_bands ){
-
 std::cout<<"Universe Name = " <<cat.first << std::endl;
-
 }
-
-
 int unv_count = 0;
 
 std::map<std::string, const int>::iterator itr_m;
@@ -297,16 +296,12 @@ double mcPOT = GetPOT_local(mcchainPOT, "MC");
 std::cout<<"Number of Universes set is = "<<    MinervaUniverse::GetNFluxUniverses()<<std::endl;
 std::cout << "POT of this Playlist = "<< mcPOT <<std::endl;
 
-
 static weightMK *weight_MK;
 char *mparalocation = std::getenv("MPARAMFILESROOT");
 string dir_data = string(mparalocation)+"/data/Reweight/";
 weight_MK = new weightMK(dir_data + "output_ratio_genie_neut_for_MKmodel.root");
 
-//MinervaUniverse::SetNFluxUniverses(25);
 POTCounter pot_counter;
-
-//MinervaUniverse::SetPlaylist_AGAIN(playlist);
 
 
 const std::string RootName = GetPlaylist_ROOT_path(PlayList_iterator, is_mc );
@@ -315,12 +310,7 @@ std::cout<<"The Playlist that is set is = "<< playlist.c_str()<<std::endl;
 std::cout<<"The Playlist Root = "<< RootName<<std::endl;
  ///pnfs/minerva/persistent/users/cnguyen/ME_G1_Merg/*.root
 
-
-  auto mcscale = 1.0; //Data_POT_full/ MC_POT_full;
-
-
-
-  std::cout<<"Working with Playlist =  "<<  Playlist_Info.GetPlaylistname()<<std::endl;
+std::cout<<"Working with Playlist =  "<<  Playlist_Info.GetPlaylistname()<<std::endl;
 
   //======================================================================
   // SET Binning for Hist
@@ -630,9 +620,15 @@ std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
   std::cout << "Memory/time used so Far: " << procInfo.fMemResident/1000<< " MB" <<" time = "<<  procInfo.fCpuSys <<  " Sec"<<"\n";
 
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
-  std::cout<<"MC LOOP  "<<std::endl;
+  std::cout<<" Starting RECO MC LOOP  "<<std::endl;
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
+  ///////////////////////////////////////////
+  ////
+  //// Main Event Selection Loop
+  ////
+  ////
+  ///////////////////////////////////////////
 
   for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
 
@@ -842,14 +838,12 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
   char outFileName[1024];
   auto playlist_name = Playlist_Info.GetPlaylistname();
-  auto datatype = String_ISMC(is_mc);
   char c[playlist_name.length() + 1];
-  char d[datatype.length() + 1];
   char rootpathway[OUTputRoot_pathway.length()+1];
   char ErrorStatus[sysmatics_status.length()+1];
+
   strcpy(rootpathway, OUTputRoot_pathway.c_str());
   strcpy(c, playlist_name.c_str());
-  strcpy(d, datatype.c_str());
   strcpy(ErrorStatus, sysmatics_status.c_str());
 
 
@@ -860,7 +854,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   TGraph  *TRUE_RECO_2DCuts      = Make_RECOCut_Tgraph_fromCutMap("TRUE_RECO_2DCuts"     , CountMap_TRUE_RECO);
   TGraph  *Truth_2DCuts          = Make_TruthCut_Tgraph_fromCutMap("Truth_2DCuts"        , Truth_Cut_Map);
 
-  sprintf(outFileName, "%s/%s_2D%s_%s_%s.root",rootpathway, "Histograms",c,d,ErrorStatus);
+  sprintf(outFileName, "%s/%s_2D%s_%s_%s.root", rootpathway, "Histograms", c, "RECO_MC", ErrorStatus);
   std::cout << "Writing output file to: " <<outFileName << std::endl;
 
   TFile *outFile = new TFile(outFileName,"RECREATE");

@@ -176,7 +176,7 @@ std::vector<int> Helium9_colorScheme = {
     TColor::GetColor("#555555")  // dark grey
 };
 
-typedef std::map< std::string, std::vector<HeliumCVUniverse*> > UniverseMap;
+//typedef std::map< std::string, std::vector<HeliumCVUniverse*> > UniverseMap;
 
 UniverseMap GetErrorBands(PlotUtils::ChainWrapper* chain) {
 
@@ -225,9 +225,9 @@ if(m_RunCodeWithSystematics){
     error_bands.insert(angle_systematics.begin(), angle_systematics.end());
 
     //========================================================================
-      // GENIE
-      //========================================================================
-      // Standard
+    // GENIE
+    //========================================================================
+    // Standard
 
     UniverseMap genie_systematics = PlotUtils::GetGenieSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(genie_systematics.begin(), genie_systematics.end());
@@ -245,8 +245,8 @@ if(m_RunCodeWithSystematics){
     error_bands.insert(RPA_systematics.begin(), RPA_systematics.end());
 
     //========================================================================
-     // Helium
-     //========================================================================
+    // Helium
+    //========================================================================
 
     UniverseMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
@@ -318,8 +318,7 @@ bool is_mc= true;
 
  TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
 
-
-//for(auto PlayList_iterator:kPlayListVector ){
+ MinervaUniverse::SetTruth(false);
   MinervaUniverse::SetDeuteriumGeniePiTune(false);
   MinervaUniverse::SetNuEConstraint(true);
   MinervaUniverse::SetZExpansionFaReweight(false);
@@ -329,9 +328,8 @@ bool is_mc= true;
   std::string playlist = GetPlaylist(PlayList_iterator);
 
   MinervaUniverse::SetPlaylist(playlist);
-  //MinervaUniverse::Set_Multiple_resetPlaylist(true);
   int otherlongtrack=0;
-  //lotUtils::MnvH1D* h_Flux = nullptr;
+
   int nu_pdg = MinervaUniverse::GetAnalysisNuPDG();
   std::string playlist_fluxreweighter = MinervaUniverse::GetPlaylist();
   bool useNuEconstraint = MinervaUniverse::UseNuEConstraint();
@@ -339,9 +337,6 @@ bool is_mc= true;
   bool useMuonCorrelations = true;
   double Min_NuFluxEnergy = 0.0;
   double Max_NuFluxEnergy = 120.0;
-  //PlotUtils::MnvH1D* h_Flux = PlotUtils::flux_reweighter(playlist_fluxreweighter, nu_pdg, useNuEconstraint, NFlux_universe).GetFluxReweighted(nu_pdg	);
-
-
 
   auto Playlist_txtFILEPath = GetPlaylist_txtFILE_path(PlayList_iterator, is_mc );
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
