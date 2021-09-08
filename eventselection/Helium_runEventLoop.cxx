@@ -1044,6 +1044,13 @@ MnvH2D *h_Mig_MuonE      =   new MnvH2D("h_Mig_MuonE",     "h_Mig_MuonE",     Eb
 MnvH2D *h_Mig_MuonPZ     =   new MnvH2D("h_Mig_MuonPZ",    "h_Mig_MuonPZ",    Pzbin_vector.size()-1,        Pzbin_vector.data(),        Pzbin_vector.size()-1,        Pzbin_vector.data());
 MnvH2D *h_Mig_MuonPT     =   new MnvH2D("h_Mig_MuonPT",    "h_Mig_MuonPT",    PTbin_vector.size()-1,        PTbin_vector.data(),        PTbin_vector.size()-1,        PTbin_vector.data());
 MnvH2D *h_Mig_MuonTheta  =   new MnvH2D("h_Mig_MuonTheta", "h_Mig_MuonTheta", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(), MuonThetabin_vector.size()-1, MuonThetabin_vector.data());
+MnvH2D *h_Mig_Vertex_X      =   new MnvH2D("h_Mig_Vertex_X",     "h_Mig_Vertex_X",  Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data(), Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data());
+MnvH2D *h_Mig_Vertex_Y      =   new MnvH2D("h_Mig_Vertex_Y",     "h_Mig_Vertex_Y",  Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data(), Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data());
+MnvH2D *h_Mig_Vertex_R      =   new MnvH2D("h_Mig_Vertex_R",     "h_Mig_Vertex_R",  Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data());
+MnvH2D *h_Mig_Vertex_Z      =   new MnvH2D("h_Mig_Vertex_Z",     "h_Mig_Vertex_Z",  Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data());
+
+
+
 
 auto fraction = MakeBinVector(20, 0, 1);
 MnvH2D *h_2d_Track_Fraction_Energy    =    new MnvH2D("h_2d_Track_Fraction_Energy", "h_2d_Track_Fraction_Energy", TrackSize_vector.size()-1,TrackSize_vector.data() ,fraction.size()-1, fraction.data()  );
@@ -2359,10 +2366,18 @@ int PDG_match=0;
           h_2d_muonPT_2ndTrkangle_TRUE_RECO->Fill(universe->GetPmuTransverseTrue(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
           h_2d_muonPZ_2ndTrkangle_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
           h_2d_2ndtrkangle_2ndTrkE_TRUE_RECO->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+
           h_Mig_MuonE->Fill(universe->GetEmu()*.001,universe->GetTRUE_Emu(),wgt_minerva_v1);
           h_Mig_MuonPZ->Fill(Pmu*std::cos(Theta),universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
           h_Mig_MuonPT->Fill(Pmu*std::sin(Theta),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
           h_Mig_MuonTheta->Fill(Theta*toDegs,universe->GetTRUE_muANGLE_WRTB_DEG(),wgt_minerva_v1);
+
+          h_Mig_Vertex_X->Fill(universe->GetVertex_x(),universe->GetTRUE_Vertex_x(),wgt_minerva_v1);
+          h_Mig_Vertex_Y->Fill(universe->GetVertex_y(),universe->GetTRUE_Vertex_y(),wgt_minerva_v1);
+          h_Mig_Vertex_R->Fill(universe->GetVertex_r(),universe->GetTRUE_Vertex_r(),wgt_minerva_v1);
+          h_Mig_Vertex_Z->Fill(universe->GetVertex_z(),universe->GetTRUE_Vertex_z(),wgt_minerva_v1);
+
+
 
           h_2d_2ndtrkPathlength_2ndTrkE_TRUE_RECO->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
           h_2d_2ndtrkPathlength_2ndtrkangle_TRUE_RECO->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
@@ -3152,6 +3167,12 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_Mig_MuonPZ->Write();
   h_Mig_MuonPT->Write();
   h_Mig_MuonTheta->Write();
+  
+  h_Mig_Vertex_X->Write();
+  h_Mig_Vertex_Y->Write();
+  h_Mig_Vertex_R->Write();
+  h_Mig_Vertex_Z->Write();
+
   h_Mig_MuonE_py->Write();
   h_Mig_MuonPZ_py->Write();
   h_Mig_MuonPT_py->Write();

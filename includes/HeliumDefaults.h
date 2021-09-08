@@ -232,7 +232,7 @@ enum CryoVertex{kX,  kY,  kZ, kR, kRR, kX_eff,  kY_eff,  kZ_eff, kR_eff, kRR_eff
 
 
 enum SecondTrkVar{ksecE, ksecE_Proton, ksecE_Pion,  kThetamid,  kTheta, kOpenAngle, kPathway, kDOCA,
-  kFirstsecTrk_Xnode, kFirstsecTrk_Ynode, kFirstsecTrk_Znode, kLastsecTrk_Xnode, kLastsecTrk_Ynode,
+   kFirstsecTrk_Xnode, kFirstsecTrk_Ynode, kFirstsecTrk_Znode, kLastsecTrk_Xnode, kLastsecTrk_Ynode,
    kLastsecTrk_Znode, ksec_vertexTiming, ksec_Pt, ksec_Pz, ksecDOCA_TRUTH, kFullAngle, ksec_tracklength_minerva};
 
 

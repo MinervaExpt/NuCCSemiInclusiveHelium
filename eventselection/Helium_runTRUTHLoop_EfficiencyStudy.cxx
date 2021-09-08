@@ -314,7 +314,9 @@ std::vector<double> Vertex_secondTrkEbin_Proton_vector= GetSecondTrkVarVector(ks
 //std::sort(Vertex_secondTrkEbin_Proton_vector.begin(),Vertex_secondTrkEbin_Proton_vector.end());
 std::vector<double> Vertex_secondTrkTheta_bins= GetSecondTrkVarVector(kThetamid);//GetSecondTrkVarVector(kFullAngle);
 
-std::vector<double> Vertex_secondTrkTheta_Coarse_bins{0,5,10,15,20,25,30,35,40,45,50,55,60,65,70};
+std::vector<double> Vertex_secondTrkTheta_Coarse_bins{0 ,2 ,4 ,6 ,8 ,10 ,12 ,14 ,16 ,18 ,20 ,22 ,24 ,26 ,28 ,30 ,32 ,34 ,36 ,38 ,40 ,42 ,44 ,46 ,48 ,50 ,52 ,54 ,56 ,58 ,60 ,62 ,64 ,66 ,68};
+
+
 std::vector<double> Vertex_secondTrkDOCA_bins= GetSecondTrkVarVector(kDOCA);
 std::vector<double> Vertex_secondTrkPathway_bins= GetSecondTrkVarVector(kPathway);
 

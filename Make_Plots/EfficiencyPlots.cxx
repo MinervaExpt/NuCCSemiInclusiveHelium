@@ -119,13 +119,17 @@ auto PlaylistME_1G_MC_TRUTH_Efficiency_path = "/minerva/data/users/cnguyen/ME_MC
 
 
 bool isRECOBranch = false;
+
 PlayList_INFO PlaylistMC_1F(kPlayListVector_MC[0],PlaylistME_1F_MC_Efficiency_path, is_mc, isRECOBranch, AllSystmaticErrors );
 PlayList_INFO PlaylistMC_1G(kPlayListVector_MC[1],PlaylistME_1G_MC_Efficiency_path, is_mc, isRECOBranch, AllSystmaticErrors );
+
 PlayList_INFO PlaylistTRUTH_1F(kPlayListVector_MC[0], PlaylistME_1F_MC_TRUTH_Efficiency_path, is_mc, !isRECOBranch, AllSystmaticErrors );
 PlayList_INFO PlaylistTRUTH_1G(kPlayListVector_MC[1], PlaylistME_1G_MC_TRUTH_Efficiency_path, is_mc,  !isRECOBranch, AllSystmaticErrors );
 
 
 PlayList_INFO PlaylistMC_1F_piePlots(kPlayListVector_MC[0],PlaylistME_1F_MC_path, is_mc, isRECOBranch, AllSystmaticErrors );
+PlayList_INFO PlaylistMC_1G_piePlots(kPlayListVector_MC[1],PlaylistME_1G_MC_path, is_mc, isRECOBranch, AllSystmaticErrors );
+
 PlayList_INFO PlaylistTRUTH_1F_piePlots(kPlayListVector_MC[0], PlaylistME_1F_MC_TRUTH_path, is_mc, !isRECOBranch, AllSystmaticErrors );
 PlayList_INFO PlaylistTRUTH_1G_piePlots(kPlayListVector_MC[1], PlaylistME_1G_MC_TRUTH_path, is_mc, !isRECOBranch, AllSystmaticErrors );
 
@@ -245,7 +249,7 @@ MakeLatexForEffMuonVar_StatsOnly("Efficency_latex" , text_title_pdf2, kMuonVarib
 //Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1D, Efficiency_Playlist[1] ,PlaylistTRUTH_1A, "h_secTrk_Energy",
   //0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] );
   std::vector<double> SecTrk_Thetamidbin_vector= GetSecondTrkVarVector(kThetamid);
-  std::vector<double> SecTrk_Theta_TRUEbin_vector= GetSecondTrkVarVector(kFullAngle);
+  //std::vector<double> SecTrk_Theta_TRUEbin_vector= GetSecondTrkVarVector(kFullAngle);
 
 
   std::vector<double> Vertex_DOCAbin_vector= GetBinMuonVector(kDOCA_muon);
@@ -454,6 +458,14 @@ DrawPie_Figures_EventCutRate(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST,  "Truth_C
 
 Hist_phyiscs_map MAP_stack_TRUTH_F_MFP_pi =  Make_Physics_distribution_map_FromTFile(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST, "h_MuonE_MFP_pi_TRUE" , false, 1.0, kPlayListVector_MC.at(0), false );
 DrawPieFigures(MAP_stack_TRUTH_F_MFP_pi ,  text_title_pdf5, can2, mnv_plot, true, false, "MuonE");
+
+///////////////
+// Migration
+//////////////
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+   const char *histoName, const char *Xaxis_title, const char *Yaxis_title, const char* title,
+   const char* title_type_char , mnv_plot, can2, const char *pdf);
 
 
 
@@ -1228,13 +1240,13 @@ void Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom
       bool isempty = false;
 
       MnvH1D *hist_full_nom = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_nom, isfull); //(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-      MnvH1D *hist_full_dem = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_dem), isfull); //(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_dem);
+      MnvH1D *hist_full_dem = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_dem, isfull); //(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_dem);
 
       MnvH1D *hist_empty_nom = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_nom, isempty); //(MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
       MnvH1D *hist_empty_dem = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_dem, isempty); //(MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_dem);
 
       MnvH1D* hist_full_nom_clone = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_nom, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-      MnvH1D* hist_full_dem_clone = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_dem), isfull); //(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_dem);
+      MnvH1D* hist_full_dem_clone = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_dem, isfull); //(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_dem);
 
       MnvH1D* hist_empty_nom_clone = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_nom, isempty); //(MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
       MnvH1D* hist_empty_dem_clone = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_dem, isempty);//(MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_dem);
@@ -1462,39 +1474,32 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayLis
 
 
 
-void Draw_Migration_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist, PlayList_INFO EMPTY_playlist,
+void Draw_Migration_2D_FULL_EMPTY_TRUTH( FULL_playlist, PlayList_INFO EMPTY_playlist,
    const char *histoName, const char *Xaxis_title, const char *Yaxis_title, const char* title,
    const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf)
    {
 
      gStyle->SetPalette(kGreenPink); //
-      char histoName_TRUE[1024];
-      char histoName_TRUE_RECO[1024];
-      char Title_His[1024];
+     char Title_His[1024];
 
-      double FULL_POT = FULL_playlist_nom.Get_Pot();
-      double EMPTY_POT = EMPTY_playlist_nom.Get_Pot();
+      double FULL_POT = FULL_playlist.Get_Pot();
+      double EMPTY_POT = EMPTY_playlist.Get_Pot();
       double Scale_MC = FULL_POT / EMPTY_POT;
 
-      sprintf(histoName_TRUE, "%s_TRUE", histoName);
-      sprintf(histoName_TRUE_RECO, "%s_TRUE_RECO", histoName);
-
-      std::cout<< "Getting Hist Named for True = " << histoName_TRUE<<std::endl;
-      std::cout<< "Getting Hist Named for RECO True = " << histoName_TRUE_RECO <<std::endl;
       bool isfull = true;
       bool isempty = false;
       MnvH2D *hMigration_FULL = Get2DHist(*FULL_playlist.TFILE_PLAYLIST, histoName, isfull);
       MnvH2D *hMigration_EMPTY = Get2DHist(*EMPTY_playlist.TFILE_PLAYLIST, histoName, isempty);
 
-      MnvH2D *hMigration_FULL_FULL = Get2DHist(*FULL_playlist.TFILE_PLAYLIST, histoName, isfull);
-      MnvH2D *hMigration_EMPTY_EMPTY = Get2DHist(*EMPTY_playlist.TFILE_PLAYLIST, histoName, isempty);
+      MnvH2D *hMigration_FULL_clone = Get2DHist(*FULL_playlist.TFILE_PLAYLIST, histoName, isfull);
+      MnvH2D *hMigration_EMPTY_clone = Get2DHist(*EMPTY_playlist.TFILE_PLAYLIST, histoName, isempty);
 
       hMigration_EMPTY_clone->Scale(Scale_MC);
       hMigration_EMPTY_clone->Scale(Scale_MC);
       hMigration_FULL_clone->Add(hMigration_EMPTY_clone,-1);
 
-      auto FULL_name = FULL_playlist_nom.GetPlaylist();
-      auto Empty_name = EMPTY_playlist_nom.GetPlaylist();
+      auto FULL_name = FULL_playlist.GetPlaylist();
+      auto Empty_name = EMPTY_playlist.GetPlaylist();
       std::string playlistFull =   GetPlaylist_InitialName(FULL_name);
       std::string playlistEmpty = GetPlaylist_InitialName(Empty_name);
 
@@ -1505,16 +1510,16 @@ void Draw_Migration_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist, PlayList_IN
       strcpy( playlistEmpty_char,  playlistEmpty.c_str());
       // .pdf
       sprintf(Title_His, "Migration %s [Full(%s)]", title,   playlistFull_char);
-      Draw2DHist_TFILE(FULL_playlist.TFILE_PLAYLIST, histoName, Title_His  , Xaxis_title,Yaxis_title, pdf,can, plot,false );
+      Draw2DHist_TFILE(FULL_playlist.TFILE_PLAYLIST, histoName, Title_His  , Xaxis_title,Yaxis_title, pdf,can, plot, false );
 
       sprintf(Title_His, "Migration %s [Empty(%s)]", title, playlistEmpty_char);
-      Draw2DHist_TFILE(EMPTY_playlist_playlist.TFILE_PLAYLIST, histoName,Title_His, Xaxis_title, Yaxis_title, pdf,can, plot,false );
+      Draw2DHist_TFILE(EMPTY_playlist.TFILE_PLAYLIST, histoName,Title_His, Xaxis_title, Yaxis_title, pdf,can, plot, false );
 
       sprintf(Title_His, "Migration %s [Full(%s)]", title_type_char, title, playlistFull_char);
       DrawMagration_heatMap_noText(hMigration_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot); // need .pdf
 
       sprintf(Title_His, "Migration %s [Empty(%s)]", title, playlistEmpty_char);
-      DrawMagration_heatMap_noText(hMigration_Empty, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
+      DrawMagration_heatMap_noText(hMigration_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
 
       sprintf(Title_His, "Migration %s (%s-%s)", title, playlistFull_char, playlistEmpty_char);
       DrawMagration_heatMap_noText(hMigration_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);

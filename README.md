@@ -1,6 +1,6 @@
 
 # Neutrino Charge Current(CC) Semi-Inclusive 4Helium GIT Marco Repository 
-- Author: Christian Nguyen (PhD Candidate University of Florida  Graduate student )
+- Author: Christian Nguyen (University of Florida Graduate student, PhD Candidate )
 * Email: Christian2nguyen@ufl.edu
 
 ## Description
@@ -62,8 +62,8 @@
   *  mcincoming = 14
   *  mctargetZ = 2 
 - TRUE KE Detector Phase Space
-  * leading Muon KE Cut 2 [GeV] < True KE < 50 [GeV]   
-  * TRUE leading Muon Angle &theta &mu (wrtb)  <  12 [Degs]
+  * leading Muon KE Cut 2 [GeV] < True KE<sub>&mu;</sub> < 50 [GeV]   
+  * TRUE leading Muon Angle &theta;<sub> &mu;</sub> (wrtb)  <  12 [Degs]
 - The TRUE vertex position is within the CryoTank's Fiducial Volume  
   * Fiducial Volume is smaller than the CryoTank's Volume
   *  Fiducial Volume surface is  concentric to the inner CryoTank's surface.
@@ -71,7 +71,7 @@
 - At least 2 TRUE Particles are in the Final State (leading Muon + leading recoil track ) 
 - The non-muon track Candidates  with the greatest TRUE KE is selected as the `Leading` non-Muon FS particle (recoil System)
   * Is Not a Neutral Particle (Charge != 0)
-  * TRUE Angle < 55 [Degs] (wrtb)
+  *  &theta;<sub>2ndTrk</sub> < 55 [Degs] (wrtb)
 - TRUE particle types have TRUE KE thresholds 
   * Proton KE > 105.0 [MeV/c]
   * Pion KE > 60.0 [MeV/c]
@@ -82,9 +82,9 @@
 * Quality of the Muon 
  * Matched to a Minos track
  * Muon curvature significance cut (210 [mm] < Minos R < 2500 [mm])
- * Muon curvature significance cut  (&sigma<= - 5)
- * Muon Angle < 12 [Degs] 
- * Muon KE Cut 2 [GeV] < Muon KE < 50 [GeV] 
+ * Muon curvature significance cut  (&sigma; <= - 5)
+ * &theta;<sub> &mu;</sub> < 12 [Degs] 
+ * Muon KE Cut 2 [GeV] < KE<sub>&mu;</sub> < 50 [GeV] 
 * Vertex Converges in Helium CyroTank  
   *  CryoTank Fiducial Volume  
   *  Vertex fit of candidate tracks converges
@@ -93,4 +93,7 @@
 *  Recoil Tracks are foward going and < 60 [Degs] 
 
 ### To Does
-* add LE  
+* add LE
+
+### NOTES
+* Migration Matrix ,  Signal then RECO Cuts should be applied before filling the Hist, this is because when we unfold the data we want to correct for Smearing created from the detector instrumentation there fore we only want to "Un-Smear" the data only using the sample set of the defined Signal otherwise only applying RECO cuts would cause the "Un-Smearing operation" using a sample with  multiple Signal definitions creating an uncertainty in the systematic error       

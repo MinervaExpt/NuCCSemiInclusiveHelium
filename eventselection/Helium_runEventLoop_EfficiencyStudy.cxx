@@ -443,10 +443,11 @@ std::vector<double> Vertex_Percent_resolution_RRbin_vector= GetBinvertexVector(k
 
 std::vector<double> secTrk_Theta_TRUEbin_vector = GetSecondTrkVarVector(kThetamid);//GetSecondTrkVarVector(kFullAngle);
 std::vector<double> Vertex_secondTrkThetamidbin_vector = GetSecondTrkVarVector(kThetamid);
-std::vector<double> Vertex_secondTrkTheta_Coarse_bins{0,5,10,15,20,25,30,35,40,45,50,55,60,65,70};
+std::vector<double> Vertex_secondTrkTheta_Coarse_bins{0 ,2 ,4 ,6 ,8 ,10 ,12 ,14 ,16 ,18 ,20 ,22 ,24 ,26 ,28 ,30 ,32 ,34 ,36 ,38 ,40 ,42 ,44 ,46 ,48 ,50 ,52 ,54 ,56 ,58 ,60 ,62 ,64 ,66 ,68};
+
 
 std::vector<double> Vertex_DOCAbin_vector= GetBinMuonVector(kDOCA_muon);
-std::vector<double> Vertex_secondTrkEbin_vector = GetSecondTrkVarVector(ksecE);  //GetSecondTrkVarVector(ksecE);,ksecE_Proton
+std::vector<double> Vertex_secondTrkEbins = GetSecondTrkVarVector(ksecE);  //GetSecondTrkVarVector(ksecE);,ksecE_Proton
 std::vector<double> Vertex_secondTrkEbin_Proton_vector= GetSecondTrkVarVector(ksecE_Proton);
 //std::sort(Vertex_secondTrkEbin_Proton_vector.begin(),Vertex_secondTrkEbin_Proton_vector.end());
 
@@ -724,22 +725,22 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_TRUE_RECO("h_secTrk_Thet
 
 //PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_ThetaLeading_TRUE_RECO("h_secTrk_ThetaLeading_TRUE_RECO", "h_secTrk_ThetaLeading_TRUE_RECO",  secTrk_Theta_TRUEbin_vector , error_bands);
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_TRUE_RECO("h_secTrk_Energy_TRUE_RECO", "h_secTrk_Energy NEW Method",  Vertex_secondTrkEbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_TRUE_RECO("h_secTrk_Energy_TRUE_RECO", "h_secTrk_Energy NEW Method",  Vertex_secondTrkEbins, error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_EnergyFINEBinning_TRUE_RECO("h_secTrk_EnergyFINEBinning_TRUE_RECO", "h_secTrk_Energy NEW Method",  Vertex_secondTrkEbin_Proton_vector, error_bands);
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Energy_Material =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Energy_Material", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Material; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Energy_Material", Vertex_secondTrkEbins ,"h_secTrk_Energy_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Energy_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Energy_Interaction", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Energy_Interaction", Vertex_secondTrkEbins ,"h_secTrk_Energy_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Energy_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Energy_Particle", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Energy_Particle", Vertex_secondTrkEbins ,"h_secTrk_Energy_Particle; [GeV];Events");
 //h_secTrk_Energy_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_nonparentEnergy_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_nonparentEnergy_Particle", Vertex_secondTrkEbin_vector ,"h_secTrk_nonparentEnergy_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_nonparentEnergy_Particle", Vertex_secondTrkEbins ,"h_secTrk_nonparentEnergy_Particle; [GeV];Events");
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Energy_TRUE_RECO_Material =
@@ -779,9 +780,9 @@ MnvH2D *h_muonPZ_2ndTrkangle_TRUE_RECO     =    new MnvH2D("h_muonPZ_2ndTrkangle
 MnvH2D *h_muontheta_2ndTrkangle_TRUE_RECO  =    new MnvH2D("h_muontheta_2ndTrkangle_TRUE_RECO", "h_muontheta_2ndTrkangle_TRUE_RECO",  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 //MnvH2D *h_2ndtrkPathlength_2ndTrkE_TRUE    =    new MnvH2D("h_2ndtrkPathlength_2ndTrkE_TRUE", "h_2ndtrkPathlength_2ndTrkE_TRUE", Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 
-MnvH2D *h_2ndTrkE_2ndtrkangle_TRUE_RECO         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_TRUE_RECO",        "h_2ndTrkE_2ndtrkangle_TRUE_RECO",        Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
-MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO  =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO", "h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO", Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
-MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO    =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO",   "h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO",   Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_TRUE_RECO         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_TRUE_RECO",        "h_2ndTrkE_2ndtrkangle_TRUE_RECO",        Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO  =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO", "h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO", Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO    =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO",   "h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO",   Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 
 
   //=========================================
