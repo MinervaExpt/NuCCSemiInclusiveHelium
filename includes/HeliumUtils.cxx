@@ -229,39 +229,44 @@ double calcVfromXY(double X, double Y) { return (1./ 2.)*(X + sqrt(3)*Y); }
 double ConvertRadToDeg(double rad) { return rad* TMath::RadToDeg(); }
 //==============================================================================
 //==============================================================================
-PlotUtils::MnvH1D* GetHist(TFile& fin, const char* name) {
+PlotUtils::MnvH1D* Get1DHist(TFile& fin, const char* name) {
   PlotUtils::MnvH1D* h=(PlotUtils::MnvH1D*)fin.Get(name);
-  if (h==0) std::cout << "Could not get hist " << name << "\n";
+  if (h==0) std::cout << "Could not get 1D hist " << name << "\n";
   return h;
 }
 
-PlotUtils::MnvH1D* GetHist(TFile& fin, std::string name ){
-
-const char* name_char = name.c_str();
-auto hist = GetHist(fin, name_char);
-return hist;
+PlotUtils::MnvH1D* Get1DHist(TFile& fin, std::string name ){
+  const char* name_char = name.c_str();
+  PlotUtils::MnvH1D* hist = Get1DHist(fin, name_char);
+  return hist;
 
 }
 
+PlotUtils::MnvH1D* Get1DHist(TFile& fin, const char* name, bool isFull) {
+  PlotUtils::MnvH1D* h=(PlotUtils::MnvH1D*)fin.Get(name);
+  std::string Status = isFull ? "Cyro Full" : "Cryo Empty";
+  if (h==0) std::cout << "Could not get 1D hist " << name <<" Helium Status  = "<< Status <<"\n";
+  return h;
+}
+
+
 PlotUtils::MnvH2D* Get2DHist(TFile& fin, const char* name) {
   PlotUtils::MnvH2D* h=(PlotUtils::MnvH2D*)fin.Get(name);
-  if (h==0) std::cout << "Could not get hist " << name << "\n";
+  if (h==0) std::cout << "Could not get 2D hist " << name << "\n";
   return h;
 }
 
 PlotUtils::MnvH2D* Get2DHist(TFile& fin, const char* name, bool isFull) {
   PlotUtils::MnvH2D* h=(PlotUtils::MnvH2D*)fin.Get(name);
   std::string Status = isFull ? "Cyro Full" : "Cryo Empty";
-  if (h==0) std::cout << "Could not get hist " << name <<" Helium Status  = "<< Status <<"\n";
+  if (h==0) std::cout << "Could not get 2D hist " << name <<" Helium Status  = "<< Status <<"\n";
   return h;
 }
 
 PlotUtils::MnvH2D* Get2DHist(TFile& fin, std::string name ){
-
-const char* name_char = name.c_str();
-auto hist = Get2DHist(fin, name_char);
-return hist;
-
+  const char* name_char = name.c_str();
+  auto hist = Get2DHist(fin, name_char);
+  return hist;
 }
 //==============================================================================
 // TArrayD Functions

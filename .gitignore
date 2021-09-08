@@ -4,6 +4,8 @@
 #text files 
 *.txt
 LogFile_TRUTH.txt
+*.cvs
+
 # file system getting stuck for a while when you try to delete a file.
 *.nfs*
 
@@ -68,6 +70,11 @@ CryoTankVertexPlots_FullStats
 KinematicPlots_FullStats
 Smearing_Study_FullStats
 TRUE_KinematicPlots
+#Make_2DPlots
+Efficiency2DPlots
+CryoTankVertex2DPlots
+NonMuonKinematic2DPlots
+Kinematic2DPlots
 #Make_Arachne
 Make_Arachne_links
 #Make_crossSection 

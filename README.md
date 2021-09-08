@@ -1,7 +1,7 @@
 
 # Neutrino Charge Current(CC) Semi-Inclusive 4Helium GIT Marco Repository 
-- Author Christian Nguyen (PhD Candidate University of Florida  Graduate student )
-* Email Christian2nguyen@ufl.edu
+- Author: Christian Nguyen (PhD Candidate University of Florida  Graduate student )
+* Email: Christian2nguyen@ufl.edu
 
 ## Description
  This repository contains MAT macros for analyzing ntuples created from HeAnaTupleTool.cpp using ME(1D/2D) and LE Nu flux epochs. This Anaylsis is to Produces a Nu-4Helium Semi-Inclusive cross-section from ME and LE MINERvA data.    These Marcos uses MakeFiles to compile and Run and is based on the MAT-Minerva EventLoop prescription.  
@@ -27,9 +27,9 @@
 - `/includes` -  Shared .cxx files that use a Makefile to Compile and build .o libraries. These .cxx files  contain the Binning, Cuts, plotting functions, hist Naming, The Helium CVUniverse, CryoTank Fiduical functionality, and definitions Used for the ME 1D/2D anaylsis    
 - `/eventselection`  - 1D Event Selection marcos to apply cuts to make hist for Semi-Incluive Helium Event Selection for RECO MC and, TRUE MC, and DATA 
 - `/eventselection2D` - 2D Event Selection marcos to apply cuts and make hist for Semi-Incluive Helium Event Selection for RECO MC and, TRUE MC, and DATA
-- `/Make_Plots` - To make Plots from the Event Selection from `/eventselection`
-- `/Make_2DPlots' - Plottin from 2D Event Selection from `/eventselection2D` 
-- `/Make_CrossSection` - macros to make Helium Cross Section 
+- `/Make_Plots` - To make Plots  from the Event Selection from `/eventselection`
+- `/Make_2DPlots` - To make Plots from 2D Event Selection from `/eventselection2D` 
+- `/Make_CrossSection` - Macros to Extract and Plot Helium Cross Section 
 
 ### Physics Analysis 
 
@@ -82,7 +82,7 @@
 * Quality of the Muon 
  * Matched to a Minos track
  * Muon curvature significance cut (210 [mm] < Minos R < 2500 [mm])
- * Muon curvature significance cut  ($\sigma$<= - 5)
+ * Muon curvature significance cut  (&sigma<= - 5)
  * Muon Angle < 12 [Degs] 
  * Muon KE Cut 2 [GeV] < Muon KE < 50 [GeV] 
 * Vertex Converges in Helium CyroTank  

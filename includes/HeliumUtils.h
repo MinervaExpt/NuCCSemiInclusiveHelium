@@ -130,8 +130,10 @@ std::string GetMuonVar_crosssection(MuonVar playlist_name);
 //==============================================================================
 // Get hist by name from an in-file
 //==============================================================================
-PlotUtils::MnvH1D* GetHist(TFile& fin, const char* name);
-PlotUtils::MnvH1D* GetHist(TFile& fin, std::string name );
+PlotUtils::MnvH1D* Get1DHist(TFile& fin, const char* name);
+PlotUtils::MnvH1D* Get1DHist(TFile& fin, std::string name );
+PlotUtils::MnvH1D* Get1DHist(TFile& fin, const char* name, bool isFull);
+
 PlotUtils::MnvH2D* Get2DHist(TFile& fin, const char* name);
 PlotUtils::MnvH2D* Get2DHist(TFile& fin, const char* name, bool isFull);
 PlotUtils::MnvH2D* Get2DHist(TFile& fin, std::string name );

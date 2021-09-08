@@ -308,11 +308,13 @@ std::vector<double> Vertex_Zbins  = GetBinvertexVector(kZ_eff);
 std::vector<double> Vertex_Rbins  = GetBinvertexVector(kR_eff);
 std::vector<double> Vertex_RRbins = GetBinvertexVector(kRR_eff);
 
-std::vector<double> Vertex_DOCAbins= GetBinMuonVector(kDOCA_muon);
-std::vector<double> Vertex_secondTrkEbins= GetSecondTrkVarVector(ksecE); //GetSecondTrkVarVector(ksecE);,ksecE_Proton
+std::vector<double> Vertex_DOCAbins = GetBinMuonVector(kDOCA_muon);
+std::vector<double> Vertex_secondTrkEbins = GetSecondTrkVarVector(ksecE); //GetSecondTrkVarVector(ksecE);,ksecE_Proton
 std::vector<double> Vertex_secondTrkEbin_Proton_vector= GetSecondTrkVarVector(ksecE_Proton);
 //std::sort(Vertex_secondTrkEbin_Proton_vector.begin(),Vertex_secondTrkEbin_Proton_vector.end());
 std::vector<double> Vertex_secondTrkTheta_bins= GetSecondTrkVarVector(kThetamid);//GetSecondTrkVarVector(kFullAngle);
+
+std::vector<double> Vertex_secondTrkTheta_Coarse_bins{0,5,10,15,20,25,30,35,40,45,50,55,60,65,70};
 std::vector<double> Vertex_secondTrkDOCA_bins= GetSecondTrkVarVector(kDOCA);
 std::vector<double> Vertex_secondTrkPathway_bins= GetSecondTrkVarVector(kPathway);
 
@@ -572,14 +574,14 @@ MnvH2D *h_cryoVertex_R_secTrkTheta_TRUE        =    new MnvH2D("h_cryoVertex_R_s
 MnvH2D *h_cryoVertex_Z_R_TRUE                  =    new MnvH2D("h_cryoVertex_Z_R_TRUE", "h_cryoVertex_Z_R_TRUE", Vertex_Zbins.size()-1,  Vertex_Zbins.data(),  Vertex_Rbins.size()-1,  Vertex_Rbins.data()  );
 
 
-MnvH2D *h_muonPT_2ndTrkangle_TRUE         =    new MnvH2D("h_muonPT_2ndTrkangle_TRUE", "h_muonPT_2ndTrkangle_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_muonPZ_2ndTrkangle_TRUE         =    new MnvH2D("h_muonPZ_2ndTrkangle_TRUE", "h_muonPZ_2ndTrkangle_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_muontheta_2ndTrkangle_TRUE         =    new MnvH2D("h_muontheta_2ndTrkangle_TRUE", "h_muontheta_2ndTrkangle_TRUE",  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
+MnvH2D *h_muonPT_2ndTrkangle_TRUE         =    new MnvH2D("h_muonPT_2ndTrkangle_TRUE", "h_muonPT_2ndTrkangle_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(),                     Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_muonPZ_2ndTrkangle_TRUE         =    new MnvH2D("h_muonPZ_2ndTrkangle_TRUE", "h_muonPZ_2ndTrkangle_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(),                     Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_muontheta_2ndTrkangle_TRUE      =    new MnvH2D("h_muontheta_2ndTrkangle_TRUE", "h_muontheta_2ndTrkangle_TRUE",  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 //MnvH2D *h_2ndtrkPathlength_2ndTrkE_TRUE    =    new MnvH2D("h_2ndtrkPathlength_2ndTrkE_TRUE", "h_2ndtrkPathlength_2ndTrkE_TRUE", Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 
-MnvH2D *h_2ndTrkE_2ndtrkangle_TRUE         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_TRUE", "h_2ndTrkE_2ndtrkangle_TRUE", Vertex_secondTrkEbin_Proton_vector.size()-1, Vertex_secondTrkEbin_Proton_vector.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_TRUE         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Proton_TRUE", "h_2ndTrkE_2ndtrkangle_Proton_TRUE", Vertex_secondTrkEbin_Proton_vector.size()-1, Vertex_secondTrkEbin_Proton_vector.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_TRUE         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_TRUE", "h_2ndTrkE_2ndtrkangle_Pion_TRUE", Vertex_secondTrkEbin_Proton_vector.size()-1, Vertex_secondTrkEbin_Proton_vector.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_TRUE         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_TRUE",        "h_2ndTrkE_2ndtrkangle_TRUE",        Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_TRUE  =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Proton_TRUE", "h_2ndTrkE_2ndtrkangle_Proton_TRUE", Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_TRUE    =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_TRUE",   "h_2ndTrkE_2ndtrkangle_Pion_TRUE",   Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 
 
   //=========================================
