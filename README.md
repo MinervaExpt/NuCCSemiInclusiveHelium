@@ -13,13 +13,13 @@
 4. Gain a greater understanding of the Helium nucleus through different  &nu weak interaction pathways including QE, RES, Non-RES pion production, mult-nucleon (2p2h), and DIS. Along with the smearing and that come with FSI.   
 
 ## Installation
-NEW: Install all dependencies using [NuCCSemiInclusiveHelium](https://github.com/MinervaExpt/NuCCSemiInclusiveHelium).
-
-## Dependencies
+### Dependencies
 1. [MAT-PlotUtils](https://github.com/MinervaExpt/MAT)
 2. [MAT-MINERvA](https://github.com/MinervaExpt/MAT-MINERvA)
 2. [UnfoldUtils](https://github.com/MinervaExpt/UnfoldUtils)
 3. [ROOT 6](https://root.cern.ch/building-root)
+
+- Install Package after the dependencies using [NuCCSemiInclusiveHelium](https://github.com/MinervaExpt/NuCCSemiInclusiveHelium).
 
 ## Macro FrameWork Structure
 - `/playlists`  Currently for Pathways ME Nu Data and MC root ntulples created from HeAnaTupleTool.cpp for Event Selection scripts in  'eventselection' and 'eventselection2D'     
@@ -33,10 +33,10 @@ NEW: Install all dependencies using [NuCCSemiInclusiveHelium](https://github.com
 
 - Interaction Model - GENIE v2.12.6 
 - MINERvA-V1 tune
- * non-resonant pion reduction
- * 2p2h
- * 2p2h + neutrino Low Recoil Fit
- * Valencia RPA applied to QE  
+  - non-resonant pion reduction
+  - 2p2h
+  - 2p2h + neutrino Low Recoil Fit
+  - Valencia RPA applied to QE  
 
 ### Error Systematic Universes 
 *  GetFluxSystematicsMap
@@ -51,7 +51,7 @@ NEW: Install all dependencies using [NuCCSemiInclusiveHelium](https://github.com
 *  GetHeliumMassMap 
 *  GetVertexSmearingRandZMap 
 
-### `Signal Def for Muon Neutrino Charge Current (CC) Semi-Inclusive Interaction with Helium Nuclei'  
+### Signal definition: Muon Neutrino Charge Current (CC) Semi-Inclusive Interaction with Helium (4^He) Nuclei 
 - A Muon Neutrino CC Helium Interaction
   *  mccurrent = 1
   *  mcincoming = 14
@@ -65,12 +65,12 @@ NEW: Install all dependencies using [NuCCSemiInclusiveHelium](https://github.com
   * Fiducial Volume surface is defined to be 20 [mm] away from the inner CryoTank's surface 
 - At least 2 TRUE Particles are in the Final State (leading Muon + leading recoil track ) 
 - The non-muon track Candidates  with the greatest TRUE KE is selected as the `Leading` non-Muon FS particle (recoil System)
- * Is Not a Neutral Particle (Charge != 0)
- * TRUE Angle < 55 [Degs] (wrtb)
-* TRUE particle types have TRUE KE thresholds 
- * Proton KE > 105.0 [MeV/c]
- * Pion KE > 60.0 [MeV/c]
- * Di-Muon KE > 60.0 [MeV/c]
+  * Is Not a Neutral Particle (Charge != 0)
+  * TRUE Angle < 55 [Degs] (wrtb)
+- TRUE particle types have TRUE KE thresholds 
+  * Proton KE > 105.0 [MeV/c]
+  * Pion KE > 60.0 [MeV/c]
+  * Di-Muon KE > 60.0 [MeV/c]
 
 ### RECO Cuts 
 * Helicity (+)
@@ -81,10 +81,10 @@ NEW: Install all dependencies using [NuCCSemiInclusiveHelium](https://github.com
  * Muon Angle < 12 [Degs] 
  * Muon KE Cut 2 [GeV] < Muon KE < 50 [GeV] 
 * Vertex Converges in Helium CyroTank  
-  * CryoTank Fiducial Volume  
+  *  CryoTank Fiducial Volume  
   *  Vertex fit of candidate tracks converges
   *  Number of tracks in the vertex > 1
-* Tracks don't match to an active on voltage Veto Wall  scintillator paddle with hit activity 
+*  Tracks don't match to an active on voltage Veto Wall  scintillator paddle with hit activity 
 *  Recoil Tracks are foward going and < 60 [Degs] 
 
 ### To Does
