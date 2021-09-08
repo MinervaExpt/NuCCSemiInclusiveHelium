@@ -38,6 +38,8 @@ Playlist_MnvH2D_Map Constuct_MnvH2DMap_FromME_playlist_TFileMAP(ME_playlist_TFil
 void BinWidthNorm_MnvH2D_Array(const TObjArray HistArray );
 void AddFirst_toSecond_MnvH2D_Arrays(const TObjArray HistArray1 , const TObjArray HistArray2);
 void SubractSecond_FromFirst_MnvH2D_Arrays(const TObjArray HistArray1 , const TObjArray HistArray2);
+std::string Construct_string_Ending(bool isMiG,bool isStack,char *StackType, bool isYProj,int isFULLorEmpty, bool FirstorSecond );
+
 
 /*
 //==============================================================================

@@ -461,7 +461,6 @@ Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_T
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
   "h_cryoVertex_R_secTrkTheta", "Vertex R [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Vertex R vs #theta_{2ndtrk}" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
 
-
 Draw_Resolution_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1],
   "h_resolutionZ_FidiucalCut", "Fiducial Cut Distance to Cryotank Edge [mm]", "True - Reco Vertex Z [mm]",
   "Resolution Vertex Z [mm] Vs Fiducial Cut" ,"", mnv_plot, can2, text_title_pdf5, 500.0); // no pdf tag format
@@ -484,6 +483,25 @@ Draw_Resolution_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1
   Draw2DHist_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_resolutionR_FidiucalCut", "Resolution Vertex R [mm] Vs Fiducial Cut [Full ME1F]", "Fiducial Cut Distance to Cryotank Edge [mm]","True - Reco Vertex R [mm]", text_title_pdf2, can2, mnv_plot);
 
 //EventCut_Rate_STRUCT EventCut_Rate_STRUCT_ME1F = MakeEventCut_Rate_STRUCT_fromTFiles();
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_muonPT_2ndTrkangle", "Muon P_{T} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "Muon P_{T} vs #theta_{2ndtrk}" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_muonPZ_2ndTrkangle", "Muon P_{Z} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "Muon P_{Z} vs #theta_{2ndtrk}" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_muontheta_2ndTrkangle", "#theta_{#mu} [Deg]", "#theta_{2ndtrk} [Deg](wrtb)", "#theta_{#mu} vs #theta_{2ndtrk}" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_2ndTrkE_2ndtrkangle", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk}" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_2ndTrkE_2ndtrkangle_Proton", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk} [Proton]" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_2ndTrkE_2ndtrkangle_Pion", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk} [Pion]" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
+
 
 
 DrawPie_Figures_EventCutRate(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST,  "Truth_Cuts",

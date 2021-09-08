@@ -562,6 +562,7 @@ int HeliumCVUniverse::Get_Index_highestKE_mc_FSPart_WithDeglessthan(double Angle
 int HeliumCVUniverse::Get_Index_highestKE_mc_FSPart_WithDeglessthan_NO_NeutralParticles(double Angle,
   std::vector<double> KE_vector, std::vector<double> angle_vector, std::vector<int> pdg_vector  ) const {
     int secondTk_index = -999;
+
     if(pdg_vector.size()==1){ return 0;}
   else if(pdg_vector.size()==2 &&
     angle_vector.at(1) < Angle &&
@@ -920,7 +921,7 @@ int HeliumCVUniverse::Get_Index_highestKE_NOleadingMuoninlist_WithDeglessthan_NO
          {
            highest = KE_vector.at(i);
            secondTk_index = i;
-           
+
          } // if found highest E
        }
      }

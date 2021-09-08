@@ -7,9 +7,10 @@
  This repository contains MAT macros for analyzing ntuples created from HeAnaTupleTool.cpp using ME(1D/2D) and LE Nu flux epochs. This Anaylsis is to Produces a Nu-4Helium Semi-Inclusive cross-section from ME and LE MINERvA data.    These Marcos uses MakeFiles to compile and Run and is based on the MAT-Minerva EventLoop prescription.  
  
 ## Goals 
-1. Produce Self-contain Anaylsis Package to Anaylze Helium Interactions
-2. Produce 1D and 2D differential cross section measurement for ME beam configuration
-3. Produce 1D differential cross section measurement for LE beam configuration
+1. Produce Self-contain Anaylsis Package to Anaylze Helium Interactions from ntuples created by HeAnaTupleTool.cpp
+2. Produce 1D and 2D differential Cross-Section measurement for Nu ME beam (FHC Mode) configuration 
+   - FHC Mode - Forward Horn Current, foward Focusing of positively changed Pions and Kaons that dominantly decay to Nu mu's    
+3. Produce 1D differential cross section measurement for FHC LE beam configuration
 4. Gain a greater understanding of the Helium nucleus through different  &nu weak interaction pathways including QE, RES, Non-RES pion production, mult-nucleon (2p2h), and DIS. Along with the smearing and that come with FSI.   
 
 ## Installation
@@ -26,17 +27,21 @@
 - `/includes` -  Shared .cxx files that use a Makefile to Compile and build .o libraries. These .cxx files  contain the Binning, Cuts, plotting functions, hist Naming, The Helium CVUniverse, CryoTank Fiduical functionality, and definitions Used for the ME 1D/2D anaylsis    
 - `/eventselection`  - 1D Event Selection marcos to apply cuts to make hist for Semi-Incluive Helium Event Selection for RECO MC and, TRUE MC, and DATA 
 - `/eventselection2D` - 2D Event Selection marcos to apply cuts and make hist for Semi-Incluive Helium Event Selection for RECO MC and, TRUE MC, and DATA
-- `/Make_Plots` - To make Plots from the Event Selection from 'eventselection' and 'eventselection2D' 
+- `/Make_Plots` - To make Plots from the Event Selection from `/eventselection`
+- `/Make_2DPlots' - Plottin from 2D Event Selection from `/eventselection2D` 
 - `/Make_CrossSection` - macros to make Helium Cross Section 
 
 ### Physics Analysis 
 
 - Interaction Model - GENIE v2.12.6 
+- Non Model Weights 
+  - Minso Efficiency Correction  
 - MINERvA-V1 tune
   - non-resonant pion reduction
   - 2p2h
   - 2p2h + neutrino Low Recoil Fit
   - Valencia RPA applied to QE  
+  - Nu Flux constraint
 
 ### Error Systematic Universes 
 *  GetFluxSystematicsMap

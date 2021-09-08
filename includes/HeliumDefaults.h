@@ -780,6 +780,7 @@ std::string  beginFrame_string = "\\begin{frame}";
 std::string  endFrame_string = "\\end{frame}";
 std::string  beginTabular = "\\begin{tabular}{";
 std::string  EndTabular = "\\end{tabular}";
+std::string  Centering = "\\centering";
 double m_scale;
 std::string m_pdf_Name;
 std::string m_PlotsPerPage= "ccc";
@@ -822,6 +823,8 @@ public:
 
   std::string GetEndTabular(){return EndTabular;}
 
+  std::string GetCentering(){return Centering;}
+
   std::string GetInclude_figure(int page, std::string pdf){
     double scale = GetScale();
     std::string Figure_string = "\\includegraphics[scale = " +  to_string_with_precision(scale,  2) + " , page = " + to_string_with_precision(page,2) + "]{" +  pdf + ".pdf}";
@@ -831,6 +834,12 @@ public:
   std::string GetInclude_figure(int page, std::string pdf, double inputscale){
     double scale = inputscale;
     std::string Figure_string = "\\includegraphics[scale = " +  to_string_with_precision(scale,  2) + " , page = " + to_string_with_precision(page,2) + "]{" +  pdf + ".pdf}";
+    return Figure_string;
+  }
+
+  std::string GetInclude_figure( std::string pdf){
+    double scale = GetScale();
+    std::string Figure_string = "\\includegraphics[scale = " +  to_string_with_precision(scale,  2) + " ]{" +  pdf + ".pdf}";
     return Figure_string;
   }
 

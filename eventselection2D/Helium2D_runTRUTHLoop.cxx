@@ -409,8 +409,8 @@ PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_2ndtrkangle_2ndTrkE_TRUE("h_2ndtrka
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
   std::string sysmatics_status;
-  if(m_RunCodeWithSystematics==true){sysmatics_status= "Systematics On";}
-  else if (m_RunCodeWithSystematics==false){sysmatics_status= "Systematics Off";}
+  if(m_RunCodeWithSystematics==true){sysmatics_status= "Systematics_On";}
+  else if (m_RunCodeWithSystematics==false){sysmatics_status= "Systematics_Off";}
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
   std::cout<<"~~~~~~~~~  "<< sysmatics_status <<" ~~~~~~~~~ "<<std::endl;
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
@@ -426,7 +426,7 @@ PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_2ndtrkangle_2ndTrkE_TRUE("h_2ndtrka
   ///////////////////////////////////////////
 
   for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
-    if(ii%5000==0) std::cout << (ii/1000) << " 10 k " << std::endl;
+    if(ii%50000==0) std::cout << (ii/1000) << " k " << std::flush;
 
     //=========================================
     // For every systematic, loop over the universes, and fill the
@@ -447,15 +447,33 @@ PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_2ndtrkangle_2ndTrkE_TRUE("h_2ndtrka
           std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
 
           int secondTrk = 999;
-          if(PDG_trklist.size()==0)std::cout<<"Have PDG of size 0 after Cuts ERROR"<<std::endl;assert(false);
+          if(PDG_trklist.size()==0){std::cout<<"Have PDG of size 0 after Cuts ERROR"<<std::endl;assert(false);}
           if(PDG_trklist.size()==1){std::cout<<"Have PDG of size 1 after Cuts ERROR"<<std::endl;assert(false);}
 
-          secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist ) ;
+          //secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist ) ;
+
+           secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
+/*
+          std::cout<<" secondTrk =  "<< secondTrk<< std::endl;
+
+          std::cout<<" PDG_trklist  "<< PDG_trklist.size()<< std::endl;
+          std::cout<<"inside PDG_trklist"<<std::endl;
+          for(auto pdg:PDG_trklist){std::cout<<"PrintDG_trklist pdg = "<< pdg<<std::endl; }
+          std::cout<<" Energy_trklist  "<< Energy_trklist.size()<< std::endl;
+          for(auto energy:Energy_trklist){std::cout<<"PrintDG_trklist Energy_trklist = "<< energy<<std::endl; }
+
+          std::cout<<" Angle_trklist  "<< Angle_trklist.size()<< std::endl;
+          for(auto angle:Angle_trklist){std::cout<<"PrintAngle_trklist angle  = "<< angle<<std::endl; }
+*/
+
 
           int true_track_size = PDG_trklist.size();
           int pdg_2ndTrk = PDG_trklist.at(secondTrk);
           double SecTrkTrueEnergy = Energy_trklist.at(secondTrk);
           double SecTrkTrueAngle = Angle_trklist.at(secondTrk);
+
+
+
 
          double Theta = universe->GetTRUE_muANGLE_WRTB_rad();
          double Pmu = universe->GetTRUE_Pmu();
@@ -546,30 +564,38 @@ PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_2ndtrkangle_2ndTrkE_TRUE("h_2ndtrka
   //=========================================
   // Writing Root File
   //=========================================
-  char outFileName[1024];
+  std::string systematics_status;
+  if(m_RunCodeWithSystematics==true)
+  {
+    sysmatics_status= "All_SysErrorsOn";
+    std::cout<<"print to: "<< sysmatics_status <<std::endl ;
+  }
+  else if (m_RunCodeWithSystematics==false)
+  {
+    sysmatics_status= "StatsONLY";
+  }
+
+    std::cout<<"print to: "<< sysmatics_status <<std::endl ;
+    char sysmatics_status_char[sysmatics_status.length()+1];
+    strcpy(sysmatics_status_char, sysmatics_status.c_str());
+
+  char outFileName[2024];
   auto playlist_name = Playlist_Info.GetPlaylistname();
   std::string datatype = "TRUTH";
   char c[playlist_name.length() + 1];
   char d[datatype.length() + 1];
-  char rootpathway[OUTputRoot_pathway.length()+1];
+  char rootpathway[OUTputRoot_pathway.length() + 1];
+  char systematics_char[sysmatics_status.length() + 1];
   strcpy(rootpathway, OUTputRoot_pathway.c_str());
   strcpy(c, playlist_name.c_str());
   strcpy(d, datatype.c_str());
-  std::string systematics_status;
 
-  if(m_RunCodeWithSystematics==true){sysmatics_status= "All_SysErrorsOn";}
-  else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
-  char systematics_status_char[sysmatics_status.length() + 1];
-  strcpy(systematics_status_char, systematics_status.c_str());
+  sprintf(outFileName, "%s/Histograms_2D_%s_%s_%s.root", rootpathway, c, d, sysmatics_status_char);
 
-  sprintf(outFileName, "%s/Histograms_%s_2D%s_%s.root",rootpathway, c, d, systematics_status_char);
-  std::cout << "Writing output file to: " <<outFileName << std::endl;
+  std::cout << " Writing output file to: " <<outFileName << std::endl;
+
 
   TGraph  *Truth_2DCuts  = Make_TruthCut_Tgraph_fromCutMap("Truth_2DCuts"        , Truth_Cut_Map);
-
-
-
-
   TFile *outFile = new TFile(outFileName,"RECREATE");
 
   Truth_2DCuts->Write();
@@ -640,6 +666,8 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
   True_vec.push_back(kTRUTHCCInteraction );
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTH_greaterthanoneFS);
+  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   True_vec.push_back(kAllTRUTHCuts);
 
   return True_vec;

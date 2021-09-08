@@ -3,7 +3,7 @@
 
 #text files 
 *.txt
-
+LogFile_TRUTH.txt
 # file system getting stuck for a while when you try to delete a file.
 *.nfs*
 
