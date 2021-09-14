@@ -1,10 +1,10 @@
 
-# Neutrino Charge Current(CC) Semi-Inclusive 4Helium GIT Marco Repository 
+# Neutrino Charge Current(CC) Semi-Inclusive <sup>4</sup>Helium GIT Marco Repository 
 - Author: Christian Nguyen (University of Florida Graduate student, PhD Candidate )
 * Email: Christian2nguyen@ufl.edu
 
 ## Description
- This repository contains MAT macros for analyzing ntuples created from HeAnaTupleTool.cpp using ME(1D/2D) and LE Nu flux epochs. This Anaylsis is to Produces a Nu-4Helium Semi-Inclusive cross-section from ME and LE MINERvA data.    These Marcos uses MakeFiles to compile and Run and is based on the MAT-Minerva EventLoop prescription.  
+ This repository contains MAT macros for analyzing ntuples created from HeAnaTupleTool.cpp using ME(1D/2D) and LE Nu flux epochs. This Anaylsis is to Produces a &nu;<sub>&mu;</sub>-<sup>4</sup>Helium Semi-Inclusive cross-section from ME and LE MINERvA data.    These Marcos uses MakeFiles to compile and Run and is based on the MAT-Minerva EventLoop prescription.  
  
 ## Goals 
 1. Produce Self-contain Anaylsis Package to Anaylze Helium Interactions from ntuples created by HeAnaTupleTool.cpp
@@ -56,7 +56,7 @@
 *  GetHeliumMassMap 
 *  GetVertexSmearingRandZMap 
 
-### Signal definition: Muon Neutrino Charge Current (CC) Semi-Inclusive Interaction with Helium (4^He) Nuclei 
+### Signal definition: Muon Neutrino Charge Current (CC) Semi-Inclusive Interaction with Helium (<sup>4</sup>He) Nuclei 
 - A Muon Neutrino CC Helium Interaction
   *  mccurrent = 1
   *  mcincoming = 14

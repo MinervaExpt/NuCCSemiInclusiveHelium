@@ -211,12 +211,13 @@ std::cout << "Done WITH EfficiencyPlots " << std::endl;
 
 
 TCanvas *can2 = new TCanvas("can2");
-sprintf(text_title_pdf1, "PLOTS_EfficiencyTRUTH_%s.pdf(","" );
+//TCanvas *can_Mig = new TCanvas("can_Mig");
+sprintf(text_title_pdf1, "PLOTS_EfficiencyTRUTH.pdf(" );
 can2 -> Print(text_title_pdf1);
-sprintf(text_title_pdf2, "PLOTS_EfficiencyTRUTH_%s.pdf","" );
-sprintf(text_title_pdf5, "PLOTS_EfficiencyTRUTH_%s","" );
-sprintf(text_title_pdf3, "PLOTS_EfficiencyTRUTH_%s.pdf)","" );
-sprintf(text_title_pdf4, "PLOTS_EfficiencyTRUTH_%s","" );
+sprintf(text_title_pdf2, "PLOTS_EfficiencyTRUTH.pdf");
+sprintf(text_title_pdf5, "PLOTS_EfficiencyTRUTH" );
+sprintf(text_title_pdf3, "PLOTS_EfficiencyTRUTH.pdf)");
+sprintf(text_title_pdf4, "PLOTS_EfficiencyTRUTH");
 
 sprintf(Resolution_title_pdf1, "PLOTS_Resolution.pdf(" );
 can2 -> Print(Resolution_title_pdf1);
@@ -445,11 +446,28 @@ Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_T
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
   "h_2ndTrkE_2ndtrkangle_Pion", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk} [Pion]" ,"Efficency" , mnv_plot, can2, text_title_pdf2);
 
-  Draw_Efficiency_2ndTrk_FULL_EMPTY(Efficiency_Playlist[0],Efficiency_Playlist[1] , "h_secTrk_Pathlength",
-  0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[3] );
+  //Draw_Efficiency_2ndTrk_FULL_EMPTY(Efficiency_Playlist[0],Efficiency_Playlist[1] , "h_secTrk_Pathlength",
+  //0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[3] );
 
-  Draw_Efficiency_2ndTrk_FULL_EMPTY(Efficiency_Playlist[0],Efficiency_Playlist[1] , "h_secTrk_DOCA",
-  0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[4] );
+  //Draw_Efficiency_2ndTrk_FULL_EMPTY(Efficiency_Playlist[0],Efficiency_Playlist[1] , "h_secTrk_DOCA",
+  //0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[4] );
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonE", "Migration", "RECO E_{#mu}", "TRUE E_{#mu}", text_title_pdf2, can2, mnv_plot);
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPZ", "RECO Muon P_{Z}", "TRUE Muon P_{Z}", "Migration Muon P_{Z}", text_title_pdf2, can2, mnv_plot);
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPT", "RECO Muon P_{T}", "TRUE Muon P_{T}", "Migration Muon P_{T}", text_title_pdf2, can2, mnv_plot);
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonTheta", "RECO Muon #theta_{#mu}", "TRUE Muon #theta_{#mu}", "Migration Muon #theta_{#mu}", text_title_pdf2, can2, mnv_plot);
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_X", "RECO Vertex X", "TRUE Vertex X", "Migration Vertex X", text_title_pdf2, can2, mnv_plot);
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Y", "RECO Vertex Y", "TRUE Vertex Y", "Migration Vertex Y", text_title_pdf2, can2, mnv_plot);
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_R", "RECO Vertex R", "TRUE Vertex R", "Migration Vertex R", text_title_pdf2, can2, mnv_plot);
+
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Z", "RECO Vertex Z", "TRUE Vertex Z", "Migration Vertex Z", text_title_pdf2, can2, mnv_plot);
+
 
 DrawPie_Figures_EventCutRate(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST,  "Truth_Cuts",
    PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "Truth_Cuts" , "TRUE_RECO_Cuts", PlaylistMC_1F_piePlots.m_playlist,
@@ -462,23 +480,49 @@ DrawPieFigures(MAP_stack_TRUTH_F_MFP_pi ,  text_title_pdf5, can2, mnv_plot, true
 ///////////////
 // Migration
 //////////////
+/*
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+   "h_Mig_MuonE", "RECO E_{#mu}", "TRUE E_{#mu}", "Migration Muon Energy",
+   "" , mnv_plot, can2, text_title_pdf2);
+
 
 Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
-   const char *histoName, const char *Xaxis_title, const char *Yaxis_title, const char* title,
-   const char* title_type_char , mnv_plot, can2, const char *pdf);
+      "h_Mig_MuonPZ", "RECO Muon P_{Z}", "TRUE Muon P_{Z}", "Migration Muon P_{Z}",
+      "" , mnv_plot, can2, text_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+  "h_Mig_MuonPT", "RECO Muon P_{T}", "TRUE Muon P_{T}", "Migration Muon P_{T}",
+  "" , mnv_plot, can2, text_title_pdf2);
 
 
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+  "h_Mig_MuonTheta", "RECO Muon #theta_{#mu}", "TRUE Muon #theta_{#mu}", "Migration Muon #theta_{#mu}",
+  "" , mnv_plot, can2, text_title_pdf2);
 
 
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+    "h_Mig_Vertex_X", "RECO Vertex X", "TRUE Vertex X", "Migration Vertex X",
+    "" , mnv_plot, can2, text_title_pdf2);
 
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+  "h_Mig_Vertex_Y", "RECO Vertex Y", "TRUE Vertex Y", "Migration Vertex Y",
+  "" , mnv_plot, can2, text_title_pdf2);
 
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+  "h_Mig_Vertex_R", "RECO Vertex R", "TRUE Vertex R ", "Migration Vertex R",
+  "" , mnv_plot, can2, text_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH(PlaylistMC_1F_piePlots,  PlaylistMC_1G_piePlots,
+    "h_Mig_Vertex_Z", "RECO Vertex Z", "TRUE Vertex Z ", "Migration Vertex Z",
+    "" , mnv_plot, can2, text_title_pdf2);
+*/
 std::cout << std::endl;
 std::cout << "Done WITH EfficiencyPlots" << std::endl;
 can2 -> Print(text_title_pdf3);
 can2 -> Print(Resolution_title_pdf3);
 can2 -> Print(Migration_title_pdf3);
 
-
+can2->Close();
 }// end of Function
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1474,12 +1518,12 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayLis
 
 
 
-void Draw_Migration_2D_FULL_EMPTY_TRUTH( FULL_playlist, PlayList_INFO EMPTY_playlist,
+void Draw_Migration_2D_FULL_EMPTY_TRUTH( PlayList_INFO FULL_playlist, PlayList_INFO EMPTY_playlist,
    const char *histoName, const char *Xaxis_title, const char *Yaxis_title, const char* title,
-   const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf)
+   const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf) /*Needs .pdf */
    {
 
-     gStyle->SetPalette(kGreenPink); //
+    // gStyle->SetPalette(kGreenPink); //
      char Title_His[1024];
 
       double FULL_POT = FULL_playlist.Get_Pot();
@@ -1488,6 +1532,7 @@ void Draw_Migration_2D_FULL_EMPTY_TRUTH( FULL_playlist, PlayList_INFO EMPTY_play
 
       bool isfull = true;
       bool isempty = false;
+
       MnvH2D *hMigration_FULL = Get2DHist(*FULL_playlist.TFILE_PLAYLIST, histoName, isfull);
       MnvH2D *hMigration_EMPTY = Get2DHist(*EMPTY_playlist.TFILE_PLAYLIST, histoName, isempty);
 
@@ -1525,6 +1570,9 @@ void Draw_Migration_2D_FULL_EMPTY_TRUTH( FULL_playlist, PlayList_INFO EMPTY_play
       DrawMagration_heatMap_noText(hMigration_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
 
 }//endl;
+
+
+
 
 
 void Draw_Resolution_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist,
@@ -2132,22 +2180,26 @@ void MakeLatex_WithData_CutTable_TGraphs(TFile *inputFile_Data, const char* TGra
 
 bool cutsOn;
 std::cout << "Run over cutsOn?  (0 = false, 1 = true) " << std::endl;
-std::cin >> cutsOn;
+//std::cin >> cutsOn;
+cutsOn = true;
 std::cout << std::boolalpha << cutsOn << std::endl;
 
 bool my_norm;
 std::cout << "Which Normalization?  (0 = POT, 1 = relative equal areas) " << std::endl;
-std::cin >> my_norm;
+//std::cin >> my_norm;
+my_norm = true;
 std::cout << std::boolalpha << my_norm << std::endl;
 
 bool my_debug;
 std::cout << "Run in Debug Mode? (0 = NO, 1 = YES) " << std::endl;
-std::cin >> my_debug;
+//std::cin >> my_debug;
+my_debug = false;
 std::cout << std::boolalpha << my_debug << std::endl;
 
-std::string input;
+std::string input = "cnguyen";
 std::cout << "What is the name of the user? " << std::endl;
-std::cin >> input;
+//std::cin >> input;
+
 std::cout << input << std::endl;
 
 const char *inputFileLoc = input.c_str();

@@ -787,13 +787,18 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
 
           h_secTrk_Energy_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
           h_secTrk_EnergyFINEBinning_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+          h_secTrk_Pathlength_TRUE.univHist(universe)->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_mvnV1);
 
           if(Particle_type_Event==kSecondary_particle_vector[0]){
             h_secTrk_Energy_PROTON_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+            h_secTrk_Pathlength_PROTON_TRUE.univHist(universe)->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_mvnV1);
+
           }
           if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
           { // removed Particle_type_Event==kSecondary_particle_vector[2]
             h_secTrk_Energy_PION_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+            h_secTrk_Pathlength_PION_TRUE.univHist(universe)->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_mvnV1);
+
           }
           if(Particle_type_Event==kSecondary_particle_vector[1]){
             h_secTrk_Energy_Dimuon_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
@@ -947,7 +952,9 @@ double countmc= 0.0;
     h_secTrk_Theta_TRUE.SyncCVHistos();
     h_secTrk_Openangle_TRUE.SyncCVHistos();
     h_secTrk_Theta_Dimuon_TRUE.SyncCVHistos();
-
+    h_secTrk_Pathlength_TRUE.SyncCVHistos();
+    h_secTrk_Pathlength_PROTON_TRUE.SyncCVHistos();
+    h_secTrk_Pathlength_PION_TRUE.SyncCVHistos();
 
     h_secTrk_Energy_Dimuon_TRUE.SyncCVHistos();
     h_secTrk_Energy_PROTON_TRUE.SyncCVHistos();
@@ -956,6 +963,7 @@ double countmc= 0.0;
     h_secTrk_Energy_PION_TRUE.SyncCVHistos();
     h_secTrk_Theta_PION_TRUE.SyncCVHistos();
     h_secTrkopenangle_PION_TRUE.SyncCVHistos();
+
     //////////////////////////////////
 
     //h_secTrkTheta_cryoVertex_Z_TRUE.SyncCVHistos();
@@ -1098,6 +1106,10 @@ double countmc= 0.0;
   h_secTrk_Energy_PION_TRUE.hist->Write();
   h_secTrk_Theta_PION_TRUE.hist->Write();
   h_secTrkopenangle_PION_TRUE.hist->Write();
+
+  h_secTrk_Pathlength_TRUE.hist->Write();
+  h_secTrk_Pathlength_PROTON_TRUE.hist->Write();
+  h_secTrk_Pathlength_PION_TRUE.hist->Write();
 
   //h_secTrkTheta_cryoVertex_Z_TRUE.hist->Write();
   //h_secTrkTheta_cryoVertex_R_TRUE.hist->Write();

@@ -1159,13 +1159,18 @@ int PDG_match=0;
 
           h_secTrk_Energy_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
           h_secTrk_EnergyFINEBinning_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
+          h_secTrk_Pathlength_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_minerva_v1);
 
           if(Particle_type_Event==kSecondary_particle_vector[0]){
             h_secTrk_Energy_PROTON_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
+            h_secTrk_Pathlength_PROTON_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_minerva_v1);
+
           }
           if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
           {
             h_secTrk_Energy_PION_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
+            h_secTrk_Pathlength_PION_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_minerva_v1);
+
           }
           if(Particle_type_Event==kSecondary_particle_vector[1]){
             h_secTrk_Energy_Dimuon_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
@@ -1204,6 +1209,7 @@ int PDG_match=0;
           if(secondTrk==-999)continue;
 
           double secTrkTrueAngle  = Angle_trklist.at(secondTrk);
+          double secTrkEnergy = Energy_trklist.at(secondTrk);
           double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
           int secTrk_PDG = PDG_trklist.at(secondTrk);
           Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
@@ -1228,6 +1234,19 @@ int PDG_match=0;
           if(isCV(*universe)){
             h_muonPT_2ndTrkangle_TRUE_RECO->Fill(universe->GetTRUE_PTmu(),secTrkTrueAngle,wgt_minerva_v1);
             h_muonPZ_2ndTrkangle_TRUE_RECO->Fill(universe->GetTRUE_PZmu(),secTrkTrueAngle,wgt_minerva_v1);
+            h_2ndTrkE_2ndtrkangle_TRUE_RECO->Fill(secTrkEnergy,secTrkTrueAngle,wgt_minerva_v1);
+
+            if(Particle_type_Event==kSecondary_particle_vector[0]){
+              h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO->Fill(secTrkEnergy,secTrkTrueAngle,wgt_minerva_v1);
+
+            }
+            if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
+            {
+              h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO->Fill(secTrkEnergy,secTrkTrueAngle,wgt_minerva_v1);
+
+            }
+
+
 
           }//END OF CV
 
@@ -1255,10 +1274,12 @@ int PDG_match=0;
           double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
           int secTrk_PDG = PDG_trklist.at(secondTrk);
           Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
+
           if(isCV(*universe)){
             h_cryoVertex_Z_R_TRUE_RECO->Fill(universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r(),wgt_minerva_v1);
             h_cryoVertex_Z_secTrkTheta_TRUE_RECO->Fill(universe->GetTRUE_Vertex_z(), secTrkTrueAngle,wgt_minerva_v1);
             h_cryoVertex_R_secTrkTheta_TRUE_RECO->Fill(universe->GetTRUE_Vertex_r(), secTrkTrueAngle,wgt_minerva_v1);
+
 
           }//End CV
         }// END of Universe Groups
@@ -1359,6 +1380,10 @@ double countmc= 0.0;
     h_secTrk_EnergyFINEBinning_TRUE_RECO.SyncCVHistos();
     h_secTrk_Theta_TRUE_RECO.SyncCVHistos();
     h_secTrk_Openangle_TRUE_RECO.SyncCVHistos();
+
+    h_secTrk_Pathlength_TRUE_RECO.SyncCVHistos();
+    h_secTrk_Pathlength_PROTON_TRUE_RECO.SyncCVHistos();
+    h_secTrk_Pathlength_PION_TRUE_RECO.SyncCVHistos();
 
     h_secTrk_Energy_Dimuon_TRUE_RECO.SyncCVHistos();
     h_secTrk_Energy_PROTON_TRUE_RECO.SyncCVHistos();
@@ -1522,6 +1547,9 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
 
   h_secTrk_Energy_TRUE_RECO.hist->Write();
+  h_secTrk_Pathlength_TRUE_RECO.hist->Write();
+  h_secTrk_Pathlength_PROTON_TRUE_RECO.hist->Write();
+  h_secTrk_Pathlength_PION_TRUE_RECO.hist->Write();
 
   h_CryoVertex_X_Material.WriteToFile(*outFile);
   h_CryoVertex_X_Interaction.WriteToFile(*outFile);
