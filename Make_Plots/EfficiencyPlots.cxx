@@ -70,8 +70,7 @@ std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::
 std::vector<ME_helium_Playlists> GetPlayListVector_MC();
 const std::vector< ME_helium_Playlists> kPlayListVector_MC = GetPlayListVector_MC();
 std::vector<ME_helium_Playlists> kPlayListVector_DATA = GetPlayListVector_DATA();
-//const std::vector< ME_helium_Playlists> kPlayListVector_DATA = GetPlayListVector_DATA();
-
+Pot_MapStatusList POT_MC_Status, POT_DATA_Status;
 std::vector<SecondTrkVar> Get2ndTrkVaribles();
 std::vector<MuonVar> GetMUONVaribles();
 const std::vector<CryoVertex> kCryoVertexVaribles_vector = GetCryoVertexVaribles();
@@ -123,6 +122,11 @@ bool isRECOBranch = false;
 PlayList_INFO PlaylistMC_1F(kPlayListVector_MC[0],PlaylistME_1F_MC_Efficiency_path, is_mc, isRECOBranch, AllSystmaticErrors );
 PlayList_INFO PlaylistMC_1G(kPlayListVector_MC[1],PlaylistME_1G_MC_Efficiency_path, is_mc, isRECOBranch, AllSystmaticErrors );
 
+POT_MC_Status[kFULL] =  PlaylistMC_1F.Get_Pot();
+POT_MC_Status[kEMPTY] =  PlaylistMC_1G.Get_Pot();
+
+
+
 PlayList_INFO PlaylistTRUTH_1F(kPlayListVector_MC[0], PlaylistME_1F_MC_TRUTH_Efficiency_path, is_mc, !isRECOBranch, AllSystmaticErrors );
 PlayList_INFO PlaylistTRUTH_1G(kPlayListVector_MC[1], PlaylistME_1G_MC_TRUTH_Efficiency_path, is_mc,  !isRECOBranch, AllSystmaticErrors );
 
@@ -160,6 +164,8 @@ Efficiency_Playlist_TRUTH.push_back(PlaylistTRUTH_1G);
 double PoTMC_ME1F = PlaylistMC_1F.Get_Pot();
 double POTData_ME1F = PlaylistDATA_1F.Get_Pot();
 
+POT_DATA_Status[kFULL] = PlaylistDATA_1F.Get_Pot();
+POT_DATA_Status[kEMPTY] = PlaylistDATA_1G.Get_Pot();
 double POT_Data_MC_ME1F = POTData_ME1F / PoTMC_ME1F;
 
 
@@ -311,7 +317,7 @@ start=start+spacing;
 //0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] );
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta",
-0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 56.0 /*[Deg]*/ );
+0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 54.0 /*[Deg]*/ );
 
 Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
@@ -320,7 +326,7 @@ start=start+spacing;
 //0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] );
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta_PROTON",
-0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 60 , true  );
+0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 54.0 , true  );
 
 Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk [Proton] Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
@@ -329,7 +335,7 @@ start=start+spacing;
 //0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] );
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta_PION",
-0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1], 60 , true );
+0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1], 54.0 , true );
 
 Appendtotxt_2ndTrk("Efficency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk [#pi^{#pm}] Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
@@ -424,7 +430,135 @@ Draw_Resolution_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1
         "h_resolutionR_FidiucalCut", "Fiducial Cut Distance to Cryotank Edge [mm]", "True - Reco Vertex R [mm]",
         "Resolution Vertex R [mm] Vs Fiducial Cut" ,"", mnv_plot, can2, Resolution_title_pdf5 , 800.0);
 
+std::string pdf_label =std::string(Resolution_title_pdf5);
+bool Dugbug_ON = true;
+bool BinWithNorm_ON = false;
+bool setMax = true;
+double MaxMaterial = 325;
 
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [no Fiducial]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [no Fiducial]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_RECO" ,
+    POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [no Fiducial]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON, setMax ,  MaxMaterial );
+
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z[no Fiducial]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z[no Fiducial]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z[no Fiducial]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+///////
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_Neg100_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial -100 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_Neg100_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial -100 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_Neg100_RECO" ,
+    POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial -100 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial -100 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial -100 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial -100 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+//////////
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_Neg50_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial -50 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_Neg50_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial -50 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_Neg50_RECO" ,
+    POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial -50 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_Neg50_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial -50 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_Neg50_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial -50 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_Neg50_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial -50 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+/////
+
+
+//////////
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 20 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 20 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_RECO" ,
+    POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 20 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 20 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 20 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 20 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+//////
+
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_50_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 50 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_50_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 50 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_50_RECO" ,
+    POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 50 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_50_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 50 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_50_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 50 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_50_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 50 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON  , setMax ,  MaxMaterial );
+/////
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_100_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 100 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_100_RECO" ,
+  POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 100 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionR_fidiucal_100_RECO" ,
+    POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex R [Fiducial 100 mm]", "TRUE - RECO Vertex R" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON  , setMax ,  MaxMaterial );
+
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_100_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 100 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kParticle , Dugbug_ON , setMax ,  MaxMaterial);
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_100_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 100 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kInteraction , Dugbug_ON, setMax ,  MaxMaterial );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,"h_CryoVertex_resolutionZ_fidiucal_100_RECO" ,
+POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 100 mm]", "TRUE - RECO Vertex Z" ,pdf_label ,BinWithNorm_ON, "[mm]",kMaterial , Dugbug_ON , setMax ,  MaxMaterial  );
+
+
+//////
   Draw2DHist_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_resolutionZ_FidiucalCut", "Resolution Vertex Z [mm] Vs Fiducial Cut [Full ME1F]", "Fiducial Cut Distance to Cryotank Edge [mm]","True - Reco Vertex Z [mm]", text_title_pdf2, can2, mnv_plot);
   Draw2DHist_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_resolutionR_FidiucalCut", "Resolution Vertex R [mm] Vs Fiducial Cut [Full ME1F]", "Fiducial Cut Distance to Cryotank Edge [mm]","True - Reco Vertex R [mm]", text_title_pdf2, can2, mnv_plot);
 
@@ -454,19 +588,19 @@ Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_T
 
 Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonE", "Migration", "RECO E_{#mu}", "TRUE E_{#mu}", text_title_pdf2, can2, mnv_plot);
 
-Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPZ", "RECO Muon P_{Z}", "TRUE Muon P_{Z}", "Migration Muon P_{Z}", text_title_pdf2, can2, mnv_plot);
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPZ","Migration Muon P_{Z}", "RECO Muon P_{Z}", "TRUE Muon P_{Z}", text_title_pdf2, can2, mnv_plot);
 
-Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPT", "RECO Muon P_{T}", "TRUE Muon P_{T}", "Migration Muon P_{T}", text_title_pdf2, can2, mnv_plot);
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPT", "Migration Muon P_{T}", "RECO Muon P_{T}", "TRUE Muon P_{T}", text_title_pdf2, can2, mnv_plot);
 
-Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonTheta", "RECO Muon #theta_{#mu}", "TRUE Muon #theta_{#mu}", "Migration Muon #theta_{#mu}", text_title_pdf2, can2, mnv_plot);
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonTheta","Migration Muon #theta_{#mu}", "RECO Muon #theta_{#mu}", "TRUE Muon #theta_{#mu}",  text_title_pdf2, can2, mnv_plot);
 
-Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_X", "RECO Vertex X", "TRUE Vertex X", "Migration Vertex X", text_title_pdf2, can2, mnv_plot);
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_X","Migration Vertex X", "RECO Vertex X", "TRUE Vertex X",  text_title_pdf2, can2, mnv_plot);
 
-Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Y", "RECO Vertex Y", "TRUE Vertex Y", "Migration Vertex Y", text_title_pdf2, can2, mnv_plot);
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Y","Migration Vertex Y", "RECO Vertex Y", "TRUE Vertex Y",  text_title_pdf2, can2, mnv_plot);
 
-Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_R", "RECO Vertex R", "TRUE Vertex R", "Migration Vertex R", text_title_pdf2, can2, mnv_plot);
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_R","Migration Vertex R", "RECO Vertex R", "TRUE Vertex R",  text_title_pdf2, can2, mnv_plot);
 
-Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Z", "RECO Vertex Z", "TRUE Vertex Z", "Migration Vertex Z", text_title_pdf2, can2, mnv_plot);
+Draw2DHist_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Z","Migration Vertex Z",  "RECO Vertex Z", "TRUE Vertex Z", text_title_pdf2, can2, mnv_plot);
 
 
 DrawPie_Figures_EventCutRate(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST,  "Truth_Cuts",
@@ -1579,6 +1713,7 @@ void Draw_Resolution_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist,
   PlayList_INFO EMPTY_playlist, const char *histoName, const char *Xaxis_title, const char *Yaxis_title,
   const char* title ,const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf, Double_t ymax)
   {
+    gStyle->SetPalette(kBird);
     char Title_His[1024];
     bool isFull = true;
     bool isEmpty= false;

@@ -57,6 +57,7 @@ else if(univ.ShortName()=="VertexSmearingZ"){
 
   }
 
+  delta_to_shell = std::floor(delta_to_shell*100)/100; //round to 100s place
   if (Min_distance_toShell <= delta_to_shell && delta_to_shell  > 0.0 ) {
     return true;
 
@@ -127,25 +128,28 @@ bool IsInExtendentedFiducalVolumeFromtheInnerEdge(const HeliumCVUniverse& univ, 
   if( ((CryoTankConsts::FrontOfCryoInnerVessel - Sigma_Zextra) <= Zinput) && (Zinput < CryoTankConsts::Zpostion_EndOfupstreamBulge) ){
     double lenghtupstream  = abs(CryoTankConsts::startofradiusUpstreamVector  -  Zinput);
     Rsmall = sqrt( pow(lenghtupstream,2) + pow(Rinput,2) );
-    delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius ) - Rsmall;
+    //delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius ) - Rsmall;
+    delta_to_shell =  CryoTankConsts::CryoDishedHeadInnerRadius  - Rsmall;
   }
 
   else if ((CryoTankConsts::Zpostion_EndOfupstreamBulge <= Zinput) && (Zinput <= CryoTankConsts::Zpostion_StartOfdownstreamendBulge)){
-    delta_to_shell  = (AddRegionOutside + CryoTankConsts::CryoInnerVesselInnerRadius) - Rinput;
+    //delta_to_shell  = (AddRegionOutside + CryoTankConsts::CryoInnerVesselInnerRadius) - Rinput;
+    delta_to_shell  = CryoTankConsts::CryoInnerVesselInnerRadius - Rinput;
   }
 
   else if((Zinput > CryoTankConsts::Zpostion_StartOfdownstreamendBulge) && ((CryoTankConsts::FBackOfCryoInnerVessel + Sigma_Zextra) >= Zinput) ){
     double lenghtdownstream  = abs(Zinput - CryoTankConsts::startofradiusDownstreamVector);
     Rsmall = sqrt( pow(lenghtdownstream,2) + pow(Rinput,2) );
-    delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius) - Rsmall;
+    //delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius) - Rsmall;
+    delta_to_shell =  CryoTankConsts::CryoDishedHeadInnerRadius - Rsmall;
   }
 
 
-  else{Rsmall = -9999.00;
+  else{
     return false;
 
   }
-
+/*
   if(Min_distance_toShell > delta_to_shell && delta_to_shell  > 0.0 )
   {
     return true;
@@ -153,10 +157,30 @@ bool IsInExtendentedFiducalVolumeFromtheInnerEdge(const HeliumCVUniverse& univ, 
   else{
     return false;
   }
+*/
 
-}
+  delta_to_shell = std::floor(delta_to_shell*100)/100; // rounding to  hundredths place
 
-bool IsInExtendentedFiducalVolumeFromtheInnerEdge(const HeliumCVUniverse& univ, double Min_distance_toShell, double AddRegionOutside, double AddRegionOutside_center ,  double Sigma_Zextra )  {
+  if(delta_to_shell >= 0.0){return true;} // if positive is inside cryoTank inner shell
+
+  else if (delta_to_shell < 0) // if negative is outside of cryoTank inner shell but is it too far away ?
+  {
+    double outside_distance_to_shell = abs(delta_to_shell);
+
+    if (outside_distance_to_shell < Min_distance_toShell )
+    {
+      return true;
+    } // checking if distance to shell is at the min
+    else {
+      return false;
+    } // if to far fail
+  } // end of outside of cryotank inner surface
+
+}// end of function
+
+bool IsInExtendentedFiducalVolumeFromtheInnerEdge(const HeliumCVUniverse& univ, double Min_distance_toShell,
+  double AddRegionOutside, double AddRegionOutside_center ,  double Sigma_Zextra )
+  {
 
 
 //THis Function Extrents the Fidiucal Volumne and can control the  center the region and the Caps seperately
@@ -166,39 +190,50 @@ bool IsInExtendentedFiducalVolumeFromtheInnerEdge(const HeliumCVUniverse& univ, 
 
   double Rsmall, delta_to_shell;
 
-
   if( ((CryoTankConsts::FrontOfCryoInnerVessel - Sigma_Zextra) <= Zinput) && (Zinput < CryoTankConsts::Zpostion_EndOfupstreamBulge) ){
     double lenghtupstream  = abs(CryoTankConsts::startofradiusUpstreamVector  -  Zinput);
     Rsmall = sqrt( pow(lenghtupstream,2) + pow(Rinput,2) );
-    delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius ) - Rsmall;
+    //delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius ) - Rsmall;
+    delta_to_shell =  CryoTankConsts::CryoDishedHeadInnerRadius  - Rsmall;
   }
 
   else if ((CryoTankConsts::Zpostion_EndOfupstreamBulge <= Zinput) && (Zinput <= CryoTankConsts::Zpostion_StartOfdownstreamendBulge)){
-    delta_to_shell  = (AddRegionOutside_center + CryoTankConsts::CryoInnerVesselInnerRadius) - Rinput;
+  //  delta_to_shell  = (AddRegionOutside_center + CryoTankConsts::CryoInnerVesselInnerRadius) - Rinput;
+  delta_to_shell  = CryoTankConsts::CryoInnerVesselInnerRadius - Rinput;
   }
 
   else if((Zinput > CryoTankConsts::Zpostion_StartOfdownstreamendBulge) && ((CryoTankConsts::FBackOfCryoInnerVessel + Sigma_Zextra) >= Zinput) ){
     double lenghtdownstream  = abs(Zinput - CryoTankConsts::startofradiusDownstreamVector);
     Rsmall = sqrt( pow(lenghtdownstream,2) + pow(Rinput,2) );
-    delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius) - Rsmall;
-  }
-
-
-  else{Rsmall = -9999.00;
-    return false;
-  }
-
-  if (Min_distance_toShell <= delta_to_shell && delta_to_shell  > 0.0 )
-  {
-    return true;
+    //delta_to_shell = (AddRegionOutside + CryoTankConsts::CryoDishedHeadInnerRadius) - Rsmall;
+    delta_to_shell =  CryoTankConsts::CryoDishedHeadInnerRadius - Rsmall;
   }
 
   else{
     return false;
   }
 
-}
+//  if (Min_distance_toShell <= delta_to_shell && delta_to_shell  > 0.0 )
+  //{
+    //return true;
+  //}
+  delta_to_shell = std::floor(delta_to_shell*100)/100; // rounding to  hundredths place
 
+
+  if(delta_to_shell >= 0.0){return true;} // if positive is inside cryoTank inner shell
+
+  else if (delta_to_shell < 0) // if negative is outside of cryoTank inner shell but is it to far away ?
+  {
+    double outside_distance_to_shell = abs(delta_to_shell);
+
+    if (outside_distance_to_shell < Min_distance_toShell )
+    {
+      return true;
+    }
+    else {return false;}
+
+  }// outside of shell
+}// end of function
 
 
 

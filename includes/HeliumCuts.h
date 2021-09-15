@@ -55,8 +55,8 @@ namespace HeliumCUTConsts {
   const double Truth_HardonAngle_wrtb_Maximum = 60; //deg
   const double Truth_EFractionAreTrueDigits = 0.50; //
 
-  const double Maximum_secTrkwrtb_CUT = 60;
-  const double Maximum_secTrkwrtb_GreatestKE = 60; // For Truth Section of index of second track with Greatest KE
+  const double Maximum_secTrkwrtb_CUT = 54;
+  const double Maximum_secTrkwrtb_GreatestKE = 54; // For Truth Section of index of second track with Greatest KE
 
   const double Maximum_VertexChiSqrt = 200.0;
 

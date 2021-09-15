@@ -393,6 +393,13 @@ double HeliumCVUniverse::GetTRUE_Phimu() const{return GetDouble("truth_FSlepton_
 int  HeliumCVUniverse::GetIntactionType()const{ return GetInt("mc_intType");};
 int  HeliumCVUniverse::GetTargetType()   const{ return GetInt("mc_targetZ");};
 
+bool HeliumCVUniverse::isHeliumInteraction() const {
+  int z_nucleus = GetTargetType();
+  if(z_nucleus==HeliumConsts::HeliumZ){return true;}
+  else{return false;}
+}
+
+
 int  HeliumCVUniverse::GetNon_muon_PDG(int TRKNum)const{ return GetVecElem("truth_nonmu_PDG",TRKNum);};
 ///////////////////////////////////////////////////
 int  HeliumCVUniverse::GetPDG_2ndTrk_highestEnergy() const{
@@ -537,6 +544,7 @@ int HeliumCVUniverse::Get_Index_highestKE_mc_FSPart() const {
   if(secondTk_index==-999){return -999;}
   return secondTk_index;
 }
+
 ///////////////////////////////////////////////////
 int HeliumCVUniverse::Get_Index_highestKE_mc_FSPart_WithDeglessthan(double Angle,
   std::vector<double> KE_vector, std::vector<double> angle_vector, std::vector<int> pdg_vector) const {
@@ -544,8 +552,10 @@ int HeliumCVUniverse::Get_Index_highestKE_mc_FSPart_WithDeglessthan(double Angle
     if(pdg_vector.size()==1) return 0;
     else if(pdg_vector.size()==2) return 1;
     else {
+
       int start = 0;
       if(pdg_vector[0] == 13){start = 1;}
+
       int N_size= KE_vector.size();
       double highest = -999;
       for (int i = start; i < N_size; i++) {
@@ -896,13 +906,14 @@ int HeliumCVUniverse::Get_Index_highestKE_NOleadingMuoninlist_WithDeglessthan_NO
        Helium_PDG::pdg_antiLambda0 != pdg_vector.at(1) &&
        Helium_PDG::pdg_Photon != pdg_vector.at(1) &&
        -9999 != pdg_vector.at(1) &&
-       TRUTH_EnergyFraction_AreTrueDigits(truedigitEfraction_vector,1 ) == true)
+       TRUTH_EnergyFraction_AreTrueDigits(truedigitEfraction_vector, 1 ) == true)
      { return 1;}
+
      else if(pdg_vector.size() > 2) {
        int N_size= KE_vector.size();
        double highest = -999;
 
-       for (unsigned int i = 1; i < N_size; i++) {
+       for (unsigned int i = 1; i < N_size; ++i) {
          if (KE_vector.at(i) > highest &&
          angle_vector.at(i) < Angle &&
          Helium_PDG::pdg_Pi0 != pdg_vector.at(i) &&
@@ -925,6 +936,7 @@ int HeliumCVUniverse::Get_Index_highestKE_NOleadingMuoninlist_WithDeglessthan_NO
          } // if found highest E
        }
      }
+
      if(secondTk_index==-999){return -999;}
      return secondTk_index;
    }

@@ -759,6 +759,7 @@ namespace HeliumConsts {
   const double CHARGED_KAON_MASS_GEV = .493677; // GeV
   const double MUON_MASS_GEV = .105659; // GeV
   const double PROTON_MASS_GEV = .9383; // GeV
+  const int HeliumZ = 2;
 
 }
 

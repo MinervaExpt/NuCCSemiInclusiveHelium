@@ -2766,7 +2766,7 @@ void Draw2DHist(MnvH2D *hist, const char* xaxislabel,const char* yaxislabel,
 void Draw2DHist_TFILE(TFile *inputFile, const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
   const char* pdf, TCanvas *can, MnvPlotter *plot, bool PrintText)
   {
-
+    gStyle->SetPalette(kBird);
     std::cout<<"trying 2D HisName  = "<< histoName<<std::endl;
 
     MnvH2D *hist = (MnvH2D*)inputFile -> Get(histoName);
@@ -3108,7 +3108,7 @@ void DrawMagration_heatMap(TH2D *h_migration, const char* xaxislabel,const char*
 
 
   gStyle->SetPaintTextFormat("2.2f");
-
+  tmp.SetMarkerColor(kRed);
   tmp.SetMarkerSize(0.7);
   tmp.DrawCopy("colz text");
 
@@ -3190,6 +3190,7 @@ void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yax
   gStyle->SetTickLength(0.0,"y");
   gStyle->SetPaintTextFormat("0.2f");
   tmp.SetMarkerSize(.7);
+  tmp.SetMarkerColor(kRed);
   tmp.GetXaxis()->SetTickLength(0.);
   tmp.GetYaxis()->SetTickLength(0.);
   tmp.DrawCopy("colz text");
@@ -6158,12 +6159,16 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector ,
   FirstTargetMinerva->SetMarkerColor(1);
 
   auto Y_vs_Z_Tgraph = Make_Y_vs_Z_Tgraph_fromVector(input_XYZ_vector);
+  double NPointsY = Y_vs_Z_Tgraph->GetN();
   SetHist_SizeMarker(Y_vs_Z_Tgraph);
   auto X_vs_Z_Tgraph = Make_X_vs_Z_Tgraph_fromVector(input_XYZ_vector);
+  double NPointsX = X_vs_Z_Tgraph->GetN();
   SetHist_SizeMarker(X_vs_Z_Tgraph);
   auto R_vs_Z_Tgraph = Make_R_vs_Z_Tgraph_fromVector(input_XYZ_vector);
+  double NPointsR = R_vs_Z_Tgraph->GetN();
   SetHist_SizeMarker(R_vs_Z_Tgraph);
   auto RR_vs_Z_Tgraph = Make_RR_vs_Z_Tgraph_fromVector(input_XYZ_vector);
+  double NPointsRR = RR_vs_Z_Tgraph->GetN();
   SetHist_SizeMarker(RR_vs_Z_Tgraph);
   //Y_vs_Z_Tgraph->SetMarkerSize(1);
   TAxis *axis1 = Y_vs_Z_Tgraph->GetXaxis();
@@ -6189,7 +6194,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector ,
   Y_vs_Z_Tgraph->Draw("Same P");
   FirstPlaneMinerva->Draw("Same P");
   FirstTargetMinerva->Draw("Same P");
-  sprintf(Plot_title,"%s [%s] [X vs Z Vector Position]",title, Playlist);
+  sprintf(Plot_title,"%s [%s] [Y vs Z Vector Position] [Nevents: %.2f]",title, Playlist, NPointsX);
   plot->AddHistoTitle(Plot_title, .04);
   plot->WritePreliminary("TL", .035, 0, 0, false);
   gPad->Update();
@@ -6201,7 +6206,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector ,
   X_vs_Z_Tgraph->Draw("Same P");
   FirstPlaneMinerva->Draw("Same P");
   FirstTargetMinerva->Draw("Same P");
-  sprintf(Plot_title,"%s [%s] [Y vs Z Vector Position]",title, Playlist);
+  sprintf(Plot_title,"%s [%s] [X vs Z Vector Position] [Nevents: %.2f]",title, Playlist, NPointsX);
   plot->AddHistoTitle(Plot_title, .04);
   plot->WritePreliminary("TL", .035, 0, 0, false);
   gPad->Update();
@@ -6213,7 +6218,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector ,
   R_vs_Z_Tgraph->Draw("Same P");
   FirstPlaneMinerva->Draw("Same P");
   FirstTargetMinerva->Draw("Same P");
-  sprintf(Plot_title,"%s [%s] [R vs Z Vector Position]",title, Playlist);
+  sprintf(Plot_title,"%s [%s] [R vs Z Vector Position] [Nevents: %.2f]",title, Playlist, NPointsR);
   plot->AddHistoTitle(Plot_title, .04);
   plot->WritePreliminary("TL", .035, 0, 0, false);
   gPad->Update();
@@ -6225,7 +6230,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector ,
   RR_vs_Z_Tgraph->Draw("Same P");
   FirstPlaneMinerva->Draw("Same P");
   FirstTargetMinerva->Draw("Same P");
-  sprintf(Plot_title,"%s [%s] [R^{2} vs Z Vector Position]",title, Playlist);
+  sprintf(Plot_title,"%s [%s] [R^{2} vs Z Vector Position] [Nevents: %.2f]",title, Playlist, NPointsRR);
   plot->AddHistoTitle(Plot_title, .04);
   plot->WritePreliminary("TL", .035, 0, 0, false);
   gPad->Update();
@@ -6286,13 +6291,17 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He 
 
 
   auto Y_vs_Z_Tgraph_He = Make_Y_vs_Z_Tgraph_fromVector(input_XYZ_vector_He);
+  double NPointsY = Y_vs_Z_Tgraph_He->GetN();
   SetHist_SizeMarker(Y_vs_Z_Tgraph_He);
   auto X_vs_Z_Tgraph_He = Make_X_vs_Z_Tgraph_fromVector(input_XYZ_vector_He);
+  double NPointsX = X_vs_Z_Tgraph_He->GetN();
   SetHist_SizeMarker(X_vs_Z_Tgraph_He);
   auto R_vs_Z_Tgraph_He = Make_R_vs_Z_Tgraph_fromVector(input_XYZ_vector_He);
+  double NPointsR = R_vs_Z_Tgraph_He->GetN();
   SetHist_SizeMarker(R_vs_Z_Tgraph_He);
   auto RR_vs_Z_Tgraph_He = Make_RR_vs_Z_Tgraph_fromVector(input_XYZ_vector_He);
   SetHist_SizeMarker(RR_vs_Z_Tgraph_He);
+  double NPointsRR = RR_vs_Z_Tgraph_He->GetN();
 
   auto Y_vs_Z_Tgraph_Al = Make_Y_vs_Z_Tgraph_fromVector(input_XYZ_vector_Al);
   SetHist_SizeMarker(Y_vs_Z_Tgraph_Al);
@@ -6323,7 +6332,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He 
   char Plot_title[1024];
 
   double x1, x2, y1, y2;
-  plot->DecodeLegendPosition(x1, y1, x2, y2, "R", 6.5, 6., .025);
+  plot->DecodeLegendPosition(x1, y1, x2, y2,"R", 6.5, 6., .025);
   TLegend *legend1 = new TLegend(x1 - .015, y1 + .15, x2 + .075, y2 + .3);
   Y_vs_Z_Tgraph_He->SetMarkerColor(kBlue);
   Y_vs_Z_Tgraph_Al->SetMarkerColor(kGreen);
@@ -6337,7 +6346,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He 
   legend1->AddEntry(Y_vs_Z_Tgraph_Al, "Aluminium", "P");
   legend1->SetBorderSize(0);
   legend1->Draw("Same");
-  sprintf(Plot_title,"%s [%s] [X vs Z Vector Position]",title, Playlist);
+  sprintf(Plot_title,"%s [%s] [X vs Z Vector Position][Nevents: %.2f]",title, Playlist, NPointsY);
   plot->AddHistoTitle(Plot_title, .04);
   plot->WritePreliminary("TL", .035, 0, 0, false);
   gPad->Update();

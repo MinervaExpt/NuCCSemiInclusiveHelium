@@ -257,6 +257,8 @@ virtual double GetTotalMomentum(double px,double py,double pz) const;
 virtual int Get_mc_incoming() const;
 virtual int Get_mc_current() const;
 
+virtual bool isHeliumInteraction() const;
+
 virtual double GetTRUE_Emu()  const;
 virtual double GetTRUE_Pmu()  const;
 virtual double GetTRUE_PZmu() const;

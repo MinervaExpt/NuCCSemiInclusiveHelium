@@ -314,7 +314,7 @@ std::vector<double> Vertex_secondTrkEbin_Proton_vector= GetSecondTrkVarVector(ks
 //std::sort(Vertex_secondTrkEbin_Proton_vector.begin(),Vertex_secondTrkEbin_Proton_vector.end());
 std::vector<double> Vertex_secondTrkTheta_bins= GetSecondTrkVarVector(kThetamid);//GetSecondTrkVarVector(kFullAngle);
 
-std::vector<double> Vertex_secondTrkTheta_Coarse_bins{0 ,2 ,4 ,6 ,8 ,10 ,12 ,14 ,16 ,18 ,20 ,22 ,24 ,26 ,28 ,30 ,32 ,34 ,36 ,38 ,40 ,42 ,44 ,46 ,48 ,50 ,52 ,54 ,56 ,58 ,60 ,62 ,64 ,66 ,68};
+std::vector<double> Vertex_secondTrkTheta_Coarse_bins{0 ,2 ,4 ,6 ,8 ,10 ,12 ,14 ,16 ,18 ,20 ,22 ,24 ,26 ,28 ,30 ,32 ,34 ,36 ,38 ,40 ,42 ,44 ,46 ,48 ,50 ,52 ,54 ,56 ,58 ,60 ,62};
 
 
 std::vector<double> Vertex_secondTrkDOCA_bins= GetSecondTrkVarVector(kDOCA);
@@ -571,8 +571,8 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories,
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_secTrkTheta_cryoVertex_Z_TRUE("h_secTrkTheta_cryoVertex_Z_TRUE", "h_secTrkTheta_cryoVertex_Z_TRUE",Vertex_Zbins, Vertex_secondTrkTheta_bins, error_bands);
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_secTrkTheta_cryoVertex_R_TRUE("h_secTrkTheta_cryoVertex_R_TRUE", "h_secTrkTheta_cryoVertex_R_TRUE",Vertex_Rbins, Vertex_secondTrkTheta_bins,  error_bands);
 
-MnvH2D *h_cryoVertex_Z_secTrkTheta_TRUE        =    new MnvH2D("h_cryoVertex_Z_secTrkTheta_TRUE", "h_cryoVertex_Z_secTrkTheta_TRUE",  Vertex_Zbins.size()-1,  Vertex_Zbins.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_cryoVertex_R_secTrkTheta_TRUE        =    new MnvH2D("h_cryoVertex_R_secTrkTheta_TRUE", "h_cryoVertex_R_secTrkTheta_TRUE",  Vertex_Rbins.size()-1,  Vertex_Rbins.data(), Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
+MnvH2D *h_cryoVertex_Z_secTrkTheta_TRUE        =    new MnvH2D("h_cryoVertex_Z_secTrkTheta_TRUE", "h_cryoVertex_Z_secTrkTheta_TRUE",  Vertex_Zbins.size()-1,  Vertex_Zbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_cryoVertex_R_secTrkTheta_TRUE        =    new MnvH2D("h_cryoVertex_R_secTrkTheta_TRUE", "h_cryoVertex_R_secTrkTheta_TRUE",  Vertex_Rbins.size()-1,  Vertex_Rbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 MnvH2D *h_cryoVertex_Z_R_TRUE                  =    new MnvH2D("h_cryoVertex_Z_R_TRUE", "h_cryoVertex_Z_R_TRUE", Vertex_Zbins.size()-1,  Vertex_Zbins.data(),  Vertex_Rbins.size()-1,  Vertex_Rbins.data()  );
 
 
@@ -584,6 +584,17 @@ MnvH2D *h_muontheta_2ndTrkangle_TRUE      =    new MnvH2D("h_muontheta_2ndTrkang
 MnvH2D *h_2ndTrkE_2ndtrkangle_TRUE         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_TRUE",        "h_2ndTrkE_2ndtrkangle_TRUE",        Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_TRUE  =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Proton_TRUE", "h_2ndTrkE_2ndtrkangle_Proton_TRUE", Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_TRUE    =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_TRUE",   "h_2ndTrkE_2ndtrkangle_Pion_TRUE",   Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+///////
+
+MnvH2D *h_cryoVertex_Z_Pathlength_TRUE        =    new MnvH2D("h_cryoVertex_Z_Pathlength_TRUE", "h_cryoVertex_Z_Pathlength_TRUE",  Vertex_Zbins.size()-1,  Vertex_Zbins.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_cryoVertex_R_Pathlength_TRUE        =    new MnvH2D("h_cryoVertex_R_Pathlength_TRUE", "h_cryoVertex_R_Pathlength_TRUE",  Vertex_Rbins.size()-1,  Vertex_Rbins.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
+
+MnvH2D *h_cryoVertex_Z_DOCA_TRUE        =    new MnvH2D("h_cryoVertex_Z_DOCA_TRUE", "h_cryoVertex_Z_DOCA_TRUE",  Vertex_Zbins.size()-1,  Vertex_Zbins.data(), Vertex_secondTrkDOCA_bins.size()-1, Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_cryoVertex_R_DOCA_TRUE        =    new MnvH2D("h_cryoVertex_R_DOCA_TRUE", "h_cryoVertex_R_DOCA_TRUE",  Vertex_Rbins.size()-1,  Vertex_Rbins.data(), Vertex_secondTrkDOCA_bins.size()-1, Vertex_secondTrkDOCA_bins.data()  );
+
+MnvH2D *h_cryoVertex_Z_2ndTrkE_TRUE        =    new MnvH2D("h_cryoVertex_Z_2ndTrkE_TRUE", "h_cryoVertex_Z_2ndTrkE_TRUE",  Vertex_Zbins.size()-1,  Vertex_Zbins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+MnvH2D *h_cryoVertex_R_2ndTrkE_TRUE        =    new MnvH2D("h_cryoVertex_R_2ndTrkE_TRUE", "h_cryoVertex_R_2ndTrkE_TRUE",  Vertex_Rbins.size()-1,  Vertex_Rbins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+
 
 
   //=========================================
@@ -774,6 +785,9 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
           Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
           Material_type Material_type_Event = universe->Get_MaterialStackType();
 
+          ///===================
+          // Fill CV
+          ///===================
 
 
           if(isCV(*universe)){
@@ -781,6 +795,7 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
             h_secTrk_Energy_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetTRUE_NonmuTrkE(secondTrk), wgt_mvnV1);
             h_secTrk_Energy_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetTRUE_NonmuTrkE(secondTrk), wgt_mvnV1);
             h_secTrk_Energy_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetTRUE_NonmuTrkE(secondTrk), wgt_mvnV1);
+
           }
 
 
@@ -826,7 +841,9 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
           Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
           Material_type Material_type_Event = universe->Get_MaterialStackType();
 
-
+          ///===================
+          // Fill CV
+          ///===================
 
           if(isCV(*universe)){
 
@@ -834,10 +851,15 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
             h_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
             h_secTrk_Theta_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
 
+            h_muonPT_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PTmu(),secTrkTrueAngle,wgt_mvnV1);
+            h_muonPZ_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PZmu(),secTrkTrueAngle,wgt_mvnV1);
+
+
           }
 
-          h_muonPT_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PTmu(),secTrkTrueAngle,wgt_mvnV1);
-          h_muonPZ_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PZmu(),secTrkTrueAngle,wgt_mvnV1);
+          ///===================
+          // End CV
+          ///===================
 
 
           h_secTrk_Theta_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
@@ -859,6 +881,8 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
           }
         } // end of Universes
       }// End of Truth Cuts
+
+
 
 
       if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkAngle_Fidiucal)){
@@ -883,12 +907,23 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
           //h_secTrkTheta_cryoVertex_Z_TRUE.univHist(universe)->Fill(universe->GetTRUE_Vertex_z(), secTrkTrueAngle,wgt_mvnV1);
           //h_secTrkTheta_cryoVertex_R_TRUE.univHist(universe)->Fill(universe->GetTRUE_Vertex_r(), secTrkTrueAngle,wgt_mvnV1);
 
-          if(isCV(*universe)){
-            h_cryoVertex_Z_secTrkTheta_TRUE->Fill(universe->GetTRUE_Vertex_z(), secTrkTrueAngle,wgt_mvnV1);
-            h_cryoVertex_R_secTrkTheta_TRUE->Fill(universe->GetTRUE_Vertex_r(), secTrkTrueAngle,wgt_mvnV1);
+          ///===================
+          // Fill CV
+          ///===================
 
+          if(isCV(*universe)){
+            h_cryoVertex_Z_secTrkTheta_TRUE->Fill(universe->GetTRUE_Vertex_z(), secTrkTrueAngle, wgt_mvnV1);
+            h_cryoVertex_R_secTrkTheta_TRUE->Fill(universe->GetTRUE_Vertex_r(), secTrkTrueAngle, wgt_mvnV1);
 
             h_2ndTrkE_2ndtrkangle_TRUE ->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
+            h_cryoVertex_Z_Pathlength_TRUE->Fill(universe->GetTRUE_Vertex_z(), universe->GetTRUE_nonMuoncolumnarDensity(secondTrk), wgt_mvnV1);
+            h_cryoVertex_R_Pathlength_TRUE->Fill(universe->GetTRUE_Vertex_r(), universe->GetTRUE_nonMuoncolumnarDensity(secondTrk), wgt_mvnV1);
+            h_cryoVertex_Z_DOCA_TRUE->Fill(universe->GetTRUE_Vertex_z(), universe->GetTRUE_nonMuonDOCA(secondTrk), wgt_mvnV1);
+            h_cryoVertex_R_DOCA_TRUE->Fill(universe->GetTRUE_Vertex_r(), universe->GetTRUE_nonMuonDOCA(secondTrk), wgt_mvnV1);
+            h_cryoVertex_Z_2ndTrkE_TRUE->Fill(universe->GetTRUE_Vertex_z(), secTrkTrueEnergy, wgt_mvnV1);
+            h_cryoVertex_R_2ndTrkE_TRUE->Fill(universe->GetTRUE_Vertex_r(), secTrkTrueEnergy, wgt_mvnV1);
+
+
 
             if(Particle_type_Event==kSecondary_particle_vector[0]){
               h_2ndTrkE_2ndtrkangle_Proton_TRUE->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
@@ -1126,6 +1161,13 @@ double countmc= 0.0;
   h_2ndTrkE_2ndtrkangle_Proton_TRUE->Write();
   h_2ndTrkE_2ndtrkangle_Pion_TRUE->Write();
 
+
+  h_cryoVertex_Z_Pathlength_TRUE->Write();
+  h_cryoVertex_R_Pathlength_TRUE->Write();
+  h_cryoVertex_Z_DOCA_TRUE->Write();
+  h_cryoVertex_R_DOCA_TRUE->Write();
+  h_cryoVertex_Z_2ndTrkE_TRUE->Write();
+  h_cryoVertex_R_2ndTrkE_TRUE->Write();
 
   outFile->Close();
   //std::cout<< " the Number of on_leading = "<< non_leading<<std::endl;
