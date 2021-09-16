@@ -166,7 +166,10 @@ UniverseMap GetErrorBands(PlotUtils::ChainWrapper* chain) {
     //return Map
     UniverseMap error_bands;
 
+    //========================================================================
     // CV
+    //========================================================================
+
     error_bands[std::string("cv")].push_back( new HeliumCVUniverse(chain) );
 
     //Detector systematics, lateral sh
@@ -208,32 +211,37 @@ if(m_RunCodeWithSystematics){
     error_bands.insert(angle_systematics.begin(), angle_systematics.end());
 
     //========================================================================
-      // GENIE
-      //========================================================================
-      // Standard
+    // GENIE Standards
+    //========================================================================
+
 
     UniverseMap genie_systematics = PlotUtils::GetGenieSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(genie_systematics.begin(), genie_systematics.end());
 
     //========================================================================
-     // MnvTunes
-     //========================================================================
-     // 2p2h
+    //  MnvTuned - 2p2h
+    //========================================================================
 
     UniverseMap a2p2h_systematics = PlotUtils::Get2p2hSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(a2p2h_systematics.begin(), a2p2h_systematics .end());
 
-    // RPA
+    //========================================================================
+    // (RPA)random phase appox , long range Nuclear correlations modeling
+    //========================================================================
+
     UniverseMap RPA_systematics = PlotUtils::GetRPASystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(RPA_systematics.begin(), RPA_systematics.end());
 
     //========================================================================
-     // Helium
+     // Helium Vertex smearing
      //========================================================================
 
     UniverseMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
 
+    //========================================================================
+    // Helium Mass
+    //========================================================================
 
     UniverseMap HeliumTargetMass_systematics = GetHeliumTargetMassSystematicsMap<HeliumCVUniverse>(chain);
     error_bands.insert(HeliumTargetMass_systematics.begin(), HeliumTargetMass_systematics.end());
