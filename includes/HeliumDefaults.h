@@ -189,6 +189,20 @@ struct  parameterizationEquation_paramsWithTrueFraction
 };
 
 
+struct GaussianFitsParms{
+double CutValue;
+double TotalN;
+double Sigma;
+double Sigma_Error;
+double Mean;
+double Mean_Error;
+double Constant;
+double Constant_Error;
+double ChiSqrt;
+int NDF;
+
+};
+
 
 enum ECuts {
   kNoCuts,  kGoodEnergy, kUsableMuon, kMinosCoil, kMinosMatch, kMinosCurvature,  kMinosCharge, // Good muon
@@ -202,12 +216,28 @@ enum ECuts {
 
 
 enum ECutsTRUTH {
-  kTRUTHNoCuts, kTRUTHneutrino, kTRUTHCCInteraction, kTRUTHtarget,  kTRUTHMuonEnergy,  kTRUTHMuonAngle, kTRUTHFiduical,
-  kTRUTH_greaterthanoneFS, kTRUTHFiduical_ExtraShell ,
-  kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH, kTRUTH_NoNeutral_FS_2ndTrk_noAngleCut_RECOBRANCH, kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH,
-  kTRUTH_2ndTrkPionEnergythreshold,kTRUTH_2ndTrkProtonEnergythreshold,kTRUTH_2ndTrkDimuonEnergythreshold,
-  kTRUTH_2ndTrkEnergythreshold, kTRUTH_secTrk_Angle_threshold, kTRUTH_No_Neutral_secTrk_Angle_threshold, kTRUTH_atleastone_non_Neutral_secTrk,
-  kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds, kAllTRUTHCuts
+  kTRUTHNoCuts,
+  kTRUTHneutrino,
+  kTRUTHCCInteraction,
+  kTRUTHtarget,
+  kTRUTHMuonEnergy,
+   kTRUTHMuonAngle,
+   kTRUTHFiduical,
+   kTRUTH_greaterthanoneFS,
+   kTRUTHFiduical_ExtraShell,
+   kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH,
+   kTRUTH_NoNeutral_FS_2ndTrk_noAngleCut_RECOBRANCH,
+   kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH,
+   kTRUTH_2ndTrkPionEnergythreshold,/* this cut doesn't check if the particle is neutral*/
+   kTRUTH_2ndTrkProtonEnergythreshold,/* this cut doesn't check if the particle is neutral*/
+   kTRUTH_2ndTrkDimuonEnergythreshold,/* this cut doesn't check if the particle is neutral*/
+   kTRUTH_2ndTrkEnergythreshold, /* this cut doesn't check if the particle is neutral*/
+   kTRUTH_secTrk_Angle_threshold, /* this cut doesn't check if the particle is neutral*/
+   kTRUTH_atleastone_non_Neutral_secTrk,
+   kTRUTH_No_Neutral_secTrk_Angle_threshold,
+   kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds,
+   kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds,
+   kAllTRUTHCuts
 };
 
 
@@ -286,16 +316,7 @@ enum CrossSectionHist{Data_signal, Data_BG, Data_signal_potNorm, Data_BG_potNorm
 //enum class {
 //kIron, kHelium, kCarbon,kLead, kAluminium, kmaterial_typeOTHER, kmaterial_typeTotal,
 //};
-struct GaussianResolutionFits{
-double CutValue;
-double TotalN;
-double Sigma;
-double Mean;
-double Constant;
-double ChiSqrt;
-int NDF;
 
-};
 
 
 
@@ -760,6 +781,7 @@ namespace HeliumConsts {
   const double MUON_MASS_GEV = .105659; // GeV
   const double PROTON_MASS_GEV = .9383; // GeV
   const int HeliumZ = 2;
+  const double FirstPlaneZPostion = 4337.25; // mm
 
 }
 
@@ -768,10 +790,9 @@ namespace HeliumConsts {
 
 namespace HeliumPlayListInfo_Pathways{
 
-  const std::string ME_LOCAL_PLAYLIST_txtFILE_mc = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium/Ana/VetoWallStudies/scripts/ChainWrapper_ME/playlists/MC_Playlist/";
-  const std::string ME_LOCAL_PLAYLIST_txtFILE_data = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium/Ana/VetoWallStudies/scripts/ChainWrapper_ME/playlists/Data_Playlist/";
+  const std::string ME_LOCAL_PLAYLIST_txtFILE_mc = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/playlists/MC_Playlist/";
+  const std::string ME_LOCAL_PLAYLIST_txtFILE_data = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/playlists/Data_Playlist/";
   const std::string ME_PNFS_ROOT_Pathway = "/pnfs/minerva/persistent/users/cnguyen/";
-
 
 }
 

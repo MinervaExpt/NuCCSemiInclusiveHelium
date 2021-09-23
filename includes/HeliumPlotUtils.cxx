@@ -2102,6 +2102,210 @@ void DrawCVAndError_FromHIST_withFit(MnvH1D *hist, char *histotitle ,std::string
 
   }
 
+  void FillFitParms(TF1 *gfit, GaussianFitsParms &FitParms ){
+
+    FitParms.ChiSqrt = gfit->GetChisquare();
+    FitParms.NDF = gfit->GetNDF();
+    FitParms.Constant = gfit->GetParameter(0);
+    FitParms.Constant_Error = gfit->GetParError(0);
+    FitParms.Mean = gfit->GetParameter("Mean");
+    FitParms.Mean_Error = gfit->GetParError(1);
+    FitParms.Sigma = gfit->GetParameter(2);
+    FitParms.Sigma_Error = gfit->GetParError(2);
+
+  }
+
+
+  void DrawCVAndError_From2HIST_withFit(MnvH1D *hist_total, MnvH1D *histHelium,MnvH1D *histnonHelium, char *histotitle ,std::string xaxislabel,std::string yaxislabel,
+    std::string pdf_name, bool Setgrid ,GaussianFitsParms &total_FitParms, GaussianFitsParms &helium_FitParms,
+     GaussianFitsParms &nonhelium_FitParms,  bool PrintErrors , bool PrintallErrorGroups , bool BinWidthNorm )
+    {
+
+      PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
+      TCanvas cE ("c1","c1");
+      double x1,y1,x2,y2;
+      TLegend *legend = new TLegend (0.62, 0.40, 0.95,.87);
+      mnvPlotter.DecodeLegendPosition(x1, y1, x2, y2, "R", 6.5, 6., .025);
+      if(Setgrid==true){cE.SetGrid();}
+      else if (Setgrid==false){cE.Clear();}
+      //histHelium->GetXaxis()->SetTitleSize(0.035);
+      hist_total->GetXaxis()->SetTitle(Form("%s",xaxislabel.c_str()));
+      hist_total->GetYaxis()->SetTitle(Form("%s",yaxislabel.c_str()));
+
+      histHelium->GetXaxis()->SetTitle(Form("%s",xaxislabel.c_str()));
+      histHelium->GetYaxis()->SetTitle(Form("%s",yaxislabel.c_str()));
+
+      histnonHelium->GetXaxis()->SetTitle(Form("%s",xaxislabel.c_str()));
+      histnonHelium->GetYaxis()->SetTitle(Form("%s",yaxislabel.c_str()));
+
+      hist_total->SetTitleOffset(1.2);
+      histHelium->SetTitleOffset(1.2);
+      histnonHelium->SetTitleOffset(1.2);
+
+      //histHelium->SetTitleOffset(0.);
+      //histnonHelium->SetTitleOffset(0.);
+
+      double min_helium =  histHelium->GetXaxis()->GetXmin();
+      double max_helium =  histHelium->GetXaxis()->GetXmax();
+      double min_nonhelium =  histnonHelium->GetXaxis()->GetXmin();
+      double max_nonhelium =  histnonHelium->GetXaxis()->GetXmax();
+
+      double min_Total =  hist_total->GetXaxis()->GetXmin();
+      double max_Total =  hist_total->GetXaxis()->GetXmax();
+
+
+      int nbins_Helium = histHelium->GetNbinsX();
+      int nbins_nonHelium = histnonHelium->GetNbinsX();
+      int nbins_total = hist_total->GetNbinsX();
+      if (nbins_Helium!=nbins_nonHelium ||nbins_nonHelium != nbins_total ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
+
+
+      TF1 *gfit_helium = new TF1("Gaussian","gaus",min_helium,max_helium);
+      TF1 *gfit_nonhelium = new TF1("Gaussian","gaus",min_nonhelium,max_nonhelium);
+      TF1 *gfit_total = new TF1("Gaussian","gaus",min_Total, max_Total);
+
+      if(BinWidthNorm== true){
+        histHelium->Scale(1,"width");
+        histnonHelium->Scale(1,"width");
+        hist_total->Scale(1,"width");
+      }
+
+
+      gfit_helium->SetParameters(500, histHelium->GetMean(),histHelium->GetRMS());
+      gfit_helium->SetParNames("Constant","Mean","Sigma");
+      histHelium->Fit(gfit_helium,"RQ");
+
+      gfit_nonhelium->SetParameters(500,histnonHelium->GetMean(),histnonHelium->GetRMS());
+      gfit_nonhelium->SetParNames("Constant","Mean","Sigma");
+      histnonHelium->Fit(gfit_nonhelium,"RQ");
+
+      gfit_total->SetParameters(500,hist_total->GetMean(),hist_total->GetRMS());
+      gfit_total->SetParNames("Constant","Mean","Sigma");
+      hist_total->Fit(gfit_total,"RQ");
+
+
+      FillFitParms(gfit_helium, helium_FitParms );
+      FillFitParms(gfit_nonhelium, nonhelium_FitParms );
+      FillFitParms(gfit_total, total_FitParms );
+
+      helium_FitParms.TotalN = histHelium->Integral(1,nbins);
+      nonhelium_FitParms.TotalN = histnonHelium->Integral(1,nbins);
+      total_FitParms.TotalN = hist_total->Integral(1,nbins);
+
+/*
+int NDF;
+double TotalN;
+double sigma;
+double chi_sq;
+double mean;
+double ConstantA;
+*/
+
+      std::cout<< "histHelium->GetIntegral(1,nbins)  = " << helium_FitParms.TotalN<<std::endl;
+
+
+
+      mnvPlotter.axis_title_size_x = 0.03;
+      //mnvPlotter.axis_title_offset_y = 1.0;
+      mnvPlotter.axis_title_size_y = 0.03;
+      mnvPlotter.axis_label_size = 0.03;
+      mnvPlotter.axis_draw_grid_x = true;
+      mnvPlotter.axis_draw_grid_y = true;
+      histHelium->SetTitle("Helium");
+      histnonHelium->SetTitle("non Helium");
+      hist_total->SetTitle("Total");
+      hist_total->SetLineColor(kBlack);
+      histHelium->SetLineColor(kBlue);
+      histnonHelium->SetLineColor(kRed);
+      TObjArray m_hist_array;
+
+      m_hist_array.Add(hist_total);
+      m_hist_array.Add(histnonHelium);
+      m_hist_array.Add(histHelium);
+
+      PlotUtils::MnvH1D* datahist =new PlotUtils::MnvH1D("adsf", "", nbins, xmin, xmax);
+      datahist->GetXaxis()->SetTitle(Form("%s",xaxislabel.c_str()));
+      datahist->GetYaxis()->SetTitle(Form("%s",yaxislabel.c_str()));
+
+      bool dataAsPoints =false;
+      bool allSolidLines = true;
+      bool leaveStyleAlone = true;
+      mnvPlotter.DrawDataMCVariations(datahist, &m_hist_array , 1.0, "TL", dataAsPoints, allSolidLines, leaveStyleAlone, false );
+      //hist->Scale(1,"width");
+      gfit_helium->SetLineColor(kBlue);
+      gfit_nonhelium->SetLineColor(kRed);
+      gfit_total->SetLineColor(kBlack);
+
+
+      gfit_helium->Draw("same");
+      gfit_nonhelium->Draw("same");
+      gfit_total->Draw("same");
+      gStyle->SetOptFit(1111);
+
+      char chi_name[1024];
+      char sigma_name[1024];
+      char mean_name[1024];
+      char contant_name[1024];
+
+      sprintf(chi_name,     "#chi^{2} / ndf = %.2f / %i = %.2f",total_FitParms.ChiSqrt, total_FitParms.NDF , total_FitParms.ChiSqrt /(double)total_FitParms.NDF);
+      sprintf(sigma_name,   "#sigma  = %.2f #pm %.2f",   total_FitParms.Sigma,   total_FitParms.Sigma_Error);
+      sprintf(mean_name,    "Mean  = %.2f #pm %.2f",     total_FitParms.Mean,    total_FitParms.Mean_Error);
+      sprintf(contant_name, "Contant  = %.2f #pm %.2f",  total_FitParms.Constant,total_FitParms.Constant_Error);
+
+      legend->AddEntry(gfit_total, "Total", "l");
+      legend->AddEntry((TObject*)0, chi_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, sigma_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, mean_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, contant_name, ""); // to put fit param
+
+      sprintf(chi_name,    "#chi^{2} / ndf = %.2f / %i = %.2f",helium_FitParms.ChiSqrt, helium_FitParms.NDF , helium_FitParms.ChiSqrt / (double)helium_FitParms.NDF);
+      sprintf(sigma_name,  "#sigma  = %.2f #pm %.2f",   helium_FitParms.Sigma,   helium_FitParms.Sigma_Error);
+      sprintf(mean_name,   "Mean  = %.2f #pm %.2f",     helium_FitParms.Mean,    helium_FitParms.Mean_Error);
+      sprintf(contant_name,"Contant  = %.2f #pm %.2f",  helium_FitParms.Constant,helium_FitParms.Constant_Error);
+
+      legend->AddEntry(gfit_helium, "Helium Fit", "l");
+      legend->AddEntry((TObject*)0, chi_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, sigma_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, mean_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, contant_name, ""); // to put fit param
+
+      sprintf(chi_name,    "#chi^{2} / ndf = %.2f / %i = %.2f",nonhelium_FitParms.ChiSqrt, nonhelium_FitParms.NDF,nonhelium_FitParms.ChiSqrt / (double)nonhelium_FitParms.NDF );
+      sprintf(sigma_name,  "#sigma  = %.2f #pm %.2f",   nonhelium_FitParms.Sigma,   nonhelium_FitParms.Sigma_Error);
+      sprintf(mean_name,   "Mean  = %.2f #pm %.2f",     nonhelium_FitParms.Mean,    nonhelium_FitParms.Mean_Error);
+      sprintf(contant_name,"Contant  = %.2f #pm %.2f",  nonhelium_FitParms.Constant,nonhelium_FitParms.Constant_Error);
+
+      legend->AddEntry((TObject*)0, " ", ""); // to put fit param
+      legend->AddEntry(gfit_nonhelium, "NonHelium Fit", "l");
+      legend->AddEntry((TObject*)0, chi_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, sigma_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, mean_name, ""); // to put fit param
+      legend->AddEntry((TObject*)0, contant_name, ""); // to put fit param
+
+
+      legend->SetTextSize(0.025);
+      legend->Draw("same");
+
+
+      mnvPlotter.AddHistoTitle(histotitle, .028);
+      mnvPlotter.WritePreliminary("TR", .03, 0, 0, false);
+      std::string plotname = Form("%s",pdf_name.c_str());
+      mnvPlotter.MultiPrint(&cE, plotname, "pdf");
+      //PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
+      if(PrintErrors==true){
+      mnvPlotter.legend_n_columns = 2;
+      // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
+      PlotErrorSummaryNew(histHelium, plotname, histotitle, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+      mnvPlotter.legend_n_columns = 1;
+    }
+
+    mnvPlotter.axis_draw_grid_x = false;
+    mnvPlotter.axis_draw_grid_y = false;
+      cE.Closed();
+
+    }
+
+
+
 
       void DrawCVAndError_FromHIST(MnvH1D *hist, char *histotitle ,std::string xaxislabel,std::string yaxislabel,
          std::string pdf_name, bool Setgrid, bool LogX){
@@ -2146,6 +2350,8 @@ void DrawCVAndError_FromHIST_withFit(MnvH1D *hist, char *histotitle ,std::string
         if (LogX==true){gPad->SetLogx(0);}
         else if (LogX==false){gPad->SetLogy(0);}
       }
+
+
 
 
 
@@ -2843,9 +3049,10 @@ void Draw2DHist_TFILE(TFile *inputFile, const char* histoName, const char *Title
     can->Closed();
 
 
-
-
   }//end of 2D draw function
+
+
+
 
   void Draw2DHist_hist(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
            const char* pdf, TCanvas *can, MnvPlotter *plot){
@@ -2916,6 +3123,101 @@ void Draw2DHist_TFILE(TFile *inputFile, const char* histoName, const char *Title
 
 
         }//end of 2D draw function
+///////////////////
+///
+///////////////////
+void Draw2DHist_Migration_TFILE(TFile *inputFile, const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
+  const char* pdf, TCanvas *can, MnvPlotter *plot, bool PrintText)
+  {
+    gStyle->SetPalette(kBird);
+    std::cout<<"trying 2D HisName  = "<< histoName<<std::endl;
+
+    MnvH2D *hist = (MnvH2D*)inputFile -> Get(histoName);
+    MnvH2D *histrowcol = (MnvH2D*)inputFile -> Get(histoName);
+    colNormalize(*histrowcol);
+
+    MnvH2D *histrownom = (MnvH2D*)inputFile -> Get(histoName);
+    rowNormalize(*histrownom);
+    std::string TotalTitle = string(Title);
+    std::string TotalTitle_RowNorm = TotalTitle + " [RowNorm]";
+    std::string TotalTitle_ColNorm = TotalTitle + " [ColNorm]";
+
+    hist->Draw("COLZ");
+    hist->GetXaxis()->CenterTitle();
+    hist->GetYaxis()->CenterTitle();
+    hist->GetXaxis()->SetTitle(xaxislabel);
+    hist->GetYaxis()->SetTitle(yaxislabel);
+    hist->GetXaxis()->SetTitleSize(0.038);
+    hist->GetYaxis()->SetTitleSize(0.038);
+
+    plot->AddHistoTitle(TotalTitle.c_str(), .04);
+    plot->WritePreliminary("TL", .035, 0, 0, false);
+
+    gPad->Update();
+    can->Modified();
+    can->Print(pdf);
+
+    if(PrintText==false){
+      histrownom->Draw("COLZ");
+      histrownom->GetXaxis()->CenterTitle();
+      histrownom->GetYaxis()->CenterTitle();
+      histrownom->GetXaxis()->SetTitle(xaxislabel);
+      histrownom->GetYaxis()->SetTitle(yaxislabel);
+      histrownom->GetXaxis()->SetTitleSize(0.038);
+      histrownom->GetYaxis()->SetTitleSize(0.038);
+
+      plot->AddHistoTitle(TotalTitle_RowNorm.c_str(), .04);
+      plot->WritePreliminary("TL", .035, 0, 0, false);
+
+      gPad->Update();
+      can->Modified();
+      can->Print(pdf);
+      //////////////
+
+      histrowcol->Draw("COLZ");
+      histrowcol->GetXaxis()->CenterTitle();
+      histrowcol->GetYaxis()->CenterTitle();
+      histrowcol->GetXaxis()->SetTitle(xaxislabel);
+      histrowcol->GetYaxis()->SetTitle(yaxislabel);
+      histrowcol->GetXaxis()->SetTitleSize(0.038);
+      histrowcol->GetYaxis()->SetTitleSize(0.038);
+
+      plot->AddHistoTitle(TotalTitle_ColNorm.c_str(), .04);
+      plot->WritePreliminary("TL", .035, 0, 0, false);
+
+      gPad->Update();
+      can->Modified();
+      can->Print(pdf);
+    }
+
+
+    else if(PrintText==true){
+
+      DrawMagration_heatMap(hist, xaxislabel, yaxislabel, Title, pdf,can, plot, true );
+      char TotalTitle_RowNorm_char_array[TotalTitle_RowNorm.length() + 1];
+      strcpy(TotalTitle_RowNorm_char_array, TotalTitle_RowNorm.c_str());
+      DrawMagration_heatMap(histrownom, xaxislabel, yaxislabel, TotalTitle_RowNorm_char_array, pdf,can, plot, true );
+
+      char TotalTitle_ColNorm_char_array[TotalTitle_ColNorm.length() + 1];
+      strcpy(TotalTitle_ColNorm_char_array, TotalTitle_ColNorm.c_str());
+      DrawMagration_heatMap(histrowcol, xaxislabel, yaxislabel, TotalTitle_ColNorm_char_array, pdf,can, plot, true );
+    }
+
+    can->Closed();
+
+
+  }//end of 2D draw function
+
+
+
+
+
+
+
+
+
+
+
 
 void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
   const char* pdf, TCanvas *can, MnvPlotter *plot){
@@ -2956,7 +3258,7 @@ void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const ch
       char hist_Title[1024];
       MnvH2D *hist = (PlotUtils::MnvH2D*)hist_input->Clone("hist");
       std::map<double, MnvH1D*> hist_CutMap;
-      std::vector<GaussianResolutionFits> GaussianFits_values_Resolution_vector;
+      std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector;
 
       string TotalTitle = string(Title);
       int NXbins = hist->GetNbinsX();
@@ -2986,7 +3288,7 @@ void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const ch
           pdf,  Setgrid , sigma_return , TotalN_return, chi_sq_return, NDF_return,
           Mean_return,  Constant_return , printerrors, PrintAllgroups); // need no pdf format
 
-          GaussianResolutionFits Fits;
+          GaussianFitsParms Fits;
 
            Fits.CutValue=Hist_index.first;
            Fits.TotalN=TotalN_return;
@@ -3011,6 +3313,111 @@ void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const ch
 
 
     }//end of Function
+
+
+    void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_input_total, MnvH2D *hist_input_Helium,
+      MnvH2D *hist_input_NonHelium, const char *Title, const char* xaxislabel,const char* yaxislabel,
+      const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY , bool LogX, bool LogY ){
+
+        char hist_Title[1024];
+        MnvH2D *hist_helium = (PlotUtils::MnvH2D*)hist_input_Helium->Clone("hist_helium");
+        std::map<double, MnvH1D*> hist_CutMap_helium;
+        std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_helium;
+
+        MnvH2D *hist_nonhelium = (PlotUtils::MnvH2D*)hist_input_NonHelium->Clone("hist_nonhelium");
+        std::map<double, MnvH1D*> hist_CutMap_nonhelium;
+        std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_nonhelium;
+
+        MnvH2D *hist_total = (PlotUtils::MnvH2D*)hist_input_total->Clone("hist_total");
+        std::map<double, MnvH1D*> hist_CutMap_total;
+        std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_total;
+
+
+        string TotalTitle = string(Title);
+        int NXbins = hist_helium->GetNbinsX();
+
+        for(int i = 1 ; i < NXbins+1; ++i ){
+          /* Not include unflow and over flow bins*/
+          double CutValue = hist_helium->GetXaxis()-> GetBinUpEdge(i);
+          sprintf(hist_Title, "h_projection_HeliumCut_%i",(int)CutValue);
+          MnvH1D * h_projection = hist_helium->ProjectionY(hist_Title,i,i,"");
+          h_projection->SetMaximum(maxY);
+          hist_CutMap_helium.insert({CutValue, h_projection});
+        }
+
+        for(int i = 1 ; i< NXbins+1; ++i ){
+          /* Not include unflow and over flow bins*/
+          double CutValue = hist_nonhelium->GetXaxis()-> GetBinUpEdge(i);
+          sprintf(hist_Title, "h_projection_nonHeliumCut_%i",(int)CutValue);
+          MnvH1D * h_projection = hist_nonhelium->ProjectionY(hist_Title,i,i,"");
+          h_projection->SetMaximum(maxY);
+          hist_CutMap_nonhelium.insert({CutValue, h_projection});
+        }
+
+        for(int i = 1 ; i< NXbins+1; ++i ){
+          /* Not include unflow and over flow bins*/
+          double CutValue = hist_total->GetXaxis()-> GetBinUpEdge(i);
+          sprintf(hist_Title, "h_projection_totalCut_%i",(int)CutValue);
+          MnvH1D * h_projection = hist_total->ProjectionY(hist_Title,i,i,"");
+          h_projection->SetMaximum(maxY);
+          hist_CutMap_total.insert({CutValue, h_projection});
+        }
+
+        std::string xaxislabel_string(xaxislabel);
+        std::string yaxislabel_string(yaxislabel);
+
+        bool printerrors= false; bool PrintAllgroups = false;
+
+        std::map<double, MnvH1D*>::iterator it_helium;
+        std::map<double, MnvH1D*>::iterator it_nonhelium;
+        std::map<double, MnvH1D*>::iterator it_total;
+
+
+        //for(const auto Hist_index :hist_CutMap_helium ){
+
+        for(it_helium = hist_CutMap_helium.begin(),it_nonhelium = hist_CutMap_nonhelium.begin(), it_total =hist_CutMap_total.begin()  ;it_helium != hist_CutMap_helium.end(); ++it_helium, ++it_nonhelium , ++it_total){
+
+          GaussianFitsParms FitsHelium;
+          GaussianFitsParms FitsnonHelium;
+          GaussianFitsParms FitsTotal;
+
+          sprintf(hist_Title , "%s [Fiducial Cut to Edge %.1f]",Title , it_helium->first);
+          DrawCVAndError_From2HIST_withFit(it_total->second, it_helium->second, it_nonhelium->second, hist_Title ,xaxislabel_string,yaxislabel_string,
+            pdf,  Setgrid ,  FitsTotal , FitsHelium, FitsnonHelium,printerrors, PrintAllgroups); // need no pdf format
+
+
+             FitsHelium.CutValue=it_helium->first;
+             FitsnonHelium.CutValue=it_nonhelium->first;
+             FitsTotal.CutValue=it_nonhelium->first;
+
+             GaussianFits_values_Resolution_vector_helium.push_back(FitsHelium);
+             GaussianFits_values_Resolution_vector_nonhelium.push_back(FitsnonHelium);
+             GaussianFits_values_Resolution_vector_total.push_back(FitsTotal);
+
+
+        }
+
+        char pdf_withTag[1024];
+        sprintf(pdf_withTag, "%s.pdf", pdf);
+
+        Draw_TGraphs_fitParams(GaussianFits_values_Resolution_vector_helium,
+           GaussianFits_values_Resolution_vector_nonhelium,
+           GaussianFits_values_Resolution_vector_total, pdf_withTag, "GaussianFits", can, plot);
+
+           if (LogX==true || LogY == true ){
+             Draw_TGraphs_fitParams(GaussianFits_values_Resolution_vector_helium,
+               GaussianFits_values_Resolution_vector_nonhelium,
+               GaussianFits_values_Resolution_vector_total, pdf_withTag, "GaussianFits", can, plot, LogX, LogY);
+             }
+
+
+
+        can->Closed();
+
+
+      }//end of Function
+
+
 
 
         void Draw2DHist_NumberFigures_TFILE(TFile *inputFile, const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
@@ -3042,7 +3449,8 @@ void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const ch
 
 
 
-void DrawMagration_heatMap(TH2D *h_migration, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter )
+void DrawMagration_heatMap(TH2D *h_migration, const char* xaxislabel,const char* yaxislabel,
+   const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter , bool includeFlows  )
 {
 
   //std::vector<double> Binning_vector = DetermineBinning(h_migration, .5);
@@ -3052,7 +3460,7 @@ void DrawMagration_heatMap(TH2D *h_migration, const char* xaxislabel,const char*
   //std::cout << *ibin << ",";
   //std::cout << " };" << std::endl;
 
-  bool includeFlows = true;
+  //bool includeFlows = true;
 
   int first_bin = includeFlows ? 0 : 1;
   int last_bin_x = includeFlows ? h_migration->GetNbinsX()+1 : h_migration->GetNbinsX();
@@ -3119,7 +3527,8 @@ void DrawMagration_heatMap(TH2D *h_migration, const char* xaxislabel,const char*
 
 
 
-void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter )
+void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
+  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, bool includeFlows )
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -3130,7 +3539,7 @@ void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yax
   //std::cout << *ibin << ",";
   //std::cout << " };" << std::endl;
 
-  bool includeFlows =false;
+//  bool includeFlows =false;
 
   int first_bin = includeFlows ? 0 : 1;
   int last_bin_x = includeFlows ? h_migration->GetNbinsX()+1 : h_migration->GetNbinsX();
@@ -3202,7 +3611,8 @@ void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yax
 }//end of function
 //////////////////////////////////////////////////
 
-void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter )
+void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel, const char* yaxislabel,
+   const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, bool includeFlows )
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -3213,7 +3623,7 @@ void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel,const ch
   //std::cout << *ibin << ",";
   //std::cout << " };" << std::endl;
 
-  bool includeFlows =false;
+  //bool includeFlows =false;
 
   int first_bin = includeFlows ? 0 : 1;
   int last_bin_x = includeFlows ? h_migration->GetNbinsX()+1 : h_migration->GetNbinsX();
@@ -3281,6 +3691,11 @@ void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel,const ch
   plotter->AddHistoTitle(Title, .04);
   can->Print(pdf);
 }//end of function
+/////////////////////////////////////////////////
+///
+////////////////////////////////////////////////
+
+
 
 //////////////////////////////////////////////////
 /////
@@ -4892,6 +5307,7 @@ void DrawSTACKfromHistFilio_FromTFileNoData(TFile *inputFile_MCFULL, TFile *inpu
       if(SetMaximum==true){
         mnvPlotter.axis_maximum= Maximum_group;
         mnvPlotter.axis_maximum_group = Maximum_group;}
+
       mnvPlotter.DrawStackedMC(&FULL_EMPTY_MC_Stack_array, 1.0, "TR", -1, -1,
       1001, xaxislabel.c_str(), ytitle);
     }
@@ -9029,6 +9445,30 @@ return gr;
 
 }//end of function
 
+TGraphErrors  *MakeTGraph_from_VectorsErrors(std::vector<double> Y_para, std::vector<double> y_para_errors, std::vector<double> X_para)
+{
+
+  if(Y_para.size() != X_para.size() || Y_para.size() != y_para_errors.size()) {std::cout<<"Oops X and Y Bins are different sizes can't make TGraph"<< " | Y_para.size() = " << Y_para.size() << "  | X_para.size() = "<< X_para.size()<<std::endl; assert(false);  }
+
+  double x[X_para.size()];
+  double y[Y_para.size()];
+  double ey[y_para_errors.size()];
+  int n= X_para.size();
+
+  for(unsigned int i=0; i<n;++i){
+    x[i]=X_para.at(i);
+    y[i]=Y_para.at(i);
+    ey[i]= y_para_errors.at(i);
+
+  }
+
+
+
+TGraphErrors *gr = new TGraphErrors(n,x,y,0,ey);
+
+return gr;
+
+}//end of function
 
 void Draw_TGraph_fit(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel)
 {
@@ -9080,40 +9520,128 @@ void Draw_TGraph_fit(TFile *inputFile_MCinput,  char *histoName_MC, std::string 
 
 }
 
-void Draw_TGraphs_fitParams(std::vector<GaussianResolutionFits> GaussianFits_values_Resolution_vector,  const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter)
+void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector,
+    const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog)
 {
 
   std::string TotalTitle = string(histotitle);
   std::vector<double> X_axis_CutValue;
   std::vector<double> Y_axis_TotalN;
   std::vector<double> Y_axis_Sigma;
+  std::vector<double> Y_axis_Sigma_Error;
   std::vector<double> Y_axis_Mean;
+  std::vector<double> Y_axis_Mean_Error;
 
 
   for(auto fit_params : GaussianFits_values_Resolution_vector){
     X_axis_CutValue.push_back(fit_params.CutValue);
     Y_axis_TotalN.push_back(fit_params.TotalN);
     Y_axis_Sigma.push_back(fit_params.Sigma);
+    Y_axis_Sigma_Error.push_back(fit_params.Sigma_Error);
     Y_axis_Mean.push_back(fit_params.Mean);
+    Y_axis_Mean_Error.push_back(fit_params.Mean_Error);
   }
 
     TGraphErrors  *TG_TotalN = MakeTGraph_from_Vectors(Y_axis_TotalN,  X_axis_CutValue);
-    TGraphErrors  *TG_Sigma = MakeTGraph_from_VectorsNoErrors(Y_axis_Sigma,  X_axis_CutValue);
-    TGraphErrors  *TG_Mean = MakeTGraph_from_VectorsNoErrors(Y_axis_Mean,  X_axis_CutValue);
+    TGraphErrors  *TG_Sigma = MakeTGraph_from_VectorsErrors(Y_axis_Sigma,Y_axis_Sigma_Error,  X_axis_CutValue);
+    TGraphErrors  *TG_Mean = MakeTGraph_from_VectorsErrors(Y_axis_Mean, Y_axis_Mean_Error,  X_axis_CutValue);
 
 // need pdf format
 
-    DrawTGraph(TG_TotalN,"Fiducial Cut to Edge [mm]","NEvnets", "NEvents Pass Fiducial Cut", "Nevents",pdf_label, cE, mnvPlotter, false, false );
+    DrawTGraph(TG_TotalN,"Fiducial Cut to Edge [mm]","NEvnets", "NEvents Pass Fiducial Cut", "Nevents",pdf_label, cE, mnvPlotter, Xlog, Ylog );
 
-    DrawTGraph(TG_Sigma,"Fiducial Cut to Edge [mm]","Sigma Gaussian Fits", "Change in #sigma Gaussian Fits Fiducial Cut", "#sigma",pdf_label, cE, mnvPlotter, false, false );
+    DrawTGraph(TG_Sigma,"Fiducial Cut to Edge [mm]","Sigma Gaussian Fits", "Change in #sigma Gaussian Fits Fiducial Cut", "#sigma",pdf_label, cE, mnvPlotter, Xlog, Ylog );
 
-    DrawTGraph(TG_Mean,"Fiducial Cut to Edge [mm]","Mean ", "Change in mean Gaussian Fits as Fiducial Cut", "mean",  pdf_label, cE, mnvPlotter, false, false );
+    DrawTGraph(TG_Mean,"Fiducial Cut to Edge [mm]","Mean ", "Change in mean Gaussian Fits as Fiducial Cut", "mean",  pdf_label, cE, mnvPlotter, Xlog, Ylog );
 
 
 
 }
 
+void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_helium,
+                          std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_nonhelium,
+                          std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_total,
+                          const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter,
+                         bool Xlog ,bool Ylog)
+{
 
+  std::string TotalTitle = string(histotitle);
+  std::vector<double> X_axis_CutValue_Helium;
+  std::vector<double> Y_axis_TotalN_Helium;
+  std::vector<double> Y_axis_Sigma_Helium;
+  std::vector<double> Y_axis_Sigma_Error_Helium;
+  std::vector<double> Y_axis_Mean_Helium;
+  std::vector<double> Y_axis_Mean_Error_Helium;
+
+  std::vector<double> X_axis_CutValue_nonHelium;
+  std::vector<double> Y_axis_TotalN_nonHelium;
+  std::vector<double> Y_axis_Sigma_nonHelium;
+  std::vector<double> Y_axis_Sigma_Error_nonHelium;
+  std::vector<double> Y_axis_Mean_nonHelium;
+  std::vector<double> Y_axis_Mean_Error_nonHelium;
+
+  std::vector<double> X_axis_CutValue_total;
+  std::vector<double> Y_axis_TotalN_total;
+  std::vector<double> Y_axis_Sigma_total;
+  std::vector<double> Y_axis_Sigma_Error_total;
+  std::vector<double> Y_axis_Mean_total;
+  std::vector<double> Y_axis_Mean_Error_total;
+
+
+
+  for(auto fit_params : GaussianFits_values_Resolution_vector_helium){
+    X_axis_CutValue_Helium.push_back(fit_params.CutValue);
+    Y_axis_TotalN_Helium.push_back(fit_params.TotalN);
+    Y_axis_Sigma_Helium.push_back(fit_params.Sigma);
+    Y_axis_Mean_Helium.push_back(fit_params.Mean);
+
+    Y_axis_Sigma_Error_Helium.push_back(fit_params.Sigma_Error);
+    Y_axis_Mean_Error_Helium.push_back(fit_params.Mean_Error);
+  }
+
+  for(auto fit_params : GaussianFits_values_Resolution_vector_nonhelium){
+    X_axis_CutValue_nonHelium.push_back(fit_params.CutValue);
+    Y_axis_TotalN_nonHelium.push_back(fit_params.TotalN);
+    Y_axis_Sigma_nonHelium.push_back(fit_params.Sigma);
+    Y_axis_Mean_nonHelium.push_back(fit_params.Mean);
+    Y_axis_Sigma_Error_nonHelium.push_back(fit_params.Sigma_Error);
+    Y_axis_Mean_Error_nonHelium.push_back(fit_params.Mean_Error);
+  }
+
+  for(auto fit_params : GaussianFits_values_Resolution_vector_total){
+    X_axis_CutValue_total.push_back(fit_params.CutValue);
+    Y_axis_TotalN_total.push_back(fit_params.TotalN);
+    Y_axis_Sigma_total.push_back(fit_params.Sigma);
+    Y_axis_Mean_total.push_back(fit_params.Mean);
+    Y_axis_Sigma_Error_total.push_back(fit_params.Sigma_Error);
+    Y_axis_Mean_Error_total.push_back(fit_params.Mean_Error);
+  }
+
+    TGraphErrors  *TG_TotalN_Helium = MakeTGraph_from_Vectors(Y_axis_TotalN_Helium,  X_axis_CutValue_Helium);
+    TGraphErrors  *TG_Sigma_Helium = MakeTGraph_from_VectorsErrors(Y_axis_Sigma_Helium, Y_axis_Sigma_Error_Helium,  X_axis_CutValue_Helium);
+    TGraphErrors  *TG_Mean_Helium = MakeTGraph_from_VectorsErrors(Y_axis_Mean_Helium, Y_axis_Mean_Error_Helium,  X_axis_CutValue_Helium);
+
+    TGraphErrors  *TG_TotalN_nonHelium = MakeTGraph_from_Vectors(Y_axis_TotalN_nonHelium,  X_axis_CutValue_nonHelium);
+    TGraphErrors  *TG_Sigma_nonHelium = MakeTGraph_from_VectorsErrors(Y_axis_Sigma_nonHelium, Y_axis_Sigma_Error_nonHelium,  X_axis_CutValue_nonHelium);
+    TGraphErrors  *TG_Mean_nonHelium = MakeTGraph_from_VectorsErrors(Y_axis_Mean_nonHelium,Y_axis_Mean_Error_nonHelium,  X_axis_CutValue_nonHelium);
+
+    TGraphErrors  *TG_TotalN_total = MakeTGraph_from_Vectors(Y_axis_TotalN_total,  X_axis_CutValue_total);
+    TGraphErrors  *TG_Sigma_total = MakeTGraph_from_VectorsErrors(Y_axis_Sigma_total, Y_axis_Sigma_Error_total,  X_axis_CutValue_total);
+    TGraphErrors  *TG_Mean_total = MakeTGraph_from_VectorsErrors(Y_axis_Mean_total,Y_axis_Mean_Error_total,  X_axis_CutValue_total);
+
+
+
+// need pdf format
+
+    DrawTGraph(TG_TotalN_total, TG_TotalN_Helium, TG_TotalN_nonHelium,  "Fiducial Cut to Edge [mm]","NEvnets", "NEvents Pass Fiducial Cut", " Nevents Total", "Nevents Helium", "Nevents nonHelium" ,pdf_label, cE, mnvPlotter, Xlog, Ylog );
+
+    DrawTGraph(TG_Sigma_total, TG_Sigma_Helium, TG_Sigma_nonHelium, "Fiducial Cut to Edge [mm]","Sigma Gaussian Fits", "Change in #sigma Gaussian Fits Fiducial Cut", "#sigma Total", "#sigma Helium","#sigma nonHelium",pdf_label, cE, mnvPlotter, Xlog, Ylog );
+
+    DrawTGraph(TG_Mean_total, TG_Mean_Helium, TG_Mean_nonHelium, "Fiducial Cut to Edge [mm]","Mean ", "Change in mean Gaussian Fits as Fiducial Cut", "#mu Helium" ,"#mu Helium","#mu nonHelium",  pdf_label, cE, mnvPlotter, Xlog, Ylog );
+
+
+
+}
 
 
 
@@ -10773,7 +11301,7 @@ void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, TGraphErrors *
    const char* Title,const char* legend_Title1, const char* legend_Title2, const char* legend_Title3,
    const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG ){
      double x1, x2, y1, y2;
-     TLegend *legend = new TLegend (0.80,0.73,0.95,.88);
+     TLegend *legend = new TLegend (0.70,0.73,0.90,.88);
      plot->DecodeLegendPosition(x1, y1, x2, y2, "R", 6.5, 6., .025);
 
      if(MakeXaxisLOG==true){
@@ -10782,6 +11310,18 @@ void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, TGraphErrors *
      if(MakeYaxisLOG==true){
        gPad->SetLogy();
      }
+     double SetMinY;
+     double SetMaxY;
+     if(g_TGraph1->GetMinimum()  >= g_TGraph2->GetMinimum()  && g_TGraph1->GetMinimum() >= g_TGraph3->GetMinimum()){SetMaxY = g_TGraph1->GetMaximum();}
+     else if (g_TGraph1->GetMaximum()  <= g_TGraph2->GetMaximum() && g_TGraph3->GetMaximum() <= g_TGraph2->GetMaximum()){SetMaxY = g_TGraph2->GetMaximum();}
+     else{SetMaxY = g_TGraph3->GetMaximum();}
+     g_TGraph1->SetMaximum(SetMaxY*1.2);
+
+
+     if(g_TGraph1->GetMinimum()  <= g_TGraph2->GetMinimum() && g_TGraph1->GetMinimum() <= g_TGraph3->GetMinimum()){SetMinY = g_TGraph1->GetMinimum();}
+     else if (g_TGraph2->GetMinimum()  <= g_TGraph1->GetMinimum() && g_TGraph2->GetMinimum() <= g_TGraph3->GetMinimum()){SetMinY = g_TGraph2->GetMinimum();}
+     else{SetMinY = g_TGraph3->GetMinimum();}
+     g_TGraph1->SetMaximum(SetMinY*.8);
 
      string TotalTitle = string(Title);
 
@@ -10795,14 +11335,16 @@ void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, TGraphErrors *
 
     g_TGraph1 -> SetLineColor(2);
     g_TGraph1 -> SetMarkerColor(2);
-    g_TGraph1->SetMarkerStyle(6);
-
+    g_TGraph1-> SetMarkerStyle(6);
+    g_TGraph1->SetMarkerSize(2);
     g_TGraph2 -> SetLineColor(4);
     g_TGraph2 -> SetMarkerColor(4);
-    g_TGraph2->SetMarkerStyle(6);
+    g_TGraph2-> SetMarkerStyle(6);
+    g_TGraph2->SetMarkerSize(2);
     g_TGraph3 -> SetLineColor(3);
     g_TGraph3 -> SetMarkerColor(3);
-    g_TGraph3->SetMarkerStyle(6);
+    g_TGraph3-> SetMarkerStyle(6);
+    g_TGraph3->SetMarkerSize(2);
    //TCanvas *optcan = new TCanvas("optcan");
    g_TGraph1 -> Draw("ALP");
    g_TGraph2 -> Draw("Same");

@@ -2435,7 +2435,7 @@ return  title_name;
       return bins_vec;
 
       case kR:
-      bins_vec = {  0.0, 50.0, 100.0, 150.0, 235.0, 350.0, 450.00, 500.0, 600.0, 700.0, 750.0};
+      bins_vec = { 0,25,50,75,100,125,150,175,200,225,250,275,300,325,350,375,400,425,450,475,500,525,550,575,600,625,650,675,700,725,750,775,800};
       return bins_vec;
 
       case kRR:
@@ -4142,7 +4142,7 @@ if(upstream_points.size() != downstream_points.size()){assert(false && "Size of 
 
 std::vector<double> output_vector; //mm
 
-for(unsigned int i = 0; i < upstream_points.size(); i++){
+for(unsigned int i = 0; i < upstream_points.size(); ++i){
   double distance = FindDistance( upstream_points.at(i), downstream_points.at(i) );
 output_vector.push_back(distance);
 }
@@ -4388,7 +4388,7 @@ std::vector<parameterizationEquation_params_bare> MakeParameterize_bare_linePara
 std::vector<parameterizationEquation_params_bare> return_vector;
 
 for(auto cat : EndPoints){
-  double a = cat.x - VertexP.x;
+  double a = cat.x - VertexP.x; // (Final - Intial) Postion
   double b = cat.y - VertexP.y;
   double c = cat.z - VertexP.z;
 
@@ -4400,12 +4400,12 @@ for(auto cat : EndPoints){
 }
 
 
-std::vector<double> FindVector_TforParameterizeLinesAtZ(std::vector<parameterizationEquation_params_bare> Input_vector , double ZPoint_start){
-  std::vector<double> t_vector;
-  for(auto cat : Input_vector){
-    double t = (ZPoint_start - cat.Zo) / cat.c;
+std::vector<double> FindVector_TforParameterizeLinesAtZ(std::vector<parameterizationEquation_params_bare> Input_vector,
+   double ZPoint_start){
+     std::vector<double> t_vector;
+     for(auto cat : Input_vector){
+       double t = (ZPoint_start - cat.Zo) / cat.c;
     t_vector.push_back(t);
-
   }
   return t_vector;
 
@@ -4419,7 +4419,7 @@ std::vector<Vertex_XYZ> GetTrueMinervaStartPostion(std::vector<parameterizationE
   //std::vector<parameterizationEquation_params_bare>::iterator it_params;
   //std::vector<double>::iterator it_t;
   //for(it_params = InputPara_vector.begin(), it_t = t_vector.begin(); it_params != InputPara_vector.end(); ++it_params, ++it_t ){
-for(unsigned int i = 0; i < InputPara_vector.size(); i++){
+for(unsigned int i = 0; i < t_vector.size(); ++i){
     double x =  InputPara_vector.at(i).Xo +  t_vector.at(i) * InputPara_vector.at(i).a;
     double y =  InputPara_vector.at(i).Yo +  t_vector.at(i) * InputPara_vector.at(i).b;
     Vertex_XYZ vertex_start_node{x,y, ZPoint_start};

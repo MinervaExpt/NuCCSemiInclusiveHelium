@@ -319,6 +319,14 @@ virtual std::vector <double> GETvector_Energy_mc_FS_particles_MeVtoGeV()const;
 virtual std::vector <double> FromTRUTH_branch_GetVector_lastNode_X() const;
 virtual std::vector <double> FromTRUTH_branch_GetVector_lastNode_Y() const;
 virtual std::vector <double> FromTRUTH_branch_GetVector_lastNode_Z() const;
+virtual std::vector <double> FromTRUTH_branch_GetVector_ALLTrajectors_FullPathlenght() const;
+
+virtual std::vector <int>    FromTRUTH_branch_GetVector_ALLTrajectors_PDG() const;
+virtual std::vector <double> FromTRUTH_branch_GetVector_ALLTrajectors_ColumnarDensity() const;
+virtual std::vector <double> FromTRUTH_branch_GetVector_ALLTrajectors_KE() const;
+virtual std::vector <double> FromTRUTH_branch_GetVector_ALLTrajectors_Angles() const;
+
+
 
 virtual std::vector <Vertex_XYZ> Construct_EndPointvector_ForTRUE_FS_particle ()const;
 

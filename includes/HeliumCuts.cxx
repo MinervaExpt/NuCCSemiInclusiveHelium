@@ -266,6 +266,9 @@ bool  PassesTRUTH(const HeliumCVUniverse& univ, ECutsTRUTH cut) {
     case kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds:
     return TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_WITHProtonAndPion_thresholds(univ);
 
+    case kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds:
+    return TRUTH_Is2ndTrk_No_Neutral_WITHProtonAndPion_thresholds(univ);
+
     case  kTRUTH_2ndTrkEnergythreshold:
     return Truth_hardonCut_Threshold_Energy( univ);
 
@@ -431,11 +434,44 @@ bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_WITHProtonAndPion_threshol
   std::vector<double> Energy_trklist   = univ.GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject_forCUTs);
 
   if(PDG_trklist.size()==0) return false;
-  for(unsigned int i = 1; i < PDG_trklist.size(); i++ ){
+  for(unsigned int i = 1; i < PDG_trklist.size(); ++i ){
     double TrueHardonangle_wrtb = Angle_trklist.at(i);
 
     if (TrueHardonangle_wrtb < Max_deg &&
         Helium_PDG::pdg_Pi0 != PDG_trklist.at(i) &&
+        Helium_PDG::pdg_neutron != PDG_trklist.at(i) &&
+        Helium_PDG::pdg_antineutron!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Genie_bindingE!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Sigma0!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_antiSigma0!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Nu_e!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Nu_mu!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Lambda0!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_antiLambda0 != PDG_trklist.at(i)  &&
+        Helium_PDG::pdg_Photon != PDG_trklist.at(i) )
+        {
+
+          if(PDG_trklist.at(i)== Helium_PDG::pdg_Proton && Energy_trklist.at(i) > Proton_Energy ){return true;}
+          else if((PDG_trklist.at(i) == Helium_PDG::pdg_Pion_pos || PDG_trklist.at(i) == Helium_PDG::pdg_Pion_neg) && Energy_trklist.at(i) > Pion_Energy){return true;}
+          else if(PDG_trklist.at(i) != Helium_PDG::pdg_Pion_pos &&  PDG_trklist.at(i) != Helium_PDG::pdg_Pion_neg && PDG_trklist.at(i) != Helium_PDG::pdg_Proton){return true;}
+
+        }
+
+  }
+
+  return false;
+}
+///////////////////
+
+bool  TRUTH_Is2ndTrk_No_Neutral_WITHProtonAndPion_thresholds(const HeliumCVUniverse& univ, double Pion_Energy , double Proton_Energy){
+
+  std::vector<int> PDG_trklist = univ.GETvector_PDG_FS_particles();
+  std::vector<double> Energy_trklist   = univ.GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject_forCUTs);
+
+  if(PDG_trklist.size()==0) return false;
+
+  for(unsigned int i = 1; i < PDG_trklist.size(); ++i ){
+    if (Helium_PDG::pdg_Pi0 != PDG_trklist.at(i) &&
         Helium_PDG::pdg_neutron != PDG_trklist.at(i) &&
         Helium_PDG::pdg_antineutron!= PDG_trklist.at(i) &&
         Helium_PDG::pdg_Genie_bindingE!= PDG_trklist.at(i) &&
@@ -463,8 +499,7 @@ bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_WITHProtonAndPion_threshol
 
 
 
-
-
+//////////////////////
     bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_leading2ndTrk(const HeliumCVUniverse& univ, double Max_deg){
       std::vector<int> PDG_trklist = univ.GETvector_PDG_FS_particles();
       std::vector <double> Angle_trklist = univ.GETvector_theta_wrtb_FS_particles();
@@ -1311,8 +1346,10 @@ std::string  GetCutNameTRUTH(ECutsTRUTH cut) {
     return "No Neutral Particle and angle Threshold";
 
     case kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds:
-    return "No Neutral Particle, angle Threshold , threshold KE on Proton and Pions";
+    return "No Neutral Particle, angle Threshold, threshold KE on Proton, charged Pions, and diMuon";
 
+    case kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds:
+    return "No Neutral Particle and threshold KE on Proton, Charged Pions and dimuon";
 
     case kAllTRUTHCuts:
     return "All True Cuts applied";
@@ -1379,8 +1416,10 @@ std::string  GetCutNameLatexTRUTH(ECutsTRUTH cut) {
     return "At least one Non Neutral Recoil Particle with $\\theta_{wrtb}$ $<$ 60 [Deg] ";
 
     case kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds:
-    return "No Neutral Particle, angle Threshold , threshold KE on Proton and Pions";
+    return "No Neutral Particle, angle Threshold [60 Deg] , threshold KE on Proton 105[MeV]and Pions 60[MeV]";
 
+    case kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds:
+    return "No Neutral Particle and threshold KE on Proton 105[MeV], Charged Pions 60[MeV] and dimuon 60[MeV]";
 
     case kAllTRUTHCuts:
     return "All True Cuts applied";
@@ -1452,6 +1491,8 @@ std::string  GetCutNameLatexforRootTRUTH(ECutsTRUTH cut) {
     case kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds:
     return "No Neutral Particle, angle Threshold , threshold KE on Proton and Pions";
 
+    case kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds:
+    return "No Neutral Particle and threshold KE on Proton 105[MeV], Charged Pions 60[MeV] and dimuon 60[MeV]";
 
     case kAllTRUTHCuts:
     return "All True Cuts applied";

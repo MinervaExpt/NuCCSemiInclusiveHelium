@@ -21,6 +21,7 @@
 #include "plot.h"
 #include "myPlotStyle.h"
 #include <TProfile.h>
+#include "TObjArray.h"
 //#include "TF1Convolution.h" gvm root verson 5 doesn't have these functions
 
 //#include "PlotUtils/MnvApplication.h"
@@ -110,7 +111,11 @@ void DrawStack_secTrk_Particle_FUll_EMPTY_WITHDATA(bool my_debug, TFile *inputFi
 void Draw2DHist(MnvH2D *hist,   const char* xaxislabel,const char* yaxislabel,const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plot);
 
 
-void Draw2DHist_TFILE(TFile *inputFile, const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel, const char* pdf, TCanvas *can, MnvPlotter *plot,  bool PrintText= true);
+void Draw2DHist_TFILE(TFile *inputFile, const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
+  const char* pdf, TCanvas *can, MnvPlotter *plot,  bool PrintText= true);
+
+void Draw2DHist_Migration_TFILE(TFile *inputFile, const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
+  const char* pdf, TCanvas *can, MnvPlotter *plot, bool PrintText);
 
 void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
   const char* pdf, TCanvas *can, MnvPlotter *plot);
@@ -120,9 +125,9 @@ void DrawStack_Vertex_Material_FUll_EMPTY_WITHDATA(bool my_debug, TFile *inputFi
                                                    Pot_MapList POT_MC ,Pot_MapList POT_DATA ,CryoVertex CryroVertex_type,ME_helium_Playlists PlayListFULL , ME_helium_Playlists PlayListEmpty,int doShape,
                                                    int logScale, std::string Hist_name_addON, MnvPlotter *plot, TCanvas *can, const char *pdf);
 
-void DrawMagration_heatMap(TH2D *h_migration, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter );
-void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter ); // overloading function
-void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter );
+void DrawMagration_heatMap(TH2D *h_migration, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter , bool includeFlows= false );
+void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter , bool includeFlows= false ); // overloading function
+void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel, const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter , bool includeFlows= false );
 void Draw2DHist_NumberFigures_TFILE(TFile *inputFile, const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
                const char* pdf, TCanvas *can, MnvPlotter *plot);
 
@@ -249,6 +254,7 @@ void Draw_TrackTypePieFigures(Hist_map_track Input_map,  const char* pdf, TCanva
 void Draw_MCHist_fromTFile(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm );
 TGraphErrors  *MakeTGraph_from_Mvn1HD(TFile *inputFile_MCinput,  char *histoName_MC);
 TGraphErrors  *MakeTGraph_from_Vectors(std::vector<double> Y_para,  std::vector<double> X_para);
+TGraphErrors  *MakeTGraph_from_VectorsErrors(std::vector<double> Y_para, std::vector<double> y_para_errors, std::vector<double> X_para);
 TGraphErrors  *MakeTGraph_from_VectorsNoErrors(std::vector<double> Y_para,  std::vector<double> X_para);
 void Draw_TGraph_fit(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel);
 void Draw_MCHist_fromTFile_andFIT(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel);
@@ -283,7 +289,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He 
 
 
 
-   void DrawFULLStatCOMBINED_CV_SystematicErr(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_scalerMap,
+void DrawFULLStatCOMBINED_CV_SystematicErr(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_scalerMap,
                                        ME_playlist_TFileMAP EmptyMCMap,     Pot_MapList EmptyMC_scalerMap,
                                        ME_playlist_TFileMAP FullDataMap, Pot_MapList FullData_scalerMap,
                                        ME_playlist_TFileMAP EmptyDataMap, Pot_MapList EmptyData_scalerMap,
@@ -291,7 +297,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He 
       char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, bool DrawallErrorGroups=true
     );
 
-   void DrawSTACKfromHistFilio_FULLStats(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_scalerMap,
+void DrawSTACKfromHistFilio_FULLStats(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_scalerMap,
                                         ME_playlist_TFileMAP EmptyMCMap,     Pot_MapList EmptyMC_scalerMap,
                                         ME_playlist_TFileMAP FullDataMap, Pot_MapList FullData_scalerMap,
                                         ME_playlist_TFileMAP EmptyDataMap, Pot_MapList EmptyData_scalerMap,
@@ -299,7 +305,7 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He 
      std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug );
 
 
-     void DrawSTACKfromHistFilio_FULLStatsCOMBINED(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_scalerMap,
+void DrawSTACKfromHistFilio_FULLStatsCOMBINED(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_scalerMap,
                                           ME_playlist_TFileMAP EmptyMCMap,     Pot_MapList EmptyMC_scalerMap,
                                           ME_playlist_TFileMAP FullDataMap, Pot_MapList FullData_scalerMap,
                                           ME_playlist_TFileMAP EmptyDataMap, Pot_MapList EmptyData_scalerMap,
@@ -327,7 +333,14 @@ void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, const char* xa
 void DrawTGraph(TGraphErrors *g_TGraph, const char* xaxislabel,const char* yaxislabel, const char* Title,const char* legend_Title,
         const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG );
 
-void Draw_TGraphs_fitParams(std::vector<GaussianResolutionFits> GaussianFits_values_Resolution_vector, const char* pdf_label, char *histotitle,TCanvas *cE, MnvPlotter *mnvPlotter);
+void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector,
+  const char* pdf_label, char *histotitle,TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog = false ,bool Ylog=false);
+
+void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_helium,
+                          std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_nonhelium,
+                          std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_total,
+                          const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter,
+                         bool Xlog=false ,bool Ylog=false);
 
 std::vector<Track_Map> Track_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler);
 std::vector<boolNTrack_Map> boolNTrack_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler);
@@ -340,5 +353,20 @@ void DrawSTACK_FORDATAONLY_fromHistFilio_FromTFile( TFile *inputFile_DATAFULL,TF
 
 void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
       const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY);
+
+void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_total, MnvH2D *hist_input_Helium, MnvH2D *hist_input_NonHelium, const char *Title, const char* xaxislabel,const char* yaxislabel,
+        const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY , bool LogX=false, bool LogY=false  );
+
+
+  void FillFitParms(TF1 *gfit, GaussianFitsParms &FitParms );
+
+void   DrawCVAndError_From2HIST_withFit(MnvH1D *hist_total, MnvH1D *histHelium, MnvH1D *histnonHelium,
+                                       char *histotitle ,std::string xaxislabel,std::string yaxislabel,
+                                       std::string pdf_name, bool Setgrid ,
+                                       GaussianFitsParms &total_FitParms,
+                                       GaussianFitsParms &helium_FitParms ,
+                                       GaussianFitsParms &nonhelium_FitParms, 
+  bool PrintErrors , bool PrintallErrorGroups, bool BinWidthNorm=false );
+
 
 #endif

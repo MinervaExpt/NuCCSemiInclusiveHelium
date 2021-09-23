@@ -10,13 +10,14 @@ std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_MC_EventSection
 //=====================================================
 // Cuts applying Functions and Weights
 //=====================================================
+std::vector<ECuts> GetVectorRECOCuts_ALL();
 std::vector<ECuts> GetRECOCutsFor_2ndTrkEnergyVector();
 std::vector<ECuts> GetVectorRECOCuts_MuonEnergy_Eff();
 std::vector<ECuts> GetRECOCutsFor2ndTrkAngleVector();
 std::vector<ECuts> GetRECOCutsFor2ndTrkAngle_noFidiucalVector();
 std::vector<ECuts> GetVectorRECOCuts_MuonTheta_Eff();
 std::vector<ECuts> GetVectorRECOCutsFidicual_Eff();
-std::vector<ECutsTRUTH> GetTRUTHCutsVector();
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_ALL();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_Energy();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkAngle();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy();
@@ -24,7 +25,7 @@ std::vector<ECutsTRUTH> GetTRUTH_ThetaMuCutsVector();
 std::vector<ECutsTRUTH> GetTRUTH_FidiucalMuCutsVector();
 std::vector<MuonVar> GetMUONVaribles();
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector();
-std::vector<CryoVertex> GetCryoVertexVaribles();
+
 
 std::vector<Particle_type>  GetParicle_type();
 std::vector<Weights> GetWeightVector();
@@ -275,6 +276,8 @@ void runEventLoop(bool &m_debugOn, ME_helium_Playlists &PlayList_iterator, bool 
 int Study_cap=40;
 int Study_count=0;
 double POT[4];
+const std::vector<ECuts> kCutsVector_ALL = GetVectorRECOCuts_ALL();
+
 const std::vector<ECuts> kCutsVector_MuonEnergy = GetVectorRECOCuts_MuonEnergy_Eff();
 const std::vector<ECuts> kCutsVector_2ndtrkAngle = GetRECOCutsFor2ndTrkAngleVector();
 const std::vector<ECuts> kCutsVector_2ndtrkAngle_noFidiucal = GetRECOCutsFor2ndTrkAngle_noFidiucalVector();
@@ -283,7 +286,7 @@ const std::vector<ECuts> kCutsVector_MuonThetaEff = GetVectorRECOCuts_MuonTheta_
 const std::vector<ECuts> kCutsVector_FiduicalEff = GetVectorRECOCutsFidicual_Eff();
 
 
-
+const std::vector<ECutsTRUTH> kTRUTHCutsVector_ALL =  GetTRUTHCutsVector_ALL();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_MuonEnergy =  GetTRUTHCutsVector_Energy();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_MuonTheta = GetTRUTH_ThetaMuCutsVector();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_Fiduical = GetTRUTH_FidiucalMuCutsVector();
@@ -301,7 +304,6 @@ const std::vector<Weights> kWeights_forMK = GetWeightVector_mk();
 const std::vector<MuonVar> kMuonVaribles_vector = GetMUONVaribles();
 const std::vector<SecondTrkVar> ksecTrkVaribles_vector = GetPlayListSecondTrkVector();
 
-const std::vector<CryoVertex> kCryoVertexVaribles_vector = GetCryoVertexVaribles();
 EventPlaylist_RecoCount EventCountMap;
 
 const std::vector<Particle_type> kSecondary_particle_vector = GetParicle_type();
@@ -330,7 +332,6 @@ bool is_mc= true;
   std::string playlist = GetPlaylist(PlayList_iterator);
 
   MinervaUniverse::SetPlaylist(playlist);
-  //MinervaUniverse::Set_Multiple_resetPlaylist(true);
   int otherlongtrack=0;
   //lotUtils::MnvH1D* h_Flux = nullptr;
   int nu_pdg = MinervaUniverse::GetAnalysisNuPDG();
@@ -376,10 +377,6 @@ std::cout << "POT of this Playlist = "<< mcPOT <<std::endl;
 
 //MinervaUniverse::SetNFluxUniverses(25);
 POTCounter pot_counter;
-
-
-//MinervaUniverse::SetPlaylist_AGAIN(playlist);
-
 
 const std::string RootName = GetPlaylist_ROOT_path(PlayList_iterator, is_mc );
 //const std::string RootName = GetPlaylist_ROOT_path("1G_MC_vertexweightto10mm",  is_mc );
@@ -539,9 +536,6 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonTheta_TRUE_RECO("h_MuonTheta_TRUE
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPhi_TRUE_RECO("h_MuonPhi_TRUE_RECO", "Muon Phi [Deg]",  AnglePhi_vector , error_bands);
 
 
-//////////////////////////////////////
-/////////////Minos/////////////////
-//////////////////////////////////
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_tracklength_TRUE_RECO("h_secTrk_tracklength_TRUE_RECO", "Recoil track length  [cm] ", Recoil_track_length_vector , error_bands);
 
 
@@ -552,10 +546,6 @@ std::vector<double> bigAngle_bins{0.0, 15.0, 30.0, 45.0, 60.0};
 std::vector<double> bigAngle_bins_finner{0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 45.0, 60.0};
 //MnvH2D *h_2d_2ndtrkLength_finerAngle    =    new MnvH2D("h_2d_2ndtrkLength_finerAngle", "h_2d_2ndtrkLength_finerAngle", Recoil_track_length_vector.size()-1, Recoil_track_length_vector.data(), bigAngle_bins_finner.size()-1, bigAngle_bins_finner.data());
 
-
-
-/////////////////////////////////////
-//
 
 
 ////////////////
@@ -805,7 +795,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_resolutionR_
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_resolutionR_fidiucal_100_RECO_Particle", Vertex_resolution_Rbin_vector ,"h_CryoVertex_resolutionR_RECO_Particle; [mm];Events");
 
 //std::vector<double> CutTOSurface{200,190,180,170,160,150,140,130,120,110,100,90,80,70,60,50,40,30,20,10,0};
-std::vector<double> CutToSurface_bins{-200,-190,-180,-170,-160,-150,-140,-130,-120,-110,-100,-90,-80,-70,-60,-50,-40,-30,-20,-10,0.0,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200};
+std::vector<double> CutToSurface_bins{-350,-300,-290,-280,-270,-260,-250,-240,-230,-220,-210,-200,-190,-180,-170,-160,-150,-140,-130,-120,-110,-100,-90,-80,-70,-60,-50,-40,-30,-20,-10,0.0,20,30,40,50,60,70,80,90,100,110,120,130,140,150};
 
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_resolutionR_FidiucalCut("h_resolutionR_FidiucalCut", "h_resolutionR_FidiucalCut",  CutToSurface_bins ,  Vertex_resolution_Rbin_vector, error_bands);
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_resolutionZ_FidiucalCut("h_resolutionZ_FidiucalCut", "h_resolutionZ_FidiucalCut",  CutToSurface_bins , Vertex_resolution_Zbin_vector, error_bands);
@@ -822,6 +812,40 @@ MnvH2D *h_resolutionZ_FidiucalCut_helium         =     new MnvH2D("h_resolutionZ
 
 MnvH2D *h_resolutionR_FidiucalCut_nonhelium          =    new MnvH2D("h_resolutionR_FidiucalCut_nonhelium", "h_resolutionR_FidiucalCut_nonhelium",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
 MnvH2D *h_resolutionZ_FidiucalCut_nonhelium         =     new MnvH2D("h_resolutionZ_FidiucalCut_nonhelium", "h_resolutionZ_FidiucalCut_nonhelium",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
+//////
+///TRUE + RECO Cuts
+////////
+
+
+MnvH2D *h_resolutionX_TRUE_RECO_FidiucalCut          =    new MnvH2D("h_resolutionX_TRUE_RECO_FidiucalCut", "h_resolutionX_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Xbin_vector.size()-1, Vertex_resolution_Xbin_vector.data()  );
+MnvH2D *h_resolutionY_TRUE_RECO_FidiucalCut          =    new MnvH2D("h_resolutionY_TRUE_RECO_FidiucalCut", "h_resolutionY_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Ybin_vector.size()-1, Vertex_resolution_Ybin_vector.data()  );
+
+MnvH2D *h_resolutionR_TRUE_RECO_FidiucalCut          =    new MnvH2D("h_resolutionR_TRUE_RECO_FidiucalCut", "h_resolutionR_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
+MnvH2D *h_resolutionZ_TRUE_RECO_FidiucalCut         =     new MnvH2D("h_resolutionZ_TRUE_RECO_FidiucalCut", "h_resolutionZ_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
+
+
+
+
+
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Particle_type> h_resolutionR_FidiucalCut_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Particle_type>(ParticleGroup_categories, "h_resolutionR_FidiucalCut_Particle",  CutToSurface_bins, Vertex_resolution_Rbin_vector ,"h_resolutionR_FidiucalCut_Particle");
+
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Material_type> h_resolutionR_FidiucalCut_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Material_type>(MaterialGroup_categories, "h_resolutionR_FidiucalCut_Material",  CutToSurface_bins , Vertex_resolution_Rbin_vector ,"h_resolutionR_FidiucalCut_Material");
+
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Interaction_type> h_resolutionR_FidiucalCut_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Interaction_type>(InteractionGroup_categories, "h_resolutionR_FidiucalCut_Interaction",  CutToSurface_bins , Vertex_resolution_Rbin_vector ,"h_resolutionR_FidiucalCut_Interaction");
+
+/////////////////////////////
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Particle_type> h_resolutionZ_FidiucalCut_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Particle_type>(ParticleGroup_categories, "h_resolutionZ_FidiucalCut_Particle",  CutToSurface_bins, Vertex_resolution_Zbin_vector ,"h_resolutionZ_FidiucalCut_Particle");
+
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Material_type> h_resolutionZ_FidiucalCut_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Material_type>(MaterialGroup_categories, "h_resolutionZ_FidiucalCut_Material",  CutToSurface_bins , Vertex_resolution_Zbin_vector ,"h_resolutionZ_FidiucalCut_Material");
+
+PlotUtils::HistFolio<PlotUtils::MnvH2D,Interaction_type> h_resolutionZ_FidiucalCut_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH2D, Interaction_type>(InteractionGroup_categories, "h_resolutionZ_FidiucalCut_Interaction",  CutToSurface_bins , Vertex_resolution_Zbin_vector ,"h_resolutionZ_FidiucalCut_Interaction");
+
 
 
   std::vector<Vertex_XYZ> FiducalCut_Neg200;
@@ -928,6 +952,21 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Energy_TRUE_RECO
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Energy_TRUE_RECO_Particle", Vertex_secondTrkEbin_Proton_vector ,"h_secTrk_Energy_TRUE_RECO_Particle; [GeV];Events");
 //h_secTrk_Energy_TRUE_RECO_Particle.ApplyColorPalette(Helium9_colorScheme);
 
+PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_DOCA_TRUE_RECO("h_secTrk_DOCA_TRUE_RECO", "h_secTrk DOCA NEW Method",  Vertex_secondTrkDOCA_bins , error_bands);
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_DOCA_TRUE_RECO_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_DOCA_TRUE_RECO_Material", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_RECO_Material; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_DOCA_TRUE_RECO_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_DOCA_TRUE_RECO_Interaction", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_RECO_Interaction; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_DOCA_TRUE_RECO_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_DOCA_TRUE_RECO_Particle", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_RECO_Particle; [mm];Events");
+
+
+
+
+
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION_TRUE_RECO("h_secTrk_Energy_PION_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION_TRUE_RECO("h_secTrk_Theta_PION_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
@@ -988,18 +1027,22 @@ MnvH2D *h_cryoVertex_R_2ndTrkE_TRUE_RECO        =    new MnvH2D("h_cryoVertex_R_
   RECO_Cut_Map CountMap_2ndTrkAngle_noFidiucal;
   FillingRecoCountingMap(kCutsVector_2ndtrkAngle_noFidiucal, CountMap_2ndTrkAngle_noFidiucal);
 
+  RECO_Cut_Map CountMap_ALL;
+  FillingRecoCountingMap(kCutsVector_ALL, CountMap_ALL);
+
   TRUE_Cut_Map Truth_Cut_Map_MuonEnergy;
   TRUE_Cut_Map Truth_Cut_Map_MuonTheta;
   TRUE_Cut_Map Truth_Cut_Map_Fiduical;
   TRUE_Cut_Map Truth_Cut_Map_2ndTrkEnergy;
   TRUE_Cut_Map Truth_Cut_Map_2ndTrkAngle;
-
+  TRUE_Cut_Map Truth_Cut_Map_ALL;
 
   FillingTruthCountingMap(kTRUTHCutsVector_MuonEnergy,   Truth_Cut_Map_MuonEnergy);
   FillingTruthCountingMap(kTRUTHCutsVector_MuonTheta,    Truth_Cut_Map_MuonTheta);
   FillingTruthCountingMap(kTRUTHCutsVector_Fiduical,     Truth_Cut_Map_Fiduical);
   FillingTruthCountingMap(kTRUTHCutsVector_2ndTrkEnergy, Truth_Cut_Map_2ndTrkEnergy);
   FillingTruthCountingMap(kTRUTHCutsVector_2ndTrkAngle,  Truth_Cut_Map_2ndTrkAngle);
+  FillingTruthCountingMap(kTRUTHCutsVector_ALL,  Truth_Cut_Map_ALL);
 
 
 
@@ -1148,6 +1191,13 @@ int PDG_match=0;
           double r_true= universe->GetTRUE_Vertex_r();
           double rr_true= universe->GetTRUE_Vertex_rr();
 
+          double resolutionX = x_true - x;
+          double resolutionY = y_true - y;
+          double resolutionZ = z_true - z;
+          double resolutionR = r_true - r;
+          double resolutionRR = rr_true - rr;
+
+
           h_CryoVertex_X_TRUE_RECO.univHist(universe)->Fill(x_true,wgt_minerva_v1);
 
           h_CryoVertex_Y_TRUE_RECO.univHist(universe)->Fill(y_true,wgt_minerva_v1);
@@ -1157,8 +1207,6 @@ int PDG_match=0;
           h_CryoVertex_R_TRUE_RECO.univHist(universe)->Fill(r_true,wgt_minerva_v1);
 
           h_CryoVertex_RR_TRUE_RECO.univHist(universe)->Fill(rr_true,wgt_minerva_v1);
-
-
 
           h_CryoVertex_recoX_TRUE_RECO.univHist(universe)->Fill(x,wgt_minerva_v1);
 
@@ -1171,18 +1219,17 @@ int PDG_match=0;
           h_CryoVertex_recoRR_TRUE_RECO.univHist(universe)->Fill(rr,wgt_minerva_v1);
 
 
-          h_CryoVertex_resolutionX_TRUE_RECO.univHist(universe)->Fill(x_true - x,wgt_minerva_v1);
-          h_CryoVertex_resolutionY_TRUE_RECO.univHist(universe)->Fill(y_true - y,wgt_minerva_v1);
-          h_CryoVertex_resolutionZ_TRUE_RECO.univHist(universe)->Fill(z_true - z,wgt_minerva_v1);
-          h_CryoVertex_resolutionR_TRUE_RECO.univHist(universe)->Fill(r_true - r,wgt_minerva_v1);
-          h_CryoVertex_resolutionRR_TRUE_RECO.univHist(universe)->Fill(rr_true - rr,wgt_minerva_v1);
+          h_CryoVertex_resolutionX_TRUE_RECO.univHist(universe)->Fill(resolutionX,wgt_minerva_v1);
+          h_CryoVertex_resolutionY_TRUE_RECO.univHist(universe)->Fill(resolutionY,wgt_minerva_v1);
+          h_CryoVertex_resolutionZ_TRUE_RECO.univHist(universe)->Fill(resolutionZ,wgt_minerva_v1);
+          h_CryoVertex_resolutionR_TRUE_RECO.univHist(universe)->Fill(resolutionR,wgt_minerva_v1);
+          h_CryoVertex_resolutionRR_TRUE_RECO.univHist(universe)->Fill(resolutionRR,wgt_minerva_v1);
 
-          h_CryoVertex_Percent_resolutionX_TRUE_RECO.univHist(universe)->Fill((x_true - x)/ x_true,wgt_minerva_v1);
-          h_CryoVertex_Percent_resolutionY_TRUE_RECO.univHist(universe)->Fill((y_true - y)/ y_true,wgt_minerva_v1);
-          h_CryoVertex_Percent_resolutionZ_TRUE_RECO.univHist(universe)->Fill((z_true - z)/ z_true,wgt_minerva_v1);
-          h_CryoVertex_Percent_resolutionR_TRUE_RECO.univHist(universe)->Fill((r_true - r)/ r_true,wgt_minerva_v1);
-          h_CryoVertex_Percent_resolutionRR_TRUE_RECO.univHist(universe)->Fill((rr_true - rr)/ rr_true,wgt_minerva_v1);
-
+          h_CryoVertex_Percent_resolutionX_TRUE_RECO.univHist(universe)->Fill(resolutionX/ x_true,wgt_minerva_v1);
+          h_CryoVertex_Percent_resolutionY_TRUE_RECO.univHist(universe)->Fill(resolutionY/ y_true,wgt_minerva_v1);
+          h_CryoVertex_Percent_resolutionZ_TRUE_RECO.univHist(universe)->Fill(resolutionZ/ z_true,wgt_minerva_v1);
+          h_CryoVertex_Percent_resolutionR_TRUE_RECO.univHist(universe)->Fill(resolutionR/ r_true,wgt_minerva_v1);
+          h_CryoVertex_Percent_resolutionRR_TRUE_RECO.univHist(universe)->Fill(resolutionRR/ rr_true,wgt_minerva_v1);
 
 
 
@@ -1223,10 +1270,22 @@ int PDG_match=0;
             h_CryoVertex_R_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
             h_CryoVertex_R_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
 
+            for(auto Fid_Cut:CutToSurface_bins ){
 
-          }
+              if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
 
+                h_resolutionX_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionX,  wgt_minerva_v1);
 
+                h_resolutionY_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionY,  wgt_minerva_v1);
+
+                h_resolutionR_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionR,  wgt_minerva_v1);
+
+                h_resolutionZ_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
+
+              } // end of Volume Cut
+          } // End of loop
+
+        } // ENd of CV
 
         }// END of Universe Groups
       }// END OF TRUTH + RECO CUTS
@@ -1255,7 +1314,7 @@ int PDG_match=0;
           double resolutionY = y_true - y;
           double resolutionZ = z_true - z;
           double resolutionR = r_true - r;
-          double resolutionRR = rr_true - r;
+          double resolutionRR = rr_true - rr;
 
           h_CryoVertex_resolutionX_RECO.univHist(universe)->Fill(resolutionX,wgt_minerva_v1);
           h_CryoVertex_resolutionY_RECO.univHist(universe)->Fill(resolutionY,wgt_minerva_v1);
@@ -1268,8 +1327,6 @@ int PDG_match=0;
           h_CryoVertex_Percent_resolutionZ_RECO.univHist(universe)->Fill(resolutionZ / z_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionR_RECO.univHist(universe)->Fill(resolutionR / r_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionRR_RECO.univHist(universe)->Fill(resolutionRR / rr_true,wgt_minerva_v1);
-
-
 
           if(isCV(*universe)){
             auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
@@ -1402,18 +1459,11 @@ int PDG_match=0;
                   h_CryoVertex_resolutionZ_fidiucal_100_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
                   h_CryoVertex_resolutionZ_fidiucal_100_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
                   h_CryoVertex_resolutionZ_fidiucal_100_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-
                 }
-
-
               } // end of fiduical cut
             }// end of loop
 
-
-
           } // end of CV
-
-
 
         }// END of Universe Groups
       }// END OF RECO CUTS
@@ -1586,6 +1636,56 @@ int PDG_match=0;
 
 
 
+    if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_ALL )){
+      // TRUTH ONLY Cuts
+      if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_ALL, kWeights_v1tune, CountMap_ALL ) ){
+        for (auto universe : Universe_GROUP){
+          universe->SetEntry(ii);
+
+          auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+          auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+          auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+          auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+          //int secondTrk = universe->Getindex2ndTrackhighestKE();
+
+
+          int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
+          if(secondTrk==-999)continue;
+
+          double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+          int secTrk_PDG = PDG_trklist.at(secondTrk);
+          Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
+          Interaction_type Interaction_type_Event =  Universe_GROUP.front()->Get_InteractionStackType();
+          Material_type Material_type_Event = Universe_GROUP.front()->Get_MaterialStackType();
+          double Pathlength2ndTrk = Universe_GROUP.front()->GetTRUE_nonMuoncolumnarDensity(secondTrk);
+          double DOCA_2ndTrk = Universe_GROUP.front()->GetTRUE_nonMuonDOCA(secondTrk);
+
+          h_secTrk_Pathlength_TRUE_RECO.univHist(universe)->Fill(Pathlength2ndTrk,wgt_minerva_v1);
+          if(Particle_type_Event==kSecondary_particle_vector[0]){
+            h_secTrk_Pathlength_PROTON_TRUE_RECO.univHist(universe)->Fill(Pathlength2ndTrk,wgt_minerva_v1);
+          }
+          else if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
+          {
+            h_secTrk_Pathlength_PION_TRUE_RECO.univHist(universe)->Fill(Pathlength2ndTrk,wgt_minerva_v1);
+          }
+
+
+          h_secTrk_DOCA_TRUE_RECO.univHist(universe)->Fill(DOCA_2ndTrk,wgt_minerva_v1);
+
+          if(isCV(*universe)){
+            h_secTrk_Pathlength_TRUE_RECO_Material.GetComponentHist(Material_type_Event)->Fill(Pathlength2ndTrk, wgt_minerva_v1);
+            h_secTrk_Pathlength_TRUE_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pathlength2ndTrk, wgt_minerva_v1);
+            h_secTrk_Pathlength_TRUE_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(DOCA_2ndTrk, wgt_minerva_v1);
+            h_secTrk_DOCA_TRUE_RECO_Material.GetComponentHist(Material_type_Event)->Fill(Pathlength2ndTrk, wgt_minerva_v1);
+            h_secTrk_DOCA_TRUE_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(DOCA_2ndTrk, wgt_minerva_v1);
+            h_secTrk_DOCA_TRUE_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(DOCA_2ndTrk, wgt_minerva_v1);
+          }//End CV
+        }// END of Universe Groups
+      }// END OF TRUTH + RECO CUTS
+    }//END OF TRUTH PASS CUTS
+
+
+
 
 
 
@@ -1691,6 +1791,10 @@ double countmc= 0.0;
     h_secTrk_Openangle_PION_TRUE_RECO.SyncCVHistos();
 
 
+    h_secTrk_Pathlength_TRUE_RECO.SyncCVHistos();
+    h_secTrk_Pathlength_PROTON_TRUE_RECO.SyncCVHistos();
+    h_secTrk_Pathlength_PION_TRUE_RECO.SyncCVHistos();
+    h_secTrk_DOCA_TRUE_RECO.SyncCVHistos();
     //h_secTrkTheta_cryoVertex_Z_TRUE_RECO.SyncCVHistos();
     //h_secTrkTheta_cryoVertex_R_TRUE_RECO.SyncCVHistos();
 
@@ -1938,7 +2042,17 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_secTrk_Theta_PION_TRUE_RECO.hist->Write();
   h_secTrk_Openangle_PION_TRUE_RECO.hist->Write();
 
+  h_secTrk_Pathlength_TRUE_RECO.hist->Write();
+  h_secTrk_Pathlength_PROTON_TRUE_RECO.hist->Write();
+  h_secTrk_Pathlength_PION_TRUE_RECO.hist->Write();
+  h_secTrk_DOCA_TRUE_RECO.hist->Write();
 
+  h_secTrk_Pathlength_TRUE_RECO_Material.WriteToFile(*outFile);
+  h_secTrk_Pathlength_TRUE_RECO_Interaction.WriteToFile(*outFile);
+  h_secTrk_Pathlength_TRUE_RECO_Particle.WriteToFile(*outFile);
+  h_secTrk_DOCA_TRUE_RECO_Material.WriteToFile(*outFile);
+  h_secTrk_DOCA_TRUE_RECO_Interaction.WriteToFile(*outFile);
+  h_secTrk_DOCA_TRUE_RECO_Particle.WriteToFile(*outFile);
 /////////////////
 /////2D hists////
 /////////////////
@@ -1955,6 +2069,11 @@ h_resolutionZ_FidiucalCut_helium->Write();
 h_resolutionR_FidiucalCut_nonhelium->Write();
 h_resolutionZ_FidiucalCut_nonhelium->Write();
 
+h_resolutionR_TRUE_RECO_FidiucalCut->Write();
+h_resolutionZ_TRUE_RECO_FidiucalCut->Write();
+
+h_resolutionX_TRUE_RECO_FidiucalCut->Write();
+h_resolutionY_TRUE_RECO_FidiucalCut->Write();
 
 h_cryoVertex_Z_secTrkTheta_TRUE_RECO->Write();
 h_cryoVertex_R_secTrkTheta_TRUE_RECO->Write();
@@ -1965,6 +2084,8 @@ h_cryoVertex_Z_DOCA_TRUE_RECO->Write();
 h_cryoVertex_R_DOCA_TRUE_RECO->Write();
 h_cryoVertex_Z_2ndTrkE_TRUE_RECO->Write();
 h_cryoVertex_R_2ndTrkE_TRUE_RECO->Write();
+
+
 
 h_cryoVertex_Z_R_TRUE_RECO->Write();
 h_muonPT_2ndTrkangle_TRUE_RECO->Write();
@@ -2149,6 +2270,40 @@ std::vector<ECuts> GetVectorRECOCuts_MuonTheta_Eff() {
 //#endif
 }
 
+std::vector<ECuts> GetVectorRECOCuts_ALL() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts  );
+  ret_vec.push_back(kGoodEnergy );
+  ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMu_is_Plausible);
+  ret_vec.push_back(kNonMu_is_Plausible);
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
+
+  ret_vec.push_back(kVertexConverge);
+  ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kTrackForwardGoing );
+  ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+  //ret_vec.push_back(kMaxChiSqrt);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+  ret_vec.push_back(kAllCuts );
+
+  return ret_vec;
+//#endif
+}
+
+
 std::vector<ECuts> GetVectorRECOCuts_MuonEnergy_Eff() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECuts> ret_vec;
@@ -2325,7 +2480,7 @@ std::vector<ECutsTRUTH> GetTRUTH_FidiucalMuCutsVector() {
 //#endif
 }
 
-std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_ALL() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECutsTRUTH> True_vec;
   True_vec.push_back(kTRUTHNoCuts   );
@@ -2340,9 +2495,9 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
   //True_vec.push_back(kTRUTH_2ndTrkAnlgethreshold );
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
-  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
+  //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
-  //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH);
+  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   True_vec.push_back(kAllTRUTHCuts);
 
@@ -2467,24 +2622,7 @@ std::vector<Particle_type> GetParicle_type() {
 //////////////////////////////////////////////////////////////////////////
 //GET Vertex Varibles
 //////////////////////////////////////////////////////////////////////////
-std::vector<CryoVertex> GetCryoVertexVaribles() {
-//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
-  std::vector<CryoVertex> CryoVertexVars;
 
-  CryoVertexVars.push_back(kX);
-  CryoVertexVars.push_back(kY);
-  CryoVertexVars.push_back(kZ);
-  CryoVertexVars.push_back(kR);
-
-
-  CryoVertexVars.push_back(kTRUTH_X);
-  CryoVertexVars.push_back(kTRUTH_Y);
-  CryoVertexVars.push_back(kTRUTH_Z);
-  CryoVertexVars.push_back(kTRUTH_R);
-
-  return CryoVertexVars;
-//#endif
-}
 
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback

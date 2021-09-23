@@ -1049,6 +1049,10 @@ MnvH2D *h_Mig_Vertex_Y      =   new MnvH2D("h_Mig_Vertex_Y",     "h_Mig_Vertex_Y
 MnvH2D *h_Mig_Vertex_R      =   new MnvH2D("h_Mig_Vertex_R",     "h_Mig_Vertex_R",  Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data());
 MnvH2D *h_Mig_Vertex_Z      =   new MnvH2D("h_Mig_Vertex_Z",     "h_Mig_Vertex_Z",  Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data());
 
+MnvH2D *h_Mig_Vertex_X_RECO      =   new MnvH2D("h_Mig_Vertex_X_RECO",     "h_Mig_Vertex_X_RECO",  Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data(), Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data());
+MnvH2D *h_Mig_Vertex_Y_RECO      =   new MnvH2D("h_Mig_Vertex_Y_RECO",     "h_Mig_Vertex_Y_RECO",  Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data(), Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data());
+MnvH2D *h_Mig_Vertex_R_RECO      =   new MnvH2D("h_Mig_Vertex_R_RECO",     "h_Mig_Vertex_R_RECO",  Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data());
+MnvH2D *h_Mig_Vertex_Z_RECO      =   new MnvH2D("h_Mig_Vertex_Z_RECO",     "h_Mig_Vertex_Z_RECO",  Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data());
 
 
 
@@ -1921,6 +1925,13 @@ int PDG_match=0;
               h_2d_2ndtrkLength_vertex_Z->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),universe->GetVertex_z(), wgt_minerva_v1);
               h_2d_2ndtrkLength_Angle->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),universe->GetNonmuTrkAngleWRTbeamMID(secondTrk), wgt_minerva_v1);
               h_2d_2ndtrkLength_finerAngle->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),universe->GetNonmuTrkAngleWRTbeamMID(secondTrk), wgt_minerva_v1);
+
+              h_Mig_Vertex_X_RECO->Fill(universe->GetVertex_x(),universe->GetTRUE_Vertex_x(),wgt_minerva_v1);
+              h_Mig_Vertex_Y_RECO->Fill(universe->GetVertex_y(),universe->GetTRUE_Vertex_y(),wgt_minerva_v1);
+              h_Mig_Vertex_R_RECO->Fill(universe->GetVertex_r(),universe->GetTRUE_Vertex_r(),wgt_minerva_v1);
+              h_Mig_Vertex_Z_RECO->Fill(universe->GetVertex_z(),universe->GetTRUE_Vertex_z(),wgt_minerva_v1);
+
+
 
               auto trackType = universe->GetTrackType();
 
@@ -3172,6 +3183,11 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_Mig_Vertex_Y->Write();
   h_Mig_Vertex_R->Write();
   h_Mig_Vertex_Z->Write();
+
+  h_Mig_Vertex_X_RECO->Write();
+  h_Mig_Vertex_Y_RECO->Write();
+  h_Mig_Vertex_R_RECO->Write();
+  h_Mig_Vertex_Z_RECO->Write();
 
   h_Mig_MuonE_py->Write();
   h_Mig_MuonPZ_py->Write();

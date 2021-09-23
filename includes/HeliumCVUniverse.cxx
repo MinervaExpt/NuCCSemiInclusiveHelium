@@ -6,7 +6,7 @@
 
 const double Mev_to_GeV=.001;
 const double True_Start_Znode = 4292.96; // mm
-
+const double FirstPlaneZPostion = 4337.25; // mm
 
 //CTOR
 double HeliumCVUniverse::GetTrueQ0() const{
@@ -292,9 +292,9 @@ Trajector_DATA HeliumCVUniverse::Return_Trajector_DATA_struct() const{
                             Energy, angle, length};
 return data_vector;};
 ///////////////////////////////////////////////////
-int HeliumCVUniverse::GetLongAnchorTrackStatus() const{return GetInt("LongAnchorTracksVtxFitStatus");};
+int HeliumCVUniverse::GetLongAnchorTrackStatus()  const{return GetInt("LongAnchorTracksVtxFitStatus");};
 int HeliumCVUniverse::GetShortAnchorTrackStatus() const{return GetInt("ShortAnchorTracksVtxFitStatus");};
-int HeliumCVUniverse::GetOtherLongTrackStatus() const{return GetInt("OtherLongTracksVtxFitStatus");};
+int HeliumCVUniverse::GetOtherLongTrackStatus()   const{return GetInt("OtherLongTracksVtxFitStatus");};
 ///////////////////////////////////////////////////
 int HeliumCVUniverse::GetTracksize() const{return GetInt("tracksize");};
 ///////////////////////////////////////////////////
@@ -341,9 +341,9 @@ int HeliumCVUniverse::Getindex2ndTrack_TRUE_highestKE()const{
 //////////////////////////////////////////////////////////////////////////
 //Get TRUTH Info
 //////////////////////////////////////////////////////////////////////////
-double HeliumCVUniverse::GetTRUE_Emu()                    const { return GetDouble("truth_true_muon_E")*.001; }
-double HeliumCVUniverse::GetTRUE_Pmu()                    const { return sqrt(pow(GetTRUE_Emu(),2.0) - pow(HeliumConsts::MUON_MASS_GEV,2.0)); }
-double HeliumCVUniverse::GetTRUE_PZmu()                   const { return GetVecElem("mc_primFSLepton",2)* .001;}
+double HeliumCVUniverse::GetTRUE_Emu()   const { return GetDouble("truth_true_muon_E")*.001; }
+double HeliumCVUniverse::GetTRUE_Pmu()   const { return sqrt(pow(GetTRUE_Emu(),2.0) - pow(HeliumConsts::MUON_MASS_GEV,2.0)); }
+double HeliumCVUniverse::GetTRUE_PZmu()  const { return GetVecElem("mc_primFSLepton",2)* .001;}
 ///////////////////////////////////////////////////
 double HeliumCVUniverse::GetTRUE_muANGLE_WRTB_DEG() const{return GetDouble("truth_true_muon_theta") * TMath::RadToDeg(); }
 double HeliumCVUniverse::GetTRUE_muANGLE_WRTB_rad() const{return GetDouble("truth_true_muon_theta") ;}
@@ -451,15 +451,25 @@ std::vector <int> HeliumCVUniverse::Get_TRUE_indexs() const {
   vector.push_back(last_daughter);
   return vector;}
   ////////////////////////////////////////////////
+  /// need to revisit and fix this
+  //////////////////////////
+
   std::vector <double> HeliumCVUniverse::MakeTRUE_VectorTrackLengthinMinerva_mm() const {
 
     std::vector<Vertex_XYZ> NpointVector_FS_particles = Construct_EndPointvector_ForTRUE_FS_particle();
     Vertex_XYZ VertexP = GetTRUE_Vertex3Dpoint();
     std::vector<parameterizationEquation_params_bare> PARS_equation_lines = MakeParameterize_bare_lineParasFromPoints(VertexP,  NpointVector_FS_particles);
-    std::vector<double> t_vector = FindVector_TforParameterizeLinesAtZ(PARS_equation_lines, True_Start_Znode );
-    std::vector<Vertex_XYZ> True_Start_nodes = GetTrueMinervaStartPostion(PARS_equation_lines, t_vector, True_Start_Znode);
+    std::vector<double> t_vector = FindVector_TforParameterizeLinesAtZ(PARS_equation_lines, FirstPlaneZPostion  ); // True_Start_Znode
+    std::vector<Vertex_XYZ> True_Start_nodes = GetTrueMinervaStartPostion(PARS_equation_lines, t_vector, FirstPlaneZPostion);
     std::vector<double>  Distance = FindDistance_vector(True_Start_nodes, NpointVector_FS_particles );
+
+    //std::cout<< "NpointVector_FS_particles.size() = " << NpointVector_FS_particles.size() << " True_Start_nodes.size() " << True_Start_nodes.size() << "Distance.size() = " << Distance.size()<<std::endl;
+
     return Distance;
+
+
+
+
   }
 
   std::vector <double> HeliumCVUniverse::MakeTRUE_VectorTrackLengthinMinerva_cm() const{
@@ -1107,10 +1117,19 @@ int HeliumCVUniverse::Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_less
 
 }
 ///////////////////////////////////////////////////
+std::vector<int>   HeliumCVUniverse::FromTRUTH_branch_GetVector_ALLTrajectors_PDG() const{return GetVecInt("truth_truthbranch_ALLTrajectors_PDG");}
 std::vector <double> HeliumCVUniverse::FromTRUTH_branch_GetVector_lastNode_X() const {return GetVecDouble("truth_truthbranch_ALLTrajectors_FinalPositionX");}
 std::vector <double> HeliumCVUniverse::FromTRUTH_branch_GetVector_lastNode_Y() const {return GetVecDouble("truth_truthbranch_ALLTrajectors_FinalPositionY");}
 std::vector <double> HeliumCVUniverse::FromTRUTH_branch_GetVector_lastNode_Z() const {return GetVecDouble("truth_truthbranch_ALLTrajectors_FinalPositionZ");}
 ///////////////////////////////////////////////////
+std::vector<double>HeliumCVUniverse::FromTRUTH_branch_GetVector_ALLTrajectors_ColumnarDensity()const{return GetVecDouble("truth_truthbranch_ALLTrajectors_columnarDensity");}
+std::vector<double>HeliumCVUniverse::FromTRUTH_branch_GetVector_ALLTrajectors_KE()             const{return GetVecDouble("truth_truthbranch_ALLTrajectors_KE");}
+std::vector<double>HeliumCVUniverse::FromTRUTH_branch_GetVector_ALLTrajectors_Angles()         const{return GetVecDouble("truth_truthbranch_ALLTrajectors_Angle");}
+std::vector<double>HeliumCVUniverse::FromTRUTH_branch_GetVector_ALLTrajectors_FullPathlenght() const{return GetVecDouble("truth_truthbranch_ALLTrajectors_TrkLength");}
+
+
+
+
 std::vector<Vertex_XYZ> HeliumCVUniverse::Construct_EndPointvector_ForTRUE_FS_particle ()const{
   std::vector <Vertex_XYZ> Final_vector;
 
@@ -1118,33 +1137,33 @@ std::vector<Vertex_XYZ> HeliumCVUniverse::Construct_EndPointvector_ForTRUE_FS_pa
   auto Y_vector = FromTRUTH_branch_GetVector_lastNode_Y();
   auto Z_vector = FromTRUTH_branch_GetVector_lastNode_Z();
 
-//std::cout<< "X_vector.size() = " << X_vector.size()<<std::endl;
-//std::cout<< "Y_vector.size() = " << Y_vector.size()<<std::endl;
-//std::cout<< "Z_vector.size() = " << Z_vector.size()<<std::endl;
+  //std::cout<< "X_vector.size() = " << X_vector.size()<<std::endl;
+  //std::cout<< "Y_vector.size() = " << Y_vector.size()<<std::endl;
+  //std::cout<< "Z_vector.size() = " << Z_vector.size()<<std::endl;
 
-if(X_vector.size() != Y_vector.size() || Y_vector.size() != Z_vector.size() ){assert(0 && "Truth Endpoint trajectories Position Vectors are not the same size in Tuple: ERROR");}
-
-
-  for(int i=0; i < X_vector.size(); i++){
+  if(X_vector.size() != Y_vector.size() || Y_vector.size() != Z_vector.size() ){assert(0 && "Truth Endpoint trajectories Position Vectors are not the same size in Tuple: ERROR");}
+  for(int i=0; i < X_vector.size(); ++i){
 
     //std::cout<< "X_vector.at("<<i<<") = " << X_vector.at(i)<<std::endl;
     //std::cout<< "Y_vector.at("<<i<<") = " << Y_vector.at(i)<<std::endl;
     //std::cout<< "Z_vector.at("<<i<<") = " << Z_vector.at(i)<<std::endl;
-
     Vertex_XYZ Single_point{X_vector.at(i),Y_vector.at(i),Z_vector.at(i)};
     Final_vector.push_back(Single_point);
   }
   return Final_vector;
 }
+
+/////////////////////////////////////////////////////////////
+//
 ///////////////////////////////////////////////////
 int HeliumCVUniverse::Get_Index_LowestKE_mc_FSPart() const {
   auto KE_vector = GETvector_Energy_mc_FS_particles_MeVtoGeV();
   auto pdg_vector = GETvector_PDG_FS_particles();
 
   if(pdg_vector[0] == 13){
-  KE_vector.erase(KE_vector.begin());}
+    KE_vector.erase(KE_vector.begin());}
 
-  int N_size= KE_vector.size();
+    int N_size= KE_vector.size();
   double Lowest = 999;
   int secondTk_index =0;
   for (int i = 0; i < N_size; i++) {
@@ -1157,9 +1176,6 @@ int HeliumCVUniverse::Get_Index_LowestKE_mc_FSPart() const {
   return secondTk_index;
 
 }
-
-
-
 ///////////////////////////////////////////////////
 std::vector <double> HeliumCVUniverse::GETvector_Px_mc_FS_particles()const{ return GetVecDouble("mc_FSPartPx");}
 std::vector <double> HeliumCVUniverse::GETvector_Py_mc_FS_particles()const{ return GetVecDouble("mc_FSPartPy");}
@@ -1222,10 +1238,9 @@ std::vector <double> HeliumCVUniverse::GetVector_NonmuTrkAngleWRTbeamMID() const
 }
 ///////////////////////////////////////////////////
 double HeliumCVUniverse::GetNonmuTrkAngleWRTmu(int TRKNum)const{return GetVecElem("trackangle",TRKNum);}
-double HeliumCVUniverse::GetNonmuTrkLength(int TRKNum)    const{return GetVecElem("nonmu_tracklength",TRKNum);}
+double HeliumCVUniverse::GetNonmuTrkLength(int TRKNum)    const{return GetVecElem("nonmu_tracklength",TRKNum);} // ColumnarDensity
 double HeliumCVUniverse::GetNonmuDOCA(int TRKNum)         const{return GetVecElem("trackDOCA",TRKNum);}
 double HeliumCVUniverse::GetNonmuTrkTimes(int TRKNum)     const{return GetVecElem("tracktimes",TRKNum);}
-
 
 double HeliumCVUniverse::GetFirstNodeX(int TRKNum) const{return GetVecElem("cryotrackxnodes",TRKNum);}
 double HeliumCVUniverse::GetLastNodeX(int TRKNum)  const{return GetVecElem("cryotrack_lastxnodes",TRKNum);}
@@ -1239,7 +1254,7 @@ double HeliumCVUniverse::GetNonmuTrkLength_InMinerva(int TRKNum)const{
   double y = GetLastNodeY(TRKNum) - GetFirstNodeY(TRKNum);
   double z = GetLastNodeZ(TRKNum) - GetFirstNodeZ(TRKNum);
 
-  return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
+  return sqrt( pow(x,2) + pow(y,2) + pow(z,2) );
 }
 
 double HeliumCVUniverse::GetNonmuTrkLength_InMinerva_Incm(int TRKNum)const{
@@ -1323,10 +1338,7 @@ std::vector <double> HeliumCVUniverse::GetVector_nonMuonTk_Energy_GeV() const {
 std::vector <int> HeliumCVUniverse::GetVector_nonMuonTk_PDG_Parent() const {return GetVecInt("truth_nonmu_PDG_Parent");}
 std::vector <double> HeliumCVUniverse::GetVector_nonMuonTk_Angle_wrtb_rad_Parent() const {return GetVecDouble("truth_nonmu_angleWRTB_Parent");}
 std::vector <double> HeliumCVUniverse::GetVector_nonMuonTk_Energy_MeV_Parent() const {return GetVecDouble("truth_nonmuKE_Parent");}
-std::vector<double> HeliumCVUniverse::Get_TrueFractionE_vector() const{ return GetVecDouble("truth_fraction_aretruedigits");}
-
-
-
+std::vector <double> HeliumCVUniverse::Get_TrueFractionE_vector() const{ return GetVecDouble("truth_fraction_aretruedigits");}
 
 
 std::vector <double> HeliumCVUniverse::GetVector_nonMuonTk_Energy_GeV_Parent() const {
@@ -1336,9 +1348,7 @@ std::vector <double> HeliumCVUniverse::GetVector_nonMuonTk_Energy_GeV_Parent() c
   for(auto cat : input_vector){
     output_vector.push_back(cat*.001);
   }
-
   return output_vector;
-
 }
 
 std::vector <double> HeliumCVUniverse::GetVector_nonMuonTk_Angle_wrtb_Degs_Parent() const {
@@ -1350,8 +1360,6 @@ std::vector <double> HeliumCVUniverse::GetVector_nonMuonTk_Angle_wrtb_Degs_Paren
 
   return output_vector;
 }
-
-
 
 double HeliumCVUniverse::GetTRUE_NonmuTrkE_Parent(int TRKNum) const{return GetVecElem("truth_nonmuKE_Parent",TRKNum) * .001;} //GeV
 double HeliumCVUniverse::GetTRUE_NonmuTrkopenangle_Parent(int TRKNum) const{return GetVecElem("truth_opening_angle_Parent",TRKNum)* TMath::RadToDeg();}
@@ -1450,8 +1458,6 @@ double HeliumCVUniverse::GetVetoAccpetedWeigh() const{
 		return wgt_flux_and_cv * wgt_normWeightLowandHighP * wgt_2p2h *  wgt_genie * wgt_nrp * wgt_RPA * wgt_VetoEff * wgt_lowQ2 * wgt_minos_eff*mgt_targetMass;
 
 	}
-
-
 
 
   double HeliumCVUniverse::GetWeight(Weights kweight) const {
@@ -1568,21 +1574,16 @@ const double W = GetWforMKmodel();
 
 
 
-std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_Angle() const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_Angle");}
-std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_DOCA() const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_DOCA");}
-std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_E() const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_E");}
-std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_TrkLength() const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_TrkLength");}
+std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_Angle()           const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_Angle");}
+std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_DOCA()            const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_DOCA");}
+std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_E()               const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_E");}
+std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_TrkLength()       const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_TrkLength");}
 std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_columnarDensity() const {return GetVecDouble("HeAnaTupleTool_ALLTrajectors_columnarDensity");}
-int HeliumCVUniverse::Get_ALLTrajector_tracksize() const{return GetInt("HeAnaTupleTool_ALLTrajectors_true_tracksize_sz");}
-
-
-
-
-
+int HeliumCVUniverse::Get_ALLTrajector_tracksize()                               const{return GetInt("HeAnaTupleTool_ALLTrajectors_true_tracksize_sz");}
 
 
 std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_FinalPosition(std::string input) const {
- if(input=="x"){return GetVecDouble("HeAnaTupleTool_ALLTrajectors_FinalPositionX");}
+ if(input=="x"){     return GetVecDouble("HeAnaTupleTool_ALLTrajectors_FinalPositionX");}
  else if(input=="y"){return GetVecDouble("HeAnaTupleTool_ALLTrajectors_FinalPositionY");}
  else if(input=="z"){return GetVecDouble("HeAnaTupleTool_ALLTrajectors_FinalPositionZ");}
  else{
@@ -1593,7 +1594,7 @@ std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_FinalPosition(std:
 }
 
 std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_InitalPosition(std::string input) const {
- if(input=="x"){return GetVecDouble("HeAnaTupleTool_ALLTrajectors_InitalPositionX");}
+ if(input=="x"){     return GetVecDouble("HeAnaTupleTool_ALLTrajectors_InitalPositionX");}
  else if(input=="y"){return GetVecDouble("HeAnaTupleTool_ALLTrajectors_InitalPositionY");}
  else if(input=="z"){return GetVecDouble("HeAnaTupleTool_ALLTrajectors_InitalPositionZ");}
  else{
@@ -1606,7 +1607,6 @@ std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_InitalPosition(std
 std::vector <int> HeliumCVUniverse::GetVector_ALLTrajector_PDG() const {return GetVecInt("HeAnaTupleTool_ALLTrajectors_PDG");}
 
 int HeliumCVUniverse::Get_index_Trajector_PDG(int index) const {return GetVecElem("HeAnaTupleTool_ALLTrajectors_PDG",index);}
-
 
 std::vector <double> HeliumCVUniverse::GetVector_ALLTrajector_P(std::string input) const {
  if(input=="x"){return GetVecDouble("HeAnaTupleTool_ALLTrajectors_PX");}
@@ -1677,30 +1677,10 @@ Trajector HeliumCVUniverse::GetVector_ALLTrajector_ForWithRecoTracks() const {
   auto nonmuon_KE = GetVector_nonMuonTk_Energy_MeV();
   auto Angle_nonmuon = GetVector_nonMuonTk_Angle_wrtb_rad();
 
-  for(auto pdg_index : pdg_nonmuon)
-  {
-    if(pdg_index != -9999)
-    {
-      PDG.push_back(pdg_index);
-    }
-  }
+  for(auto pdg_index : pdg_nonmuon){if(pdg_index != -9999){PDG.push_back(pdg_index);}}
+  for(auto KE_index : nonmuon_KE){if(KE_index != -9999){E.push_back(KE_index);}}
+  for(auto Angle_nonmuon_index : Angle_nonmuon){if(Angle_nonmuon_index != -9999){Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());}}
 
-  for(auto KE_index : nonmuon_KE)
-  {
-    if(KE_index != -9999)
-    {
-      E.push_back(KE_index); // into GeV
-    }
-
-  }
-
-  for(auto Angle_nonmuon_index : Angle_nonmuon)
-  {
-    if(Angle_nonmuon_index != -9999)
-    {
-      Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());
-    }
-  }
   int  a = PDG.size();
   int  b = E.size();
   int  c = Angle.size();
@@ -1715,10 +1695,7 @@ Trajector HeliumCVUniverse::GetVector_ALLTrajector_ForWithRecoTracks() const {
 
   if(std::count(std::begin(numbers), std::end(numbers), numbers.front()) != numbers.size()){
     int kk=0;
-    for(auto cat : numbers ){
-      std::cout<<"index = "<< kk <<" size of numbers "<< cat <<std::endl;
-      kk++;
-    }
+    for(auto cat : numbers ){std::cout<<"index = "<< kk <<" size of numbers "<< cat <<std::endl;kk++;}
 
     for(auto cat :PDG){std::cout<<"PDG = "<< cat<<std::endl;}
     for(auto cat :pdg_nonmuon){std::cout<<"pdg_nonmuon = "<< cat<<std::endl;}
@@ -1767,30 +1744,10 @@ Trajector HeliumCVUniverse::GetVector_ALLTrajector_ForWithRecoTracks_Parent() co
   auto nonmuon_KE = GetVector_nonMuonTk_Energy_MeV_Parent();
   auto Angle_nonmuon = GetVector_nonMuonTk_Angle_wrtb_rad_Parent();
 
-  for(auto pdg_index : pdg_nonmuon)
-  {
-    if(pdg_index != -9999)
-    {
-      PDG.push_back(pdg_index);
-    }
-  }
+  for(auto pdg_index : pdg_nonmuon) {if(pdg_index != -9999){PDG.push_back(pdg_index);}}
+  for(auto KE_index : nonmuon_KE){if(KE_index != -9999){E.push_back(KE_index);}}
+  for(auto Angle_nonmuon_index : Angle_nonmuon){if(Angle_nonmuon_index != -9999){ Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());}}
 
-  for(auto KE_index : nonmuon_KE)
-  {
-    if(KE_index != -9999)
-    {
-      E.push_back(KE_index); // into GeV
-    }
-
-  }
-
-  for(auto Angle_nonmuon_index : Angle_nonmuon)
-  {
-    if(Angle_nonmuon_index != -9999)
-    {
-      Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());
-    }
-  }
   int  a = PDG.size();
   int  b = E.size();
   int  c = Angle.size();
@@ -1828,9 +1785,6 @@ Trajector HeliumCVUniverse::GetVector_ALLTrajector_ForWithRecoTracks_Parent() co
   Trajector Event_trajectors = {RunInfo,PDG,E,Angle,IntialX,IntialY,IntialZ,FinalX,FinalY,FinalZ};
   return Event_trajectors;
 }
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1870,41 +1824,11 @@ Trajector_withTrueEnergyFraction HeliumCVUniverse::GetVector_ALLTrajector_ForWit
   auto TrueEnergyFr = Get_TrueFractionE_vector();
 
 
-  for(auto pdg_index : pdg_nonmuon)
-  {
-    if(pdg_index != -9999)
-    {
-      PDG.push_back(pdg_index);
-    }
+  for(auto pdg_index : pdg_nonmuon){if(pdg_index != -9999){PDG.push_back(pdg_index);}}
+  for(auto KE_index : nonmuon_KE){if(KE_index != -9999){ E.push_back(KE_index); }} // into GeV }
+  for(auto Angle_nonmuon_index : Angle_nonmuon){  if(Angle_nonmuon_index != -9999){Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());}}
+  for(auto true_energy_fr_index : TrueEnergyFr){ if(true_energy_fr_index != -9999){ True_energyFraction.push_back(true_energy_fr_index);} } // into GeV
 
-
-  }
-
-  for(auto KE_index : nonmuon_KE)
-  {
-    if(KE_index != -9999)
-    {
-      E.push_back(KE_index); // into GeV
-    }
-
-  }
-
-  for(auto Angle_nonmuon_index : Angle_nonmuon)
-  {
-    if(Angle_nonmuon_index != -9999)
-    {
-      Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());
-    }
-  }
-
-  for(auto true_energy_fr_index : TrueEnergyFr)
-  {
-    if(true_energy_fr_index != -9999)
-    {
-      True_energyFraction.push_back(true_energy_fr_index); // into GeV
-    }
-
-  }
   int  a = PDG.size();
   int  b = E.size();
   int  c = Angle.size();
@@ -1944,6 +1868,7 @@ Trajector_withTrueEnergyFraction HeliumCVUniverse::GetVector_ALLTrajector_ForWit
 
 
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 Trajector_withTrueEnergyFraction HeliumCVUniverse::GetVector_ALLTrajector_ForWithRecoTracks_withTrueEFraction_Parent() const
 {
@@ -1977,42 +1902,11 @@ Trajector_withTrueEnergyFraction HeliumCVUniverse::GetVector_ALLTrajector_ForWit
   auto Angle_nonmuon = GetVector_nonMuonTk_Angle_wrtb_rad_Parent();
   auto TrueEnergyFr = Get_TrueFractionE_vector();
 
+  for(auto pdg_index : pdg_nonmuon){  if(pdg_index != -9999){  PDG.push_back(pdg_index);}}
+  for(auto KE_index : nonmuon_KE){if(KE_index != -9999){E.push_back(KE_index); }}// into GeV
+  for(auto Angle_nonmuon_index : Angle_nonmuon){if(Angle_nonmuon_index != -9999){  Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());}}
+  for(auto true_energy_fr_index : TrueEnergyFr){if(true_energy_fr_index != -9999){True_energyFraction.push_back(true_energy_fr_index);}}
 
-  for(auto pdg_index : pdg_nonmuon)
-  {
-    if(pdg_index != -9999)
-    {
-      PDG.push_back(pdg_index);
-    }
-
-
-  }
-
-  for(auto KE_index : nonmuon_KE)
-  {
-    if(KE_index != -9999)
-    {
-      E.push_back(KE_index); // into GeV
-    }
-
-  }
-
-  for(auto Angle_nonmuon_index : Angle_nonmuon)
-  {
-    if(Angle_nonmuon_index != -9999)
-    {
-      Angle.push_back(Angle_nonmuon_index*TMath::RadToDeg());
-    }
-  }
-
-  for(auto true_energy_fr_index : TrueEnergyFr)
-  {
-    if(true_energy_fr_index != -9999)
-    {
-      True_energyFraction.push_back(true_energy_fr_index); // into GeV
-    }
-
-  }
   int  a = PDG.size();
   int  b = E.size();
   int  c = Angle.size();

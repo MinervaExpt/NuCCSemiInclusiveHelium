@@ -25,14 +25,9 @@
 
 
 namespace HeliumCUTConsts {
-
-
   const int NeutrinoPDGType = 14;
   const int HeliumZ= 2;
-
   const double Maximum_MuonAngle = 12.0;
-
-
   const double Maximum_SigCurvature = -5.0;
 
   const int MC_currentType = 1; //1 CC 2 NC
@@ -49,14 +44,15 @@ namespace HeliumCUTConsts {
   const double CryoTankExtraAddRegionOutside = 450.0; // mm Cut Cut Value for Smearing
 // was 200mm
 
-  const double Truth_pion_Minimum_Energy = .060; // GeV
-  const double Truth_proton_Minimum_Energy = .110; // GeV
-  const double Truth_dimuon_Maximum_Energy = .060; // GeV
+  const double Truth_pion_Minimum_Energy = .060; // GeV check
+  const double Truth_proton_Minimum_Energy = .105; // GeV check
+  const double Truth_dimuon_Maximum_Energy = .060; // GeV check
+
   const double Truth_HardonAngle_wrtb_Maximum = 60; //deg
   const double Truth_EFractionAreTrueDigits = 0.50; //
 
-  const double Maximum_secTrkwrtb_CUT = 54;
-  const double Maximum_secTrkwrtb_GreatestKE = 54; // For Truth Section of index of second track with Greatest KE
+  const double Maximum_secTrkwrtb_CUT = 55;// Finalized
+  const double Maximum_secTrkwrtb_GreatestKE = 55; // For Truth Section of index of second track with Greatest KE
 
   const double Maximum_VertexChiSqrt = 200.0;
 
@@ -178,7 +174,8 @@ bool PassesTRUTH(const HeliumCVUniverse&, ECutsTRUTH cut) ;
  bool  TRUTH_Is2ndTrk_maxiumAngle_threshold(const HeliumCVUniverse& univ, double Max_deg = HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE);
  bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral(const HeliumCVUniverse& univ, double Max_deg = HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE);
  bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_leading2ndTrk(const HeliumCVUniverse& univ, double Max_deg = HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE);
- bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_WITHProtonAndPion_thresholds(const HeliumCVUniverse& univ, double Max_degMax_deg = HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE,double Pion_Energy =HeliumCUTConsts::Truth_pion_Minimum_Energy , double Proton_Energy = HeliumCUTConsts::Truth_proton_Minimum_Energy );
+ bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_WITHProtonAndPion_thresholds(const HeliumCVUniverse& univ, double Max_degMax_deg = HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE, double Pion_Energy =HeliumCUTConsts::Truth_pion_Minimum_Energy , double Proton_Energy = HeliumCUTConsts::Truth_proton_Minimum_Energy );
+ bool  TRUTH_Is2ndTrk_No_Neutral_WITHProtonAndPion_thresholds(const HeliumCVUniverse& univ, double Pion_Energy =HeliumCUTConsts::Truth_pion_Minimum_Energy , double Proton_Energy = HeliumCUTConsts::Truth_proton_Minimum_Energy );
  bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_leading2ndTrk_RECOBRANCH(const HeliumCVUniverse& univ,double Max_deg = HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE);
  bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_And_KE_proton_pion_thresholdsleading2ndTrk_RECOBRANCH(const HeliumCVUniverse& univ, double Max_deg=HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE, double Pion_Energy = HeliumCUTConsts::Truth_pion_Minimum_Energy, double Proton_Energy = HeliumCUTConsts::Truth_proton_Minimum_Energy);
  bool  TRUTH_Is2ndTrk_threshold_No_Neutral_leading2ndTrk_RECOBRANCH(const HeliumCVUniverse& univ);
