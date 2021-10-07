@@ -626,6 +626,15 @@ MnvH2D *h_cryoVertex_R_DOCA_TRUE        =    new MnvH2D("h_cryoVertex_R_DOCA_TRU
 MnvH2D *h_cryoVertex_Z_2ndTrkE_TRUE        =    new MnvH2D("h_cryoVertex_Z_2ndTrkE_TRUE", "h_cryoVertex_Z_2ndTrkE_TRUE",  Vertex_Zbins.size()-1,  Vertex_Zbins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 MnvH2D *h_cryoVertex_R_2ndTrkE_TRUE        =    new MnvH2D("h_cryoVertex_R_2ndTrkE_TRUE", "h_cryoVertex_R_2ndTrkE_TRUE",  Vertex_Rbins.size()-1,  Vertex_Rbins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 
+//std::vector<double> CutToSurface_bins{-350,-300,-290,-280,-270,-260,-250,-240,-230,-220,-210,-200,-190,-180,-170,-160,-150,-140,-130,-120,-110,-100,-90,-80,-70,-60,-50,-40,-30,-20,-10,0.0,20,30,40,50,60,70,80,90,100,110,120,130,140,150};
+//std::vector<double> CutToSurface_bins{-400, -380, -360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120};
+std::vector<double> CutToSurface_bins_finner{-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+MnvH2D *h_FidiucalCut_cryoVertex_R_TRUE         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_TRUE", "h_FidiucalCut_cryoVertex_R_TRUE",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbins.size()-1, Vertex_Rbins.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_Z_TRUE         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_TRUE", "h_FidiucalCut_cryoVertex_Z_TRUE",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbins.size()-1, Vertex_Zbins.data()  );
+PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_TRUE("h_FidiucalCut_TRUE", "h_FidiucalCut_TRUE",  CutToSurface_bins_finner, error_bands);
+std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_TRUE("h_Distance_to_InnerTank_TRUE", "h_Distance_to_InnerTank_TRUE",  Distance_to_innerTank, error_bands);
+
 
 
   //=========================================
@@ -780,9 +789,18 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
 
           h_CryoVertex_RR_TRUE.univHist(universe)->Fill(VertexRR,wgt_mvnV1);
 
+          h_Distance_to_InnerTank_TRUE.univHist(universe)->Fill(TRUE_Distance_to_innerTank(*universe),wgt_mvnV1);
+
+
           ///////////
           /// Fill CV
           //////////
+          for(auto Fid_Cut:CutToSurface_bins_finner ){
+            if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(*universe, Fid_Cut)){
+              h_FidiucalCut_TRUE.univHist(universe)->Fill(Fid_Cut, wgt_mvnV1);
+            }
+          }
+
 
           if(isCV(*universe)){
             std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
@@ -814,13 +832,23 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
             h_CryoVertex_R_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexR, wgt_mvnV1);
             h_CryoVertex_R_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexR, wgt_mvnV1);
             h_CryoVertex_R_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexR, wgt_mvnV1);
+
+            for(auto Fid_Cut:CutToSurface_bins_finner ){
+              if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(*universe, Fid_Cut)){
+                h_FidiucalCut_cryoVertex_R_TRUE->Fill(Fid_Cut, VertexR,  wgt_mvnV1);
+                h_FidiucalCut_cryoVertex_Z_TRUE->Fill(Fid_Cut, VertexZ,  wgt_mvnV1);
+
+              } // end of Volume Cut
+            } // End of loop
+
+
           }
 
           ///////////
           /// End CV
           //////////
 
-        } // end of Universes
+        } // end of Universes group
       }// End of Truth Cuts
 
 
@@ -1136,7 +1164,8 @@ double countmc= 0.0;
     h_CryoVertex_R_TRUE.SyncCVHistos();
     h_CryoVertex_RR_TRUE.SyncCVHistos();
     h_CryoVertex_Z_TRUE.SyncCVHistos();
-
+    h_FidiucalCut_TRUE.SyncCVHistos();
+    h_Distance_to_InnerTank_TRUE.SyncCVHistos();
     //////////////////////////////////
     h_secTrk_Energy_TRUE.SyncCVHistos();
     h_secTrk_EnergyFINEBinning_TRUE.SyncCVHistos();
@@ -1270,6 +1299,8 @@ double countmc= 0.0;
 
 
   h_CryoVertex_RR_TRUE.hist->Write();
+  h_FidiucalCut_TRUE.hist->Write();
+  h_Distance_to_InnerTank_TRUE.hist->Write();
 
   h_secTrk_Openangle_TRUE.hist->Write();
 
@@ -1331,6 +1362,12 @@ double countmc= 0.0;
   h_cryoVertex_R_DOCA_TRUE->Write();
   h_cryoVertex_Z_2ndTrkE_TRUE->Write();
   h_cryoVertex_R_2ndTrkE_TRUE->Write();
+
+  h_FidiucalCut_cryoVertex_R_TRUE->Write();
+  h_FidiucalCut_cryoVertex_Z_TRUE->Write();
+
+
+
 
   outFile->Close();
   //std::cout<< " the Number of on_leading = "<< non_leading<<std::endl;

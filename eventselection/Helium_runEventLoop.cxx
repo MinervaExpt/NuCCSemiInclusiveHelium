@@ -860,6 +860,9 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D,TrackType> h_secTrk_tracklength_Track =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_secTrk_tracklength_Track",Recoil_track_length_vector  ,"h_secTrk_tracklength_Track; [mm];Events");
 
+std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank("h_Distance_to_InnerTank", "h_Distance_to_InnerTank",  Distance_to_innerTank, error_bands);
+
 
 
 
@@ -2002,6 +2005,7 @@ int PDG_match=0;
             h_Muon_pseudorapidity.univHist(universe)->Fill(pseduo_r, wgt_minerva_v1);
             h_Muon_pseudorapidity_angle.univHist(universe)->Fill(pseduo_theta, wgt_minerva_v1);
             h_Muon_rapidity.univHist(universe)->Fill(universe->rapidity_muon(),wgt_minerva_v1);
+            h_Distance_to_InnerTank.univHist(universe)->Fill(RECO_Distance_to_innerTank(*universe),wgt_minerva_v1);
 
           //std::cout<< "pseudorapidity_muon() = "<< universe->pseudorapidity_muon()<<std::endl;
 
@@ -3105,6 +3109,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
   h_Qsquare_TRUE_RECO.hist->Write();
 
+  h_Distance_to_InnerTank.hist->Write();
 
   h_secTrk_tracklength_TRUE_RECO.hist->Write();
   //h_secTrk_tracklength_TRUE_TRUE_RECO.hist->Write();

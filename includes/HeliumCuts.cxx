@@ -864,7 +864,30 @@ else if(Cut_MiniumDisToCryoTankInnerTank>= 0.0){
 
 }
 
+bool IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
 
+if(Cut_MiniumDisToCryoTankInnerTank < 0.0){
+
+double Cutinput = abs(Cut_MiniumDisToCryoTankInnerTank);
+double ZExtra = Cutinput;  // added a little  length to Zextra but doesnt count for Cut
+
+if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge_TRUTH(univ, Cutinput, Cutinput, ZExtra ))
+{return false;}
+else{return true;}
+}
+
+else if(Cut_MiniumDisToCryoTankInnerTank >= 0.0){
+
+  if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH( univ, Cut_MiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+
+
+}
+
+
+
+}
   //////////////////////////////////////////////////////////////
   ///IS forward Going
   /////////////////////////////////////////////////////////////

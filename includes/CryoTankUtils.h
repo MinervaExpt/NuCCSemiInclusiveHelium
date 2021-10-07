@@ -25,6 +25,9 @@ const double CryoDishedHeadInnerRadiusMin = 1271.24977876;
 const double CryoDishedHeadInnerTheta = 0.533012304503;
 const double CryoDishedHeadOuterRadius = 1483.62;
 const double CryoDishedHeadTheta = 0.534952705856;
+//////////////////////////////////////////
+/// Metal Shielding , surrounding the inner vessel
+/////////////////////////////////////////////
 const double CryoHeatShieldAngle = 1.57079632679;
 const double CryoHeatShieldCapThickness = 1.5875;
 const double CryoHeatShieldInnerRadius = 838.0;
@@ -32,6 +35,9 @@ const double CryoHeatShieldLength = 1711.16;
 const double CryoHeatShieldOuterRadius = 839.5875;
 const double CryoHeatShieldThickness = 1.5875;
 const double CryoInnerVesselDishedHeadThickness = 7.62;
+//////////////////////////////////////////
+/// Inner Vessel
+/////////////////////////////////////////////
 const double CryoInnerVesselInnerDiameter = 1500.0;
 const double CryoInnerVesselInnerRadius = 750.0;
 const double CryoInnerVesselLength = 1187.46;
@@ -39,6 +45,9 @@ const double CryoInnerVesselOuterRadius = 756.35;
 const double CryoInnerVesselThickness = 6.35;
 const double CryoInnerVesselTotalLength = 3727.04417087;
 const double CryoInnerVesselZPosInVacuumVessel = -206.0;
+//////////////////////////////////////////
+/// Vacuum Vessel
+/////////////////////////////////////////////
 const double CryoVacuumVesselCylinderLength = 2262.7;
 const double CryoVacuumVesselDishedHeadInnerRadius = 1933.0;
 const double CryoVacuumVesselDishedHeadOuterRadius = 1940.62;
@@ -51,6 +60,7 @@ const double CryoVacuumVesselEndHemiThickness = 4.3942;
 const double CryoVacuumVesselInnerRadius = 906.526;
 const double CryoVacuumVesselOuterRadius = 914.4;
 const double CryoVacuumVesselThickness = 7.874;
+
 const double DefaultOffset = 3093.91;
 const double FBackOfCryoInnerVessel = 3687.44726506;
 const double FBackOfCryoVessel = 4225.26;
@@ -60,11 +70,10 @@ const double ZZCryoInnerVesselLength = 1596.96044248;
 const double ZZCryoVacuumVesselBackToCryoInnerVessel = 537.812734936;
 const double ZZCryoVacuumVesselFrontToCryoInnerVessel = 354.743912632;
 const double ZZCryoVacuumVesselLength = 2491.6311777;
-
-
 /////////////////////////////////////////////////////////////
 ////Length of Upstream and DownStream Bulges of CyroTank/////
 const double Lenghtofbulge =   abs(CryoDishedHeadInnerRadiusMin - CryoDishedHeadInnerRadius);
+/////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////
 // Z position of the DOWNstream
 ////////////////////////////////////////////////////////////
@@ -82,6 +91,10 @@ const double FrontCryotank = CryoDishedHeadInnerRadius + FrontOfCryoInnerVessel;
 
 const double startofradiusUpstreamVector = FrontOfCryoInnerVessel + CryoDishedHeadInnerRadius;
 const double startofradiusDownstreamVector = FBackOfCryoInnerVessel - CryoDishedHeadInnerRadius;
+///////////////////////////////////////////////////////////////////////////////
+const double Lenght_of_CryotankBarrel = Zpostion_StartOfdownstreamendBulge - Zpostion_EndOfupstreamBulge;
+const double Zpostion_MidCryoTank = FrontOfCryoInnerVessel + Lenghtofbulge + (Lenght_of_CryotankBarrel / 2.0);
+
 
 /////////////////////////////////////////////////////////////
 // For Smearing Study, Adding/Subtractions distance to different Regions
@@ -129,7 +142,9 @@ double CenterVolume(double DistancefromEdge); //mm
 double CapVolume(double DistancefromEdge ); //mm
 double CryoTankInnerVolume(double DistancefromEdge); //mm
 double CryoTankInnerVolume_metercube(double DistancefromEdge = 20.0);
-
+double Distance_to_innerTank(double Zinput, double Rinput );
+double RECO_Distance_to_innerTank(const HeliumCVUniverse& univ);
+double TRUE_Distance_to_innerTank(const HeliumCVUniverse& univ);
 //////////////////////////////////////////////////////////////
 ///End of Fucntion
 /////////////////////////////////////////////////////////////

@@ -203,6 +203,15 @@ int NDF;
 
 };
 
+struct NEvent_FidiucalCut{
+  double FidiucalCut;
+  double TotalN_Numra;
+  double TotalN_TRUE;
+  double TotalN_RECO_Helium;
+  double TotalN_RECO_nonHelium;
+  double TotalN_RECO_total;
+};
+
 
 enum ECuts {
   kNoCuts,  kGoodEnergy, kUsableMuon, kMinosCoil, kMinosMatch, kMinosCurvature,  kMinosCharge, // Good muon
@@ -254,7 +263,7 @@ enum MuonVar{kNONE, kP_T,  kE,  kP_Z,  kAngleWRTB, kMidAngleWRTB, kAngleWRTBheli
 
 };
 
-enum CryoVertex{kX,  kY,  kZ, kR, kRR, kX_eff,  kY_eff,  kZ_eff, kR_eff, kRR_eff,
+enum CryoVertex{kX,  kY,  kZ, kR, kRR, kdistance_edge, kX_eff,  kY_eff,  kZ_eff, kR_eff, kRR_eff,
    kX_resolution,  kY_resolution,  kZ_resolution, kR_resolution, kRR_resolution,
    kX_Precent_resolution,  kY_Precent_resolution,  kZ_Precent_resolution, kR_Precent_resolution, kRR_Precent_resolution,
     kTRUTH_X,  kTRUTH_Y,  kTRUTH_Z, kTRUTH_R, kfitConverge };
@@ -803,6 +812,8 @@ std::string  endFrame_string = "\\end{frame}";
 std::string  beginTabular = "\\begin{tabular}{";
 std::string  EndTabular = "\\end{tabular}";
 std::string  Centering = "\\centering";
+std::string  horizontalSpace_start = "\\hspace{";
+std::string  VerticalSpace_start = "\\vspace{";
 double m_scale;
 std::string m_pdf_Name;
 std::string m_PlotsPerPage= "ccc";
@@ -841,6 +852,17 @@ public:
   std::string GetBeginTabular(std::string input){
     std::string BEGIN_start = beginTabular + input + "}";
     return BEGIN_start;
+  }
+
+
+  std::string Get_hSpace(std::string input){
+    std::string hspace = horizontalSpace_start + input + "}";
+    return hspace;
+  }
+
+  std::string Get_vSpace(std::string input){
+    std::string hspace = VerticalSpace_start + input + "}";
+    return hspace;
   }
 
   std::string GetEndTabular(){return EndTabular;}

@@ -275,9 +275,13 @@ std::vector<double> FindVector_TforParameterizeLinesAtZ(std::vector<parameteriza
 std::vector<double> FindDistance_vector(std::vector<Vertex_XYZ> upstream_points, std::vector<Vertex_XYZ> downstream_points );
 std::vector<Vertex_XYZ> GetTrueMinervaStartPostion(std::vector<parameterizationEquation_params_bare> InputPara_vector, std::vector<double> t_vector, double ZPoint_start );
 inline double round( double val );
+double GetYMaxfrombin1( MnvH2D *hist);
 std::string  GetNameTrack(TrackType playlist_name);
 std::string String_Reco_orData(bool isReco);
-
+void Subtract_FullHist(MnvH1D &hist_Full, MnvH1D *hist_Empty);
+void Subtract_FullHist(MnvH2D &hist_Full, MnvH2D *hist_Empty);
+float eff_error(double num, double denom, int statFlag);
+float Purity_eff_error(double A, double A_error, double B, double B_error);
 /*EventCut_Rate_STRUCT MakeEventCut_Rate_STRUCT_fromTFiles(TFile *inputFile_TRUTHBranch, const char* TGraphName_TRUTHBranch,
    TFile *inputFile_RECOBranch, const char* TGraphName_RECOBranch_TRUE , const char* TGraphName_RECOBranch_TRUE_RECO,
    ME_helium_Playlists playlist, ME_helium_Status Crytank_status);*/

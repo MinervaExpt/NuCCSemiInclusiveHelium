@@ -90,7 +90,7 @@ void PlotCVAndError_second_Track(PlotUtils::MnvH1D* hist, std::string label, Sec
 void DrawDATAWITHCV_AndError_FromTFile_Single_playlist(TFile *inputFile, TFile *inputFile_data,Pot_MapList POT_MC,Pot_MapList POT_DATA,
  ME_helium_Playlists playlist_name, char *histoName,char *histoName_data, char *histotitle ,std::string xaxislabel, std::string label, bool MakeBinwidth_Norm);
 
- void DrawDATAWITHCV_AndError_FromTFile_Single_playlist_Full_EMPTY(TFile *inputFileFULL,
+void DrawDATAWITHCV_AndError_FromTFile_Single_playlist_Full_EMPTY(TFile *inputFileFULL,
    TFile *inputFileEMPTY, TFile *inputFile_Fulldata,TFile *inputFile_Emptydata,Pot_MapList POT_MC,Pot_MapList POT_DATA,
    ME_helium_Playlists playlist_name_FULL,ME_helium_Playlists playlist_name_EMPTY, char *histoName,
    char *histoName_data, char *histotitle ,std::string xaxislabel, std::string label, bool MakeBinwidth_Norm);
@@ -99,7 +99,10 @@ void DrawDATAWITHCV_AndError_FromTFile_Single_playlist(TFile *inputFile, TFile *
 void DrawCVAndError_FromHIST(MnvH1D *hist_INCOMING, char *histotitle ,std::string xaxislabel,std::string yaxislabel, std::string pdf_name, bool Setgrid);
 void DrawCVAndError_FromHIST(MnvH1D *hist, char *histotitle ,std::string xaxislabel,std::string yaxislabel, std::string pdf_name, bool Setgrid, bool LogX);
 void DrawCVAndError_FromHIST(bool PrintALLerrorGroups , MnvH1D *hist, char *histotitle ,std::string xaxislabel,std::string yaxislabel,
-  std::string pdf_name, bool Setgrid);
+  std::string pdf_name, bool Setgrid,  bool doBinwidth=false ,  bool SetYlimits =false,  double Ymin=-99, double Ymax = 99 );
+
+
+
 void DrawCVAndError_FromHIST_withVLine(MnvH1D *hist, char *histotitle ,std::string xaxislabel,std::string yaxislabel,
    std::string pdf_name, bool Setgrid, bool LogX, bool LogY, double xAxis_Vline);
 void DrawStack_secTrk_Particle_FUll_EMPTY(bool my_debug, TFile *inputFile_FULL,TFile *inputFile_EMPTY,
@@ -136,9 +139,9 @@ void DrawSTACKfromHistFilio_FromTFile(TFile *inputFile_MCFULL, TFile *inputFile_
   char *histoName_Data, Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA,bool TrueifFullelseEmpty, char *histotitle,
   std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, bool doSmallerrorgrounps, std::string units, StackType STACKTYPE, bool Debug );
 
-  void DrawSTACKfromHistFilio_FromTFileNoData(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,  char *histoName_MC ,
-    Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA, char *histotitle, std::string xaxislabel, std::string pdf_label,
-     bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug, bool SetMaximum=false, double Maximum_group = 1 );
+void DrawSTACKfromHistFilio_FromTFileNoData(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,  char *histoName_MC ,
+  Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA, char *histotitle, std::string xaxislabel, std::string pdf_label,
+  bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug, bool SetMaximum=false, double Maximum_group = 1 );
 
 
 void DrawSINGLESTACKMCHistFilio_FromTFile(TFile *inputFile_MCinput,  char *histoName_MC ,char *histotitle, std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, bool Debug );
@@ -163,6 +166,14 @@ Hist_phyiscs_map Make_Physics_distribution_map_FromTFile(TFile *inputTFile, char
 
 void DrawCVAndError_FromHistPointer(MnvH1D *hist, char *histotitle ,std::string xaxislabel, std::string yaxislabel, std::string label, bool doBinwidth, bool MakeXaxisLOG);
 void DrawCVAndError_FromHistPointer(MnvH1D *hist, char *histotitle ,std::string xaxislabel, std::string yaxislabel, std::string label, bool doBinwidth, bool MakeXaxisLOG, double maxY);
+void DrawCVAndError_FromHistPointer(MnvH1D *hist, char *histotitle ,std::string xaxislabel, std::string yaxislabel,
+  std::string label, bool doBinwidth, bool MakeXaxisLOG, bool printErrors, double Ymax);
+
+void DrawCVAndError_FromHistPointer(MnvH1D *hist, MnvH1D* datahist,  char *histotitle ,std::string xaxislabel, std::string yaxislabel,
+  std::string label, bool doBinwidth, bool MakeXaxisLOG, bool printErrors, double Ymax , bool PrintALLerrorGroups=false);
+
+
+
 void Draw_2D_Panel_MC_Only_frompointer(MnvH2D *hist, char *histotitle, char *legend_title, std::string xaxislabel, std::string yaxislabel, const char* Zaxislabel , double max_x, double max_y, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG, double x_projectionTxtsize = .025,  double y_projectionTxtsize = .03);
 void Draw_2D_Panel_MC_Only_frompointer_YProjection(MnvH2D *hist, char *histotitle, char *legend_title, std::string xaxislabel, std::string yaxislabel,const char *Zaxislabel , double max_y, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG);
 void Draw_2D_Panel_MC_Only_frompointer_XProjection(MnvH2D *hist, char *histotitle, char *legend_title, std::string xaxislabel, std::string yaxislabel,const char *Zaxislabel , double max_x, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG);
@@ -214,14 +225,14 @@ void Draw_DataWITHMC_SingleHistinput(MnvH1D *hist_MC, MnvH1D *hist_Data,
   char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG);
 
-  void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC, MnvH1D *hist_Data,
-    char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-     char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG,
-     bool MakeYaxisLOG=false, bool drawAllErrorGroups= true);
+void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC, MnvH1D *hist_Data,
+  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
+  char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG,
+  bool MakeYaxisLOG=false, bool drawAllErrorGroups= true);
 
-     void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(MnvH1D *hist_MC, MnvH1D *hist_Data,
-       char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-        char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG , bool drawAllErrorGroups = true );
+void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(MnvH1D *hist_MC, MnvH1D *hist_Data,
+  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
+  char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG , bool drawAllErrorGroups = true );
 
 void Draw_DataWITHMC_SingleHistinput(MnvH1D *hist_MC, MnvH1D *hist_Data,
   char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
@@ -238,12 +249,12 @@ void Draw_Data_RECO_TRUTH_Hist_fromTFile(char *histoName_TRUTH,
     char *Playlist_name_FULL, char *Playlist_name_EMPTY, std::string pdf_label, char *histotitle,
     char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC );
 
-    void Draw_Data_RECO_TRUTH_Hist_fromPointer( MnvH1D *histMC_TRUTH, MnvH1D *histMC_RECO,  MnvH1D *hist_Data,
+void Draw_Data_RECO_TRUTH_Hist_fromPointer( MnvH1D *histMC_TRUTH, MnvH1D *histMC_RECO,  MnvH1D *hist_Data,
       char *Playlist_name, char* playlist_status, std::string pdf_label, char *histotitle,
        char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, double Ymax );
 
 
-    void   DrawPie_Figures_EventCutRate(TFile *inputFile_TRUTHBranch,  char* TGraphName_TRUTHBranch,
+void   DrawPie_Figures_EventCutRate(TFile *inputFile_TRUTHBranch,  char* TGraphName_TRUTHBranch,
           TFile *inputFile_RECOBranch,  char* TGraphName_RECOBranch_TRUE ,  char* TGraphName_RECOBranch_TRUE_RECO,
           ME_helium_Playlists playlist, ME_helium_Status Crytank_status,  const char* pdf,
          TCanvas *can, MnvPlotter *plotter, char * Title);
@@ -321,26 +332,25 @@ void MakeData_trajector(std::vector <Trajector_DATA> input_vector, const char* P
 void Draw2DHist_hist(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
    const char* pdf, TCanvas *can, MnvPlotter *plot);
 
-   void Draw2DRatio_FromTFile(TFile *inputFile_numerator, TFile *inputFile_demonator,char *histoName_num,char *histoName_dem,
+void  Draw2DHist_hist_notext(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
+            const char* pdf, TCanvas *can, MnvPlotter *plot, bool includeFlows=false);
+
+
+void Draw2DRatio_FromTFile(TFile *inputFile_numerator, TFile *inputFile_demonator,char *histoName_num,char *histoName_dem,
       char *num_labelname_y, char *dem_labelname_y, char *num_labelname_x, char *dem_labelname_x,char *histotitle, const char* pdf,TCanvas *can, MnvPlotter *plot);
 
 void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, TGraphErrors *g_TGraph3, const char* xaxislabel,const char* yaxislabel,
       const char* Title,const char* legend_Title1,const char* legend_Title2, const char* legend_Title3,
-      const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG );
+      const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG , bool setGrid=false, bool doMax=false );
+
 void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, const char* xaxislabel,const char* yaxislabel,
       const char* Title,const char* legend_Title1,const char* legend_Title2,
-      const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG );
+      const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG , bool doMax= true );
+
 void DrawTGraph(TGraphErrors *g_TGraph, const char* xaxislabel,const char* yaxislabel, const char* Title,const char* legend_Title,
         const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG );
 
-void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector,
-  const char* pdf_label, char *histotitle,TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog = false ,bool Ylog=false);
 
-void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_helium,
-                          std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_nonhelium,
-                          std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector_total,
-                          const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter,
-                         bool Xlog=false ,bool Ylog=false);
 
 std::vector<Track_Map> Track_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler);
 std::vector<boolNTrack_Map> boolNTrack_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler);
@@ -351,22 +361,82 @@ Hist_map_track Make_Track_distribution_map_FromTFile(TFile *inputTFile, char *hi
 void DrawSTACK_FORDATAONLY_fromHistFilio_FromTFile( TFile *inputFile_DATAFULL,TFile *inputFile_DATAEMPTY, char *histoName_Data, Pot_MapStatusList POT_DATA, bool TrueifFullelseEmpty, char *histotitle,
   std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm,  std::string units, StackType STACKTYPE, bool Debug );
 
+void FillFitParms(TF1 *gfit, GaussianFitsParms &FitParms );
+
+void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector,
+    const char* pdf_label, char *histotitle,TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog = false ,bool Ylog=false);
+
+void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_helium,
+                            std::vector<GaussianFitsParms> GaussianFits_nonhelium,
+                            std::vector<GaussianFitsParms> GaussianFits_total,
+                            const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter,
+                           bool Xlog=false, bool Ylog=false, bool setGrid=false , char *Playlist="" );
+
+
+
 void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
       const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY);
 
-void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_total, MnvH2D *hist_input_Helium, MnvH2D *hist_input_NonHelium, const char *Title, const char* xaxislabel,const char* yaxislabel,
-        const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY , bool LogX=false, bool LogY=false  );
+void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_total, MnvH2D *hist_input_Helium, MnvH2D *hist_input_NonHelium,
+  const char *Title, const char* xaxislabel,const char* yaxislabel, const char* pdf, char *Playlist,
+  TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY , bool LogX, bool LogY);
 
 
-  void FillFitParms(TF1 *gfit, GaussianFitsParms &FitParms );
 
 void   DrawCVAndError_From2HIST_withFit(MnvH1D *hist_total, MnvH1D *histHelium, MnvH1D *histnonHelium,
                                        char *histotitle ,std::string xaxislabel,std::string yaxislabel,
                                        std::string pdf_name, bool Setgrid ,
                                        GaussianFitsParms &total_FitParms,
                                        GaussianFitsParms &helium_FitParms ,
-                                       GaussianFitsParms &nonhelium_FitParms, 
+                                       GaussianFitsParms &nonhelium_FitParms,
   bool PrintErrors , bool PrintallErrorGroups, bool BinWidthNorm=false );
+
+
+  void DrawCVAndError_From2HIST(MnvH1D *hist_total, MnvH1D *histHelium, MnvH1D *histnonHelium,
+                               char *histotitle ,std::string xaxislabel,std::string yaxislabel,
+    std::string pdf_name, bool Setgrid , bool PrintErrors , bool PrintallErrorGroups , bool BinWidthNorm, double Ymax );
+
+    void DrawCVAndError_From2HIST(MnvH1D *hist_1, char *legend_1_title ,MnvH1D *hist_2, char *legend_2_title,  char *histotitle ,std::string xaxislabel, std::string yaxislabel,
+      std::string pdf_name, bool Setgrid , bool PrintErrors , bool PrintallErrorGroups , bool BinWidthNorm,double Ymax );
+
+
+  void Draw_TGraphs_NEvent_FidiucalCut(std::vector<NEvent_FidiucalCut> NEvent_FidiucalCut_vector,
+        const char* pdf_label, char *histotitle, const char *playlist, TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog);
+
+  void Draw_TGraphs_NEventONLY_FidiucalCut(std::vector<NEvent_FidiucalCut> NEvent_FidiucalCut_vector,
+            const char* pdf_label, char *histotitle, const char *playlist, TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog);
+
+
+void Draw_YDistribution_PerBin_2DHist_Purity_Efficiency(MnvH2D *hist_input_Numerator,
+                                                        MnvH2D *hist_input_Denominator,
+                                                        MnvH2D *hist_input_Total,
+                                                        MnvH2D *hist_input_Helium_RECO,
+                                                        MnvH2D *hist_input_NonHelium_RECO,
+const char *Title, const char* xaxislabel,const char* yaxislabel, const char* playlist,
+const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoCuts, double maxY_TruthCuts , bool LogX, bool LogY );
+
+void Draw_YDistribution_PerBin_2DHist_Purity_Efficiency(MnvH2D *hist_input_Numerator,
+                                                              MnvH2D *hist_input_Denominator,
+                                                              MnvH2D *hist_input_Total,
+                                                              MnvH2D *hist_input_Helium_RECO,
+                                                              MnvH2D *hist_input_NonHelium_RECO,
+                                                              MnvH2D *hist_input_Efficiency,
+      const char *Title, const char* xaxislabel,const char* yaxislabel, const char* playlist,
+      const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoCuts, double maxY_TruthCuts, bool LogX, bool LogY );
+
+
+
+
+  void Draw_YDistribution_PerBin_2DHist(    MnvH2D *hist_input_Total,
+                                            MnvH2D *hist_input_Helium_RECO,
+                                            MnvH2D *hist_input_NonHelium_RECO,
+       const char *Title, const char* xaxislabel,const char* yaxislabel, const char* playlist,
+       const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoCuts,
+       bool LogX, bool LogY );
+
+       void DrawCVAndError_eff_purity_EOM_ERROR(MnvH1D *hist_eff,  MnvH1D *hist_pur, char *histotitle ,std::string xaxislabel,
+       const char *pdf, bool doBinwidth, double Ymax , std::vector<double> BinsEdges_vector);
+
 
 
 #endif

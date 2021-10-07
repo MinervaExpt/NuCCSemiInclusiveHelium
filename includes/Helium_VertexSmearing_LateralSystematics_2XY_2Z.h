@@ -10,11 +10,10 @@
 // THis Error Systematic applies lateral shifts, In the R and Z vertex positions
 
 namespace Helium_Shifts {
-
   double const Uncertainty_X = 11.69;//mm
   double const Uncertainty_Y = 13.16;//mm
-  double const Uncertainty_Z = 65.00; // mm   // old value from true - RECO 114.54;//mm
-  double const Uncertainty_R = 15.00 ;//mm
+  double const Uncertainty_Z = 106.0; // mm // 65  // old value from true - RECO 114.54;//mm
+  double const Uncertainty_R = 13.00 ;//mm
 //error shifts from gaussain fit
   double const nsigma_Xshift_pos =   0.13; //mm
   double const nsigma_Xshift_neg =  - 0.13;//mm

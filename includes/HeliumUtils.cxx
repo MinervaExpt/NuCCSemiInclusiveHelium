@@ -85,7 +85,7 @@ std::vector <double> MakeBinVector(int Nbins, double binStart, double binEnd)
   double Spaceing = (binEnd - binStart) / (double)Nbins;
   double Start = binStart;
   return_vector.push_back(binStart);
-  for(int i=0; i<Nbins; i++ )
+  for(int i=0; i<=Nbins; ++i )
   {
     Start = Start + Spaceing;
     return_vector.push_back(Start);
@@ -1042,6 +1042,8 @@ std::string  GetVetowall_Title( VetoWall_vars vetowall_input) {
       case kfitConverge:
       return "CryoVertex ChiSqFit";
 
+      case kdistance_edge:
+      return "Vertex Distance to Inner CyroTank Surface";
 
       default:
       std::cout << "ERROR: unknown Truth Varible Name!" << std::endl;
@@ -1915,6 +1917,8 @@ std::string  GetVertexCryoVarHistName(CryoVertex playlist_name) {
     case kfitConverge:
     return "h_CryoVertexChiSqFit";
 
+    case kdistance_edge:
+    return "h_Distance_to_InnerTank";
 
     default:
     std::cout << "Unknown Truth CryoVertex name" << std::endl;
@@ -1937,6 +1941,9 @@ std::string  GetVertexCryoVarHist_DATA_Name(CryoVertex playlist_name) {
 
     case kfitConverge:
     return "h_Data_CryoVertexChiSqFit";
+
+    case kdistance_edge:
+    return "h_Data_Distance_to_InnerTank";
 
     default:
     std::cout << "Unknown Cryo Data name" << std::endl;
@@ -2021,6 +2028,8 @@ std::string  GetVertexCryoVarAxisTitle(CryoVertex playlist_name) {
     case kfitConverge:
     return "ChiSqr fit";
 
+    case kdistance_edge:
+    return "Distance to Cryotank surface [mm]";
 
     default:
     std::cout << "Unknown Vertex Naming" << std::endl;
@@ -2451,11 +2460,11 @@ return  title_name;
       return bins_vec;
 
       case kZ_eff:
-      bins_vec = MakeBinVector(46, 1500.0, 4500);//MakeBinVector_chiSqrt();
+      bins_vec = MakeBinVector(80, 1400.0, 4600);//MakeBinVector_chiSqrt();
       return bins_vec;
 
       case kR_eff:
-      bins_vec = MakeBinVector(40, 0.0, 900.0);
+      bins_vec = MakeBinVector(50, 0.0, 1000.0);
       return bins_vec;
 
       case kRR_eff:
@@ -5923,3 +5932,30 @@ int count=0;
 
 
 }//
+
+void Subtract_FullHist(MnvH1D &hist_Full, MnvH1D *hist_Empty){
+  MnvH1D* hist_Empty_clone = (MnvH1D*) hist_Empty->Clone("hist_Empty_clone");
+  hist_Full.Add(hist_Empty_clone ,-1);
+}
+
+void Subtract_FullHist(MnvH2D &hist_Full, MnvH2D *hist_Empty){
+  MnvH2D* hist_Empty_clone = (MnvH2D*) hist_Empty->Clone("hist_Empty_clone");
+  hist_Full.Add(hist_Empty_clone,-1);
+}
+
+
+double GetYMaxfrombin1( MnvH2D *hist){
+
+  MnvH1D *h_projection = hist->ProjectionY("h_projection",1,1,"");
+  double Max=h_projection->GetMaximum();
+  return Max;
+
+}
+
+
+float Purity_eff_error(double A, double A_error, double B, double B_error){
+  double C = A*B;
+  double C_error =  sqrt(pow(A_error/A,2) + pow(B_error/B,2));
+  return C*C_error;
+
+}

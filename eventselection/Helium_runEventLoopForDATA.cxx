@@ -12,6 +12,7 @@ std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_DATA_EventSecti
 // Functions
 //=====================================================
 std::vector<ECuts> GetRECOCutsVector();
+std::vector<ECuts> GetVectorRECOCutsFidicual_Eff();
 std::vector<MuonVar> GetMUONVaribles();
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector();
 std::vector<CryoVertex> GetCryoVertexVaribles();
@@ -56,7 +57,8 @@ bool is_counter = true;
 double POT[4];
 int num_NotDefinedTracks=0;
 const std::vector< ECuts > kCutsVector = GetRECOCutsVector();
-
+const std::vector< ECuts > kCutsVector_Fiduical =GetVectorRECOCutsFidicual_Eff();
+//const std::vector< ECuts > kCutsVector_Fiduical = GetRECOCutsVector();
 const std::vector< ME_helium_Playlists> kPlayListVector = GetPlayListVector();
 const std::vector< ME_helium_Playlists> kTRUEPlayListVector = GetTRUEPlayListVector();
 
@@ -162,6 +164,12 @@ recoil_bin_count = recoil_bin_count + 2.54; // bins in [cm]
 }
 std::vector<double> pseudorapidity_muon_vector{1.0, 1.5,2.0,2.25,2.5,2.75,3.0,3.25,3.5,3.75,4.0,4.5,5.0,8.0};
 std::vector<double> rapidity_muon_vector{2.25,  2.45,  2.65,   2.85,  3.05,  3.25, 3.45, 3.65};
+//std::vector<double> CutToSurface_bins{-400, -380, -360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120};
+std::vector<double> CutToSurface_bins{-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+MnvH1D *h_Data_FidiucalCut       =    new MnvH1D("h_Data_FidiucalCut", "h_Data_FidiucalCut", CutToSurface_bins.size()-1, CutToSurface_bins.data());
+std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
+MnvH1D *h_Data_Distance_to_InnerTank       =    new MnvH1D("h_Data_Distance_to_InnerTank", "h_Data_Distance_to_InnerTank", Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH1D *h_Data_Distance_to_InnerTank_Fidiucal       =    new MnvH1D("h_Data_Distance_to_InnerTank_Fidiucal", "h_Data_Distance_to_InnerTank_Fidiucal", Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
 
 
   // Use the vector of systematic universes to make your MnvH1D
@@ -390,7 +398,10 @@ MnvH2D *h2_Data_2ndtrkLength_finerAngle    =    new MnvH2D("h2_Data_2ndtrkLength
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
 RECO_Cut_Map CountMap_RECO_Data;//
+RECO_Cut_Map CountMap_RECO_Data_fiduical;//
 FillingRecoCountingMap(kCutsVector, CountMap_RECO_Data);
+
+FillingRecoCountingMap(kCutsVector_Fiduical, CountMap_RECO_Data_fiduical);
 //////////////////////////////////////////////////////////////////////////
 // Data Loop ME_playlist_1A_BranchesADDED
 //////////////////////////////////////////////////////////////////////////
@@ -427,6 +438,7 @@ for(Long64_t ievent=0; ievent < chw_Data->GetEntries(); ++ievent){
   dataEvt->SetEntry(ievent);
 
   EventCounter(*dataEvt, kCutsVector, EventCounter_data, isNOT_mc, Playlist_Info );
+
 
   if(PassesCutsRECOData(*dataEvt,  isNOT_mc , kCutsVector, CountMap_RECO_Data) ){
     double zvertex = dataEvt->GetVertex_z();
@@ -601,7 +613,7 @@ double chisqt = dataEvt->GetVertexChiSqrFit();
     h_Data_secTrk_LastNodeY->Fill(dataEvt->GetLastNodeY(secondTrk),1.0);
     h_Data_secTrk_LastNodeZ->Fill(dataEvt->GetLastNodeZ(secondTrk),1.0);
     h_Data_Tracksize->Fill(dataEvt->GetTracksize(),1.0);
-
+    h_Data_Distance_to_InnerTank_Fidiucal->Fill(RECO_Distance_to_innerTank(*dataEvt),1.0);
 /*
   if(trackcount<45){
     if(recoiltheta > 16.0 && recoiltheta < 20.0 ){
@@ -653,9 +665,27 @@ double chisqt = dataEvt->GetVertexChiSqrFit();
     h_Data_muonLastNodeZ->Fill( dataEvt->GetMuon_lastNode_Z(),1.0);
 
 
+  }// End of cuts
+
+
+  if(PassesCutsRECOData(*dataEvt,  isNOT_mc , kCutsVector_Fiduical, CountMap_RECO_Data_fiduical) ){
+
+    h_Data_Distance_to_InnerTank->Fill(RECO_Distance_to_innerTank(*dataEvt),1.0);
+
+    for(auto Fid_Cut:CutToSurface_bins ){
+      if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*dataEvt, Fid_Cut))
+      {
+            h_Data_FidiucalCut->Fill(Fid_Cut, 1.0);
+
+      }
+
   }
 
-}
+} // end of 2nd reco loop
+
+
+
+}// End of enties
 ///////////////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////////////
@@ -705,6 +735,9 @@ MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   strcpy(rootpathway, OUTputRoot_pathway.c_str());
   Make_cvsOfCutsRate( kCutsVector , EventCounter_data, c, isNOT_mc, mcscale, dataPOT );
   TGraph  *RECO_Data_Cuts = Make_RECOCut_Tgraph_fromCutMap("RECO_Data_Cuts", CountMap_RECO_Data);
+  TGraph  *RECO_Data_Cuts_Fiducial = Make_RECOCut_Tgraph_fromCutMap("RECO_Data_Cuts_Fiducial", CountMap_RECO_Data_fiduical);
+
+
   //outFileName = "Histograms_test.root";
   //auto outFile = TFile::Open(outFileName);
   char pdf_name[1024];
@@ -742,7 +775,7 @@ MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
 
 
   RECO_Data_Cuts->Write();
-
+  RECO_Data_Cuts_Fiducial->Write();
   h_Data_MuonE->Write();
   h_Data_MuonPZ->Write();
   h_Data_MuonPT->Write();
@@ -845,6 +878,10 @@ MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   h2_Data_FirstZnode_2ndTrklength->Write();
   h2_Data_LastZnode_2ndTrklength->Write();
 
+  h_Data_FidiucalCut->Write();
+  h_Data_Distance_to_InnerTank->Write();
+  h_Data_Distance_to_InnerTank_Fidiucal->Write();
+
   outFile.Close();
 
 
@@ -876,8 +913,6 @@ std::cout<< "number of tracks not defined " << num_NotDefinedTracks<< std::endl;
 //=========================================
 //=========================================
 //////////////////////////////////////////////////////////////
-
-
 std::vector<ECuts> GetRECOCutsVector() {
   std::vector<ECuts> ret_vec;
   ret_vec.push_back(kNoCuts );
@@ -943,9 +978,43 @@ std::vector<ECuts> GetRECOCutsVector() {
 //#endif
 }
 
+//////////////////
+std::vector<ECuts> GetVectorRECOCutsFidicual_Eff() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts );
+  ret_vec.push_back(kGoodEnergy );
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
+
+  ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kMu_is_Plausible);
+
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kVertexConverge);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+  //ret_vec.push_back(kFiducialVolume);
+
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
+  ret_vec.push_back(kTrackForwardGoing);
+  ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+
+  ret_vec.push_back(kAllCuts );
+  return ret_vec;
+//#endif
+}
 
 
-//////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////
 //GET MUON Varibles
 //////////////////////////////////////////////////////////////////////////
 std::vector<MuonVar> GetMUONVaribles() {

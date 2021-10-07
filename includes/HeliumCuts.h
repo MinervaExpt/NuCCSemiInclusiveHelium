@@ -156,6 +156,7 @@ bool PassesTRUTH(const HeliumCVUniverse&, ECutsTRUTH cut) ;
  bool IsInExtraFiduicalVolume(const HeliumCVUniverse& univ);
  bool IsInExtraFiduicalVolume(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank);
  bool IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank);
+ bool IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank);;
  bool IsMuon_CurvatureGreater( const HeliumCVUniverse& , double CurvatureInput ) ;
  bool IsGoodCurvatureSignificance (const HeliumCVUniverse& ) ;
  bool  NonMuon_Plausible(const HeliumCVUniverse& univ, bool IsMC);
@@ -169,6 +170,7 @@ bool PassesTRUTH(const HeliumCVUniverse&, ECutsTRUTH cut) ;
  bool IsVertexChiSqrtLessthanMax(const HeliumCVUniverse& univ , double Max_chisqrt = HeliumCUTConsts::Maximum_VertexChiSqrt);
  bool IsVertexChiSqrtLessthanMax_ByTrackType(const HeliumCVUniverse& univ , double Max_chisqrt_long= HeliumCUTConsts::Maximum_Longtrack_VertexChiSqrt, double Max_chisqrt_otherlong=HeliumCUTConsts::Maximum_OtherLongtrack_VertexChiSqrt, double Max_chisqrt_short=HeliumCUTConsts::Maximum_Short_VertexChiSqrt);
  bool IsVertexConverge_usingALLTracks(const HeliumCVUniverse& univ );
+
 
  bool  TRUTH_IsAtLeastOne_2ndTrk_non_NeutralParticle(const HeliumCVUniverse& univ);
  bool  TRUTH_Is2ndTrk_maxiumAngle_threshold(const HeliumCVUniverse& univ, double Max_deg = HeliumCUTConsts::Maximum_secTrkwrtb_GreatestKE);

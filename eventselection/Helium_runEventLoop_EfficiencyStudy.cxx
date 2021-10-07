@@ -297,6 +297,8 @@ const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndTrkEnergy = GetTRUTHCutsVector
 int count_fid_0 = 0;
 int count_fid_neg_200 = 0;
 int count_fid_50 = 0;
+int count_fid_20 = 0;
+int count_fid_30 = 0;
 
 const std::vector<Weights> kWeights_v1tune= GetWeightVector();
 const std::vector<Weights> kWeights_v2tune= GetWeightVector_v2();
@@ -571,10 +573,6 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_resolutionX_
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_resolutionX_RECO_Particle", Vertex_resolution_Xbin_vector ,"h_CryoVertex_resolutionX_RECO_Particle; [mm];Events");
 
 
-
-
-
-
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_X_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_X_Material", Vertex_Xbin_vector ,"h_CryoVertex_X_Material; [mm];Events");
 
@@ -613,10 +611,6 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categ
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_resolutionY_RECO_Particle =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_resolutionY_RECO_Particle", Vertex_resolution_Ybin_vector ,"h_CryoVertex_resolutionX_RECO_Particle; [mm];Events");
-
-
-
-
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Y_Material =
@@ -795,23 +789,54 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_resolutionR_
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_resolutionR_fidiucal_100_RECO_Particle", Vertex_resolution_Rbin_vector ,"h_CryoVertex_resolutionR_RECO_Particle; [mm];Events");
 
 //std::vector<double> CutTOSurface{200,190,180,170,160,150,140,130,120,110,100,90,80,70,60,50,40,30,20,10,0};
-std::vector<double> CutToSurface_bins{-350,-300,-290,-280,-270,-260,-250,-240,-230,-220,-210,-200,-190,-180,-170,-160,-150,-140,-130,-120,-110,-100,-90,-80,-70,-60,-50,-40,-30,-20,-10,0.0,20,30,40,50,60,70,80,90,100,110,120,130,140,150};
+std::vector<double> CutToSurface_bins{-400, -380, -360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120};
+
+std::vector<double> CutToSurface_bins_finner{-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
 
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_resolutionR_FidiucalCut("h_resolutionR_FidiucalCut", "h_resolutionR_FidiucalCut",  CutToSurface_bins ,  Vertex_resolution_Rbin_vector, error_bands);
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_resolutionZ_FidiucalCut("h_resolutionZ_FidiucalCut", "h_resolutionZ_FidiucalCut",  CutToSurface_bins , Vertex_resolution_Zbin_vector, error_bands);
-MnvH2D *h_resolutionX_FidiucalCut          =    new MnvH2D("h_resolutionX_FidiucalCut", "h_resolutionX_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Xbin_vector.size()-1, Vertex_resolution_Xbin_vector.data()  );
-MnvH2D *h_resolutionY_FidiucalCut          =    new MnvH2D("h_resolutionY_FidiucalCut", "h_resolutionY_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Ybin_vector.size()-1, Vertex_resolution_Ybin_vector.data()  );
+MnvH2D *h_resolutionX_FidiucalCut          =    new MnvH2D("h_resolutionX_FidiucalCut", "h_resolutionX_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Xbin_vector.size()-1, Vertex_resolution_Xbin_vector.data()  );
+MnvH2D *h_resolutionY_FidiucalCut          =    new MnvH2D("h_resolutionY_FidiucalCut", "h_resolutionY_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Ybin_vector.size()-1, Vertex_resolution_Ybin_vector.data()  );
 
-MnvH2D *h_resolutionR_FidiucalCut          =    new MnvH2D("h_resolutionR_FidiucalCut", "h_resolutionR_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
-MnvH2D *h_resolutionZ_FidiucalCut         =     new MnvH2D("h_resolutionZ_FidiucalCut", "h_resolutionZ_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
-//MnvH2D *h_resolutionR_FidiucalCut_RECO          =    new MnvH2D("h_resolutionR_FidiucalCut_RECO", "h_resolutionR_FidiucalCut_RECO",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
-//MnvH2D *h_resolutionZ_FidiucalCut_RECO         =    new MnvH2D("h_resolutionZ_FidiucalCut_RECO", "h_resolutionZ_FidiucalCut_RECO",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
+MnvH2D *h_resolutionR_FidiucalCut          =    new MnvH2D("h_resolutionR_FidiucalCut", "h_resolutionR_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
+MnvH2D *h_resolutionZ_FidiucalCut         =     new MnvH2D("h_resolutionZ_FidiucalCut", "h_resolutionZ_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
+MnvH2D *h_resolutionR_FidiucalCut_TRUE_RECO          =    new MnvH2D("h_resolutionR_FidiucalCut_TRUE_RECO", "h_resolutionR_FidiucalCut_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
+MnvH2D *h_resolutionZ_FidiucalCut_TRUE_RECO         =    new MnvH2D("h_resolutionZ_FidiucalCut_TRUE_RECO", "h_resolutionZ_FidiucalCut_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
 
-MnvH2D *h_resolutionR_FidiucalCut_helium          =    new MnvH2D("h_resolutionR_FidiucalCut_helium", "h_resolutionR_FidiucalCut_helium",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
-MnvH2D *h_resolutionZ_FidiucalCut_helium         =     new MnvH2D("h_resolutionZ_FidiucalCut_helium", "h_resolutionZ_FidiucalCut_helium",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
+MnvH2D *h_resolutionR_FidiucalCut_helium          =    new MnvH2D("h_resolutionR_FidiucalCut_helium", "h_resolutionR_FidiucalCut_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
+MnvH2D *h_resolutionZ_FidiucalCut_helium         =     new MnvH2D("h_resolutionZ_FidiucalCut_helium", "h_resolutionZ_FidiucalCut_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
 
-MnvH2D *h_resolutionR_FidiucalCut_nonhelium          =    new MnvH2D("h_resolutionR_FidiucalCut_nonhelium", "h_resolutionR_FidiucalCut_nonhelium",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
-MnvH2D *h_resolutionZ_FidiucalCut_nonhelium         =     new MnvH2D("h_resolutionZ_FidiucalCut_nonhelium", "h_resolutionZ_FidiucalCut_nonhelium",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
+MnvH2D *h_resolutionR_FidiucalCut_nonhelium          =    new MnvH2D("h_resolutionR_FidiucalCut_nonhelium", "h_resolutionR_FidiucalCut_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
+MnvH2D *h_resolutionZ_FidiucalCut_nonhelium         =     new MnvH2D("h_resolutionZ_FidiucalCut_nonhelium", "h_resolutionZ_FidiucalCut_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
+
+MnvH2D *h_FidiucalCut_cryoVertex_R_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_TRUE_RECO", "h_FidiucalCut_cryoVertex_R_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_Z_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_TRUE_RECO", "h_FidiucalCut_cryoVertex_Z_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+
+MnvH2D *h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO", "h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO", "h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+
+
+
+MnvH2D *h_FidiucalCut_cryoVertex_R        =    new MnvH2D("h_FidiucalCut_cryoVertex_R", "h_FidiucalCut_cryoVertex_R",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_R_helium         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_helium", "h_FidiucalCut_cryoVertex_R_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_R_nonhelium         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_nonhelium", "h_FidiucalCut_cryoVertex_R_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+
+MnvH2D *h_FidiucalCut_cryoVertex_Z         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z", "h_FidiucalCut_cryoVertex_Z",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_Z_helium         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_helium", "h_FidiucalCut_cryoVertex_Z_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_Z_nonhelium         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_nonhelium", "h_FidiucalCut_cryoVertex_Z_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+
+
+
+MnvH2D *h_FidiucalCut_cryoVertex_R_RECO            =    new MnvH2D("h_FidiucalCut_cryoVertex_R_RECO", "h_FidiucalCut_cryoVertex_R_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_R_RECO_helium     =    new MnvH2D("h_FidiucalCut_cryoVertex_R_RECO_helium", "h_FidiucalCut_cryoVertex_R_RECO_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_R_RECO_nonhelium  =    new MnvH2D("h_FidiucalCut_cryoVertex_R_RECO_nonhelium", "h_FidiucalCut_cryoVertex_R_RECO_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
+
+MnvH2D *h_FidiucalCut_cryoVertex_Z_RECO            =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_RECO", "h_FidiucalCut_cryoVertex_Z_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_Z_RECO_helium     =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_RECO_helium", "h_FidiucalCut_cryoVertex_Z_RECO_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+MnvH2D *h_FidiucalCut_cryoVertex_Z_RECO_nonhelium  =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_RECO_nonhelium", "h_FidiucalCut_cryoVertex_Z_RECO_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
+
+
+
 //////
 ///TRUE + RECO Cuts
 ////////
@@ -822,9 +847,6 @@ MnvH2D *h_resolutionY_TRUE_RECO_FidiucalCut          =    new MnvH2D("h_resoluti
 
 MnvH2D *h_resolutionR_TRUE_RECO_FidiucalCut          =    new MnvH2D("h_resolutionR_TRUE_RECO_FidiucalCut", "h_resolutionR_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
 MnvH2D *h_resolutionZ_TRUE_RECO_FidiucalCut         =     new MnvH2D("h_resolutionZ_TRUE_RECO_FidiucalCut", "h_resolutionZ_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
-
-
-
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH2D, Particle_type> h_resolutionR_FidiucalCut_Particle =
@@ -847,12 +869,55 @@ PlotUtils::HistFolio<PlotUtils::MnvH2D,Interaction_type> h_resolutionZ_FidiucalC
 PlotUtils::HistFolio<PlotUtils::MnvH2D, Interaction_type>(InteractionGroup_categories, "h_resolutionZ_FidiucalCut_Interaction",  CutToSurface_bins , Vertex_resolution_Zbin_vector ,"h_resolutionZ_FidiucalCut_Interaction");
 
 
+PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut("h_FidiucalCut", "h_FidiucalCut",  CutToSurface_bins_finner, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_helium("h_FidiucalCut_helium", "h_FidiucalCut_helium",  CutToSurface_bins_finner, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_nonhelium("h_FidiucalCut_nonhelium", "h_FidiucalCut_nonhelium",  CutToSurface_bins_finner, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_TRUE_RECO("h_FidiucalCut_TRUE_RECO", "h_FidiucalCut_TRUE_RECO",  CutToSurface_bins_finner, error_bands);
+
+std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank("h_Distance_to_InnerTank", "h_Distance_to_InnerTank",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_helium("h_Distance_to_InnerTank_helium", "h_Distance_to_InnerTank_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_nonhelium("h_Distance_to_InnerTank_nonhelium", "h_Distance_to_InnerTank_nonhelium",  Distance_to_innerTank, error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_Resolution("h_Distance_to_InnerTank_Resolution", "h_Distance_to_InnerTank_Resolution",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_Resolution_Percent("h_Distance_to_InnerTank_Resolution_Percent", "h_Distance_to_InnerTank_Resolution_Percent",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_TRUE("h_Distance_to_InnerTank_TRUE", "h_Distance_to_InnerTank_TRUE",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_TRUE_RECO("h_Distance_to_InnerTank_TRUE_RECO", "h_Distance_to_InnerTank_TRUE_RECO",  Distance_to_innerTank, error_bands);
+
+
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_Material");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Distance_to_InnerTank_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_Distance_to_InnerTank_Particle",  Distance_to_innerTank ,"h_Distance_to_InnerTank_Particle");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Distance_to_InnerTank_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Distance_to_InnerTank_Interaction",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_Interaction");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_Distance_to_InnerTank_Track =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_Distance_to_InnerTank_Track", Distance_to_innerTank ,"h_Distance_to_InnerTank_Track; [mm];Events");
+
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_TRUE_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_TRUE_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_TRUE_Material");
+
+MnvH2D *h_Mig_Distance_to_InnerTank      =   new MnvH2D("h_Mig_Distance_to_InnerTank",     "h_Mig_Distance_to_InnerTank",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH2D *h_Mig_Distance_to_InnerTank_TRUE      =   new MnvH2D("h_Mig_Distance_to_InnerTank_TRUE",     "h_Mig_Distance_to_InnerTank_TRUE",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+
+
 
   std::vector<Vertex_XYZ> FiducalCut_Neg200;
   std::vector<Vertex_XYZ> FiducalCut_Neg150;
   std::vector<Vertex_XYZ> FiducalCut_Neg100;
   std::vector<Vertex_XYZ> FiducalCut_Neg50;
   std::vector<Vertex_XYZ> FiducalCut;
+  std::vector<Vertex_XYZ> FiducalCut_20;
+  std::vector<Vertex_XYZ> FiducalCut_30;
   std::vector<Vertex_XYZ> FiducalCut_50;
   std::vector<Vertex_XYZ> FiducalCut_100;
 
@@ -1198,6 +1263,7 @@ int PDG_match=0;
           double resolutionRR = rr_true - rr;
 
 
+
           h_CryoVertex_X_TRUE_RECO.univHist(universe)->Fill(x_true,wgt_minerva_v1);
 
           h_CryoVertex_Y_TRUE_RECO.univHist(universe)->Fill(y_true,wgt_minerva_v1);
@@ -1218,6 +1284,7 @@ int PDG_match=0;
 
           h_CryoVertex_recoRR_TRUE_RECO.univHist(universe)->Fill(rr,wgt_minerva_v1);
 
+          h_Distance_to_InnerTank_TRUE_RECO.univHist(universe)->Fill(TRUE_Distance_to_innerTank(*universe),wgt_minerva_v1);
 
           h_CryoVertex_resolutionX_TRUE_RECO.univHist(universe)->Fill(resolutionX,wgt_minerva_v1);
           h_CryoVertex_resolutionY_TRUE_RECO.univHist(universe)->Fill(resolutionY,wgt_minerva_v1);
@@ -1231,9 +1298,12 @@ int PDG_match=0;
           h_CryoVertex_Percent_resolutionR_TRUE_RECO.univHist(universe)->Fill(resolutionR/ r_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionRR_TRUE_RECO.univHist(universe)->Fill(resolutionRR/ rr_true,wgt_minerva_v1);
 
-
-
-
+          for(auto Fid_Cut:CutToSurface_bins_finner ){
+            if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut))
+            {
+              h_FidiucalCut_TRUE_RECO.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
+            }
+          }
 
           if(isCV(*universe)){
 
@@ -1253,6 +1323,11 @@ int PDG_match=0;
             Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
             Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
             Material_type Material_type_Event = universe->Get_MaterialStackType();
+            double True_distance = TRUE_Distance_to_innerTank(*universe);
+            double Reco_distance = RECO_Distance_to_innerTank(*universe);
+
+            h_Mig_Distance_to_InnerTank_TRUE->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+
 
             h_CryoVertex_X_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
             h_CryoVertex_X_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
@@ -1270,7 +1345,14 @@ int PDG_match=0;
             h_CryoVertex_R_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
             h_CryoVertex_R_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
 
-            for(auto Fid_Cut:CutToSurface_bins ){
+
+            for(auto Fid_Cut:CutToSurface_bins_finner ){
+
+              if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(*universe, Fid_Cut) && IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
+
+              h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
+              h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
+            }
 
               if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
 
@@ -1282,8 +1364,12 @@ int PDG_match=0;
 
                 h_resolutionZ_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
 
+                h_FidiucalCut_cryoVertex_R_TRUE_RECO->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
+
+                h_FidiucalCut_cryoVertex_Z_TRUE_RECO->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
+
               } // end of Volume Cut
-          } // End of loop
+            } // End of loop
 
         } // ENd of CV
 
@@ -1316,6 +1402,22 @@ int PDG_match=0;
           double resolutionR = r_true - r;
           double resolutionRR = rr_true - rr;
 
+          double True_distance = TRUE_Distance_to_innerTank(*universe);
+          double Reco_distance = RECO_Distance_to_innerTank(*universe);
+          double resolution_distance = True_distance-Reco_distance;
+
+          h_Distance_to_InnerTank_TRUE.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+          h_Distance_to_InnerTank.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+          h_Distance_to_InnerTank_Resolution.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
+          h_Distance_to_InnerTank_Resolution_Percent.univHist(universe)->Fill(resolution_distance / True_distance , wgt_minerva_v1);
+
+          if( universe->isHeliumInteraction() ){
+            h_Distance_to_InnerTank_helium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+          }
+          else{
+            h_Distance_to_InnerTank_nonhelium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+          }
+
           h_CryoVertex_resolutionX_RECO.univHist(universe)->Fill(resolutionX,wgt_minerva_v1);
           h_CryoVertex_resolutionY_RECO.univHist(universe)->Fill(resolutionY,wgt_minerva_v1);
           h_CryoVertex_resolutionZ_RECO.univHist(universe)->Fill(resolutionZ,wgt_minerva_v1);
@@ -1327,6 +1429,23 @@ int PDG_match=0;
           h_CryoVertex_Percent_resolutionZ_RECO.univHist(universe)->Fill(resolutionZ / z_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionR_RECO.univHist(universe)->Fill(resolutionR / r_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionRR_RECO.univHist(universe)->Fill(resolutionRR / rr_true,wgt_minerva_v1);
+
+          for(auto Fid_Cut:CutToSurface_bins_finner ){
+            if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
+              h_FidiucalCut.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
+              if( universe->isHeliumInteraction() ){
+                h_FidiucalCut_helium.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
+
+              }
+              else{
+                h_FidiucalCut_nonhelium.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
+
+              }
+
+            }
+          }
+
+
 
           if(isCV(*universe)){
             auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
@@ -1343,7 +1462,7 @@ int PDG_match=0;
             Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
             Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
             Material_type Material_type_Event = universe->Get_MaterialStackType();
-
+            TrackType Track_type_Event = universe->GetTrackType();
             h_CryoVertex_resolutionX_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionX, wgt_minerva_v1);
             h_CryoVertex_resolutionX_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionX, wgt_minerva_v1);
             h_CryoVertex_resolutionX_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionX, wgt_minerva_v1);
@@ -1361,6 +1480,13 @@ int PDG_match=0;
             h_CryoVertex_resolutionZ_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
 
 
+            h_Distance_to_InnerTank_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_Material.GetComponentHist(Material_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_Particle.GetComponentHist(Particle_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_Track.GetComponentHist(Track_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+            h_Mig_Distance_to_InnerTank->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+
             if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, 20)){
 
               h_CryoVertex_resolutionR_fidiucal_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionR, wgt_minerva_v1);
@@ -1373,7 +1499,7 @@ int PDG_match=0;
             }
 
 
-            for(auto Fid_Cut:CutToSurface_bins ){
+            for(auto Fid_Cut:CutToSurface_bins_finner ){
 
               if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
 
@@ -1385,15 +1511,34 @@ int PDG_match=0;
 
                 h_resolutionZ_FidiucalCut->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
 
+                h_FidiucalCut_cryoVertex_R->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
+
+                h_FidiucalCut_cryoVertex_Z->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
+
+                h_FidiucalCut_cryoVertex_R_RECO->Fill(Fid_Cut, r,  wgt_minerva_v1);
+
+                h_FidiucalCut_cryoVertex_Z_RECO->Fill(Fid_Cut, z,  wgt_minerva_v1);
+
 
                 if( universe->isHeliumInteraction() ){
                   h_resolutionR_FidiucalCut_helium->Fill(Fid_Cut, resolutionR,  wgt_minerva_v1);
                   h_resolutionZ_FidiucalCut_helium->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_R_helium->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_Z_helium->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_R_RECO_helium->Fill(Fid_Cut, r,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_Z_RECO_helium->Fill(Fid_Cut, z,  wgt_minerva_v1);
                 }
                 else{
                   h_resolutionR_FidiucalCut_nonhelium->Fill(Fid_Cut, resolutionR,  wgt_minerva_v1);
                   h_resolutionZ_FidiucalCut_nonhelium->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_R_nonhelium->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_Z_nonhelium->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_R_RECO_nonhelium->Fill(Fid_Cut, r,  wgt_minerva_v1);
+                  h_FidiucalCut_cryoVertex_Z_RECO_nonhelium->Fill(Fid_Cut, z,  wgt_minerva_v1);
+
               }
+
+
 
                 if(Fid_Cut==-200){
                   Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
@@ -1435,6 +1580,19 @@ int PDG_match=0;
                   FiducalCut.push_back(XYZinput);
                   //count_fid_0 = count_fid_0 + wgt_minerva_v1;
                   count_fid_0++;
+                }
+                else if(Fid_Cut==20){
+                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
+                  FiducalCut_20.push_back(XYZinput);
+                  //count_fid_0 = count_fid_0 + wgt_minerva_v1;
+                  count_fid_20++;
+                }
+
+                else if(Fid_Cut==30){
+                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
+                  FiducalCut_30.push_back(XYZinput);
+                  //count_fid_0 = count_fid_0 + wgt_minerva_v1;
+                  count_fid_30++;
                 }
                 else if(Fid_Cut==50){
                   Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
@@ -1728,7 +1886,10 @@ double countmc= 0.0;
     h_MuonE_TRUE_RECO.SyncCVHistos();
     h_MuonTheta_TRUE_RECO.SyncCVHistos();
 
-
+    h_FidiucalCut.SyncCVHistos();
+    h_FidiucalCut_helium.SyncCVHistos();
+    h_FidiucalCut_nonhelium.SyncCVHistos();
+    h_FidiucalCut_TRUE_RECO.SyncCVHistos();
     //h_secTrk_tracklength_TRUE_TRUE_RECO.SyncCVHistos();
 //////////////////////////////////
 
@@ -1795,6 +1956,15 @@ double countmc= 0.0;
     h_secTrk_Pathlength_PROTON_TRUE_RECO.SyncCVHistos();
     h_secTrk_Pathlength_PION_TRUE_RECO.SyncCVHistos();
     h_secTrk_DOCA_TRUE_RECO.SyncCVHistos();
+
+    h_Distance_to_InnerTank_TRUE.SyncCVHistos();
+    h_Distance_to_InnerTank_Resolution.SyncCVHistos();
+    h_Distance_to_InnerTank_Resolution_Percent.SyncCVHistos();
+    h_Distance_to_InnerTank.SyncCVHistos();
+    h_Distance_to_InnerTank_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_helium.SyncCVHistos();
+    h_Distance_to_InnerTank_nonhelium.SyncCVHistos();
+
     //h_secTrkTheta_cryoVertex_Z_TRUE_RECO.SyncCVHistos();
     //h_secTrkTheta_cryoVertex_R_TRUE_RECO.SyncCVHistos();
 
@@ -1946,12 +2116,32 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_CryoVertex_Percent_resolutionR_RECO.hist->Write();
   h_CryoVertex_Percent_resolutionRR_RECO.hist->Write();
 
+  h_FidiucalCut.hist->Write();
+  h_FidiucalCut_TRUE_RECO.hist->Write();
+  h_FidiucalCut_helium.hist->Write();
+  h_FidiucalCut_nonhelium.hist->Write();
+
+  h_Distance_to_InnerTank_TRUE.hist->Write();
+  h_Distance_to_InnerTank_Resolution.hist->Write();
+  h_Distance_to_InnerTank_Resolution_Percent.hist->Write();
+  h_Distance_to_InnerTank.hist->Write();
+  h_Distance_to_InnerTank_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_helium.hist->Write();
+  h_Distance_to_InnerTank_nonhelium.hist->Write();
+
 
   h_secTrk_Energy_TRUE_RECO.hist->Write();
   h_secTrk_Pathlength_TRUE_RECO.hist->Write();
   h_secTrk_Pathlength_PROTON_TRUE_RECO.hist->Write();
   h_secTrk_Pathlength_PION_TRUE_RECO.hist->Write();
 
+  h_Distance_to_InnerTank_TRUE_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_Particle.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_Interaction.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_Track.WriteToFile(*outFile);
+  h_Mig_Distance_to_InnerTank->Write();
+  h_Mig_Distance_to_InnerTank_TRUE->Write();
   h_CryoVertex_X_Material.WriteToFile(*outFile);
   h_CryoVertex_X_Interaction.WriteToFile(*outFile);
   h_CryoVertex_X_Particle.WriteToFile(*outFile);
@@ -2069,11 +2259,37 @@ h_resolutionZ_FidiucalCut_helium->Write();
 h_resolutionR_FidiucalCut_nonhelium->Write();
 h_resolutionZ_FidiucalCut_nonhelium->Write();
 
+h_FidiucalCut_cryoVertex_R->Write();
+h_FidiucalCut_cryoVertex_R_helium->Write();
+h_FidiucalCut_cryoVertex_R_nonhelium->Write();
+
+h_FidiucalCut_cryoVertex_Z->Write();
+h_FidiucalCut_cryoVertex_Z_helium->Write();
+h_FidiucalCut_cryoVertex_Z_nonhelium->Write();
+
+
+h_FidiucalCut_cryoVertex_R_RECO->Write();
+h_FidiucalCut_cryoVertex_R_RECO_helium->Write();
+h_FidiucalCut_cryoVertex_R_RECO_nonhelium->Write();
+
+h_FidiucalCut_cryoVertex_Z_RECO->Write();
+h_FidiucalCut_cryoVertex_Z_RECO_helium->Write();
+h_FidiucalCut_cryoVertex_Z_RECO_nonhelium->Write();
+
+
 h_resolutionR_TRUE_RECO_FidiucalCut->Write();
 h_resolutionZ_TRUE_RECO_FidiucalCut->Write();
 
 h_resolutionX_TRUE_RECO_FidiucalCut->Write();
 h_resolutionY_TRUE_RECO_FidiucalCut->Write();
+
+
+h_FidiucalCut_cryoVertex_R_TRUE_RECO->Write();
+h_FidiucalCut_cryoVertex_Z_TRUE_RECO->Write();
+
+h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO->Write();
+h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO->Write();
+
 
 h_cryoVertex_Z_secTrkTheta_TRUE_RECO->Write();
 h_cryoVertex_R_secTrkTheta_TRUE_RECO->Write();
@@ -2132,6 +2348,9 @@ char pdf_end[1024];
   DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg100 , c, " Fiduical -100 ", pdf_name , can, mnv_plotter);
   DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg50 , c, " Fiduical -50 ", pdf_name , can, mnv_plotter);
   DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut , c, " Fiduical 0 ", pdf_name , can, mnv_plotter);
+  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_20 , c, " Fiduical 20 ", pdf_name , can, mnv_plotter);
+  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_30 , c, " Fiduical 30 ", pdf_name , can, mnv_plotter);
+
   DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_50 , c, " Fiduical 50 ", pdf_name , can, mnv_plotter);
   DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_100 , c, " Fiduical 100 ", pdf_name , can, mnv_plotter);
 
@@ -2472,10 +2691,10 @@ std::vector<ECutsTRUTH> GetTRUTH_FidiucalMuCutsVector() {
   True_vec.push_back(kTRUTHCCInteraction );
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTH_greaterthanoneFS);
-  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
+  //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
+  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   True_vec.push_back(kAllTRUTHCuts);
-
   return True_vec;
 //#endif
 }
