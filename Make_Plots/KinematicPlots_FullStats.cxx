@@ -69,8 +69,9 @@ tm *ltm = localtime(&now);
  char timeset_nonstacks[2024];
  std::string SysError_printLabel = PrintLabel_Systematics(Print_Systematics);
  auto Playlist_names =  MakePlaylistString(kMEPlayList_Vector);
- sprintf(timeset_nonstacks,"%i_%i_%i_%i_%s_%s", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min, SysError_printLabel.c_str(),Playlist_names.c_str());
- sprintf(timeset, "%i_%i_%i_%i", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min);
+ //sprintf(timeset_nonstacks,"%i_%i_%i_%i_%s_%s", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min, SysError_printLabel.c_str(),Playlist_names.c_str());
+ //sprintf(timeset, "%i_%i_%i_%i", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min);
+ sprintf(timeset, "");
 bool is_mc=true;bool isNOT_mc=false;
 //auto Playlist_txtFILEPath = GetPlaylist_txtFILE_path(PlayList_iterator, is_mc );
 /*
@@ -281,6 +282,7 @@ EmptyTFile_Map_Data.insert(std::make_pair(kMEPlayList_Vector.at(4),PlaylistME_1N
 bool DoBinwidthNorm = BinNorm;
 bool MakeXaxisLOG = false;
 bool MakeYaxisLOG = false;
+bool DrawAllerrorGroups = false;
 
 for(auto Muon_Var: kMuonVaribles_vector_TOTAL ){
 
@@ -317,13 +319,13 @@ for(auto Bluebird : StackType_vector){
 
 }*/
 
-DrawFULLStat_CV_SystematicErr(FullTFile_Map_MC,  FullPOT_local_MC_ScaledMAP,
-                              EmptyTFile_Map_MC,  EmptyPOT_local_MC_ScaledMAP,
-                              FullTFile_Map_Data, FullPOT_local_Data_ScaledMAP,
-                              EmptyTFile_Map_Data, EmptyPOT_local_Data_ScaledMAP,
-   histnameMC_char ,histnameDATA_char,
-   GetMuonUnitType(Muon_Var), pdf_CV, TITLE_char,
-   XAxis_name_char, "",  DoBinwidthNorm, MakeXaxisLOG, MakeYaxisLOG );
+//DrawFULLStat_CV_SystematicErr(FullTFile_Map_MC,  FullPOT_local_MC_ScaledMAP,
+//                              EmptyTFile_Map_MC,  EmptyPOT_local_MC_ScaledMAP,
+//                              FullTFile_Map_Data, FullPOT_local_Data_ScaledMAP,
+//                              EmptyTFile_Map_Data, EmptyPOT_local_Data_ScaledMAP,
+//   histnameMC_char ,histnameDATA_char,
+//   GetMuonUnitType(Muon_Var), pdf_CV, TITLE_char,
+//   XAxis_name_char, "",  DoBinwidthNorm, MakeXaxisLOG, MakeYaxisLOG );
 
 DrawFULLStatCOMBINED_CV_SystematicErr(FullTFile_Map_MC, FullPOT_local_MC_MAP,
                               EmptyTFile_Map_MC,        EmptyPOT_local_MC_MAP,
@@ -331,7 +333,7 @@ DrawFULLStatCOMBINED_CV_SystematicErr(FullTFile_Map_MC, FullPOT_local_MC_MAP,
                               EmptyTFile_Map_Data,      EmptyPOT_local_Data_MAP,
    histnameMC_char ,histnameDATA_char,
    GetMuonUnitType(Muon_Var), pdf_CV, TITLE_char,
-   XAxis_name_char, "",  DoBinwidthNorm, MakeXaxisLOG);
+   XAxis_name_char, "",  DoBinwidthNorm, MakeXaxisLOG, DrawAllerrorGroups);
 
 }
 
@@ -492,31 +494,29 @@ std::vector<MuonVar> GetMUONVaribles_Total() {
   //MuonVars.push_back(kMuonMatchtoVeto);
 //  MuonVars.push_back(kMuonMatchtoMinos);
   //MuonVars.push_back(kCharge);
-  //MuonVars.push_back(kE);
+  MuonVars.push_back(kE);
   ////MuonVars.push_back(kE_nonECT);
- //MuonVars.push_back(kP_Z);
+ MuonVars.push_back(kP_Z);
   //MuonVars.push_back(kP_Z_nonECT);
 
-  //MuonVars.push_back(kP_T);
+  MuonVars.push_back(kP_T);
   //MuonVars.push_back(kP_T_nonECT);
 
-  //MuonVars.push_back(kAngleWRTB);
-  //MuonVars.push_back(kAnglePhi);
-
-  //MuonVars.push_back(kcurvatureSig);
-  //MuonVars.push_back(kDOCA_muon);
+  MuonVars.push_back(kAngleWRTB);
+  MuonVars.push_back(kAnglePhi);
+  MuonVars.push_back(kcurvatureSig);
+  MuonVars.push_back(kDOCA_muon);
   //MuonVars.push_back(kminosMuon_Energy);
-  //MuonVars.push_back(ktracksize);
-  //MuonVars.push_back(kminosStart_X);
-  //MuonVars.push_back(kminosStart_Y);
-  //MuonVars.push_back(kminosStart_Z);
-  //MuonVars.push_back(kminosEnd_X);
-  //MuonVars.push_back(kminosEnd_Y);
-  //MuonVars.push_back(kminosEnd_Z);
+  MuonVars.push_back(ktracksize);
+  MuonVars.push_back(kminosStart_X);
+  MuonVars.push_back(kminosStart_Y);
+  MuonVars.push_back(kminosStart_Z);
+  MuonVars.push_back(kminosEnd_X);
+  MuonVars.push_back(kminosEnd_Y);
+  MuonVars.push_back(kminosEnd_Z);
   MuonVars.push_back(kmuonFirstNodeX);
   MuonVars.push_back(kmuonFirstNodeY);
   MuonVars.push_back(kmuonFirstNodeZ);
-
   MuonVars.push_back(kmuonLastNodeX);
   MuonVars.push_back(kmuonLastNodeY);
   MuonVars.push_back(kmuonLastNodeZ);
@@ -533,7 +533,7 @@ std::vector<MuonVar> GetMUONVaribles_Stacks() {
 
   //MuonVars.push_back(kMuonMatchtoVeto);
   //MuonVars.push_back(kMuonMatchtoMinos);
-  MuonVars.push_back(kCharge);
+  //MuonVars.push_back(kCharge);
   MuonVars.push_back(kE);
 
   MuonVars.push_back(kP_Z);
@@ -549,19 +549,19 @@ std::vector<MuonVar> GetMUONVaribles_Stacks() {
   //MuonVars.push_back(kminosMuon_Energy);
 
 
-  MuonVars.push_back(kminosStart_X);
-  MuonVars.push_back(kminosStart_Y);
-  MuonVars.push_back(kminosStart_Z);
-  MuonVars.push_back(kminosEnd_X);
-  MuonVars.push_back(kminosEnd_Y);
-  MuonVars.push_back(kminosEnd_Z);
-  MuonVars.push_back(kmuonFirstNodeX);
-  MuonVars.push_back(kmuonFirstNodeY);
-  MuonVars.push_back(kmuonFirstNodeZ);
+  //MuonVars.push_back(kminosStart_X);
+  //MuonVars.push_back(kminosStart_Y);
+  //MuonVars.push_back(kminosStart_Z);
+  //MuonVars.push_back(kminosEnd_X);
+  //MuonVars.push_back(kminosEnd_Y);
+  //MuonVars.push_back(kminosEnd_Z);
+  //MuonVars.push_back(kmuonFirstNodeX);
+  //MuonVars.push_back(kmuonFirstNodeY);
+  //MuonVars.push_back(kmuonFirstNodeZ);
 
-  MuonVars.push_back(kmuonLastNodeX);
-  MuonVars.push_back(kmuonLastNodeY);
-  MuonVars.push_back(kmuonLastNodeZ);
+  //MuonVars.push_back(kmuonLastNodeX);
+  //MuonVars.push_back(kmuonLastNodeY);
+  //MuonVars.push_back(kmuonLastNodeZ);
 
   MuonVars.push_back(ktracksize);
 

@@ -15,21 +15,6 @@ enum EColorPalettes
 const std::vector<int>& getColors(int whichColours);
 
 
-//Particle_color_map getColorMap_Particle();
-//Interaction_color_map getColorMap_Interaction();
-//Material_color_map getColorMap_Material();
-
-//======================================================================
-/* void autoColorHists(TPad* pad, int whichColours=kBrewerSet1Palette) */
-/* { */
-/*   const std::vector<int>& colours=getColors(whichColours); */
-
-/*   std::vector<TH1*> hists=getPadHists(pad); */
-/*   for(unsigned int i=0; i<hists.size(); ++i){ */
-/*     hists[i]->SetLineColor(colours[i%colours.size()]); */
-/*   } */
-/*   pad->Draw(); */
-/* } */
 
 
 

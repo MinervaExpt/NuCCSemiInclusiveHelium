@@ -53,7 +53,7 @@ namespace ROOT {
    {
       ::GridCanvas *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::GridCanvas >(0);
-      static ::ROOT::TGenericClassInfo 
+      static ::ROOT::TGenericClassInfo
          instance("GridCanvas", ::GridCanvas::Class_Version(), "GridCanvas.h", 25,
                   typeid(::GridCanvas), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &::GridCanvas::Dictionary, isa_proxy, 4,

@@ -1,3 +1,7 @@
+//File: HeliumUtils.h
+//Brief: Common functions that deal with the ME 1D Helium Analysis framework
+//Author: Christian Nguyen christian2nguyen@ufl.edu
+
 // * Uses the New Systematics Framework and "Universe" objects.
 // * loop universes, make cuts and fill histograms with the correct lateral
 // shifts and weights for each universe.
@@ -29,8 +33,12 @@ std::vector<Weights> GetWeightVector_mk();
 
 // Get container of systematic
 const bool m_RunCodeWithSystematics = true;
+const bool RunwithConvolution = true;
+const bool RunwithShift = false;
+const bool RunwithFid = true;
+const bool useweights = true;
 
-//vector <EventRunMAP> secTrkLowEnergy, secTrkHighAngle, secTrkLowEnergyAndHighAngle;
+
 
 const std::vector<PlotUtils::NamedCategory<Material_type>>
 MaterialGroup_categories = {
@@ -48,9 +56,25 @@ InteractionGroup_categories = {
   PlotUtils::NamedCategory<Interaction_type>({kInteraction_NONE}, "None"),
   PlotUtils::NamedCategory<Interaction_type>({kDIS},              "DIS"),
   PlotUtils::NamedCategory<Interaction_type>({k2p2h},             "2p2h"),
-  PlotUtils::NamedCategory<Interaction_type>({kRes_Coh_Pion},     "1Pion"),
-  PlotUtils::NamedCategory<Interaction_type>({kElastic},          "Elastic")
+  PlotUtils::NamedCategory<Interaction_type>({kRes_Coh_Pion},     "Res_Coh"),
+  PlotUtils::NamedCategory<Interaction_type>({kElastic},          "QE")
 };
+
+const std::vector<PlotUtils::NamedCategory<Interaction_type>>
+InteractionGroupDISBreakdown_categories = {
+  PlotUtils::NamedCategory<Interaction_type>({kInteraction_OTHER},"Other"),
+  PlotUtils::NamedCategory<Interaction_type>({kInteraction_NONE}, "None"),
+  PlotUtils::NamedCategory<Interaction_type>({kDISSoft},          "SoftDIS"),
+  PlotUtils::NamedCategory<Interaction_type>({kDISHard},          "HardDIS"),
+  PlotUtils::NamedCategory<Interaction_type>({kDISSIS},           "SIS"),
+  PlotUtils::NamedCategory<Interaction_type>({k2p2h},             "2p2h"),
+  PlotUtils::NamedCategory<Interaction_type>({kdeltaRES},         "#DeltaRes"),
+  PlotUtils::NamedCategory<Interaction_type>({kHeavierRES},       "HeavierRes"),
+  PlotUtils::NamedCategory<Interaction_type>({kElastic},          "QE")
+};
+
+
+
 
 /*
 const std::vector<PlotUtils::NamedCategory<Particle_type>>
@@ -71,29 +95,41 @@ ParticleGroup_categories = {
   PlotUtils::NamedCategory<Particle_type>({kNeutron},        "Neutron")
 };
 */
+/*
 const std::vector<PlotUtils::NamedCategory<Particle_type>>
 ParticleGroup_categories = {
 PlotUtils::NamedCategory<Particle_type>({kParticle_N_A}, "N_A"),
 PlotUtils::NamedCategory<Particle_type>({kParticle_OTHER}, "Other"),
-PlotUtils::NamedCategory<Particle_type>({kElectron}, "Electron"),
-PlotUtils::NamedCategory<Particle_type>({kMuon},     "Muon"),
-PlotUtils::NamedCategory<Particle_type>({kGamma},    "Gamma"),
-PlotUtils::NamedCategory<Particle_type>({kNeutrino_muon}, "Neutrino_muon"),
-PlotUtils::NamedCategory<Particle_type>({kNeutrino_electron}, "Neutrino_electron"),
-PlotUtils::NamedCategory<Particle_type>({kAnti_Neutrino}, "Anti_Neutrino"),
-PlotUtils::NamedCategory<Particle_type>({kKaon},     "Kaon"),
-PlotUtils::NamedCategory<Particle_type>({kPion_0},     "Pi0"),
-PlotUtils::NamedCategory<Particle_type>({kPion_neg},     "Pi^{-}"),
-PlotUtils::NamedCategory<Particle_type>({kPion_pos},     "Pi^{+}"),
+PlotUtils::NamedCategory<Particle_type>({kElectron}, "e^{-}"),
+PlotUtils::NamedCategory<Particle_type>({kMuon},     "#mu"),
+PlotUtils::NamedCategory<Particle_type>({kGamma},    "#gamma"),
+PlotUtils::NamedCategory<Particle_type>({kNeutrino_muon}, "#nu_{#mu}"),
+PlotUtils::NamedCategory<Particle_type>({kNeutrino_electron}, "#nu_{e}"),
+PlotUtils::NamedCategory<Particle_type>({kAnti_Neutrino}, "#bar{#nu}"),
+PlotUtils::NamedCategory<Particle_type>({kKaon},     "#Kappa"),
+PlotUtils::NamedCategory<Particle_type>({kPion_0},     "#pi^{0}"),
+PlotUtils::NamedCategory<Particle_type>({kPion_neg},     "#pi^{-}"),
+PlotUtils::NamedCategory<Particle_type>({kPion_pos},     "#pi^{+}"),
 PlotUtils::NamedCategory<Particle_type>({kProton},   "Proton"),
 PlotUtils::NamedCategory<Particle_type>({kNeutron},   "Neutron"),
 PlotUtils::NamedCategory<Particle_type>({kFourHelium},   "{}^{4}He"),
-PlotUtils::NamedCategory<Particle_type>({kLamdba},   "Lamdba"),
-PlotUtils::NamedCategory<Particle_type>({kSigma_plus},   "Sigma^{+}")
+PlotUtils::NamedCategory<Particle_type>({kLamdba},       "#Lambda"),
+PlotUtils::NamedCategory<Particle_type>({kSigma_plus},   "#Sigma^{+}")
 };
+*/
+
+const std::vector<PlotUtils::NamedCategory<Particle_type>>
+ParticleGroup_reduced_categories = {
+  PlotUtils::NamedCategory<Particle_type>({kParticle_N_A},          "N_A"),
+  PlotUtils::NamedCategory<Particle_type>({kParticle_OTHER},        "Other"),
+  PlotUtils::NamedCategory<Particle_type>({kParticle_neutral},      "Neutral"),
+  PlotUtils::NamedCategory<Particle_type>({kMuon},                   "Muon"),
+  PlotUtils::NamedCategory<Particle_type>({kPion_0_Electron_kGamma},"Pion_0_Electron_Gamma"),
+  PlotUtils::NamedCategory<Particle_type>({kPion_pos_neg},          "#pi^{}"),
+  PlotUtils::NamedCategory<Particle_type>({kProton},                "Proton")
 
 
-
+};
 
 
 
@@ -178,7 +214,7 @@ std::vector<int> Helium9_colorScheme = {
 
 //typedef std::map< std::string, std::vector<HeliumCVUniverse*> > UniverseMap;
 
-UniverseMap GetErrorBands(PlotUtils::ChainWrapper* chain) {
+UniverseMap GetErrorBands(PlotUtils::ChainWrapper* chain , ME_helium_Status CryoTankStatus ) {
 
     //return Map
     UniverseMap error_bands;
@@ -224,6 +260,13 @@ if(m_RunCodeWithSystematics){
     UniverseMap angle_systematics = PlotUtils::GetAngleSystematicsMap<HeliumCVUniverse>(chain);/*,NSFDefaults::beamThetaX_Err,NSFDefaults::beamThetaY_Err*/
     error_bands.insert(angle_systematics.begin(), angle_systematics.end());
 
+    // Muon Energy resolution
+    UniverseMap MuonEnergyResolution_systematics =PlotUtils::GetMuonResolutionSystematicsMap<HeliumCVUniverse>(chain);
+    error_bands.insert(MuonEnergyResolution_systematics.begin(), MuonEnergyResolution_systematics.end());
+
+
+    UniverseMap MuonangleResolution_systematics = PlotUtils::GetMuonAngleResolutionSystematicsMap<HeliumCVUniverse>(chain);
+    error_bands.insert(MuonangleResolution_systematics.begin(), MuonangleResolution_systematics.end());
     //========================================================================
     // GENIE
     //========================================================================
@@ -248,8 +291,9 @@ if(m_RunCodeWithSystematics){
     // Helium
     //========================================================================
 
-    UniverseMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
+    UniverseMap VertexSmearing_systematics = GetHELIUMVertex_XYZ_SmearingShiftSystematicsMap<HeliumCVUniverse>(chain,CryoTankStatus);
     error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
+
 
 
     UniverseMap HeliumTargetMass_systematics = GetHeliumTargetMassSystematicsMap<HeliumCVUniverse>(chain);
@@ -321,13 +365,39 @@ bool is_mc= true;
  MinervaUniverse::SetTruth(false);
   MinervaUniverse::SetDeuteriumGeniePiTune(false);
   MinervaUniverse::SetNuEConstraint(true);
-  MinervaUniverse::SetZExpansionFaReweight(false);
+  MinervaUniverse::SetZExpansionFaReweight(true);
   MinervaUniverse::SetAnalysisNuPDG(14);
   MinervaUniverse::SetNonResPiReweight(true);
   MinervaUniverse::SetNFluxUniverses(n_flux_universes);
   std::string playlist = GetPlaylist(PlayList_iterator);
-
+  ME_helium_Status CryoTankStatus =  GetPlaylist_HeliumStatus(PlayList_iterator);
   MinervaUniverse::SetPlaylist(playlist);
+
+  double ShiftX_major = return_shiftX(); //5.0;//-44.0; // [mm]
+  double ShiftY_major = return_shiftY(); //50.0; // 41 [mm]
+  double ShiftZ_major = return_shiftZ();
+
+  if(RunwithShift==false){
+   ShiftX_major= 0.0;
+   ShiftY_major= 0.0;
+   ShiftZ_major= 0.0;
+  }
+
+
+  double vertex_X_sigma = 0.0; double vertex_X_mean = 0.0;
+  double vertex_Y_sigma = 0.0; double vertex_Y_mean = 0.0;
+  double vertex_Z_sigma = 0.0; double vertex_Z_mean = 0.0;
+  std::default_random_engine generator;
+
+  if(RunwithConvolution == true){
+  Fill_Convolution_BeforeShift(PlayList_iterator ,vertex_X_mean,
+    vertex_X_sigma, vertex_Y_mean, vertex_Y_sigma, vertex_Z_mean, vertex_Z_sigma);
+  }
+
+  std::normal_distribution<double> vertexZ_Convolution(vertex_Z_mean, vertex_Z_sigma);
+  std::normal_distribution<double> vertexX_Convolution(vertex_X_mean, vertex_X_sigma);
+  std::normal_distribution<double> vertexY_Convolution(vertex_Y_mean, vertex_Y_sigma);
+
   int otherlongtrack=0;
 
   int nu_pdg = MinervaUniverse::GetAnalysisNuPDG();
@@ -352,7 +422,7 @@ bool is_mc= true;
   ///////////////////Making/adding to error bands  ///////////////////////////
   //======================================================================
 //std::map< std::string, std::vector<HeliumCVUniverse*> > error_bands = GetErrorBands(chw_FullMC);
-UniverseMap error_bands = GetErrorBands(chw_MC);
+UniverseMap error_bands = GetErrorBands(chw_MC, CryoTankStatus);
 for(auto band :error_bands ){std::cout<<"Checking Universe this is universe with name : " << band.first<<std::endl;}
 std::vector<std::vector<HeliumCVUniverse*>> Error_Band_Universe_GROUPS = groupCompatibleUniverses(error_bands);
 
@@ -376,7 +446,7 @@ POTCounter pot_counter;
 
 
 const std::string RootName = GetPlaylist_ROOT_path(PlayList_iterator, is_mc );
-//const std::string RootName = GetPlaylist_ROOT_path("1G_MC_vertexweightto10mm",  is_mc );
+//const std::string RootName = GetPlaylist_ROOT_path("1L_newTrackers",  is_mc );
 //const std::string RootName = GetPlaylist_ROOT_path("1F_Bugfix",  is_mc );
 std::cout<<"The Playlist that is set is = "<< playlist.c_str()<<std::endl;
 std::cout<<"The Playlist Root = "<< RootName<<std::endl;
@@ -422,8 +492,10 @@ std::vector<double> Vertex_ChiSqFit_vector= GetBinvertexVector(kfitConverge);
 ////////////////////////
 std::vector<double> Vertex_Xbin_vector= GetBinvertexVector(kX);
 std::vector<double> Vertex_Ybin_vector= GetBinvertexVector(kY);
-std::vector<double> Vertex_Zbin_vector= GetBinvertexVector(kZ);
+std::vector<double> Vertex_Zbin_vector= GetBinvertexVector(kZ_2D);
 std::vector<double> Vertex_Rbin_vector= GetBinvertexVector(kR);
+
+
 
 std::vector<double> secTrk_Thetamidbin_vector= GetSecondTrkVarVector(kThetamid);
 std::vector<double> secTrk_Theta_TRUEbin_vector = GetSecondTrkVarVector(kThetamid);//GetSecondTrkVarVector(kFullAngle);
@@ -493,14 +565,14 @@ std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<<std::endl;
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonCharge_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonCharge_Interaction", MuonCharge_vector  ,"h_MuonCharge_Interaction; [charge];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonCharge_Interaction", MuonCharge_vector  ,"h_MuonCharge_Interaction; [charge];Events");
 
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<<std::endl;
 std::cout<<"~~~~ starting Particle_type HistFolio  ~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<<std::endl;
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonCharge_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonCharge_Particle", MuonCharge_vector ," h_MuonCharge_Particle; [charge];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonCharge_Particle", MuonCharge_vector ," h_MuonCharge_Particle; [charge];Events");
 
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<<std::endl;
 std::cout<<"~~~~ Finished 1 set  ~~~~~~"<<std::endl;
@@ -515,13 +587,14 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonMatchtoMinos_Materi
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonMatchtoMinos_Material", MuonMatchtoMinos_vector ,"h_MuonMatchtoMinos_Material; [bool];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonMatchtoMinos_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonMatchtoMinos_Interaction",MuonMatchtoMinos_vector  ,"h_MuonMatchtoMinos_Interaction; [bool];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonMatchtoMinos_Interaction",MuonMatchtoMinos_vector  ,"h_MuonMatchtoMinos_Interaction; [bool];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonMatchtoMinos_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonMatchtoMinos_Particle",MuonMatchtoMinos_vector ," h_MuonMatchtoMinos_Particle; [bool];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonMatchtoMinos_Particle",MuonMatchtoMinos_vector ," h_MuonMatchtoMinos_Particle; [bool];Events");
 //h_MuonMatchtoMinos_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonE("h_MuonE", "Muon_{E} NEW Method", Ebin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonE_BG("h_MuonE_BG", "Muon_{E} NEW Method", Ebin_vector , error_bands);
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonE_Fake("h_MuonE_Fake", "Muon_{E} NEW Method", Ebin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonE_Fake2("h_MuonE_Fake2", "Muon_{E} NEW Method", Ebin_vector , error_bands);
@@ -535,26 +608,27 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonE_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonE_Material", Ebin_vector ,"MuonE_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonE_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonE_Interaction", Ebin_vector ,"MuonE_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonE_Interaction", Ebin_vector ,"MuonE_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonE_Particle", Ebin_vector ,"MuonE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonE_Particle", Ebin_vector ,"MuonE_Particle; [GeV];Events");
 
 //h_MuonE_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonE_TRUE_RECO_Material =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonE_Material", Ebin_vector ,"MuonE_Material; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonE_TRUE_RECO_Material", Ebin_vector ,"MuonE_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonE_TRUE_RECO_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonE_Interaction", Ebin_vector ,"MuonE_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonE_TRUE_RECO_Interaction", Ebin_vector ,"MuonE_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonE_TRUE_RECO_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonE_Particle", Ebin_vector ,"MuonE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, " h_MuonE_TRUE_RECO_Particle", Ebin_vector ,"MuonE_Particle; [GeV];Events");
 
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPZ("h_MuonPZ", "Muon_{PZ} NEW Method",  Pzbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPZ_BG("h_MuonPZ_BG", "Muon_{PZ} NEW Method",  Pzbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPZ_Fake("h_MuonPZ_Fake", "Muon_{PZ} NEW Method",  Pzbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPZ_Fake2("h_MuonPZ_Fake2", "Muon_{PZ} NEW Method",  Pzbin_vector , error_bands);
 
@@ -564,14 +638,15 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonPZ_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonPZ_Material", Pzbin_vector ,"h_MuonPZ_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPZ_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonPZ_Interaction", Pzbin_vector ,"h_MuonPZ_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonPZ_Interaction", Pzbin_vector ,"h_MuonPZ_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPZ_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonPZ_Particle", Pzbin_vector ,"h_MuonPZ_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPZ_Particle", Pzbin_vector ,"h_MuonPZ_Particle; [GeV];Events");
 //h_MuonPZ_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPT("h_MuonPT", "Muon_{PT} NEW Method",  PTbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPT_BG("h_MuonPT_BG", "Muon_{PT} NEW Method",  PTbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPT_Fake("h_MuonPT_Fake", "Muon_{PT} NEW Method",  PTbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPT_Fake2("h_MuonPT_Fake2", "Muon_{PT} NEW Method",  PTbin_vector , error_bands);
 
@@ -588,10 +663,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonPT_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonPT_Material", PTbin_vector ,"h_MuonPT_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPT_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonPT_Interaction", PTbin_vector ,"h_MuonPT_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonPT_Interaction", PTbin_vector ,"h_MuonPT_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPT_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonPT_Particle", PTbin_vector ,"h_MuonPT_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPT_Particle", PTbin_vector ,"h_MuonPT_Particle; [GeV];Events");
 //h_MuonPT_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonCurvatureSig("h_MuonCurvatureSig", "(q/p) / #sigma(q/p)",  Muon_curvatureSig_vector , error_bands);
@@ -600,12 +675,14 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonCurvatureSig_Materi
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonCurvatureSig_Material", Muon_curvatureSig_vector ,"h_MuonCurvatureSig_Material; [#sigma(q/p)];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonCurvatureSig_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonCurvatureSig_Interaction", Muon_curvatureSig_vector ,"h_MuonCurvatureSig_Interaction; [#sigma(q/p)];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonCurvatureSig_Interaction", Muon_curvatureSig_vector ,"h_MuonCurvatureSig_Interaction; [#sigma(q/p)];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonCurvatureSig_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonCurvatureSig_Particle", Muon_curvatureSig_vector ,"h_MuonCurvatureSig_Particle; [];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonCurvatureSig_Particle", Muon_curvatureSig_vector ,"h_MuonCurvatureSig_Particle; [];Events");
 //h_MuonCurvatureSig_Particle.ApplyColorPalette(Helium9_colorScheme);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonTheta("h_MuonTheta", "MuonTheta [Deg]",  MuonThetabin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonTheta_BG("h_MuonTheta_BG", "MuonTheta [Deg]",  MuonThetabin_vector , error_bands);
+
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonTheta_Fake("h_MuonTheta_Fake", "MuonTheta [Deg]",  MuonThetabin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonTheta_Fake2("h_MuonTheta_Fake2", "MuonTheta [Deg]",  MuonThetabin_vector , error_bands);
 
@@ -617,10 +694,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonTheta_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonTheta_Material", MuonThetabin_vector ,"h_MuonTheta_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonTheta_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonTheta_Interaction", MuonThetabin_vector ,"h_MuonTheta_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonTheta_Interaction", MuonThetabin_vector ,"h_MuonTheta_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonTheta_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonTheta_Particle", MuonThetabin_vector ,"h_MuonTheta_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonTheta_Particle", MuonThetabin_vector ,"h_MuonTheta_Particle; [GeV];Events");
 //h_MuonTheta_Particle.ApplyColorPalette(Helium9_colorScheme);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPhi("h_MuonPhi", "Muon Phi [Deg]",  AnglePhi_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPhi_TRUE_RECO("h_MuonPhi_TRUE_RECO", "Muon Phi [Deg]",  AnglePhi_vector , error_bands);
@@ -630,10 +707,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonPhi_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonPhi_Material", AnglePhi_vector ,"h_MuonPhi_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPhi_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonPhi_Interaction", AnglePhi_vector ,"h_MuonPhi_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonPhi_Interaction", AnglePhi_vector ,"h_MuonPhi_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPhi_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonPhi_Particle", AnglePhi_vector ,"h_MuonPhi_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPhi_Particle", AnglePhi_vector ,"h_MuonPhi_Particle; [GeV];Events");
 
 //h_MuonPhi_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -645,10 +722,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Tracksize_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Tracksize_Material", TrackSize_vector ,"h_Tracksize_Material; [Tracknumber];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Tracksize_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Tracksize_Interaction", TrackSize_vector ,"h_Tracksize_Interaction; [Tracknumber];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_Tracksize_Interaction", TrackSize_vector ,"h_Tracksize_Interaction; [Tracknumber];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Tracksize_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_Tracksize_Particle", TrackSize_vector ,"h_Tracksize_Particle; [Tracknumber];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_Tracksize_Particle", TrackSize_vector ,"h_Tracksize_Particle; [Tracknumber];Events");
 h_Tracksize_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonDOCA("h_MuonDOCA", "Muon_DOCA",  Vertex_DOCAbin_vector , error_bands);
@@ -658,10 +735,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonDOCA_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonDOCA_Material", Vertex_DOCAbin_vector ,"h_MuonDOCA_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonDOCA_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonDOCA_Interaction", Vertex_DOCAbin_vector ,"h_MuonDOCA_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonDOCA_Interaction", Vertex_DOCAbin_vector ,"h_MuonDOCA_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonDOCA_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonDOCA_Particle", Vertex_DOCAbin_vector ,"h_MuonDOCA_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonDOCA_Particle", Vertex_DOCAbin_vector ,"h_MuonDOCA_Particle; [mm];Events");
 //h_MuonDOCA_Particle.ApplyColorPalette(Helium9_colorScheme);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Nonmuon_VertexTiming("h_Nonmuon_VertexTiming", "h_Nonmuon_VertexTiming",  VectexTiming_vector , error_bands);
 
@@ -669,10 +746,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Nonmuon_VertexTiming_Ma
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Nonmuon_VertexTiming_Material", VectexTiming_vector ,"h_Nonmuon_VertexTiming_Material; [time];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Nonmuon_VertexTiming_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Nonmuon_VertexTiming_Interaction", VectexTiming_vector ,"h_Nonmuon_VertexTiming_Interaction; [time];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_Nonmuon_VertexTiming_Interaction", VectexTiming_vector ,"h_Nonmuon_VertexTiming_Interaction; [time];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Nonmuon_VertexTiming_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_Nonmuon_VertexTiming_Particle", VectexTiming_vector ,"h_Nonmuon_VertexTiming_Particle; [time];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_Nonmuon_VertexTiming_Particle", VectexTiming_vector ,"h_Nonmuon_VertexTiming_Particle; [time];Events");
 //h_Nonmuon_VertexTiming_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 //////////////////////////////////////
@@ -688,10 +765,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_minosStart_X_Mater
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_minosStart_X_Material", Minos_Start_X_vector ,"h_muon_minosStart_X_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_minosStart_X_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_minosStart_X_Interaction", Minos_Start_X_vector ,"h_muon_minosStart_X_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_minosStart_X_Interaction", Minos_Start_X_vector ,"h_muon_minosStart_X_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_minosStart_X_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_minosStart_X_Particle", Minos_Start_X_vector ,"h_muon_minosStart_X_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_minosStart_X_Particle", Minos_Start_X_vector ,"h_muon_minosStart_X_Particle; [mm];Events");
 
 //h_muon_minosStart_X_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -700,10 +777,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_minosStart_Y_Mater
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_minosStart_Y_Material", Minos_Start_Y_vector ,"h_muon_minosStart_Y_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_minosStart_Y_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_minosStart_Y_Interaction", Minos_Start_Y_vector ,"h_muon_minosStart_Y_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_minosStart_Y_Interaction", Minos_Start_Y_vector ,"h_muon_minosStart_Y_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_minosStart_Y_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_minosStart_Y_Particle", Minos_Start_Y_vector ,"h_muon_minosStart_Y_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_minosStart_Y_Particle", Minos_Start_Y_vector ,"h_muon_minosStart_Y_Particle; [mm];Events");
 
 //h_muon_minosStart_Y_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -714,10 +791,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_minosStart_Z_Mater
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_minosStart_Z_Material", Minos_Start_Z_vector ,"h_muon_minosStart_Z_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_minosStart_Z_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_minosStart_Z_Interaction", Minos_Start_Z_vector ,"h_muon_minosStart_Z_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_minosStart_Z_Interaction", Minos_Start_Z_vector ,"h_muon_minosStart_Z_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_minosStart_Z_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_minosStart_Z_Particle", Minos_Start_Z_vector ,"h_muon_minosStart_Z_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_minosStart_Z_Particle", Minos_Start_Z_vector ,"h_muon_minosStart_Z_Particle; [mm];Events");
 
 //h_muon_minosStart_Z_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -728,10 +805,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_minosEnd_X_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_minosEnd_X_Material", Minos_End_X_vector ,"h_muon_minosEnd_X_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_minosEnd_X_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_minosEnd_X_Interaction", Minos_End_X_vector ,"h_muon_minosEnd_X_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_minosEnd_X_Interaction", Minos_End_X_vector ,"h_muon_minosEnd_X_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_minosEnd_X_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_minosEnd_X_Particle", Minos_End_X_vector ,"h_muon_minosEnd_X_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_minosEnd_X_Particle", Minos_End_X_vector ,"h_muon_minosEnd_X_Particle; [mm];Events");
 
 //h_muon_minosEnd_X_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -741,10 +818,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_minosEnd_Y_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_minosEnd_Y_Material", Minos_End_Y_vector ,"h_muon_minosEnd_Y_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_minosEnd_Y_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_minosEnd_Y_Interaction", Minos_End_Y_vector ,"h_muon_minosEnd_Y_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_minosEnd_Y_Interaction", Minos_End_Y_vector ,"h_muon_minosEnd_Y_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_minosEnd_Y_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_minosEnd_Y_Particle", Minos_End_Y_vector ,"h_muon_minosEnd_Y_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_minosEnd_Y_Particle", Minos_End_Y_vector ,"h_muon_minosEnd_Y_Particle; [mm];Events");
 
 //h_muon_minosEnd_Y_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -754,10 +831,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_minosEnd_Z_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_minosEnd_Z_Material", Minos_End_Z_vector ,"h_muon_minosEnd_Z_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_minosEnd_Z_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_minosEnd_Z_Interaction", Minos_End_Z_vector ,"h_muon_minosEnd_Z_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_minosEnd_Z_Interaction", Minos_End_Z_vector ,"h_muon_minosEnd_Z_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_minosEnd_Z_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_minosEnd_Z_Particle", Minos_End_Z_vector ,"h_muon_minosEnd_Z_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_minosEnd_Z_Particle", Minos_End_Z_vector ,"h_muon_minosEnd_Z_Particle; [mm];Events");
 
 //h_muon_minosEnd_Z_Particle.ApplyColorPalette(Helium9_colorScheme);
 /////////////////////////////////////////////////////
@@ -768,10 +845,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_StartNode_X_Materi
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_StartNode_X_Material", Muon_StartNode_X_vector ,"h_muon_StartNode_X_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_StartNode_X_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_StartNode_X_Interaction", Muon_StartNode_X_vector ,"h_muon_StartNode_X_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_StartNode_X_Interaction", Muon_StartNode_X_vector ,"h_muon_StartNode_X_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_StartNode_X_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_StartNode_X_Particle", Muon_StartNode_X_vector ,"h_muon_StartNode_X_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_StartNode_X_Particle", Muon_StartNode_X_vector ,"h_muon_StartNode_X_Particle; [mm];Events");
 
 //h_muon_StartNode_X_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -780,10 +857,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_StartNode_Y_Materi
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_StartNode_Y_Material", Muon_StartNode_X_vector ,"h_muon_StartNode_Y_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_StartNode_Y_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_StartNode_Y_Interaction", Muon_StartNode_X_vector ,"h_muon_minosEnd_Y_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_StartNode_Y_Interaction", Muon_StartNode_X_vector ,"h_muon_minosEnd_Y_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_StartNode_Y_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_StartNode_Y_Particle", Muon_StartNode_Y_vector ,"h_muon_StartNode_Y_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_StartNode_Y_Particle", Muon_StartNode_Y_vector ,"h_muon_StartNode_Y_Particle; [mm];Events");
 
 //h_muon_StartNode_Y_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -794,10 +871,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_StartNode_Z_Materi
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_StartNode_Z_Material", Muon_StartNode_Z_vector ,"h_muon_StartNode_Z_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_StartNode_Z_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_StartNode_Z_Interaction", Muon_StartNode_Z_vector ,"h_muon_StartNode_Z_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_StartNode_Z_Interaction", Muon_StartNode_Z_vector ,"h_muon_StartNode_Z_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_StartNode_Z_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_StartNode_Z_Particle", Muon_StartNode_Z_vector ,"h_muon_StartNode_Z_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_StartNode_Z_Particle", Muon_StartNode_Z_vector ,"h_muon_StartNode_Z_Particle; [mm];Events");
 //h_muon_StartNode_Z_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 
@@ -807,10 +884,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_LastNode_X_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_LastNode_X_Material", Muon_LastNode_X_vector ,"h_muon_LastNode_X_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_LastNode_X_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_LastNode_X_Interaction", Muon_LastNode_X_vector , "h_muon_LastNode_X_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_LastNode_X_Interaction", Muon_LastNode_X_vector , "h_muon_LastNode_X_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_LastNode_X_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_LastNode_X_Particle",Muon_LastNode_X_vector  ,"h_muon_LastNode_X_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_LastNode_X_Particle",Muon_LastNode_X_vector  ,"h_muon_LastNode_X_Particle; [mm];Events");
 
 //h_muon_LastNode_X_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -820,10 +897,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_LastNode_Y_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_LastNode_Y_Material", Muon_LastNode_Y_vector ,"h_muon_LastNode_Y_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_LastNode_Y_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_LastNode_Y_Interaction", Muon_LastNode_Y_vector , "h_muon_LastNode_Y_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_LastNode_Y_Interaction", Muon_LastNode_Y_vector , "h_muon_LastNode_Y_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_LastNode_Y_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_LastNode_Y_Particle",Muon_LastNode_Y_vector  ,"h_muon_LastNode_Y_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_LastNode_Y_Particle",Muon_LastNode_Y_vector  ,"h_muon_LastNode_Y_Particle; [mm];Events");
 
 //h_muon_LastNode_Y_Particle.ApplyColorPalette(Helium9_colorScheme);
 
@@ -833,10 +910,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_muon_LastNode_Z_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_muon_LastNode_Z_Material", Muon_LastNode_Z_vector ,"h_muon_LastNode_Z_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_muon_LastNode_Z_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_muon_LastNode_Z_Interaction", Muon_LastNode_Z_vector , "h_muon_LastNode_Z_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_muon_LastNode_Z_Interaction", Muon_LastNode_Z_vector , "h_muon_LastNode_Z_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_muon_LastNode_Z_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_muon_LastNode_Z_Particle",Muon_LastNode_Z_vector  ,"h_muon_LastNode_Z_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_muon_LastNode_Z_Particle",Muon_LastNode_Z_vector  ,"h_muon_LastNode_Z_Particle; [mm];Events");
 
 //h_muon_LastNode_Z_Particle.ApplyColorPalette(Helium9_colorScheme);
 // Track length
@@ -852,16 +929,16 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_tracklength_Mate
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_tracklength_Material", Recoil_track_length_vector ,"h_secTrk_tracklength_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_tracklength_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_tracklength_Interaction", Recoil_track_length_vector , "h_secTrk_tracklength_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_tracklength_Interaction", Recoil_track_length_vector , "h_secTrk_tracklength_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_tracklength_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_tracklength_Particle",Recoil_track_length_vector  ,"h_secTrk_tracklength_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_tracklength_Particle",Recoil_track_length_vector  ,"h_secTrk_tracklength_Particle; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D,TrackType> h_secTrk_tracklength_Track =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_secTrk_tracklength_Track",Recoil_track_length_vector  ,"h_secTrk_tracklength_Track; [mm];Events");
 
-std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
-PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank("h_Distance_to_InnerTank", "h_Distance_to_InnerTank",  Distance_to_innerTank, error_bands);
+//std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank("h_Distance_to_InnerTank", "h_Distance_to_InnerTank",  Distance_to_innerTank, error_bands);
 
 
 
@@ -1032,9 +1109,9 @@ MnvH2D *h_2d_2ndtrkLength_finerAngle    =    new MnvH2D("h_2d_2ndtrkLength_finer
 /////////////////////////////////////
 MnvH2D *h_2d_2ndtrkangle_2ndTrkE_TRUE_RECO    =    new MnvH2D("h_2d_2ndtrkangle_2ndTrkE_TRUE_RECO", "h_2d_2ndtrkangle_2ndTrkE_TRUE_RECO", secTrk_Theta_TRUEbin_vector.size()-1, secTrk_Theta_TRUEbin_vector.data(),Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data()  );
 
-MnvH2D *h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO    =    new MnvH2D("h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO", "h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO", secTrk_Theta_TRUEbin_vector.size()-1, secTrk_Theta_TRUEbin_vector.data(),Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data()  );
+//MnvH2D *h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO    =    new MnvH2D("h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO", "h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO", secTrk_Theta_TRUEbin_vector.size()-1, secTrk_Theta_TRUEbin_vector.data(),Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data()  );
 
-MnvH2D *h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO    =    new MnvH2D("h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO", "h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO", secTrk_Theta_TRUEbin_vector.size()-1, secTrk_Theta_TRUEbin_vector.data(),Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data()  );
+//MnvH2D *h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO    =    new MnvH2D("h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO", "h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO", secTrk_Theta_TRUEbin_vector.size()-1, secTrk_Theta_TRUEbin_vector.data(),Vertex_secondTrkEbin_vector.size()-1, Vertex_secondTrkEbin_vector.data()  );
 
 ////////////////////////////////////////
 ////Migration Studies
@@ -1061,7 +1138,7 @@ MnvH2D *h_Mig_Vertex_Z_RECO      =   new MnvH2D("h_Mig_Vertex_Z_RECO",     "h_Mi
 
 auto fraction = MakeBinVector(20, 0, 1);
 MnvH2D *h_2d_Track_Fraction_Energy    =    new MnvH2D("h_2d_Track_Fraction_Energy", "h_2d_Track_Fraction_Energy", TrackSize_vector.size()-1,TrackSize_vector.data() ,fraction.size()-1, fraction.data()  );
-MnvH2D *h_2d_Track_Fraction_Energy_Cuts    =    new MnvH2D("h_2d_Track_Fraction_Energy_Cuts", "h_2d_Track_Fraction_Energy_Cuts", TrackSize_vector.size()-1,TrackSize_vector.data() ,fraction.size()-1, fraction.data()  );
+//MnvH2D *h_2d_Track_Fraction_Energy_Cuts    =    new MnvH2D("h_2d_Track_Fraction_Energy_Cuts", "h_2d_Track_Fraction_Energy_Cuts", TrackSize_vector.size()-1,TrackSize_vector.data() ,fraction.size()-1, fraction.data()  );
 MnvH2D *h_2d_Track_Fraction_Energy_Second    =    new MnvH2D("h_2d_Track_Fraction_Energy_Second", "h_2d_Track_Fraction_Energy_Second", TrackSize_vector.size()-1,TrackSize_vector.data() ,fraction.size()-1, fraction.data()  );
 
 ////////////////
@@ -1078,10 +1155,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_X_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_X_Material", Vertex_Xbin_vector ,"h_CryoVertex_X_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_X_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_X_Interaction", Vertex_Xbin_vector ,"h_CryoVertex_X_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_CryoVertex_X_Interaction", Vertex_Xbin_vector ,"h_CryoVertex_X_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_X_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_X_Particle", Vertex_Xbin_vector ,"h_CryoVertex_X_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_X_Particle", Vertex_Xbin_vector ,"h_CryoVertex_X_Particle; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_CryoVertex_X_Track =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_CryoVertex_X_Track", Vertex_Xbin_vector ,"h_CryoVertex_X_Track; [mm];Events");
@@ -1103,10 +1180,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Y_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_Y_Material", Vertex_Ybin_vector ,"h_CryoVertex_Y_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_Y_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_Y_Interaction", Vertex_Ybin_vector ,"h_CryoVertex_Y_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_CryoVertex_Y_Interaction", Vertex_Ybin_vector ,"h_CryoVertex_Y_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_Y_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_Y_Particle", Vertex_Ybin_vector ,"h_CryoVertex_Y_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_Y_Particle", Vertex_Ybin_vector ,"h_CryoVertex_Y_Particle; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_CryoVertex_Y_Track =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_CryoVertex_Y_Track", Vertex_Ybin_vector ,"h_CryoVertex_Y_Track; [mm];Events");
@@ -1133,10 +1210,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Z_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_Z_Material", Vertex_Zbin_vector ,"h_CryoVertex_Z_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_Z_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_Z_Interaction", Vertex_Zbin_vector ,"h_CryoVertex_Z_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_CryoVertex_Z_Interaction", Vertex_Zbin_vector ,"h_CryoVertex_Z_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_Z_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_Z_Particle", Vertex_Zbin_vector ,"h_CryoVertex_Z_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_Z_Particle", Vertex_Zbin_vector ,"h_CryoVertex_Z_Particle; [mm];Events");
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_CryoVertex_Z_Track =
@@ -1156,10 +1233,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_R_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_R_Material", Vertex_Rbin_vector ,"h_CryoVertex_R_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_R_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_R_Interaction", Vertex_Rbin_vector ,"h_CryoVertex_R_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_CryoVertex_R_Interaction", Vertex_Rbin_vector ,"h_CryoVertex_R_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_R_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_R_Particle", Vertex_Rbin_vector ,"h_CryoVertex_R_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_R_Particle", Vertex_Rbin_vector ,"h_CryoVertex_R_Particle; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_CryoVertex_R_Track =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_CryoVertex_R_Track", Vertex_Rbin_vector ,"h_CryoVertex_R_Track; [mm];Events");
@@ -1170,9 +1247,24 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, boolNTrack>(boolNTrack_Category, "h_Cryo
 PlotUtils::HistFolio<PlotUtils::MnvH1D, VertexOptions> h_CryoVertex_R_VertexOptions =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, VertexOptions>(VertexOptions_Category, "h_CryoVertex_R_VertexOptions", Vertex_Rbin_vector ,"h_CryoVertex_R_VertexOptions; [mm];Events");
 
+std::vector<double> Distance_to_innerTank = GetBinvertexVector(kdistance_edge);
+//std::vector<double> Distance_to_innerTank = GetBinvertexVector(kdistance_edge_fiducial);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank("h_Distance_to_InnerTank", "h_Distance_to_InnerTank",  Distance_to_innerTank, error_bands);
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_Material");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Distance_to_InnerTank_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_Distance_to_InnerTank_Particle",  Distance_to_innerTank ,"h_Distance_to_InnerTank_Particle");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Distance_to_InnerTank_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_Distance_to_InnerTank_Interaction",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_Interaction");
+
+
+
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertexChiSqFit("h_CryoVertexChiSqFit", "h_CryoVertexChiSqFit",  Vertex_ChiSqFit_vector , error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertexChiSqFit_TRUE("h_CryoVertexChiSqFit_TRUE", "h_CryoVertexChiSqFit_TRUE",  Vertex_ChiSqFit_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertexChiSqFit_TRUE("h_CryoVertexChiSqFit_TRUE", "h_CryoVertexChiSqFit_TRUE",  Vertex_ChiSqFit_vector , error_bands);
 
 MnvH1D *h_Efficiency_h_CryoVertexChiSqFit[3]; // 0 helium, 1 other, 2 total
 Array1D(h_Efficiency_h_CryoVertexChiSqFit, 3, "h_Efficiency_h_CryoVertexChiSqFit", "h_Efficiency_h_CryoVertexChiSqFit", Vertex_ChiSqFit_vector);
@@ -1194,10 +1286,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertexChiSqFit_Mate
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertexChiSqFit_Material", Vertex_ChiSqFit_vector ,"h_CryoVertexChiSqFit_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertexChiSqFit_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertexChiSqFit_Interaction", Vertex_ChiSqFit_vector ,"h_CryoVertexChiSqFit_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_CryoVertexChiSqFit_Interaction", Vertex_ChiSqFit_vector ,"h_CryoVertexChiSqFit_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertexChiSqFit_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertexChiSqFit_Particle", Vertex_ChiSqFit_vector ,"h_CryoVertexChiSqFit_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertexChiSqFit_Particle", Vertex_ChiSqFit_vector ,"h_CryoVertexChiSqFit_Particle; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_CryoVertexChiSqFit_Track =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_CryoVertexChiSqFit_Track", Vertex_ChiSqFit_vector ,"h_CryoVertexChiSqFit_Track; [mm];Events");
@@ -1227,49 +1319,47 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Openangle_Materi
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Openangle_Material", secTrk_Thetamidbin_vector ,"h_secTrk_Openangle_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Openangle_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Openangle_Interaction", secTrk_Thetamidbin_vector ,"h_secTrk_Openangle_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Openangle_Interaction", secTrk_Thetamidbin_vector ,"h_secTrk_Openangle_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Openangle_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Openangle_Particle", secTrk_Thetamidbin_vector ,"h_secTrk_Openangle_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Openangle_Particle", secTrk_Thetamidbin_vector ,"h_secTrk_Openangle_Particle; [mm];Events");
 //h_secTrk_Openangle_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Openangle_TRUE_RECO_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Openangle_TRUE_RECO_Material", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Openangle_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Openangle_TRUE_RECO_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Openangle_TRUE_RECO_Interaction", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Openangle_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Openangle_TRUE_RECO_Interaction", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Openangle_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Openangle_TRUE_RECO_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Openangle_TRUE_RECO_Particle", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Openangle_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Openangle_TRUE_RECO_Particle", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Openangle_Particle; [mm];Events");
 //h_secTrk_Openangle_TRUE_RECO_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Pathlength("h_secTrk_Pathlength", "h_secTrk Pathlength ",  secTrk_Pathway_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Pathlength_TRUE_RECO("h_secTrk_Pathlength_TRUE_RECO", "h_secTrk Pathlength ",  secTrk_Pathway_vector , error_bands);
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Pathlength_PROTON_TRUE_RECO("h_secTrk_Pathlength_PROTON_TRUE_RECO", "h_secTrk Pathlength Proton",  secTrk_Pathway_vector , error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Pathlength_PION_TRUE_RECO("h_secTrk_Pathlength_PION_TRUE_RECO", "h_secTrk Pathlength pion ",  secTrk_Pathway_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Pathlength_PROTON_TRUE_RECO("h_secTrk_Pathlength_PROTON_TRUE_RECO", "h_secTrk Pathlength Proton",  secTrk_Pathway_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Pathlength_PION_TRUE_RECO("h_secTrk_Pathlength_PION_TRUE_RECO", "h_secTrk Pathlength pion ",  secTrk_Pathway_vector , error_bands);
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Pathlength_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Pathlength_Material", secTrk_Pathway_vector ,"h_secTrk_Pathlength_Material; [cm^2/g];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Pathlength_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Pathlength_Interaction", secTrk_Pathway_vector ,"h_secTrk_Pathlength_Interaction; [cm^2/g];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Pathlength_Interaction", secTrk_Pathway_vector ,"h_secTrk_Pathlength_Interaction; [cm^2/g];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Pathlength_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Pathlength_Particle", secTrk_Pathway_vector ,"h_secTrk_Pathlength_Particle; [cm^2/g];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Pathlength_Particle", secTrk_Pathway_vector ,"h_secTrk_Pathlength_Particle; [cm^2/g];Events");
 //h_secTrk_Pathlength_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Pathlength_TRUE_RECO_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Pathlength_TRUE_RECO_Material", secTrk_Pathway_vector ,"h_secTrk_Pathlength_TRUE_RECO_Material; [cm^2/g];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Pathlength_TRUE_RECO_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Pathlength_TRUE_RECO_Interaction", secTrk_Pathway_vector ,"h_secTrk_Pathlength_TRUE_RECO_Interaction; [cm^2/g];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Pathlength_TRUE_RECO_Interaction", secTrk_Pathway_vector ,"h_secTrk_Pathlength_TRUE_RECO_Interaction; [cm^2/g];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Pathlength_TRUE_RECO_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Pathlength_TRUE_RECO_Particle", secTrk_Pathway_vector ,"h_secTrk_Pathlength_TRUE_RECO_Particle; [cm^2/g];Events");
-//h_secTrk_Pathlength_TRUE_RECO_Particle.ApplyColorPalette(Helium9_colorScheme);
-
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Pathlength_TRUE_RECO_Particle", secTrk_Pathway_vector ,"h_secTrk_Pathlength_TRUE_RECO_Particle; [cm^2/g];Events");
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_MidTheta("h_secTrk_MidTheta", "h_secTrk_MidTheta NEW Method",  Vertex_secondTrkThetamidbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_TRUE_RECO("h_secTrk_Theta_TRUE_RECO", "h_secTrk_MidTheta NEW Method",  secTrk_Theta_TRUEbin_vector , error_bands);
@@ -1289,30 +1379,30 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_MidTheta_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_MidTheta_Material", Vertex_secondTrkThetamidbin_vector ,"h_secTrk_MidTheta_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_MidTheta_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_MidTheta_Interaction", Vertex_secondTrkThetamidbin_vector ,"h_secTrk_MidTheta_Interaction; [[GeV;Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_MidTheta_Interaction", Vertex_secondTrkThetamidbin_vector ,"h_secTrk_MidTheta_Interaction; [[GeV;Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_MidTheta_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_MidTheta_Particle", Vertex_secondTrkThetamidbin_vector ,"h_secTrk_MidTheta_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_MidTheta_Particle", Vertex_secondTrkThetamidbin_vector ,"h_secTrk_MidTheta_Particle; [GeV];Events");
 //h_secTrk_MidTheta_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Theta_TRUE_RECO_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Theta_TRUE_RECO_Material", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Theta_TRUE_RECO_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Theta_TRUE_RECO_Interaction", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_Interaction; [[GeV;Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Theta_TRUE_RECO_Interaction", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_Interaction; [[GeV;Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Theta_TRUE_RECO_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Theta_TRUE_RECO_Particle", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Theta_TRUE_RECO_Particle", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_Particle; [GeV];Events");
 //h_secTrk_Theta_TRUE_RECO_Particle.ApplyColorPalette(Helium9_colorScheme);
 /*
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Theta_TRUE_RECO_LOWANGLE_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Theta_TRUE_RECO_LOWANGLE_Material", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_LOWANGLE_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Theta_TRUE_RECO_LOWANGLE_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Theta_TRUE_RECO_LOWANGLE_Interaction", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_LOWANGLE_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Theta_TRUE_RECO_LOWANGLE_Interaction", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_LOWANGLE_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Theta_TRUE_RECO_LOWANGLE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Theta_TRUE_RECO_LOWANGLE_Particle", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_LOWANGLE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Theta_TRUE_RECO_LOWANGLE_Particle", secTrk_Theta_TRUEbin_vector ,"h_secTrk_Theta_TRUE_RECO_LOWANGLE_Particle; [GeV];Events");
 //h_secTrk_Theta_TRUE_RECO_LOWANGLE_Particle.ApplyColorPalette(Helium9_colorScheme);
 */
 
@@ -1327,14 +1417,14 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Energy_Material 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Energy_Material", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Energy_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Energy_Interaction", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Energy_Interaction", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Energy_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Energy_Particle", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Energy_Particle", Vertex_secondTrkEbin_vector ,"h_secTrk_Energy_Particle; [GeV];Events");
 //h_secTrk_Energy_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_nonparentEnergy_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_nonparentEnergy_Particle", Vertex_secondTrkEbin_vector ,"h_secTrk_nonparentEnergy_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_nonparentEnergy_Particle", Vertex_secondTrkEbin_vector ,"h_secTrk_nonparentEnergy_Particle; [GeV];Events");
 
 
 
@@ -1343,57 +1433,57 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Energy_TRUE_RECO
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Energy_TRUE_RECO_Material", Vertex_secondTrkEbin_Proton_vector ,"h_secTrk_Energy_TRUE_RECO_Material; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Energy_TRUE_RECO_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Energy_TRUE_RECO_Interaction", Vertex_secondTrkEbin_Proton_vector ,"h_secTrk_Energy_TRUE_RECO_Interaction; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_Energy_TRUE_RECO_Interaction", Vertex_secondTrkEbin_Proton_vector ,"h_secTrk_Energy_TRUE_RECO_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Energy_TRUE_RECO_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Energy_TRUE_RECO_Particle", Vertex_secondTrkEbin_Proton_vector ,"h_secTrk_Energy_TRUE_RECO_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Energy_TRUE_RECO_Particle", Vertex_secondTrkEbin_Proton_vector ,"h_secTrk_Energy_TRUE_RECO_Particle; [GeV];Events");
 //h_secTrk_Energy_TRUE_RECO_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_DOCA("h_secTrk_DOCA", "h_secTrk DOCA NEW Method",  secTrk_DOCA_vector , error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_DOCA_TRUE_RECO("h_secTrk_DOCA_TRUE_RECO", "h_secTrk_DOCA_TRUE_RECO",  Vertex_DOCAbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_DOCA_TRUE_RECO("h_secTrk_DOCA_TRUE_RECO", "h_secTrk_DOCA_TRUE_RECO",  secTrk_DOCA_vector , error_bands);
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_DOCA_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_DOCA_Material", secTrk_DOCA_vector ,"h_secTrk_DOCA_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_DOCA_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_DOCA_Interaction", secTrk_DOCA_vector ,"h_secTrk_DOCA_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_DOCA_Interaction", secTrk_DOCA_vector ,"h_secTrk_DOCA_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_DOCA_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_DOCA_Particle", secTrk_DOCA_vector ,"h_secTrk_DOCA_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_DOCA_Particle", secTrk_DOCA_vector ,"h_secTrk_DOCA_Particle; [mm];Events");
 //h_secTrk_DOCA_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_DOCA_TRUE_RECO_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_DOCA_TRUE_RECO_Material", secTrk_DOCA_vector ,"h_secTrk_DOCA_TRUE_RECO_Material; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_DOCA_TRUE_RECO_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_DOCA_TRUE_RECO_Interaction", secTrk_DOCA_vector ,"h_secTrk_DOCA_TRUE_RECO_Interaction; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_DOCA_TRUE_RECO_Interaction", secTrk_DOCA_vector ,"h_secTrk_DOCA_TRUE_RECO_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_DOCA_TRUE_RECO_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_DOCA_TRUE_RECO_Particle", secTrk_DOCA_vector ,"h_secTrk_DOCA_TRUE_RECO_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_DOCA_TRUE_RECO_Particle", secTrk_DOCA_vector ,"h_secTrk_DOCA_TRUE_RECO_Particle; [mm];Events");
 //h_secTrk_DOCA_TRUE_RECO_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION_TRUE_RECO("h_secTrk_Energy_PION_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION_TRUE_RECO("h_secTrk_Theta_PION_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PION_TRUE_RECO("h_secTrk_Openangle_PION_TRUE_RECO", "h_secTrk_Openangle  PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION_TRUE_RECO("h_secTrk_Energy_PION_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION_TRUE_RECO("h_secTrk_Theta_PION_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PION_TRUE_RECO("h_secTrk_Openangle_PION_TRUE_RECO", "h_secTrk_Openangle  PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION0_TRUE_RECO("h_secTrk_Energy_PION0_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION0_TRUE_RECO("h_secTrk_Theta_PION0_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PION0_TRUE_RECO("h_secTrk_Openangle_PION0_TRUE_RECO", "h_secTrk_Openangle  PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION_neg_pos_TRUE_RECO("h_secTrk_Energy_PION_neg_pos_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION_neg_pos_TRUE_RECO("h_secTrk_Theta_PION_neg_pos_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PION_neg_pos_TRUE_RECO("h_secTrk_Openangle_PION_neg_pos_TRUE_RECO", "h_secTrk_Openangle  PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION0_TRUE_RECO("h_secTrk_Energy_PION0_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION0_TRUE_RECO("h_secTrk_Theta_PION0_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PION0_TRUE_RECO("h_secTrk_Openangle_PION0_TRUE_RECO", "h_secTrk_Openangle  PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
-
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION_neg_pos_TRUE_RECO("h_secTrk_Energy_PION_neg_pos_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION_neg_pos_TRUE_RECO("h_secTrk_Theta_PION_neg_pos_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PION_neg_pos_TRUE_RECO("h_secTrk_Openangle_PION_neg_pos_TRUE_RECO", "h_secTrk_Openangle  PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
 
 
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PROTON_TRUE_RECO("h_secTrk_Energy_PROTON_TRUE_RECO", "h_secTrk_Energy Proton(TRUE+RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PROTON_TRUE_RECO("h_secTrk_Theta_PROTON_TRUE_RECO", "h_secTrk_Theta Proton(TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PROTON_TRUE_RECO("h_secTrk_Openangle_PROTON_TRUE_RECO", "h_secTrk_Openangle Proton(TRUE+RECO) ",  secTrk_Theta_TRUEbin_vector , error_bands);
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PROTON_TRUE_RECO("h_secTrk_Energy_PROTON_TRUE_RECO", "h_secTrk_Energy Proton(TRUE+RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PROTON_TRUE_RECO("h_secTrk_Theta_PROTON_TRUE_RECO", "h_secTrk_Theta Proton(TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PROTON_TRUE_RECO("h_secTrk_Openangle_PROTON_TRUE_RECO", "h_secTrk_Openangle Proton(TRUE+RECO) ",  secTrk_Theta_TRUEbin_vector , error_bands);
-
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_Dimuon_TRUE_RECO("h_secTrk_Energy_Dimuon_TRUE_RECO", "h_secTrk_Energy Dimuon(TRUE+RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secTrk_Theta_Dimuon_TRUE_RECO", "h_secTrk_Theta Dimuon(TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_Dimuon_TRUE_RECO("h_secTrk_Energy_Dimuon_TRUE_RECO", "h_secTrk_Energy Dimuon(TRUE+RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secTrk_Theta_Dimuon_TRUE_RECO", "h_secTrk_Theta Dimuon(TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
  //PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_Dimuon_TRUE("h_secTrk_Openangle_Dimuon_TRUE", "h_secTrk_Openangle Dimuon(TRUE)",  secTrk_Theta_TRUEbin_vector , error_bands);
  //PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_Dimuon_TRUE_RECO("h_secTrk_Openangle_Dimuon_TRUE_RECO", "h_secTrk_Openangle Dimuon(TRUE+RECO) ",  secTrk_Theta_TRUEbin_vector , error_bands);
  PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_FirstNodeX("h_secTrk_FirstNodeX", "h_secTrk_FirstNodeX",  secTrk_StartNode_X_vector, error_bands);
@@ -1401,10 +1491,10 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secT
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_FirstNodeX_Material", secTrk_StartNode_X_vector ,"h_secTrk_FirstNodeX_Material; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_FirstNodeX_Interaction =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_FirstNodeX_Interaction", secTrk_StartNode_X_vector ,"h_secTrk_FirstNodeX_Interaction; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_FirstNodeX_Interaction", secTrk_StartNode_X_vector ,"h_secTrk_FirstNodeX_Interaction; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_FirstNodeX_Particle =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_FirstNodeX_Particle", secTrk_StartNode_X_vector ,"h_secTrk_FirstNodeY_Particle; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_FirstNodeX_Particle", secTrk_StartNode_X_vector ,"h_secTrk_FirstNodeY_Particle; [mm];Events");
 
 
  PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_FirstNodeY("h_secTrk_FirstNodeY", "h_secTrk_FirstNodeY",  secTrk_StartNode_Y_vector, error_bands);
@@ -1412,10 +1502,10 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secT
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_FirstNodeY_Material", secTrk_StartNode_Y_vector ,"h_secTrk_FirstNodeY_Material; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_FirstNodeY_Interaction =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_FirstNodeY_Interaction", secTrk_StartNode_Y_vector ,"h_secTrk_FirstNodeY_Interaction; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_FirstNodeY_Interaction", secTrk_StartNode_Y_vector ,"h_secTrk_FirstNodeY_Interaction; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_FirstNodeY_Particle =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_FirstNodeY_Particle", secTrk_StartNode_Y_vector ,"h_secTrk_FirstNodeY_Particle; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_FirstNodeY_Particle", secTrk_StartNode_Y_vector ,"h_secTrk_FirstNodeY_Particle; [mm];Events");
 
 
  PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_FirstNodeZ("h_secTrk_FirstNodeZ", "h_secTrk_FirstNodeZ",  secTrk_StartNode_Z_vector, error_bands);
@@ -1423,10 +1513,10 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secT
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_FirstNodeZ_Material", secTrk_StartNode_Z_vector ,"h_secTrk_FirstNodeZ_Material; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_FirstNodeZ_Interaction =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_FirstNodeZ_Interaction", secTrk_StartNode_Z_vector ,"h_secTrk_FirstNodeZ_Interaction; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_FirstNodeZ_Interaction", secTrk_StartNode_Z_vector ,"h_secTrk_FirstNodeZ_Interaction; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_FirstNodeZ_Particle =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_FirstNodeZ_Particle", secTrk_StartNode_Z_vector ,"h_secTrk_FirstNodeZ_Particle; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_FirstNodeZ_Particle", secTrk_StartNode_Z_vector ,"h_secTrk_FirstNodeZ_Particle; [mm];Events");
 
  PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_LastNodeX("h_secTrk_LastNodeX", "h_secTrk_LastNodeX",  secTrk_LastNodeX_vector, error_bands);
 
@@ -1434,10 +1524,10 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secT
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_LastNodeX_Material", secTrk_LastNodeX_vector ,"h_secTrk_LastNodeX_Material; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_LastNodeX_Interaction =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_LastNodeX_Interaction", secTrk_LastNodeX_vector ,"h_secTrk_LastNodeX_Interaction; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_LastNodeX_Interaction", secTrk_LastNodeX_vector ,"h_secTrk_LastNodeX_Interaction; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_LastNodeX_Particle =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_LastNodeX_Particle",secTrk_LastNodeX_vector ,"h_secTrk_LastNodeX_Particle; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_LastNodeX_Particle",secTrk_LastNodeX_vector ,"h_secTrk_LastNodeX_Particle; [mm];Events");
 
 
  PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_LastNodeY("h_secTrk_LastNodeY", "h_secTrk_LastNodeY",  secTrk_LastNodeY_vector, error_bands);
@@ -1445,10 +1535,10 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secT
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_LastNodeY_Material", secTrk_LastNodeY_vector ,"h_secTrk_LastNodeY_Material; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_LastNodeY_Interaction =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_LastNodeY_Interaction", secTrk_LastNodeY_vector ,"h_secTrk_LastNodeY_Interaction; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_LastNodeY_Interaction", secTrk_LastNodeY_vector ,"h_secTrk_LastNodeY_Interaction; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_LastNodeY_Particle =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_LastNodeY_Particle", secTrk_LastNodeY_vector ,"h_secTrk_LastNodeY_Particle; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_LastNodeY_Particle", secTrk_LastNodeY_vector ,"h_secTrk_LastNodeY_Particle; [mm];Events");
 
 
  PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_LastNodeZ("h_secTrk_LastNodeZ", "h_secTrk_LastNodeZ",  secTrk_LastNodeZ_vector, error_bands);
@@ -1456,10 +1546,10 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE_RECO("h_secT
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_LastNodeZ_Material", secTrk_LastNodeZ_vector,"h_secTrk_LastNodeZ_Material; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_LastNodeZ_Interaction =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_LastNodeZ_Interaction", secTrk_LastNodeZ_vector ,"h_secTrk_LastNodeZ_Interaction; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_secTrk_LastNodeZ_Interaction", secTrk_LastNodeZ_vector ,"h_secTrk_LastNodeZ_Interaction; [mm];Events");
 
  PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_LastNodeZ_Particle =
- PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_LastNodeZ_Particle", secTrk_LastNodeZ_vector ,"h_secTrk_LastNodeZ_Particle; [mm];Events");
+ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_LastNodeZ_Particle", secTrk_LastNodeZ_vector ,"h_secTrk_LastNodeZ_Particle; [mm];Events");
 
 ///////////
 ///Vetowall
@@ -1500,10 +1590,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonMatchtoVeto_Materia
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_MuonMatchtoVeto_Material", MuonMatchtoVeto_vector ,"h_MuonMatchtoVeto_Material; [bool];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonMatchtoVeto_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonMatchtoVeto_Interaction",MuonMatchtoVeto_vector  ,"h_MuonMatchtoVeto_Interaction; [bool];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonMatchtoVeto_Interaction",MuonMatchtoVeto_vector  ,"h_MuonMatchtoVeto_Interaction; [bool];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonMatchtoVeto_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonMatchtoVeto_Particle",MuonMatchtoVeto_vector ," h_MuonMatchtoVeto_Particle; [bool];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonMatchtoVeto_Particle",MuonMatchtoVeto_vector ," h_MuonMatchtoVeto_Particle; [bool];Events");
 //h_MuonMatchtoVeto_Particle.ApplyColorPalette(Helium9_colorScheme);
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_VetoWall_PMTPaddleMap("h_VetoWall_PMTPaddleMap","h_VetoWall_PMTPaddleMap", MuonMatchtoVeto_vector ,error_bands);
@@ -1513,8 +1603,8 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_Qsquare_TRUE_RECO("h_Qsquare_TRUE_REC
 
 
 
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction", secTrk_Theta_TRUEbin_vector ,"h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction; [Degs];Events");
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction =
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction", secTrk_Theta_TRUEbin_vector ,"h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction; [Degs];Events");
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<<std::endl;
 std::cout<<"~~~~Finshed to initialize Histograms ~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<<std::endl;
@@ -1545,11 +1635,25 @@ std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<<std::endl;
   gSystem->GetProcInfo(&procInfo);
 
 std::string sysmatics_status;
+std::string convolution_status;
+std::string Fid_status;
+std::string weight_status;
 if(m_RunCodeWithSystematics==true){sysmatics_status= "Systematics On";}
 else if (m_RunCodeWithSystematics==false){sysmatics_status= "Systematics Off";}
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
 std::cout<<"~~~~~~~~~ Systematics are =   "<< sysmatics_status <<" ~~~~~~~~~ "<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
+if(RunwithConvolution==true){convolution_status= "ConvolutionApp";}
+else if (RunwithConvolution==false){convolution_status= "";}
+
+if(useweights==true){weight_status= "wgtApp";}
+else if (useweights==false){weight_status= "";}
+
+if(RunwithFid==true){Fid_status= "";}
+else if (RunwithFid==false){Fid_status= "no";}
+
+
+
 
 
 //RECO_Cut_Map CountMap_RECO_Eff = ConstuctRecoCountingMap(kCutsVector_Eff);
@@ -1566,6 +1670,13 @@ FillingRecoCountingMap(kCutsVector, CountMap_RECO);
 FillingRecoCountingMap(kCutsVector, CountMap_RECO_Helium);
 FillingRecoCountingMap(kCutsVector, CountMap_RECO_nonHelium);
 FillingRecoCountingMap(kCutsVector_Eff, CountMap_TRUE_RECO);
+
+
+FillingRecoCountingMapAdd(CountMap_RECO , kFiducialVolume_new );
+FillingRecoCountingMapAdd(CountMap_RECO_Helium ,kFiducialVolume_new );
+FillingRecoCountingMapAdd(CountMap_RECO_nonHelium ,kFiducialVolume_new );
+FillingRecoCountingMapAdd(CountMap_TRUE_RECO ,kFiducialVolume_new );
+
 FillingTruthCountingMap(kTRUTHCutsVector, Truth_Cut_Map);
 
 std::cout << "CountMap_RECO.size() = " << CountMap_RECO.size()<< std::endl;
@@ -1590,6 +1701,10 @@ int PDG_match=0;
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
   std::cout<<"MC LOOP  "<<std::endl;
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
+
+  std::cout<<"Running Over this Playlist = "<< playlist.c_str()<<std::endl;
+
+
   double Pi = 3.14159265358979323846;
   for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
 
@@ -1599,28 +1714,16 @@ int PDG_match=0;
     // For every systematic, loop over the universes, and fill the
     // appropriate histogram in the MnvH1D
     //=========================================
-/*
-    for (auto band : error_bands)
-    {
-      std::vector<HeliumCVUniverse*> error_band_universes = band.second;
-      for (auto universe : error_band_universes){
-*/
 
 
     for (auto  Universe_GROUP: Error_Band_Universe_GROUPS){
 
-//      std::vector<HeliumCVUniverse*> error_band_universes = band.second;
-     Universe_GROUP.front()->SetEntry(ii);
+      //      std::vector<HeliumCVUniverse*> error_band_universes = band.second;
+      Universe_GROUP.front()->SetEntry(ii);
 
 
-
-
-    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector,kWeights_v1tune, CountMap_RECO, CountMap_RECO_Helium, CountMap_RECO_nonHelium) ){
-  // std::cout<<"Inside Truth Cuts "<< std::endl;
-  //std::cout<<"NEW GROUP "<< std::endl;
-
-        for (auto universe : Universe_GROUP){
-          //std::cout<<"universe->ShortName() = " << universe->ShortName()<<std::endl;
+      for (auto universe : Universe_GROUP){
+        //std::cout<<"universe->ShortName() = " << universe->ShortName()<<std::endl;
         // Tell the Event which entry in the TChain it's looking at
         universe->SetEntry(ii);
 
@@ -1631,40 +1734,95 @@ int PDG_match=0;
         ////
         ///////////////////////////////////////////
 
-        double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+/*
+        double ShiftX  = ShiftX_major;
+        double ShiftY =  ShiftY_major;
+        double ShiftZ =  ShiftZ_major;
 
-        double Theta = universe->GetThetamu();
-        double Pmu = universe ->GetPmu()/1000;
+        if(Material_type_Event!=kAluminium && Material_type_Event!=kHelium ){
+          ShiftX=0;
+          ShiftY=0;
+          ShiftZ=0;}
+*/
+          double Smearing_X = vertexX_Convolution(generator);
+          double Smearing_Y = vertexY_Convolution(generator);
+          double Smearing_Z = vertexZ_Convolution(generator);
 
-        double pseduo_r = universe->pseudorapidity_muon();
-        double pseduo_theta = 2 * atan(exp(-pseduo_r)) *TMath::RadToDeg();
+          if(RunwithConvolution == false){
+            Smearing_X = 0.0;
+            Smearing_Y = 0.0;
+            Smearing_Z = 0.0;
+          }
 
-        auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
-        auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
-        auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
 
-        auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+        double x = universe->GetVertex_x()  + Smearing_X;
+        double y = universe->GetVertex_y()  + Smearing_Y;
+        double z = universe->GetVertex_z()  + Smearing_Z;
+        double r =  sqrt(x*x + y*y);
 
-        //int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
-      //int secondTrk_nonparent = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist_nonparent, Energy_trklist_nonparent, Angle_trklist_nonparent, EnergyFraction_vector);
-      int secondTrk = universe->Getindex2ndTrackhighestKE();
-      //  int secondTrk = universe-> Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist_KE_proton_pion_thrusthold(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
-        if(secondTrk==-9999 ||secondTrk==-999 )continue;
 
-        ///////////////////////////////////////////
-        ////
-        ////  FILL CV
-        ////
-        ////
-        ///////////////////////////////////////////
-        if( isCV(*universe)){
+
+        if(PassesCutsRECO(*universe,  is_mc , kCutsVector,kWeights_v1tune, CountMap_RECO, CountMap_RECO_Helium, CountMap_RECO_nonHelium,r,z) ){
+
+          double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+          Material_type Material_type_Event = universe->Get_MaterialStackType();
+
+
+          double x_true= universe->GetTRUE_Vertex_x();
+          double y_true= universe->GetTRUE_Vertex_y();
+          double z_true= universe->GetTRUE_Vertex_z();
+          double r_true =  sqrt(x_true*x_true + y_true*y_true);
+
+          //if(RunwithFid==true){
+          //if(IsInFiducalVolumeFromtheInnerEcdge( r, z, 50.0  )==false) continue;
+          //}
+        //if(universe->ShortName() == "GENIE_MaCCQE"){std::cout<<"(MaCCQE)weight = "<< wgt_minerva_v1 << std::endl;}
+          CryoTank_REGIONS CryoTankRegion_type = FourRegion_of_CryoTank(z_true);
+
+          double Al_wgt = 1.0;
+          if(useweights==true){Al_wgt *= return_AlWgt(CryoTankRegion_type, Material_type_Event);}
+          wgt_minerva_v1*=Al_wgt;
+
+
+          double Theta = universe->GetThetamu();
+          double Pmu = universe ->GetPmu()/1000;
+          double phi = universe -> GetPhimu();
+          double Emu = universe->GetEmu()*.001;
+
+          double px = Pmu * std::sin(Theta) * std::cos(phi);
+          double py = Pmu * std::sin(Theta) * std::sin(phi);
+
+          double PT = sqrt(px*px + py*py);
+          double PZ = Pmu*std::cos(Theta);
+
+
+          double pseduo_r = universe->pseudorapidity_muon();
+          double pseduo_theta = 2 * atan(exp(-pseduo_r)) *TMath::RadToDeg();
+
+          auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+          auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+          auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+
+          auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+
+          //int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
+          //int secondTrk_nonparent = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist_nonparent, Energy_trklist_nonparent, Angle_trklist_nonparent, EnergyFraction_vector);
+          int secondTrk = universe->Getindex2ndTrackhighestKE();
+          //  int secondTrk = universe-> Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist_KE_proton_pion_thrusthold(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
+          if(secondTrk==-9999 ||secondTrk==-999 )continue;
+
+          ///////////////////////////////////////////
+          ////
+          ////  FILL CV
+          ////
+          ////
+          ///////////////////////////////////////////
+          if( isCV(*universe)){
 
 
             auto PDG_trklist_nonparent = universe->GetVector_nonMuonTk_PDG();
             auto Energy_trklist_nonparent = universe-> GetVector_nonMuonTk_Energy_GeV();
             auto Angle_trklist_nonparent = universe->GetVector_nonMuonTk_Angle_wrtb_Degs();
-
-
 
             //int secondTrk = universe->Getindex2ndTrackhighestKE();
             int fraction_count=1;
@@ -1676,17 +1834,23 @@ int PDG_match=0;
 
 
             //std::cout<<"fails 1"<<std::endl;
-            Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
-            Material_type Material_type_Event = universe->Get_MaterialStackType();
+            Interaction_type Interaction_type_Event =  universe->Get_Interaction_withDISbreakdown();//->Get_InteractionStackType();
+
             TrackType Track_type_Event = universe->GetTrackType();
             //Particle_type Particle_type_Event =  universe->Get_NonParticleStackType(secondTrk);
             int secTrk_PDG = PDG_trklist.at(secondTrk);
             //std::cout<<"fails 2"<<std::endl;
             int secTrk_PDG_nonpartent = PDG_trklist_nonparent.at(secondTrk);
             //std::cout<<"fails 3"<<std::endl;
-            Particle_type Particle_type_Event_nonparent =  GetParticlegroup_type(secTrk_PDG_nonpartent);
+            //Particle_type Particle_type_Event_nonparent =  GetParticlegroup_type(secTrk_PDG_nonpartent);
             //std::cout<<"fails 4"<<std::endl;
-            Particle_type Particle_type_Event =  GetParticlegroup_type(secTrk_PDG);
+            //Particle_type Particle_type_Event =  GetParticlegroup_type(secTrk_PDG);
+
+            Particle_type Particle_type_Event_nonparent =  GetParticlegroup_typeReduced(secTrk_PDG_nonpartent);
+            Particle_type Particle_type_Event =  GetParticlegroup_typeReduced(secTrk_PDG);
+
+            //std::cout<<"pdg_2ndTrk = "<< secTrk_PDG<< "Particle_type_Event =  " << Particle_type_Event << std::endl;
+
             //std::cout<<"fails 5"<<std::endl;
             ///////////////////////////////////////////
             ////
@@ -1694,11 +1858,11 @@ int PDG_match=0;
             ////
             ///////////////////////////////////////////
 
-              for(auto fraction : EnergyFraction_vector ){
+              /*for(auto fraction : EnergyFraction_vector ){
 
               h_2d_Track_Fraction_Energy_Cuts->Fill(fraction_count,fraction,wgt_minerva_v1);
                 fraction_count++;
-              }
+              }*/
 
               double weight_forMK = universe->GetWeight(kWeights_forMK);
               double MK_Weight = universe->GetMKmodelWeight_local(weight_MK);
@@ -1709,24 +1873,18 @@ int PDG_match=0;
               VertexOptions VertexOption_type = universe->GetVertex_optionType();
               boolNTrack boolNTrack_Type = universe->GetVertex_boolNTrack();
 
-              //bool trk1 = universe->GetisOneTrk();
-              //bool trk2 = universe->GetisTwoTrk();
-              //bool trkgreater2 = universe->GetisTwoTrk();
 
+              h_MuonE_Material.GetComponentHist(Material_type_Event)->Fill(Emu, wgt_minerva_v1);
+              h_MuonE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu, wgt_minerva_v1);
+              h_MuonE_Particle.GetComponentHist(Particle_type_Event, false)->Fill(Emu, wgt_minerva_v1);
 
-              //if(trk2 != trkgreater2 ){std::cout << std::boolalpha <<"trk1 = " <<trk1 <<"  trk2 =  " <<trk2 <<"  trkgreater2 = "<< trkgreater2 << std::endl;}
+              h_MuonPZ_Material.GetComponentHist(Material_type_Event)->Fill(PZ, wgt_minerva_v1);
+              h_MuonPZ_Interaction.GetComponentHist(Interaction_type_Event)->Fill(PZ, wgt_minerva_v1);
+              h_MuonPZ_Particle.GetComponentHist(Particle_type_Event)->Fill(PZ, wgt_minerva_v1);
 
-              h_MuonE_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetEmu()*.001, wgt_minerva_v1);
-              h_MuonE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetEmu()*.001, wgt_minerva_v1);
-              h_MuonE_Particle.GetComponentHist(Particle_type_Event,false)->Fill(universe->GetEmu()*.001, wgt_minerva_v1);
-
-              h_MuonPZ_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::cos(Theta), wgt_minerva_v1);
-              h_MuonPZ_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::cos(Theta), wgt_minerva_v1);
-              h_MuonPZ_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::cos(Theta), wgt_minerva_v1);
-
-              h_MuonPT_Material.GetComponentHist(Material_type_Event)->Fill(Pmu*std::sin(Theta), wgt_minerva_v1);
-              h_MuonPT_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pmu*std::sin(Theta), wgt_minerva_v1);
-              h_MuonPT_Particle.GetComponentHist(Particle_type_Event)->Fill(Pmu*std::sin(Theta), wgt_minerva_v1);
+              h_MuonPT_Material.GetComponentHist(Material_type_Event)->Fill(PT, wgt_minerva_v1);
+              h_MuonPT_Interaction.GetComponentHist(Interaction_type_Event)->Fill(PT, wgt_minerva_v1);
+              h_MuonPT_Particle.GetComponentHist(Particle_type_Event)->Fill(PT, wgt_minerva_v1);
 
               h_MuonTheta_Material.GetComponentHist(Material_type_Event)->Fill(Theta*toDegs, wgt_minerva_v1);
               h_MuonTheta_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Theta*toDegs, wgt_minerva_v1);
@@ -1806,40 +1964,47 @@ int PDG_match=0;
               h_MuonCurvatureSig_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetCurvatureSignificance(), wgt_minerva_v1);
               h_MuonCurvatureSig_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetCurvatureSignificance(), wgt_minerva_v1);
 
-              h_CryoVertex_X_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
-              h_CryoVertex_X_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
-              h_CryoVertex_X_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
-              h_CryoVertex_X_Track.GetComponentHist(Track_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
-              h_CryoVertex_X_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
-              h_CryoVertex_X_VertexOptions.GetComponentHist(VertexOption_type)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
+
+              h_CryoVertex_X_Material.GetComponentHist(Material_type_Event)->Fill(x, wgt_minerva_v1);
+              h_CryoVertex_X_Interaction.GetComponentHist(Interaction_type_Event)->Fill(x, wgt_minerva_v1);
+              h_CryoVertex_X_Particle.GetComponentHist(Particle_type_Event)->Fill(x, wgt_minerva_v1);
+              h_CryoVertex_X_Track.GetComponentHist(Track_type_Event)->Fill(x, wgt_minerva_v1);
+              h_CryoVertex_X_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(x, wgt_minerva_v1);
+              h_CryoVertex_X_VertexOptions.GetComponentHist(VertexOption_type)->Fill(x, wgt_minerva_v1);
+
+
+              h_CryoVertex_Y_Material.GetComponentHist(Material_type_Event)->Fill(y, wgt_minerva_v1);
+              h_CryoVertex_Y_Interaction.GetComponentHist(Interaction_type_Event)->Fill(y, wgt_minerva_v1);
+              h_CryoVertex_Y_Particle.GetComponentHist(Particle_type_Event)->Fill(y, wgt_minerva_v1);
+              h_CryoVertex_Y_Track.GetComponentHist(Track_type_Event)->Fill(y, wgt_minerva_v1);
+              h_CryoVertex_Y_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(y, wgt_minerva_v1);
+              h_CryoVertex_Y_VertexOptions.GetComponentHist(VertexOption_type)->Fill(y, wgt_minerva_v1);
 
 
 
-
-              h_CryoVertex_Y_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_y(), wgt_minerva_v1);
-              h_CryoVertex_Y_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_y(), wgt_minerva_v1);
-              h_CryoVertex_Y_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_y(), wgt_minerva_v1);
-              h_CryoVertex_Y_Track.GetComponentHist(Track_type_Event)->Fill(universe->GetVertex_y(), wgt_minerva_v1);
-              h_CryoVertex_Y_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(universe->GetVertex_y(), wgt_minerva_v1);
-              h_CryoVertex_Y_VertexOptions.GetComponentHist(VertexOption_type)->Fill(universe->GetVertex_y(), wgt_minerva_v1);
-
+              h_CryoVertex_Z_Material.GetComponentHist(Material_type_Event)->Fill(z, wgt_minerva_v1);
+              h_CryoVertex_Z_Interaction.GetComponentHist(Interaction_type_Event)->Fill(z, wgt_minerva_v1);
+              h_CryoVertex_Z_Particle.GetComponentHist(Particle_type_Event)->Fill(z, wgt_minerva_v1);
+              h_CryoVertex_Z_Track.GetComponentHist(Track_type_Event)->Fill(z, wgt_minerva_v1);
+              h_CryoVertex_Z_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(z, wgt_minerva_v1);
+              h_CryoVertex_Z_VertexOptions.GetComponentHist(VertexOption_type)->Fill(z, wgt_minerva_v1);
 
 
-              h_CryoVertex_Z_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_z(), wgt_minerva_v1);
-              h_CryoVertex_Z_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_z(), wgt_minerva_v1);
-              h_CryoVertex_Z_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_z(), wgt_minerva_v1);
-              h_CryoVertex_Z_Track.GetComponentHist(Track_type_Event)->Fill(universe->GetVertex_z(), wgt_minerva_v1);
-              h_CryoVertex_Z_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(universe->GetVertex_z(), wgt_minerva_v1);
-              h_CryoVertex_Z_VertexOptions.GetComponentHist(VertexOption_type)->Fill(universe->GetVertex_z(), wgt_minerva_v1);
+              h_CryoVertex_R_Material.GetComponentHist(Material_type_Event)->Fill(r, wgt_minerva_v1);
+              h_CryoVertex_R_Interaction.GetComponentHist(Interaction_type_Event)->Fill(r, wgt_minerva_v1);
+              h_CryoVertex_R_Particle.GetComponentHist(Particle_type_Event)->Fill(r, wgt_minerva_v1);
+              h_CryoVertex_R_Track.GetComponentHist(Track_type_Event)->Fill(r, wgt_minerva_v1);
 
+              //double Reco_distance = RECO_Distance_to_innerTank(*universe);
 
-              h_CryoVertex_R_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
-              h_CryoVertex_R_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
-              h_CryoVertex_R_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
-              h_CryoVertex_R_Track.GetComponentHist(Track_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
+              double Reco_distance = RECO_Distance_to_innerTank(r,z);
 
-              h_CryoVertex_R_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
-              h_CryoVertex_R_VertexOptions.GetComponentHist(VertexOption_type)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
+              h_Distance_to_InnerTank_Material.GetComponentHist(Material_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_Particle.GetComponentHist(Particle_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+
+              h_CryoVertex_R_boolNTrack.GetComponentHist(boolNTrack_Type)->Fill(r, wgt_minerva_v1);
+              h_CryoVertex_R_VertexOptions.GetComponentHist(VertexOption_type)->Fill(r, wgt_minerva_v1);
 
 
               h_secTrk_Pathlength_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetNonmuTrkLength(secondTrk), wgt_minerva_v1);
@@ -1918,21 +2083,21 @@ int PDG_match=0;
               h_secTrk_Openangle_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetOpenAngle(secondTrk), wgt_minerva_v1);
               h_secTrk_Openangle_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetOpenAngle(secondTrk), wgt_minerva_v1);
 
-              h_2d_2ndtrkPathlength_vertex_R->Fill(universe->GetNonmuTrkLength(secondTrk),universe->GetVertex_r(), wgt_minerva_v1);
-              h_2d_2ndtrkPathlength_vertex_Z->Fill(universe->GetNonmuTrkLength(secondTrk),universe->GetVertex_z(), wgt_minerva_v1);
+              h_2d_2ndtrkPathlength_vertex_R->Fill(universe->GetNonmuTrkLength(secondTrk),r, wgt_minerva_v1);
+              h_2d_2ndtrkPathlength_vertex_Z->Fill(universe->GetNonmuTrkLength(secondTrk),z, wgt_minerva_v1);
 
               h2_FirstZnode_2ndTrklength->Fill(universe->GetFirstNodeZ(secondTrk), universe->GetNonmuTrkLength(secondTrk), wgt_minerva_v1);
               h2_LastZnode_2ndTrklength->Fill(universe->GetLastNodeZ(secondTrk), universe->GetNonmuTrkLength(secondTrk), wgt_minerva_v1);
 
-              h_2d_2ndtrkLength_vertex_R->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),universe->GetVertex_r(), wgt_minerva_v1);
-              h_2d_2ndtrkLength_vertex_Z->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),universe->GetVertex_z(), wgt_minerva_v1);
+              h_2d_2ndtrkLength_vertex_R->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),r, wgt_minerva_v1);
+              h_2d_2ndtrkLength_vertex_Z->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),z, wgt_minerva_v1);
               h_2d_2ndtrkLength_Angle->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),universe->GetNonmuTrkAngleWRTbeamMID(secondTrk), wgt_minerva_v1);
               h_2d_2ndtrkLength_finerAngle->Fill(universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),universe->GetNonmuTrkAngleWRTbeamMID(secondTrk), wgt_minerva_v1);
 
-              h_Mig_Vertex_X_RECO->Fill(universe->GetVertex_x(),universe->GetTRUE_Vertex_x(),wgt_minerva_v1);
-              h_Mig_Vertex_Y_RECO->Fill(universe->GetVertex_y(),universe->GetTRUE_Vertex_y(),wgt_minerva_v1);
-              h_Mig_Vertex_R_RECO->Fill(universe->GetVertex_r(),universe->GetTRUE_Vertex_r(),wgt_minerva_v1);
-              h_Mig_Vertex_Z_RECO->Fill(universe->GetVertex_z(),universe->GetTRUE_Vertex_z(),wgt_minerva_v1);
+              h_Mig_Vertex_X_RECO->Fill(x,x_true,wgt_minerva_v1);
+              h_Mig_Vertex_Y_RECO->Fill(y,y_true,wgt_minerva_v1);
+              h_Mig_Vertex_R_RECO->Fill(r,r_true,wgt_minerva_v1);
+              h_Mig_Vertex_Z_RECO->Fill(z,z_true,wgt_minerva_v1);
 
 
 
@@ -1998,28 +2163,24 @@ int PDG_match=0;
             double weight_forMK = 1.0; //universe->GetWeight(kWeights_forMK);
             double MK_Weight = universe->GetMKmodelWeight_local(weight_MK);
 
-            h_MuonE.univHist(universe)->Fill(universe->GetEmu()*.001,wgt_minerva_v1);
-            h_MuonPZ.univHist(universe)->Fill(Pmu*std::cos(Theta),wgt_minerva_v1);
-            h_MuonPT.univHist(universe)->Fill(Pmu*std::sin(Theta),wgt_minerva_v1);
+            h_MuonE.univHist(universe)->Fill(Emu,wgt_minerva_v1);
+            h_MuonPZ.univHist(universe)->Fill(PZ,wgt_minerva_v1);
+            h_MuonPT.univHist(universe)->Fill(PT,wgt_minerva_v1);
             h_MuonTheta.univHist(universe)->Fill(Theta*TMath::RadToDeg(),wgt_minerva_v1);
+
+            if(Material_type_Event != kHelium){
+              h_MuonE_BG.univHist(universe)->Fill(Emu,wgt_minerva_v1);
+              h_MuonPZ_BG.univHist(universe)->Fill(PZ,wgt_minerva_v1);
+              h_MuonPT_BG.univHist(universe)->Fill(PT,wgt_minerva_v1);
+              h_MuonTheta_BG.univHist(universe)->Fill(Theta*TMath::RadToDeg(),wgt_minerva_v1);
+            }
+
+
             h_Muon_pseudorapidity.univHist(universe)->Fill(pseduo_r, wgt_minerva_v1);
             h_Muon_pseudorapidity_angle.univHist(universe)->Fill(pseduo_theta, wgt_minerva_v1);
             h_Muon_rapidity.univHist(universe)->Fill(universe->rapidity_muon(),wgt_minerva_v1);
-            h_Distance_to_InnerTank.univHist(universe)->Fill(RECO_Distance_to_innerTank(*universe),wgt_minerva_v1);
 
-          //std::cout<< "pseudorapidity_muon() = "<< universe->pseudorapidity_muon()<<std::endl;
-
-          //std::cout<< "pseudorapidity_muon() angle = "<< pseduo_theta*TMath::RadToDeg()<<std::endl;
-
-          ///std::cout<< "universe->rapidity_muon() = "<< universe->rapidity_muon()<<std::endl;
-
-            //h_MuonE.univHist(universe)->Fill(universe->GetMuonE_ECT(),wgt_minerva_v1);
-
-            //h_MuonPZ.univHist(universe)->Fill(universe->GetMuonPz_ECT(),wgt_minerva_v1);
-
-            //h_MuonPT.univHist(universe)->Fill(universe->GetMuonPt_ECT(),wgt_minerva_v1);
-
-            //h_MuonTheta.univHist(universe)->Fill(universe->GetmuAngleWRTB_Degs(),wgt_minerva_v1);
+            h_Distance_to_InnerTank.univHist(universe)->Fill(RECO_Distance_to_innerTank(r,z),wgt_minerva_v1);
 
             h_MuonE_Fake.univHist(universe)->Fill(universe->GetMuonE_ECT(),universe->GetWeight(kWeights_v2tune));
 
@@ -2037,8 +2198,7 @@ int PDG_match=0;
 
             h_MuonTheta_Fake2.univHist(universe)->Fill(universe->GetmuAngleWRTB_Degs(),MK_Weight*weight_forMK);
 
-
-            h_MuonPhi.univHist(universe)->Fill(universe->GetmuAngleWRTB_Degs(),wgt_minerva_v1);
+            h_MuonPhi.univHist(universe)->Fill(universe->GetPhimu()*toDegs,wgt_minerva_v1);
 
             h_MuonDOCA.univHist(universe)->Fill(universe->GetDOCAmu(),wgt_minerva_v1);
 
@@ -2070,13 +2230,16 @@ int PDG_match=0;
 
             //Vertex varibles
 
-            h_CryoVertex_X.univHist(universe)->Fill(universe->GetVertex_x(),wgt_minerva_v1);
+            h_CryoVertex_X.univHist(universe)->Fill(x,wgt_minerva_v1);
 
-            h_CryoVertex_Y.univHist(universe)->Fill(universe->GetVertex_y(),wgt_minerva_v1);
+            h_CryoVertex_Y.univHist(universe)->Fill(y,wgt_minerva_v1);
 
-            h_CryoVertex_Z.univHist(universe)->Fill(universe->GetVertex_z(),wgt_minerva_v1);
+            h_CryoVertex_Z.univHist(universe)->Fill(z,wgt_minerva_v1);
 
-            h_CryoVertex_R.univHist(universe)->Fill(universe->GetVertex_r(),wgt_minerva_v1);
+            h_CryoVertex_R.univHist(universe)->Fill(r,wgt_minerva_v1);
+
+            //h_Distance_to_InnerTank.univHist(universe)->Fill(RECO_Distance_to_innerTank(*universe), wgt_minerva_v1);
+
 
             h_CryoVertexChiSqFit.univHist(universe)->Fill(universe->GetVertexChiSqrFit(),wgt_minerva_v1);
 
@@ -2152,16 +2315,44 @@ int PDG_match=0;
 
         if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector, kWeights_v1tune , Truth_Cut_Map)){
           // TRUTH ONLY Cuts
-          for (auto universe : Universe_GROUP){
+          /*for (auto universe : Universe_GROUP){
             universe->SetEntry(ii);
             h_CryoVertexChiSqFit_TRUE.univHist(universe)->Fill(universe->GetVertexChiSqrFit(), universe->GetWeight(kWeights_v1tune));
-          }
-
-          if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_Eff ,kWeights_v1tune ,CountMap_TRUE_RECO ) ){
+          }*/
 
             for (auto universe : Universe_GROUP){
               //std::cout<<"universe->ShortName() = " << universe->ShortName()<<std::endl;
             // Tell the Event which entry in the TChain it's looking at
+/*
+            double ShiftX  = ShiftX_major;
+            double ShiftY =  ShiftY_major;
+            double ShiftZ =  ShiftZ_major;
+
+            if(Material_type_Event!=kAluminium && Material_type_Event!=kHelium ){
+              ShiftX=0;
+              ShiftY=0;
+              ShiftZ=0;}
+              */
+
+              double Smearing_X = vertexX_Convolution(generator);
+              double Smearing_Y = vertexY_Convolution(generator);
+              double Smearing_Z = vertexZ_Convolution(generator);
+
+              if(RunwithConvolution == false){
+                Smearing_X = 0.0;
+                Smearing_Y = 0.0;
+                Smearing_Z = 0.0;
+              }
+
+            double x = universe->GetVertex_x() + Smearing_X;
+            double y = universe->GetVertex_y() + Smearing_Y;
+            double z = universe->GetVertex_z() + Smearing_Z;
+            double r =  sqrt(x*x + y*y);
+
+              if(PassesCutsRECO(*universe,  is_mc , kCutsVector_Eff ,kWeights_v1tune ,CountMap_TRUE_RECO,r,z) ){
+
+
+
             universe->SetEntry(ii);
 
             auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
@@ -2173,23 +2364,59 @@ int PDG_match=0;
             int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
             if(secondTrk==-999)continue;
 
+
+            Material_type Material_type_Event = universe->Get_MaterialStackType();
+
+
+            double x_true= universe->GetTRUE_Vertex_x();
+            double y_true= universe->GetTRUE_Vertex_y();
+            double z_true= universe->GetTRUE_Vertex_z();
+
+
+            double r_true =  sqrt(x_true*x_true + y_true*y_true);
+
+          //if(RunwithFid==true){
+            //if(IsInFiducalVolumeFromtheInnerEdge( r, z, 50.0  )==false) continue;}
+
+
             double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
             double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
 
             int secTrk_PDG = PDG_trklist.at(secondTrk);
             double secTrkAngle  = Angle_trklist.at(secondTrk);
             double secTrkTrueAngle = universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk);
+
+
             double Theta = universe->GetThetamu();
             double Pmu = universe -> GetPmu()/1000;
+            double Emu =   universe->GetEmu()*.001;
+            double phi = universe -> GetPhimu();
+            double Theta_Degs = Theta* TMath::RadToDeg();
+
+            double px = Pmu * std::sin(Theta) * std::cos(phi);
+            double py = Pmu * std::sin(Theta) * std::sin(phi);
+
+            double PT = sqrt(px*px + py*py);
+            double PZ = Pmu*std::cos(Theta);
 
 
-            //double secTrk_track_length = True_track_lenght_minerva.at(secondTrk);
-          //  int secondTrk = universe->Getindex2ndTrackhighestKE();
-          //  int secTrk_PDG = universe->GetPDG_2ndTrk_highestTRUEEnergy();
+            double Emu_TRUE = universe->GetTRUE_Emu();
+            double Theta_TRUE = universe->GetThetalepTrue();
+            double phi_TRUE = universe->GetPhilepTrue();
+            double Theta_Degs_TRUE = Theta_TRUE* TMath::RadToDeg();
+            //double Pmu_TRUE = universe->GetTRUE_Pmu();
+            //double px_TRUE = Pmu_TRUE * std::sin(Theta_TRUE) * std::cos(phi_TRUE);
+            //double py_TRUE = Pmu_TRUE * std::sin(Theta_TRUE) * std::sin(phi_TRUE);
 
-          //  double secTrkTrueEnergy = universe->GetTRUENonmuTrkE(secondTrk);
-            //Particle_type Particle_type_Event =  universe->Get_NonParticleStackType(secondTrk);
-            Particle_type GroupType = GetParticlegroup_type(secTrk_PDG);
+            //double MuonPT_TRUE = sqrt(px_TRUE*px_TRUE + py_TRUE*py_TRUE);
+            //double MuonPZ_TRUE = Pmu_TRUE*std::cos(Theta_TRUE);
+
+            double MuonPZ_TRUE = Universe_GROUP.front()->GetPmuLongitudinalTrue();
+            double MuonPT_TRUE = Universe_GROUP.front()->GetPmuTransverseTrue();
+
+
+
+            //Particle_type GroupType = GetParticlegroup_typeReduced(secTrk_PDG);
 
         if(isCV(*universe)){
 
@@ -2216,8 +2443,8 @@ int PDG_match=0;
 
 
 
-          Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
-          Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
+          Particle_type Particle_type_Event = GetParticlegroup_typeReduced(secTrk_PDG);
+          Interaction_type Interaction_type_Event =  universe->Get_Interaction_withDISbreakdown();//universe->Get_InteractionStackType();
           Material_type Material_type_Event = universe->Get_MaterialStackType();
 
           int run = universe->GetRunN();
@@ -2225,20 +2452,10 @@ int PDG_match=0;
           int gate = universe->GetGateN();
           int slice  = universe->GetSliceN();
 
-          // secondTrk = universe->Getindex2ndTrackhighestKE();
-          //    int secTrk_PDG = universe->GetPDG_2ndTrk_highestTRUEEnergy();
-          //double secTrkAngle = universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk);
-          //  double secTrkKE = universe->GetTRUENonmuTrkE(secondTrk);
-          //  Particle_type Particle_type_Event =  universe->Get_NonParticleStackType(secondTrk);
-
-          //auto PDG_trklist = universe->GetVector_nonMuonTk_PDG();
           int True_tracksize = PDG_trklist.size();
 
 
-          //Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
-
-
-          for(unsigned int i = 0; i != PDG_trklist.size(); ++i ){
+          /*for(unsigned int i = 0; i != PDG_trklist.size(); ++i ){
             auto leadinggrounptype = GetParticlegroup_typeProtonandpion_other(PDG_trklist.at(i));
             if(i==secondTrk){
               h_secTrk_MidTheta_leading_Particle.GetComponentHist(leadinggrounptype)->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(i), wgt_minerva_v1);
@@ -2247,77 +2464,20 @@ int PDG_match=0;
               h_secTrk_MidTheta_Nonleading_Particle.GetComponentHist(leadinggrounptype)->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(i), wgt_minerva_v1);
 
             }
-          }
+          }*/
 
           ///////////////
           if(secTrkAngle > 70){arachneHigh_angle.push_back({run,subrun,gate,slice,secTrkAngle,secTrkTrueEnergy,secTrk_PDG});}
           if(secTrkTrueEnergy < .120){arachneLow_KE.push_back({run,subrun,gate,slice,secTrkAngle,secTrkTrueEnergy,secTrk_PDG});}
 
           h_2d_Track_Fraction_Energy_Second->Fill(secondTrk,EnergyFraction_vector.at(secondTrk),wgt_minerva_v1);
-          //EnergyFraction_vector.at(secondTrk) > .6 && EnergyFraction_vector.at(secondTrk) < .8
-          //if ((secTrkAngle > 45 || secTrkAngle < 0 ) && secTrkTrueEnergy < .120 && Study_count < Study_cap){
+
           double TrackLength = universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk);
 
-          //  if ( TrackLength < 100 && TrackLength > 25 && universe->GetTracksize()==3 && Study_count < Study_cap){
-          /*
-  if ( ){
-    auto Trajectors_event = universe->GetVector_ALLTrajector();
-    //auto Trajector_RecoEvent = universe->GetVector_ALLTrajector_ForWithRecoTracks();
-    auto Trajector_RecoEvent = universe->GetVector_ALLTrajector_ForWithRecoTracks_withTrueEFraction();
-    auto Trajector_Energies = universe->TRUE_RECO_Energies_TrajectorsStuct();
-    auto Trajector_RecoEvent_Parent = universe->GetVector_ALLTrajector_ForWithRecoTracks_withTrueEFraction_Parent();
-    auto Trajector_Energies_Parent = universe->TRUE_RECO_Energies_TrajectorsStuct_Parent();
 
-
-    bool is_counter = true;
-    All_True_trajectors.push_back(Trajectors_event);
-    All_RECO_trajectors.push_back(Trajector_RecoEvent);
-    True_Reco_Energies.push_back(Trajector_Energies);
-    All_RECO_trajectors_Parent.push_back(Trajector_RecoEvent_Parent);
-    True_Reco_Energies_Parent.push_back(Trajector_Energies_Parent);
-
-
-    //vector<int>PDG_trklist = universe->GetVector_nonMuonTk_PDG();
-    //vector <double> Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs();
-    //vector <double> Energy_trklist = universe->GetVector_nonMuonTk_Energy_GeV();
-    //int NTrks = PDG_trklist.size();
-
-    std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
-    std::vector  <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
-    std::vector  <double> Energy_trklist =  universe->GETvector_Energy_mc_FS_particles_MeVtoGeV();
-    int NTrks = PDG_trklist.size();
-    Arachne_alltrks.push_back({run, subrun,gate, slice,NTrks, PDG_trklist, Angle_trklist, Energy_trklist});
-
-    arachneBoth.push_back({run,subrun,gate,slice,secTrkAngle,secTrkTrueEnergy,secTrk_PDG});
-
-
-
-    h_2d_PZ_PT_LOWANGLE_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
-    h_2d_E_PZ_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
-    h_2d_Theta_PZ_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
-    h_2d_Theta_PT_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
-    h_2d_E_PT_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
-    h_2d_Theta_PZ_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
-    h_2d_Theta_2ndTrkE_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-    h_2d_muonE_2ndTrkE_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-    h_2d_muonPT_2ndTrkE_LOWANGLE_TRUE_RECO->Fill(universe->GetPmuTransverseTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-    h_2d_muonPZ_2ndTrkE_LOWANGLE_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-    h_2d_Theta_2ndTrKangle_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
-    h_2d_muonE_2ndTrkangle_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
-    h_2d_muonPT_2ndTrkangle_LOWANGLE_TRUE_RECO->Fill(universe->GetPmuTransverseTrue(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
-    h_2d_muonPZ_2ndTrkangle_LOWANGLE_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
-    h_2d_2ndtrkangle_2ndTrkE_LOWANGLE_TRUE_RECO->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-
-    h_secTrk_Theta_TRUE_RECO_LOWANGLE_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk), wgt_minerva_v1);
-    h_secTrk_Theta_TRUE_RECO_LOWANGLE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk), wgt_minerva_v1);
-    h_secTrk_Theta_TRUE_RECO_LOWANGLE_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk), wgt_minerva_v1);
-
-    Study_count++;
-  }
-  */
-          h_MuonE_TRUE_RECO_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetEmu()*.001, wgt_minerva_v1);
-          h_MuonE_TRUE_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetEmu()*.001, wgt_minerva_v1);
-          h_MuonE_TRUE_RECO_Particle.GetComponentHist(Particle_type_Event,false)->Fill(universe->GetEmu()*.001, wgt_minerva_v1);
+          h_MuonE_TRUE_RECO_Material.GetComponentHist(Material_type_Event)->Fill(Emu_TRUE, wgt_minerva_v1);
+          h_MuonE_TRUE_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Emu_TRUE, wgt_minerva_v1);
+          h_MuonE_TRUE_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(Emu_TRUE, wgt_minerva_v1);
 
 
           h_secTrk_Openangle_TRUE_RECO_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetOpenAngle(secondTrk), wgt_minerva_v1);
@@ -2351,7 +2511,7 @@ int PDG_match=0;
 
 
 
-          if(GroupType== kParticle_N_A){
+          /*if(GroupType== kParticle_N_A){
             h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk), wgt_minerva_v1);
             True_Event_info N_A_Event{universe->Get_mc_incoming(),
               universe->Get_mc_current(),
@@ -2363,34 +2523,34 @@ int PDG_match=0;
               Energy_trklist
             };
             N_A_secTrkParticle.push_back(N_A_Event);
-          }
+          }*/
 
 
-          h_2d_PZ_PT_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
-          h_2d_E_PZ_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
-          h_2d_Theta_PZ_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
-          h_2d_Theta_PT_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
-          h_2d_E_PT_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
+          h_2d_PZ_PT_TRUE_RECO->Fill(MuonPZ_TRUE,MuonPT_TRUE,wgt_minerva_v1);
+          h_2d_E_PZ_TRUE_RECO->Fill(Emu_TRUE,MuonPZ_TRUE,wgt_minerva_v1);
+          h_2d_Theta_PZ_TRUE_RECO->Fill(Theta_Degs_TRUE,MuonPZ_TRUE,wgt_minerva_v1);
+          h_2d_Theta_PT_TRUE_RECO->Fill(Theta_Degs_TRUE,MuonPT_TRUE,wgt_minerva_v1);
+          h_2d_E_PT_TRUE_RECO->Fill(Emu_TRUE,MuonPT_TRUE,wgt_minerva_v1);
 
-          h_2d_Theta_2ndTrkE_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-          h_2d_muonE_2ndTrkE_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-          h_2d_muonPT_2ndTrkE_TRUE_RECO->Fill(universe->GetPmuTransverseTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-          h_2d_muonPZ_2ndTrkE_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-          h_2d_Theta_2ndTrKangle_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-          h_2d_muonE_2ndTrkangle_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
-          h_2d_muonPT_2ndTrkangle_TRUE_RECO->Fill(universe->GetPmuTransverseTrue(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
-          h_2d_muonPZ_2ndTrkangle_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
+          h_2d_Theta_2ndTrkE_TRUE_RECO->Fill(Theta_Degs_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+          h_2d_muonE_2ndTrkE_TRUE_RECO->Fill(Emu_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+          h_2d_muonPT_2ndTrkE_TRUE_RECO->Fill(MuonPT_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+          h_2d_muonPZ_2ndTrkE_TRUE_RECO->Fill(MuonPZ_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+          h_2d_Theta_2ndTrKangle_TRUE_RECO->Fill(Theta_Degs_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+          h_2d_muonE_2ndTrkangle_TRUE_RECO->Fill(Emu_TRUE,universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
+          h_2d_muonPT_2ndTrkangle_TRUE_RECO->Fill(MuonPT_TRUE,universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
+          h_2d_muonPZ_2ndTrkangle_TRUE_RECO->Fill(MuonPZ_TRUE,universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
           h_2d_2ndtrkangle_2ndTrkE_TRUE_RECO->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
 
-          h_Mig_MuonE->Fill(universe->GetEmu()*.001,universe->GetTRUE_Emu(),wgt_minerva_v1);
-          h_Mig_MuonPZ->Fill(Pmu*std::cos(Theta),universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
-          h_Mig_MuonPT->Fill(Pmu*std::sin(Theta),universe->GetPmuTransverseTrue(),wgt_minerva_v1);
-          h_Mig_MuonTheta->Fill(Theta*toDegs,universe->GetTRUE_muANGLE_WRTB_DEG(),wgt_minerva_v1);
+          h_Mig_MuonE->Fill(Emu,Emu_TRUE,wgt_minerva_v1);
+          h_Mig_MuonPZ->Fill(PZ,MuonPZ_TRUE,wgt_minerva_v1);
+          h_Mig_MuonPT->Fill(PT,MuonPT_TRUE,wgt_minerva_v1);
+          h_Mig_MuonTheta->Fill(Theta_Degs,Theta_Degs_TRUE,wgt_minerva_v1);
 
-          h_Mig_Vertex_X->Fill(universe->GetVertex_x(),universe->GetTRUE_Vertex_x(),wgt_minerva_v1);
-          h_Mig_Vertex_Y->Fill(universe->GetVertex_y(),universe->GetTRUE_Vertex_y(),wgt_minerva_v1);
-          h_Mig_Vertex_R->Fill(universe->GetVertex_r(),universe->GetTRUE_Vertex_r(),wgt_minerva_v1);
-          h_Mig_Vertex_Z->Fill(universe->GetVertex_z(),universe->GetTRUE_Vertex_z(),wgt_minerva_v1);
+          h_Mig_Vertex_X->Fill(x,x_true,wgt_minerva_v1);
+          h_Mig_Vertex_Y->Fill(y,y_true,wgt_minerva_v1);
+          h_Mig_Vertex_R->Fill(r,r_true,wgt_minerva_v1);
+          h_Mig_Vertex_Z->Fill(z,z_true,wgt_minerva_v1);
 
 
 
@@ -2398,22 +2558,22 @@ int PDG_match=0;
           h_2d_2ndtrkPathlength_2ndtrkangle_TRUE_RECO->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
 
           //Old method GetTRUE_PTmu()
-          if(GroupType==kSecondary_particle_vector[0]){
+      /*    if(GroupType==kSecondary_particle_vector[0]){
             h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_Theta_2ndTrkE_Proton_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_muonE_2ndTrkE_Proton_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_muonPT_2ndTrkE_Proton_TRUE_RECO->Fill(universe->GetPmuTransverseTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_muonPZ_2ndTrkE_Proton_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_Theta_2ndTrkE_Proton_TRUE_RECO->Fill(Theta_Degs_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_muonE_2ndTrkE_Proton_TRUE_RECO->Fill(Emu_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_muonPT_2ndTrkE_Proton_TRUE_RECO->Fill(MuonPT_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_muonPZ_2ndTrkE_Proton_TRUE_RECO->Fill(MuonPZ_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
             h_2d_2ndtrkPathlength_2ndTrkE_Proton_TRUE_RECO->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
             h_2d_2ndtrkPathlength_2ndtrkangle_Proton_TRUE_RECO->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
           }
 
           if(GroupType==kSecondary_particle_vector[3]||GroupType==kSecondary_particle_vector[4]){
             h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO ->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_Theta_2ndTrkE_Pion_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_muonE_2ndTrkE_Pion_TRUE_RECO->Fill(universe->GetTRUE_Emu(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_muonPT_2ndTrkE_Pion_TRUE_RECO->Fill(universe->GetPmuTransverseTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
-            h_2d_muonPZ_2ndTrkE_Pion_TRUE_RECO->Fill(universe->GetPmuLongitudinalTrue(),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_Theta_2ndTrkE_Pion_TRUE_RECO->Fill(Theta_Degs_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_muonE_2ndTrkE_Pion_TRUE_RECO->Fill(Emu_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_muonPT_2ndTrkE_Pion_TRUE_RECO->Fill(MuonPT_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
+            h_2d_muonPZ_2ndTrkE_Pion_TRUE_RECO->Fill(MuonPZ_TRUE,universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
             h_2d_2ndtrkPathlength_2ndTrkE_Pion_TRUE_RECO->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
             h_2d_2ndtrkPathlength_2ndtrkangle_Pion_TRUE_RECO->Fill(universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),wgt_minerva_v1);
 
@@ -2422,7 +2582,7 @@ int PDG_match=0;
           if(GroupType==kSecondary_particle_vector[1]){
             //h_2d_2ndtrkangle_2ndTrkE_dimuon_TRUE_RECO->Fill(universe->GetTRUE_NonmuTrkANGLE_WRTB(secondTrk),universe->GetTRUENonmuTrkE(secondTrk),wgt_minerva_v1);
           }
-
+*/
         } // END OF CV
         ///////////////////////////////////////////
         ////
@@ -2432,35 +2592,27 @@ int PDG_match=0;
 
 
 
-
-
-        //  if(GroupType ==kSecondary_particle_vector[0] && secTrkTrueEnergy < .115 ) continue;
-        //if((GroupType==kSecondary_particle_vector[3]||GroupType==kSecondary_particle_vector[4]) && secTrkTrueEnergy < .75 ) continue;
-
         int True_tracksize = PDG_trklist.size();
 
-        //std::cout<<"inside Loop True 2nd Trk E = "<<secTrkTrueEnergy<< std::endl;
+        h_MuonE_TRUE_RECO.univHist(universe)->Fill(Emu_TRUE,wgt_minerva_v1);
 
+        h_MuonPZ_TRUE_RECO.univHist(universe)->Fill(MuonPZ_TRUE,wgt_minerva_v1);
 
-        h_MuonE_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Emu(),wgt_minerva_v1);
+        h_MuonPT_TRUE_RECO.univHist(universe)->Fill(MuonPT_TRUE,wgt_minerva_v1);
 
-        h_MuonPZ_TRUE_RECO.univHist(universe)->Fill(universe->GetPmuLongitudinalTrue(),wgt_minerva_v1);
-
-        h_MuonPT_TRUE_RECO.univHist(universe)->Fill(universe->GetPmuTransverseTrue(),wgt_minerva_v1);
-
-        h_MuonTheta_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(),wgt_minerva_v1);
+        h_MuonTheta_TRUE_RECO.univHist(universe)->Fill(Theta_Degs_TRUE,wgt_minerva_v1);
 
         h_MuonDOCA_TRUE_RECO.univHist(universe)->Fill(universe->GetDOCAmu(),wgt_minerva_v1);
 
         h_MuonPhi_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Phimu(),wgt_minerva_v1);
 
-        h_CryoVertex_X_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Vertex_x(),wgt_minerva_v1);
+        h_CryoVertex_X_TRUE_RECO.univHist(universe)->Fill(x_true,wgt_minerva_v1);
 
-        h_CryoVertex_Y_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Vertex_y(),wgt_minerva_v1);
+        h_CryoVertex_Y_TRUE_RECO.univHist(universe)->Fill(y_true,wgt_minerva_v1);
 
-        h_CryoVertex_Z_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Vertex_z(),wgt_minerva_v1);
+        h_CryoVertex_Z_TRUE_RECO.univHist(universe)->Fill(z_true,wgt_minerva_v1);
 
-        h_CryoVertex_R_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_Vertex_r(),wgt_minerva_v1);
+        h_CryoVertex_R_TRUE_RECO.univHist(universe)->Fill(r_true,wgt_minerva_v1);
 
         h_CryoVertexChiSqFit_TRUE_RECO.univHist(universe)->Fill(universe->GetVertexChiSqrFit(),wgt_minerva_v1);
 
@@ -2480,7 +2632,7 @@ int PDG_match=0;
         h_secTrk_EnergyFINEBinning_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
         h_secTrk_Openangle_TRUE_RECO.univHist(universe)->Fill(universe->GetTRUE_NonmuTrkopenangle(secondTrk),wgt_minerva_v1);
         h_secTrk_Theta_TRUE_RECO.univHist(universe)->Fill(secTrkTrueAngle,wgt_minerva_v1);
-
+/*
         if(GroupType==kSecondary_particle_vector[0]){
           h_secTrk_Energy_PROTON_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
           h_secTrk_Theta_PROTON_TRUE_RECO.univHist(universe)->Fill(secTrkTrueAngle,wgt_minerva_v1);
@@ -2513,8 +2665,15 @@ int PDG_match=0;
           h_secTrk_Energy_Dimuon_TRUE_RECO.univHist(universe)->Fill(secTrkTrueEnergy,wgt_minerva_v1);
           h_secTrk_Theta_Dimuon_TRUE_RECO.univHist(universe)->Fill(secTrkTrueAngle,wgt_minerva_v1);
         }
+*/
+
+
 
       }// END of Universe Groups
+
+
+
+
 
       }// END OF TRUTH + RECO CUTS
     }//END OF TRUTH PASS CUTS
@@ -2559,6 +2718,10 @@ double countmc= 0.0;
     h_MuonPT.SyncCVHistos();
     h_MuonE.SyncCVHistos();
     h_MuonTheta.SyncCVHistos();
+    h_MuonE_BG.SyncCVHistos();
+    h_MuonPZ_BG.SyncCVHistos();
+    h_MuonPT_BG.SyncCVHistos();
+    h_MuonTheta_BG.SyncCVHistos();
     h_MuonPZ_Fake.SyncCVHistos();
     h_MuonPT_Fake.SyncCVHistos();
     h_MuonE_Fake.SyncCVHistos();
@@ -2599,6 +2762,7 @@ double countmc= 0.0;
     h_MuonTheta_TRUE_RECO.SyncCVHistos();
     h_MuonDOCA_TRUE_RECO.SyncCVHistos();
     h_MuonPhi_TRUE_RECO.SyncCVHistos();
+    h_MuonPhi.SyncCVHistos();
     h_secTrk_tracklength_TRUE_RECO.SyncCVHistos();
     //h_secTrk_tracklength_TRUE_TRUE_RECO.SyncCVHistos();
 //////////////////////////////////
@@ -2608,7 +2772,7 @@ double countmc= 0.0;
     h_CryoVertex_Y.SyncCVHistos();
     h_CryoVertex_R.SyncCVHistos();
     h_CryoVertex_Z.SyncCVHistos();
-
+    h_Distance_to_InnerTank.SyncCVHistos();
 
     h_CryoVertex_X_TRUE_RECO.SyncCVHistos();
     h_CryoVertex_Y_TRUE_RECO.SyncCVHistos();
@@ -2630,7 +2794,7 @@ double countmc= 0.0;
     h_secTrk_LastNodeZ.SyncCVHistos();
 
     h_secTrk_DOCA_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Theta_Dimuon_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Theta_Dimuon_TRUE_RECO.SyncCVHistos();
 
     h_secTrk_Energy_TRUE_RECO.SyncCVHistos();
     h_secTrk_EnergyFINEBinning_TRUE_RECO.SyncCVHistos();
@@ -2640,30 +2804,30 @@ double countmc= 0.0;
 
     h_secTrk_Pathlength.SyncCVHistos();
     h_secTrk_Pathlength_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Pathlength_PROTON_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Pathlength_PION_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Pathlength_PROTON_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Pathlength_PION_TRUE_RECO.SyncCVHistos();
 
 
 
-    h_secTrk_Energy_Dimuon_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Energy_PROTON_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Theta_PROTON_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Openangle_PROTON_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Energy_PION_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Theta_PION_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Openangle_PION_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Energy_Dimuon_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Energy_PROTON_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Theta_PROTON_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Openangle_PROTON_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Energy_PION_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Theta_PION_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Openangle_PION_TRUE_RECO.SyncCVHistos();
 
-    h_secTrk_Energy_PION0_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Theta_PION0_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Openangle_PION0_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Energy_PION0_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Theta_PION0_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Openangle_PION0_TRUE_RECO.SyncCVHistos();
 
-    h_secTrk_Energy_PION_neg_pos_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Theta_PION_neg_pos_TRUE_RECO.SyncCVHistos();
-    h_secTrk_Openangle_PION_neg_pos_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Energy_PION_neg_pos_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Theta_PION_neg_pos_TRUE_RECO.SyncCVHistos();
+    //h_secTrk_Openangle_PION_neg_pos_TRUE_RECO.SyncCVHistos();
 
     h_CryoVertexChiSqFit.SyncCVHistos();
     h_CryoVertexChiSqFit_TRUE_RECO.SyncCVHistos();
-    h_CryoVertexChiSqFit_TRUE.SyncCVHistos();
+    //h_CryoVertexChiSqFit_TRUE.SyncCVHistos();
 //////////////////////////////////
 //////////////////////////////////
     h_VetoWall_matchToVeto.SyncCVHistos();
@@ -2695,12 +2859,16 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
 
   char outFileName[1024];
+  char outFileName_pdf[1024];
   auto playlist_name = Playlist_Info.GetPlaylistname();
   auto datatype = String_ISMC(is_mc);
   char c[playlist_name.length() + 1];
   char d[datatype.length() + 1];
   char rootpathway[OUTputRoot_pathway.length()+1];
   char ErrorStatus[sysmatics_status.length()+1];
+  char Fid_status_char[Fid_status.length()+1];
+  char weight_status_char[weight_status.length()+1];
+  char Convolution_status_char[convolution_status.length()+1];
   strcpy(rootpathway, OUTputRoot_pathway.c_str());
   strcpy(c, playlist_name.c_str());
   strcpy(d, datatype.c_str());
@@ -2711,6 +2879,15 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   char true_Cuts_char[true_Cuts.length()+1];
   strcpy(reco_true_char, reco_true.c_str());
   strcpy(true_Cuts_char, true_Cuts.c_str());
+  strcpy(Fid_status_char, Fid_status.c_str());
+  strcpy(weight_status_char, weight_status.c_str());
+  strcpy(Convolution_status_char, convolution_status.c_str());
+
+
+
+
+
+
 
   PrintCutstoScreen( kCutsVector , CountMap_RECO, c, mcscale );
   PrintCutstoScreen( kCutsVector , CountMap_RECO_Helium, "Helium", mcscale );
@@ -2731,18 +2908,35 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   //Make_cvsOfCutsRate( kCutsVector_Eff, CountMap_RECO_Eff, reco_true_char, true, mcscale, mcPOT);
   //PrintCutstoScreen( kCutsVector_Eff , CountMap_RECO_Eff, c, mcscale );
 
+  if(RunwithConvolution==true && useweights==true){
+    sprintf(outFileName, "%s/%s_%s_%s_%s_%s_%s_%sFid.root", rootpathway, "Histograms", c, "RECO_MC", ErrorStatus,Convolution_status_char, weight_status_char, Fid_status_char);
+    sprintf(outFileName_pdf, "%s_%s_%s_%s_%s_%s_%sFid.pdf", "Histograms", c, "RECO_MC", ErrorStatus,Convolution_status_char, weight_status_char, Fid_status_char);
+  }
+
+  else if(RunwithConvolution==true && useweights==false){
+    sprintf(outFileName, "%s/%s_%s_%s_%s_%s_%sFid.root", rootpathway, "Histograms", c, "RECO_MC", ErrorStatus,Convolution_status_char, Fid_status_char);
+    sprintf(outFileName_pdf, "%s_%s_%s_%s_%s_%sFid.pdf", "Histograms", c, "RECO_MC", ErrorStatus,Convolution_status_char, Fid_status_char);
+
+  }
+  else {  sprintf(outFileName, "%s/%s_%s_%s_%s_%sFid.root", rootpathway, "Histograms", c, "RECO_MC", ErrorStatus, Fid_status_char);
+  sprintf(outFileName_pdf, "%s_%s_%s_%s_%s_%sFid.pdf",  "Histograms", c, "RECO_MC", ErrorStatus,Convolution_status_char, Fid_status_char);
+
+  }
+
+
+
   //outFileName = "Histograms_test.root";
   //auto outFile = TFile::Open(outFileName);
-  if(Run_EventLoopOnGid==true){
-    sprintf(outFileName, "%s_%s_%s_%s.root", "Histograms",c,d,ErrorStatus);
-    std::cout << "Writing output file on Grid to: " <<outFileName << std::endl;
+  //if(Run_EventLoopOnGid==true){
+  //  sprintf(outFileName, "%s_%s_%s_%s.root", "Histograms",c,d,ErrorStatus);
+  //  std::cout << "Writing output file on Grid to: " <<outFileName << std::endl;
 
-  }
-  else{
-    sprintf(outFileName, "%s/%s_%s_%s_%s.root", rootpathway, "Histograms",c,d,ErrorStatus);
-    std::cout << "Writing output file to: " <<outFileName << std::endl;
+  //}
+  //else{
+  //  sprintf(outFileName, "%s/%s_%s_%s_%s.root", rootpathway, "Histograms",c,d,ErrorStatus);
+  //  std::cout << "Writing output file to: " <<outFileName << std::endl;
 
-  }
+  //}
 
 
   //TFile outFile(outFileName, "RECREATE");
@@ -2812,7 +3006,10 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
   h_MuonPT.hist->Write();
   PlotUtils::MnvH1D* h_MuonPT_FluxIntegrated = PlotUtils::flux_reweighter(playlist_fluxreweighter, nu_pdg, useNuEconstraint, NFlux_universe).GetIntegratedFluxReweighted(nu_pdg, h_MuonPT.hist, Min_NuFluxEnergy, Max_NuFluxEnergy, useMuonCorrelations);//GetRebinnedFluxReweighted(nu_pdg, h_MuonPT.hist);
+  PlotUtils::MnvH1D* h_MuonPT_2FluxIntegrated = PlotUtils::flux_reweighter(playlist_fluxreweighter, nu_pdg, useNuEconstraint, NFlux_universe).GetIntegratedFluxReweighted(nu_pdg, h_MuonPT.hist, Min_NuFluxEnergy, Max_NuFluxEnergy, !useMuonCorrelations);//GetRebinnedFluxReweighted(nu_pdg, h_MuonPT.hist);
+
   h_MuonPT_FluxIntegrated->Clone()->Write("h_MuonPT_FluxIntegrated");
+  h_MuonPT_2FluxIntegrated->Clone()->Write("h_MuonPT_2FluxIntegrated");
 
   h_MuonPT_TRUE_RECO.hist->Write();
   h_MuonPT_Material.WriteToFile(*outFile);
@@ -2828,6 +3025,11 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_MuonTheta_Interaction.WriteToFile(*outFile);
   h_MuonTheta_Particle.WriteToFile(*outFile);
 
+  h_MuonE_BG.hist->Write();
+  h_MuonPZ_BG.hist->Write();
+  h_MuonPT_BG.hist->Write();
+  h_MuonTheta_BG.hist->Write();
+
   h_MuonPZ_Fake.hist->Write();
   h_MuonPT_Fake.hist->Write();
   h_MuonE_Fake.hist->Write();
@@ -2840,6 +3042,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
 
   h_MuonPhi_TRUE_RECO.hist->Write();
+  h_MuonPhi.hist->Write();
   h_MuonDOCA.hist->Write();
   h_MuonDOCA_TRUE_RECO.hist->Write();
 
@@ -2987,8 +3190,15 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_CryoVertex_R_boolNTrack.WriteToFile(*outFile);
   h_CryoVertex_R_VertexOptions.WriteToFile(*outFile);
 
+  h_Distance_to_InnerTank.hist->Write();
+
+  h_Distance_to_InnerTank_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_Particle.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_Interaction.WriteToFile(*outFile);
+
+
   h_CryoVertexChiSqFit.hist->Write();
-  h_CryoVertexChiSqFit_TRUE.hist->Write();
+  //h_CryoVertexChiSqFit_TRUE.hist->Write();
   h_CryoVertexChiSqFit_TRUE_RECO.hist->Write();
   h_CryoVertexChiSqFit_Material.WriteToFile(*outFile);
   h_CryoVertexChiSqFit_Interaction.WriteToFile(*outFile);
@@ -3039,8 +3249,8 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
   h_secTrk_Pathlength.hist->Write();
   h_secTrk_Pathlength_TRUE_RECO.hist->Write();
-  h_secTrk_Pathlength_PROTON_TRUE_RECO.hist->Write();
-  h_secTrk_Pathlength_PION_TRUE_RECO.hist->Write();
+  //h_secTrk_Pathlength_PROTON_TRUE_RECO.hist->Write();
+  //h_secTrk_Pathlength_PION_TRUE_RECO.hist->Write();
   h_secTrk_Pathlength_Material.WriteToFile(*outFile);
   h_secTrk_Pathlength_Interaction.WriteToFile(*outFile);
   h_secTrk_Pathlength_Particle.WriteToFile(*outFile);
@@ -3052,7 +3262,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_secTrk_MidTheta_leading_Particle.WriteToFile(*outFile);
   h_secTrk_MidTheta_Nonleading_Particle.WriteToFile(*outFile);
 
-  h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction.WriteToFile(*outFile);
+  //h_Particle_N_A_secTrk_Theta_TRUE_RECO_Interaction.WriteToFile(*outFile);
   ////////////////////////////////////////////////
   // Veto Wall + Others
   ////////////////////////////////////////////////
@@ -3080,9 +3290,9 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_secTrk_Openangle_TRUE_RECO_Interaction.WriteToFile(*outFile);
   h_secTrk_Openangle_TRUE_RECO_Particle.WriteToFile(*outFile);
 
-  h_secTrk_Energy_Dimuon_TRUE_RECO.hist->Write();
+  //h_secTrk_Energy_Dimuon_TRUE_RECO.hist->Write();
 
-  h_secTrk_Theta_Dimuon_TRUE_RECO.hist->Write();
+  //h_secTrk_Theta_Dimuon_TRUE_RECO.hist->Write();
   h_Muon_pseudorapidity.hist->Write();
   h_Muon_pseudorapidity_angle.hist->Write();
   h_Muon_rapidity.hist->Write();
@@ -3092,24 +3302,24 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_VetoWall_PMTmap_OFF.hist->Write();
   h_Veto_PMT_Map.WriteToFile(*outFile);
 
-  h_secTrk_Energy_PROTON_TRUE_RECO.hist->Write();
-  h_secTrk_Theta_PROTON_TRUE_RECO.hist->Write();
-  h_secTrk_Openangle_PROTON_TRUE_RECO.hist->Write();
-  h_secTrk_Energy_PION_TRUE_RECO.hist->Write();
-  h_secTrk_Theta_PION_TRUE_RECO.hist->Write();
-  h_secTrk_Openangle_PION_TRUE_RECO.hist->Write();
+//  h_secTrk_Energy_PROTON_TRUE_RECO.hist->Write();
+//  h_secTrk_Theta_PROTON_TRUE_RECO.hist->Write();
+//  h_secTrk_Openangle_PROTON_TRUE_RECO.hist->Write();
+//  h_secTrk_Energy_PION_TRUE_RECO.hist->Write();
+//  h_secTrk_Theta_PION_TRUE_RECO.hist->Write();
+//  h_secTrk_Openangle_PION_TRUE_RECO.hist->Write();
 
-  h_secTrk_Energy_PION0_TRUE_RECO.hist->Write();
-  h_secTrk_Theta_PION0_TRUE_RECO.hist->Write();
-  h_secTrk_Openangle_PION0_TRUE_RECO.hist->Write();
+  //h_secTrk_Energy_PION0_TRUE_RECO.hist->Write();
+  //h_secTrk_Theta_PION0_TRUE_RECO.hist->Write();
+  //h_secTrk_Openangle_PION0_TRUE_RECO.hist->Write();
 
-  h_secTrk_Energy_PION_neg_pos_TRUE_RECO.hist->Write();
-  h_secTrk_Theta_PION_neg_pos_TRUE_RECO.hist->Write();
-  h_secTrk_Openangle_PION_neg_pos_TRUE_RECO.hist->Write();
+//  h_secTrk_Energy_PION_neg_pos_TRUE_RECO.hist->Write();
+//  h_secTrk_Theta_PION_neg_pos_TRUE_RECO.hist->Write();
+//  h_secTrk_Openangle_PION_neg_pos_TRUE_RECO.hist->Write();
 
   h_Qsquare_TRUE_RECO.hist->Write();
 
-  h_Distance_to_InnerTank.hist->Write();
+
 
   h_secTrk_tracklength_TRUE_RECO.hist->Write();
   //h_secTrk_tracklength_TRUE_TRUE_RECO.hist->Write();
@@ -3173,8 +3383,8 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 
 
   h_2d_2ndtrkangle_2ndTrkE_TRUE_RECO->Write();
-  h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO->Write();
-  h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO->Write();
+  //h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE_RECO->Write();
+  //h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE_RECO->Write();
   //h_2d_2ndtrkangle_2ndTrkE_dimuon_TRUE_RECO->Write();
 
 
@@ -3207,7 +3417,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_MuonE_MKmodel->Write();
 
   h_2d_Track_Fraction_Energy->Write();
-  h_2d_Track_Fraction_Energy_Cuts->Write();
+  //h_2d_Track_Fraction_Energy_Cuts->Write();
   h_2d_Track_Fraction_Energy_Second->Write();
 
   h_2d_2ndtrkPathlength_vertex_R->Write();
@@ -3285,8 +3495,8 @@ MakeLatex_particleTraj_True_RECO_plots(All_True_trajectors,
 
 std::cout<<" PDG_notmatch = " << PDG_notmatch<< "  PDG_match = "<< PDG_match<< std::endl;
 */
-TCanvas *can = new TCanvas("", "");
-MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
+//TCanvas *can = new TCanvas("", "");
+//MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
 //MakeTrue_interactionPlots_WithRECOtrajector(All_True_trajectors,All_RECO_trajectors_Parent,playlistname_char , 5.0 ,"RecoStudy_recoilTracks", can,mnv_plotter);
 /*
 MakeLatex_particleTraj_True_RECO_plots(All_True_trajectors,
@@ -3296,11 +3506,11 @@ MakeLatex_particleTraj_True_RECO_plots(All_True_trajectors,
 */
 
 
-  char  pdfName[1024];
-  char pdf_start[1024];
-  char pdf_end[1024];
-  char XaxisName[1024];
-  sprintf(pdfName, "MuonVars");
+  //char  pdfName[1024];
+  //char pdf_start[1024];
+  //char pdf_end[1024];
+  //char XaxisName[1024];
+  //sprintf(pdfName, "MuonVars");
 
   //sprintf(pdf_start, "Optimization_figures.pdf(");
   //sprintf(pdf_end, "Optimization_figures.pdf)");
@@ -3429,7 +3639,7 @@ MakeLatex_particleTraj_True_RECO_plots(All_True_trajectors,
 
     std::cout << "END OF Plotting" << std::endl;
 
-    std::cout << " THe Greatest  Chi sqrt value for Reco Cuts = "<< greatest_Chisqrt<< std::endl;
+    //std::cout << " THe Greatest  Chi sqrt value for Reco Cuts = "<< greatest_Chisqrt<< std::endl;
    //MakeLatex_Tables_withTrue_Event_info(N_A_secTrkParticle," ",  "N_A_FS_RECO", c, .5, "N_A in FS");
    std::cout << " this many Other long tracks  = "<< otherlongtrack<< std::endl;
 
@@ -3441,10 +3651,10 @@ MakeLatex_particleTraj_True_RECO_plots(All_True_trajectors,
 
   std::cout << "Success" << std::endl;
 
-//}
 
+TCanvas *can = new TCanvas("", "");
 
-can -> Print("Test.pdf");
+can -> Print(outFileName_pdf);
 
 }//END of Eventloop Function
 
@@ -3456,30 +3666,31 @@ can -> Print("Test.pdf");
 std::vector<ECuts> GetRECOCutsVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECuts> ret_vec;
-  ret_vec.push_back(kNoCuts );
+  ret_vec.push_back(kNoCuts  );
   ret_vec.push_back(kGoodEnergy );
+  //ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kNTracks);
   ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMu_is_Plausible);
+  //ret_vec.push_back(kNonMu_is_Plausible);
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
   ret_vec.push_back(kMinosCoil );
   ret_vec.push_back(kMinosMatch);
   ret_vec.push_back(kMinosCurvature);
   ret_vec.push_back(kMinosCharge );
 
-//ret_vec.push_back(kThetaMu );
-  ret_vec.push_back(kMuonAngle );
-  ret_vec.push_back(kMu_is_Plausible);
-
-  ret_vec.push_back(kNTracks);
   ret_vec.push_back(kVertexConverge);
   ret_vec.push_back(kVertex_ConvergedfromAllTracks);
   ret_vec.push_back(kMaxChiSqrt_byTrackType);
-  ret_vec.push_back(kFiducialVolume);
-
-  ret_vec.push_back(kVeto );
-  ret_vec.push_back(kSix );
-  ret_vec.push_back(kMatchVetoDeadPaddle);
-
-  ret_vec.push_back(kTrackForwardGoing);
+  //ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kFiducialVolume_new );
+  ret_vec.push_back(kTrackForwardGoing );
   ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+  //ret_vec.push_back(kMaxChiSqrt);
 
   ret_vec.push_back(kAllCuts );
 
@@ -3504,13 +3715,13 @@ std::vector<ECuts> GetRECOCutsForEffVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECuts> ret_vec;
   ret_vec.push_back(kNoCuts  );
-  ret_vec.push_back(kGoodEnergy );
+  //ret_vec.push_back(kGoodEnergy );
   //ret_vec.push_back(kThetaMu );
   ret_vec.push_back(kMuonAngle );
   ret_vec.push_back(kNTracks);
   ret_vec.push_back(kUsableMuon);
   ret_vec.push_back(kMu_is_Plausible);
-  ret_vec.push_back(kNonMu_is_Plausible);
+  //ret_vec.push_back(kNonMu_is_Plausible);
   ret_vec.push_back(kVeto );
   ret_vec.push_back(kSix );
   ret_vec.push_back(kMatchVetoDeadPaddle);
@@ -3521,7 +3732,8 @@ std::vector<ECuts> GetRECOCutsForEffVector() {
   ret_vec.push_back(kMinosCharge );
 
   ret_vec.push_back(kVertexConverge);
-  ret_vec.push_back(kFiducialVolume );
+  //ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kFiducialVolume_new );
   ret_vec.push_back(kTrackForwardGoing );
   ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
   //ret_vec.push_back(kMaxChiSqrt);
@@ -3540,8 +3752,8 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECutsTRUTH> True_vec;
   True_vec.push_back(kTRUTHNoCuts   );
-  True_vec.push_back(kTRUTHMuonEnergy );
-  True_vec.push_back(kTRUTHMuonAngle );
+  //True_vec.push_back(kTRUTHMuonEnergy );
+  //True_vec.push_back(kTRUTHMuonAngle );
   True_vec.push_back(kTRUTHneutrino);
   True_vec.push_back(kTRUTHCCInteraction );
   True_vec.push_back(kTRUTHtarget);
@@ -3551,7 +3763,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
   //True_vec.push_back(kTRUTH_2ndTrkAnlgethreshold );
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
-  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
+  //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
   //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   True_vec.push_back(kAllTRUTHCuts);
@@ -3567,8 +3779,8 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_Energy() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECutsTRUTH> True_vec;
   True_vec.push_back(kTRUTHNoCuts   );
-  True_vec.push_back(kTRUTHMuonEnergy );
-  True_vec.push_back(kTRUTHMuonAngle );
+  //True_vec.push_back(kTRUTHMuonEnergy );
+  //True_vec.push_back(kTRUTHMuonAngle );
   True_vec.push_back(kTRUTHneutrino);
   True_vec.push_back(kTRUTHCCInteraction );
   True_vec.push_back(kTRUTHtarget);
@@ -3576,7 +3788,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_Energy() {
   //True_vec.push_back(kTRUTHFiduical ); // dont' apply truth fiduical cut in Nomrateor
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
-  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
+  //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
   //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH);
   //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
   //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
@@ -3702,6 +3914,8 @@ std::vector<Weights> GetWeightVector() {
   weight_vec.push_back(kweightGenie);
   weight_vec.push_back(kweight2p2ptune );
   weight_vec.push_back(kweightRPA);
+  //weight_vec.push_back(kweightMK);
+  //weight_vec.push_back(kweightZexp); weight is including in GENIE weight
   weight_vec.push_back(kweight_HeliumTargetMass);
 
   return weight_vec;
@@ -3716,6 +3930,7 @@ std::vector<Weights> GetWeightVector_v2() {
   weight_vec.push_back(kweightGenie);
   weight_vec.push_back(kweight2p2ptune );
   weight_vec.push_back(kweightRPA);
+  //weight_vec.push_back(kweightZexp);
   weight_vec.push_back(kweightLowQ2Pi);
   return weight_vec;
 //#endif

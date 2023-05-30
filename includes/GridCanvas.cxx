@@ -5,8 +5,17 @@
 //
 
 #include "GridCanvas.h"
+#include "TLatex.h"
+#include "TPad.h"
+#include "TH1.h"
+#include "TAxis.h"
+#include "TList.h"
+#include "TGraph.h"
+#include "TStyle.h"
 
-using namespace std;
+#include "plot.h"
+
+#include <iostream>
 
 GridCanvas::GridCanvas(const char* name, int nPadsX, int nPadsY, int ww, int wh)
   : TCanvas(name, "title", ww, wh), fNPadsX(nPadsX), fNPadsY(nPadsY),
@@ -16,7 +25,8 @@ GridCanvas::GridCanvas(const char* name, int nPadsX, int nPadsY, int ww, int wh)
     fXTitle(""), fYTitle(""),
     fXTitleDrawn(false), fYTitleDrawn(false),
     fTitleFont(-1), fTitleSize(-1),
-    fManualXLabels(false)
+    fManualXLabels(false),
+    fManualYLabels(false)
 {
   fPads.resize(fNPadsX*fNPadsY);
   fPads2D.resize(fNPadsX);
@@ -72,7 +82,7 @@ void GridCanvas::ResetPads()
 
       const double left=fLeftMargin + i*frameWidth + fInterpadSpace/aspectRatio;
       const double right=fRightMargin + (fNPadsX-i-1)*frameWidth + fInterpadSpace/aspectRatio;
-      const double bottom= fBottomMargin + j*frameHeight + fInterpadSpace;
+      const double bottom=fBottomMargin + j*frameHeight + fInterpadSpace;
       const double top=fTopMargin + (fNPadsY-j-1)*frameHeight + fInterpadSpace;
 
       pad->SetLeftMargin(left);
@@ -80,7 +90,10 @@ void GridCanvas::ResetPads()
       pad->SetBottomMargin(bottom);
       pad->SetTopMargin(top);
 
-      //printf("CHECKING (%d, %d) c=%d l=%.2f r=%.2f b=%.2f t=%.2f\n", i, j, counter, left, right, bottom, top);
+
+
+
+      //printf("(%d, %d) c=%d l=%.2f r=%.2f b=%.2f t=%.2f\n", i, j, counter, left, right, bottom, top);
       // pad->SetBottomMargin(j==0 ? (thisPadHeight-padHeight)/thisPadHeight : fInterpadSpace);
       // pad->SetTopMargin(fInterpadSpace);
       // pad->SetLeftMargin(i==0 ? (thisPadWidth-padWidth)/thisPadWidth : fInterpadSpace);
@@ -110,6 +123,8 @@ void GridCanvas::Paint(Option_t* option)
   if(anyPadModified || IsModified()){
     SetHistTexts();
   }
+  for(unsigned int i=0; i<fPads.size(); ++i) if(!GetPadHist(fPads[i])) fPads[i]->SetFillStyle(0);
+  //std::cout << "I AM CALLED" << std::endl;
   TCanvas::Paint(option);
 }
 
@@ -128,11 +143,28 @@ void GridCanvas::SetHistTexts()
       TH1* hist=GetPadHist(pad);
       if(!hist) continue;
 
+      bool lastincolumn = false;
+      int maxsize = fNPadsX*fNPadsY;
+      int tempcounter = fNPadsX*(fNPadsY-1-j+1)+i;//go one row further
+      if(tempcounter<maxsize){
+
+	TPad *pad_below = fPads[tempcounter];
+	TH1* hist_below= GetPadHist(pad_below);
+	if(!hist_below) lastincolumn=true;
+	//std::cout << fNPadsX << "\t" << fNPadsY << "\t" << i << "\t" << j << "\t" << lastincolumn<< std::endl;
+      }
+
       hist->GetXaxis()->SetTitleSize(0);
       hist->GetYaxis()->SetTitleSize(0);
 
       if(i!=0) hist->GetYaxis()->SetLabelSize(0);
-      if(j!=0 || fManualXLabels) hist->GetXaxis()->SetLabelSize(0);
+      if(lastincolumn){
+	hist;
+	//Want to add ChangeLabel, only ROOT 6.
+
+      }
+      else if(j!=0 || fManualXLabels) hist->GetXaxis()->SetLabelSize(0);
+
     }
   }
   if(fXTitle=="" && GetPadHist(fPads[0])) SetXTitle(GetPadHist(fPads[0])->GetXaxis()->GetTitle());
@@ -146,7 +178,7 @@ void GridCanvas::SetManualXLabels(int nLabels, const double* positions, const ch
 {
   fManualXLabels=true;
   for(int i=0; i<fNPadsX; ++i){
-    cout << "PAD " << i << endl;
+    //std::cout << "PAD " << i << std::endl;
     fPads2D[i].resize(fNPadsY);
     int j=0;
     int counter=fNPadsX*(fNPadsY-1-j)+i;
@@ -167,7 +199,7 @@ void GridCanvas::SetManualXLabels(int nLabels, const double* positions, const ch
     double tmarg=pad->GetTopMargin();
     double bmarg=pad->GetBottomMargin();
 
-    // cout << "y2=" << y2 << " y1=" << y1 << " ypos=" << (y1-yoffset*(y2-y1)) << endl;
+    // std::cout << "y2=" << y2 << " y1=" << y1 << " ypos=" << (y1-yoffset*(y2-y1)) << endl;
 
     for(int i=0; i<nLabels; ++i){
       // We have to place the TLatex in NDC so it doesn't move when
@@ -195,7 +227,65 @@ void GridCanvas::SetManualXLabels(int nLabels, const double* positions, const ch
       la->SetTextSize(gStyle->GetLabelSize());
       la->Draw();
     }
-    cout << "DONE" << endl;
+    //std::cout << "DONE" << std::endl;
+  }
+}
+
+void GridCanvas::SetManualYLabels(int nLabels, const double* positions, const char** valueStrings,
+                                  double yoffset)
+{
+  fManualYLabels=true;
+  for(int i=0; i<fNPadsY; ++i){
+    //std::cout << "PAD " << i << std::endl;
+    fPads2D[i].resize(fNPadsY);
+    int j=0;
+    int counter=fNPadsY*(fNPadsX-1-j)+i;
+
+    TPad *pad = fPads[counter];
+    pad->cd();
+    pad->Update();
+
+    TH1* hist=GetPadHist(pad);
+    if(hist==NULL) continue;
+    double x1=pad->GetUxmin();
+    double x2=pad->GetUxmax();
+    double y1=pad->GetUymin();
+    double y2=pad->GetUymax();
+
+    double lmarg=pad->GetLeftMargin();
+    double rmarg=pad->GetRightMargin();
+    double tmarg=pad->GetTopMargin();
+    double bmarg=pad->GetBottomMargin();
+
+    // std::cout << "y2=" << y2 << " y1=" << y1 << " ypos=" << (y1-yoffset*(y2-y1)) << endl;
+
+    for(int i=0; i<nLabels; ++i){
+      // We have to place the TLatex in NDC so it doesn't move when
+      // the user changes the y axis limits. This'll still break if
+      // the user changes the x limits, but you can't have
+      // everything...
+      //
+      // Presumably the real fix is to paint() the latex in
+      // GridCanvas::Paint() instead of doing this, but laziness
+
+      double y=y1-yoffset*(y2-y1);
+
+      double xndc= lmarg + (positions[i]-x1)*(1-rmarg-lmarg)/(x2-x1);
+      double yndc= bmarg + (y-y1)*(tmarg-bmarg)/(y2-y1);
+
+      TLatex* la=new TLatex(xndc, yndc, /* positions[i], y1-yoffset*(y2-y1), */
+                            valueStrings[i]);
+      la->SetNDC();
+      la->SetTextAlign(23);
+
+      la->SetTextFont(hist->GetYaxis()->GetLabelFont());
+      // Can't do this because we set the label size to zero so ROOT's
+      // labels aren't shown
+      // la->SetTextSize(axis->GetLabelSize());
+      la->SetTextSize(gStyle->GetLabelSize());
+      la->Draw();
+    }
+    //std::cout << "DONE" << std::endl;
   }
 }
 
@@ -237,24 +327,6 @@ void GridCanvas::SetYLimits(double ymin, double ymax)
   }
 }
 
-void GridCanvas::SetYLabel_Size(double size)
-{
-  for(unsigned int i=0; i<fPads.size(); ++i){
-    TH1* h=GetPadHist(fPads[i]);
-    if(!h) continue;
-    h->GetYaxis()->SetLabelSize(size);
-  }
-}
-
-void GridCanvas::SetXLabel_Size(double size)
-{
-  for(unsigned int i=0; i<fPads.size(); ++i){
-    TH1* h=GetPadHist(fPads[i]);
-    if(!h) continue;
-    h->GetXaxis()->SetLabelSize(size);
-  }
-}
-
 void GridCanvas::DrawTitles()
 {
   fXTitleLatex->SetTitle(fXTitle);
@@ -273,6 +345,15 @@ void GridCanvas::DrawTitles()
 
     fXTitleLatex->SetTextSize(fTitleSize==-1 ? 30 : fTitleSize);
     fYTitleLatex->SetTextSize(fTitleSize==-1 ? 30 : fTitleSize);
+
+    if(UseIndividualTitlesize==true){
+
+      fXTitleLatex->SetTextSize(fXTitleSize==-1 ? 30 : fXTitleSize);
+      fYTitleLatex->SetTextSize(fYTitleSize==-1 ? 30 : fYTitleSize);
+
+    }
+
+
   }
 
   fYTitleLatex->SetTextAngle(90);
@@ -310,17 +391,35 @@ void GridCanvas::DrawTitles()
   fYTitleLatex->SetNDC();
 
   if(!fXTitleDrawn){
-    std::cout << "Drawing x title" << std::endl;
+    //std::cout << "Drawing x title" << std::endl;
     TCanvas::cd();
     fXTitleLatex->Draw();
     fXTitleDrawn=true;
   }
 
   if(!fYTitleDrawn){
-    std::cout << "Drawing y title" << std::endl;
+    //std::cout << "Drawing y title" << std::endl;
     TCanvas::cd();
     fYTitleLatex->Draw();
     fYTitleDrawn=true;
+  }
+}
+
+void GridCanvas::SetYLabel_Size(double size)
+{
+  for(unsigned int i=0; i<fPads.size(); ++i){
+    TH1* h=GetPadHist(fPads[i]);
+    if(!h) continue;
+    h->GetYaxis()->SetLabelSize(size);
+  }
+}
+
+void GridCanvas::SetXLabel_Size(double size)
+{
+  for(unsigned int i=0; i<fPads.size(); ++i){
+    TH1* h=GetPadHist(fPads[i]);
+    if(!h) continue;
+    h->GetXaxis()->SetLabelSize(size);
   }
 }
 
@@ -380,6 +479,13 @@ void GridCanvas::Remax(double ymin)
   double allMax=-9e99;
   for(unsigned int i=0; i<fPads.size(); ++i) allMax=std::max(allMax, getPadMax(fPads[i]));
   SetYLimits(ymin, 1.1*allMax);
+}
+
+double GridCanvas::GetPadMax(){
+  double allMax=-9e99;
+  for(unsigned int i=0; i<fPads.size(); ++i) allMax=std::max(allMax, getPadMax(fPads[i]));
+  return allMax;
+
 }
 
 void GridCanvas::SetLeftMargin(Float_t margin)

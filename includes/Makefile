@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -g -Wall -fPIC
-ROOTFLAGS = `root-config --cflags --glibs --libs` -lTreePlayer -lEG 
+ROOTFLAGS = `root-config --cflags --glibs --libs` -lTreePlayer -lEG -lMinuit 
 INCLUDE += -I$(PLOTUTILSROOT/../include)/  -I$(UNFOLDUTILSROOT)/../include/
 LDLIBS += -L$(PLOTUTILSROOT) -lMAT -lMAT-MINERvA -L$(UNFOLDUTILSROOT) -lUnfoldUtils
 

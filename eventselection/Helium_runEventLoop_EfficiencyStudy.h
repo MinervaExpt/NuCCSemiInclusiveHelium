@@ -16,7 +16,7 @@
 #include "PlotUtils/HistFolio.h"
 #include "PlotUtils/MnvColors.h"
 #include "PlotUtils/NamedCategory.h"
-
+#include "MinervaUnfold/MnvResponse.h"
 
 
 // Systematics lib
@@ -39,6 +39,7 @@
 #include "../includes/HeliumUtils.h"
 #include "../includes/loadLibs.h"
 #include "../includes/CryoTankUtils.h"
+#include "../includes/Helium_ConvolutionTool.h"
 
 #include "TChain.h"
 #include "EventCounting.h"
@@ -84,6 +85,7 @@ MnvH2D* fMigration_MuonP_Z;
 MnvH2D* fMigration_MuonP_E;
 
 };
+
 
 
 #endif

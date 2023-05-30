@@ -108,7 +108,7 @@ std::vector<double> MuonThetabin_vector= GetBinMuonVector(kAngleWRTB);
 
 std::vector<double> Vertex_Xbin_vector= GetBinvertexVector(kX);
 std::vector<double> Vertex_Ybin_vector= GetBinvertexVector(kY);
-std::vector<double> Vertex_Zbin_vector= GetBinvertexVector(kZ);
+std::vector<double> Vertex_Zbin_vector= GetBinvertexVector(kZ_2D);
 std::vector<double> Vertex_Rbin_vector= GetBinvertexVector(kR);
 std::vector<double> Vertex_DOCAbin_vector= GetBinMuonVector(kDOCA_muon);
 
@@ -153,7 +153,7 @@ std::vector<double> MuonMatchtoMinos_vector= GetBinMuonVector(kMuonMatchtoMinos)
 std::vector<double> MuonMatchtoVeto_vector= GetBinMuonVector(kMuonMatchtoVeto);
 
 std::vector<double> Veto_PMTmap_vector = GetVetowall_BinVetor(kPMTMap);
-
+std::vector<double> AnglePhi_vector = GetBinMuonVector(kAnglePhi);
 
 
 std::vector<double> Recoil_track_length_vector;
@@ -167,9 +167,19 @@ std::vector<double> rapidity_muon_vector{2.25,  2.45,  2.65,   2.85,  3.05,  3.2
 //std::vector<double> CutToSurface_bins{-400, -380, -360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120};
 std::vector<double> CutToSurface_bins{-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
 MnvH1D *h_Data_FidiucalCut       =    new MnvH1D("h_Data_FidiucalCut", "h_Data_FidiucalCut", CutToSurface_bins.size()-1, CutToSurface_bins.data());
-std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
-MnvH1D *h_Data_Distance_to_InnerTank       =    new MnvH1D("h_Data_Distance_to_InnerTank", "h_Data_Distance_to_InnerTank", Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
-MnvH1D *h_Data_Distance_to_InnerTank_Fidiucal       =    new MnvH1D("h_Data_Distance_to_InnerTank_Fidiucal", "h_Data_Distance_to_InnerTank_Fidiucal", Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+std::vector<double> Distance_to_innerTank = GetBinvertexVector(kdistance_edge);
+//std::vector<double> Distance_to_innerTank_fidiucal = GetBinvertexVector(kdistance_edge_fiducial);
+std::vector<double> Distance_to_innerTank_fidiucal = Distance_to_innerTank;
+
+
+
+MnvH1D *h_Data_Distance_to_InnerTank          =    new MnvH1D("h_Data_Distance_to_InnerTank", "h_Data_Distance_to_InnerTank",                   Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH1D *h_Data_Distance_to_InnerTank_Fidiucal =    new MnvH1D("h_Data_Distance_to_InnerTank_Fidiucal", "h_Data_Distance_to_InnerTank_Fidiucal", Distance_to_innerTank_fidiucal.size()-1, Distance_to_innerTank_fidiucal.data());
+
+MnvH1D *h_Data_Distance_to_InnerTank_upstreamCap       =    new MnvH1D("h_Data_Distance_to_InnerTank_upstreamCap", "h_Data_Distance_to_InnerTank_upstreamCap", Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH1D *h_Data_Distance_to_InnerTank_barrel       =    new MnvH1D("h_Data_Distance_to_InnerTank_barrel", "h_Data_Distance_to_InnerTank_barrel", Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH1D *h_Data_Distance_to_InnerTank_downstreamCap       =    new MnvH1D("h_Data_Distance_to_InnerTank_downstreamCap", "h_Data_Distance_to_InnerTank_downstreamCap", Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+
 
 
   // Use the vector of systematic universes to make your MnvH1D
@@ -189,6 +199,7 @@ MnvH1D *h_Data_Muon_pseudorapidity_angle   =    new MnvH1D("h_Data_Muon_pseudora
 
 MnvH1D *h_Data_Muon_rapidity    =    new MnvH1D("h_Data_Muon_rapidity", "h_Data_Muon_rapidity", rapidity_muon_vector.size()-1, rapidity_muon_vector.data());
 
+MnvH1D *h_Data_MuonPhi    =    new MnvH1D("h_Data_MuonPhi", "h_Data_MuonPhi", AnglePhi_vector.size()-1,AnglePhi_vector.data());
 
 MnvH1D *h_Data_Tracksize =              new MnvH1D("h_Data_Tracksize", "h_Data_Tracksize", TrackSize_vector.size()-1, TrackSize_vector.data());
 MnvH1D *h_Data_MuoncurvatureSig    =    new MnvH1D("h_Data_MuoncurvatureSig", "h_Data_MuoncurvatureSig", Muon_curvatureSig_vector.size()-1, Muon_curvatureSig_vector.data());
@@ -345,9 +356,14 @@ MnvH1D *h_Data_secTrk_LastNodeZ = new MnvH1D("h_Data_secTrk_LastNodeZ","h_Data_s
 ///Vetowall
 ///////////
 
+MnvH2D *h2_Data_Vertex_Z_R= new MnvH2D("h2_Data_Vertex_Z_R","h2_Data_Vertex_Z_R",  Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data());
+
+
 MnvH2D *h2_Data_R_Z= new MnvH2D("h2_Data_R_Z","h2_Data_R_Z",Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data());
 MnvH2D *h2_Data_X_Z= new MnvH2D("h2_Data_X_Z","h2_Data_X_Z",Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data());
 MnvH2D *h2_Data_Y_Z= new MnvH2D("h2_Data_Y_Z","h2_Data_Y_Z",Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data());
+
+MnvH2D *h2_Data_X_Y= new MnvH2D("h2_Data_X_Y","h2_Data_X_Y",Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data(), Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data());
 
 
 MnvH2D *h2_Data_secTrkpathLength_R= new MnvH2D("h2_Data_secTrkpathLength_R","h2_Data_secTrkpathLength_R",secTrkPathway_vector.size()-1, secTrkPathway_vector.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data());
@@ -452,7 +468,12 @@ for(Long64_t ievent=0; ievent < chw_Data->GetEntries(); ++ievent){
     double Emu =   dataEvt->GetEmu()*.001;
     double pseduo_r = dataEvt->pseudorapidity_muon();
     double pseduo_theta = 2 * atan(exp(-pseduo_r)) *TMath::RadToDeg();
-    double PT = Pmu*std::sin(Theta);
+    double phi = dataEvt->GetPhimu();
+
+    double px = Pmu * std::sin(Theta) * std::cos(phi);
+    double py = Pmu * std::sin(Theta) * std::sin(phi);
+
+    double PT = sqrt(px*px + py*py);
     double PZ = Pmu*std::cos(Theta);
 
     auto trackType = dataEvt->GetTrackType();
@@ -466,13 +487,13 @@ for(Long64_t ievent=0; ievent < chw_Data->GetEntries(); ++ievent){
 
     //std::cout << "Muon E = "<< dataEvt->GetMuonE_ECT()<<std::endl;
     h_Data_MuonE->Fill(Emu, 1.0);
-    h_Data_MuonPZ->Fill(Pmu*std::cos(Theta), 1.0);//GetMuonPz()
-    h_Data_MuonPT->Fill(Pmu*std::sin(Theta), 1.0);
+    h_Data_MuonPZ->Fill(PZ, 1.0);//GetMuonPz()
+    h_Data_MuonPT->Fill(PT, 1.0);
     h_Data_MuonTheta->Fill(Theta*TMath::RadToDeg(),1.0);
     h_Data_Muon_pseudorapidity->Fill(pseduo_r,1.0);
     h_Data_Muon_pseudorapidity_angle->Fill(pseduo_theta,1.0);
     h_Data_Muon_rapidity->Fill(dataEvt->rapidity_muon(),1.0);
-
+    h_Data_MuonPhi->Fill(dataEvt->GetPhimu()*TMath::RadToDeg(),1.0);
     int secondTrk = dataEvt->Getindex2ndTrackhighestKE();
     double TrackLength = dataEvt->GetNonmuTrkLength(secondTrk);
   //  h_Data_MuonE->Fill(dataEvt->GetMuonE_ECT(), 1.0);//GetMuonE()
@@ -575,6 +596,8 @@ double chisqt = dataEvt->GetVertexChiSqrFit();
     h2_Data_R_Z->Fill(dataEvt->GetVertex_r(),dataEvt->GetVertex_z(),1.0);
     h2_Data_X_Z->Fill(dataEvt->GetVertex_x(),dataEvt->GetVertex_z(),1.0);
     h2_Data_Y_Z->Fill(dataEvt->GetVertex_y(),dataEvt->GetVertex_z(),1.0);
+    h2_Data_Vertex_Z_R->Fill(dataEvt->GetVertex_z(),dataEvt->GetVertex_r(),1.0);
+    h2_Data_X_Y->Fill(dataEvt->GetVertex_x(),dataEvt->GetVertex_y(),1.0);
 
     h2_Data_secTrkpathLength_R->Fill(TrackLength,dataEvt->GetVertex_r(),1.0);
     h2_Data_secTrkpathLength_Z->Fill(TrackLength,dataEvt->GetVertex_z(),1.0);
@@ -672,8 +695,25 @@ double chisqt = dataEvt->GetVertexChiSqrFit();
 
     h_Data_Distance_to_InnerTank->Fill(RECO_Distance_to_innerTank(*dataEvt),1.0);
 
+    CryoTank_REGIONS RegionType= Region_of_CryoTank(dataEvt->GetVertex_z());
+
+    if(RegionType==kUpstream_head){
+      h_Data_Distance_to_InnerTank_upstreamCap->Fill(RECO_Distance_to_innerTank(*dataEvt),1.0);
+    }
+
+    else if(RegionType==kCenter){
+      h_Data_Distance_to_InnerTank_barrel->Fill(RECO_Distance_to_innerTank(*dataEvt),1.0);
+    }
+
+    else if(RegionType==kDownstream_head){
+      h_Data_Distance_to_InnerTank_downstreamCap->Fill(RECO_Distance_to_innerTank(*dataEvt),1.0);
+    }
+
+
+
+
     for(auto Fid_Cut:CutToSurface_bins ){
-      if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*dataEvt, Fid_Cut))
+      if(IsInFiducalVolumeFromtheInnerEdge_new(*dataEvt, Fid_Cut))
       {
             h_Data_FidiucalCut->Fill(Fid_Cut, 1.0);
 
@@ -760,7 +800,7 @@ MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   can -> Print(pdf_end);
 
 
-  sprintf(outFileName, "%s/%s_%s_%s.root",rootpathway, "Histograms",c,d);
+  sprintf(outFileName, "%s/%s_%s_%s_Fid.root",rootpathway, "Histograms",c,d);
 
   std::cout << "Writing output file to: " <<outFileName << std::endl;
 
@@ -784,7 +824,7 @@ MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   h_Data_Muon_pseudorapidity->Write();
   h_Data_Muon_pseudorapidity_angle->Write();
   h_Data_Muon_rapidity->Write();
-
+  h_Data_MuonPhi->Write();
 
   h_Data_CryoVertex_X->Write();
   h_Data_CryoVertex_Y->Write();
@@ -870,6 +910,8 @@ MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   h2_Data_R_Z->Write();
   h2_Data_X_Z->Write();
   h2_Data_Y_Z->Write();
+  h2_Data_X_Y->Write();
+  h2_Data_Vertex_Z_R->Write();
 
   h2_Data_secTrkLength_R->Write();
   h2_Data_secTrkLength_Z->Write();
@@ -881,6 +923,9 @@ MnvPlotter *mnv_plotter = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   h_Data_FidiucalCut->Write();
   h_Data_Distance_to_InnerTank->Write();
   h_Data_Distance_to_InnerTank_Fidiucal->Write();
+  h_Data_Distance_to_InnerTank_upstreamCap->Write();
+  h_Data_Distance_to_InnerTank_barrel->Write();
+  h_Data_Distance_to_InnerTank_downstreamCap->Write();
 
   outFile.Close();
 
@@ -915,30 +960,31 @@ std::cout<< "number of tracks not defined " << num_NotDefinedTracks<< std::endl;
 //////////////////////////////////////////////////////////////
 std::vector<ECuts> GetRECOCutsVector() {
   std::vector<ECuts> ret_vec;
-  ret_vec.push_back(kNoCuts );
+  ret_vec.push_back(kNoCuts  );
   ret_vec.push_back(kGoodEnergy );
+  //ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kNTracks);
   ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMu_is_Plausible);
+  //ret_vec.push_back(kNonMu_is_Plausible);
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
   ret_vec.push_back(kMinosCoil );
   ret_vec.push_back(kMinosMatch);
   ret_vec.push_back(kMinosCurvature);
   ret_vec.push_back(kMinosCharge );
 
-  //ret_vec.push_back(kThetaMu );
-  ret_vec.push_back(kMuonAngle );
-  ret_vec.push_back(kMu_is_Plausible);
-
-  ret_vec.push_back(kNTracks);
   ret_vec.push_back(kVertexConverge);
   ret_vec.push_back(kVertex_ConvergedfromAllTracks);
   ret_vec.push_back(kMaxChiSqrt_byTrackType);
-  ret_vec.push_back(kFiducialVolume);
-
-  ret_vec.push_back(kVeto );
-  ret_vec.push_back(kSix );
-  ret_vec.push_back(kMatchVetoDeadPaddle);
-
-  ret_vec.push_back(kTrackForwardGoing);
+  //ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kFiducialVolume_new );
+  ret_vec.push_back(kTrackForwardGoing );
   ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+  //ret_vec.push_back(kMaxChiSqrt);
 
   ret_vec.push_back(kAllCuts );
 
@@ -1007,7 +1053,7 @@ std::vector<ECuts> GetVectorRECOCutsFidicual_Eff() {
   ret_vec.push_back(kTrackForwardGoing);
   ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
 
-  ret_vec.push_back(kAllCuts );
+  ret_vec.push_back(kAllCuts);
   return ret_vec;
 //#endif
 }

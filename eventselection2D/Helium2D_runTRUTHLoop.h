@@ -25,7 +25,9 @@
 #include "PlotUtils/PlotUtilsPhysicalConstants.h"
 #include "PlotUtils/ResponseSystematics.h"
 #include "PlotUtils/MuonSystematics.h"
+#include "PlotUtils/TargetMassSystematics.h"
 #include "PlotUtils/FluxReweighter.h"
+#include "PlotUtils/TargetUtils.h"
 #include "../includes/Helium_VertexSmearing_LateralSystematics_2XY_2Z.h"
 #include "../includes/Helium_TargetMassSystematics.h"
 //local Helium Tools

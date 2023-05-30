@@ -12,11 +12,15 @@ std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_MC_EventSection
 //=====================================================
 std::vector<ECuts> GetVectorRECOCuts_ALL();
 std::vector<ECuts> GetRECOCutsFor_2ndTrkEnergyVector();
+std::vector<ECuts> GetRECOCutsFor_2ndTrkEnergyVector_nofidiucal();
 std::vector<ECuts> GetVectorRECOCuts_MuonEnergy_Eff();
+std::vector<ECuts> GetVectorRECOCuts_MuonEnergy_noFiduical();
 std::vector<ECuts> GetRECOCutsFor2ndTrkAngleVector();
 std::vector<ECuts> GetRECOCutsFor2ndTrkAngle_noFidiucalVector();
 std::vector<ECuts> GetVectorRECOCuts_MuonTheta_Eff();
+std::vector<ECuts> GetVectorRECOCuts_MuonTheta_Eff_noFiducial();
 std::vector<ECuts> GetVectorRECOCutsFidicual_Eff();
+std::vector<ECuts> GetVectorRECOCuts_MuonTheta_no2ndangle();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_ALL();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_Energy();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkAngle();
@@ -25,6 +29,10 @@ std::vector<ECutsTRUTH> GetTRUTH_ThetaMuCutsVector();
 std::vector<ECutsTRUTH> GetTRUTH_FidiucalMuCutsVector();
 std::vector<MuonVar> GetMUONVaribles();
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector();
+std::vector<ECuts> GetVectorRECOCuts_DataOverLay_Eff();
+std::vector<ECutsTRUTH> GetTRUTH_OverlayMuCutsVector();
+
+
 
 
 std::vector<Particle_type>  GetParicle_type();
@@ -34,7 +42,7 @@ std::vector<Weights> GetWeightVector_mk();
 //double Mev_to_GeV=.001;
 
 // Get container of systematic
-const bool m_RunCodeWithSystematics = true;
+const bool m_RunCodeWithSystematics = false;
 
 //vector <EventRunMAP> secTrkLowEnergy, secTrkHighAngle, secTrkLowEnergyAndHighAngle;
 
@@ -143,6 +151,21 @@ boolNTrack_Category = {
   PlotUtils::NamedCategory<boolNTrack>({kallfalseTrk},"AllfalseTrk")
 };
 
+const std::vector<PlotUtils::NamedCategory<OpenAngle>>
+OpenAngle_Category = {
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle5},    "angle5"),
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle10},   "angle10"),
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle15},   "angle15"),
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle20},   "angle20"),
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle25},   "angle25"),
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle30},   "angle30"),
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle45},   "angle45"),
+  PlotUtils::NamedCategory<OpenAngle>({kOAngle60},   "angle60")
+};
+
+
+
+
 
 const int n_flux_universes = 100;
 std::vector<int> Helium9_colorScheme = {
@@ -237,8 +260,8 @@ if(m_RunCodeWithSystematics){
      // Helium Vertex smearing
      //========================================================================
 
-    UniverseMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
-    error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
+    //UniverseMap VertexSmearing_systematics = GetHELIUMVertexSmearingShiftSystematicsMap<HeliumCVUniverse>(chain);
+    //error_bands.insert(VertexSmearing_systematics.begin(), VertexSmearing_systematics.end());
 
     //========================================================================
     // Helium Mass
@@ -279,10 +302,14 @@ double POT[4];
 const std::vector<ECuts> kCutsVector_ALL = GetVectorRECOCuts_ALL();
 
 const std::vector<ECuts> kCutsVector_MuonEnergy = GetVectorRECOCuts_MuonEnergy_Eff();
+const std::vector<ECuts> kCutsVector_MuonEnergy_noFidiucal = GetVectorRECOCuts_MuonEnergy_noFiduical();
 const std::vector<ECuts> kCutsVector_2ndtrkAngle = GetRECOCutsFor2ndTrkAngleVector();
 const std::vector<ECuts> kCutsVector_2ndtrkAngle_noFidiucal = GetRECOCutsFor2ndTrkAngle_noFidiucalVector();
 const std::vector<ECuts> kCutsVector_2ndtrkEnergy = GetRECOCutsFor_2ndTrkEnergyVector();
+const std::vector<ECuts> kCutsVector_2ndtrkEnergy_noFiduical =GetRECOCutsFor_2ndTrkEnergyVector_nofidiucal();
 const std::vector<ECuts> kCutsVector_MuonThetaEff = GetVectorRECOCuts_MuonTheta_Eff();
+const std::vector<ECuts> kCutsVector_MuonThetaEff_2ndtrkAngle =GetVectorRECOCuts_MuonTheta_no2ndangle();
+const std::vector<ECuts> kCutsVector_MuonThetaEff_noFidiucal =GetVectorRECOCuts_MuonTheta_Eff_noFiducial();
 const std::vector<ECuts> kCutsVector_FiduicalEff = GetVectorRECOCutsFidicual_Eff();
 
 
@@ -292,6 +319,13 @@ const std::vector<ECutsTRUTH> kTRUTHCutsVector_MuonTheta = GetTRUTH_ThetaMuCutsV
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_Fiduical = GetTRUTH_FidiucalMuCutsVector();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndTrkAngle =  GetTRUTHCutsVector_2ndtrkAngle();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndTrkEnergy = GetTRUTHCutsVector_2ndtrkEnergy();
+
+
+std::vector<ECutsTRUTH> kTRUTHCutsVector_NoOverLay =  GetTRUTH_OverlayMuCutsVector();
+
+const std::vector<ECuts> kCutsVectorr_NoOverLay = GetVectorRECOCuts_DataOverLay_Eff();
+
+
 
 
 int count_fid_0 = 0;
@@ -365,13 +399,16 @@ UniverseMap error_bands = GetErrorBands(chw_MC);
 for(auto band :error_bands ){std::cout<<"Checking Universe this is universe with name : " << band.first<<std::endl;}
 std::vector<std::vector<HeliumCVUniverse*>> Error_Band_Universe_GROUPS = groupCompatibleUniverses(error_bands);
 
-
-
+error_name_Map error_name;
+error_name_Univ_MvnHistMap MnvReponse_Hist_N_Map;
+int unv_count = 0;
 double mcPOT = GetPOT_local(mcchainPOT, "MC");
 std::cout<<"Number of Universes set is = "<< 	MinervaUniverse::GetNFluxUniverses()<<std::endl;
 std::cout << "POT of this Playlist = "<< mcPOT <<std::endl;
 
-
+std::map<std::string, std::vector<HeliumCVUniverse*> >::iterator itr;
+for(itr = error_bands.begin(); itr != error_bands.end(); ++itr) error_name.insert(std::pair<std::string, const int>((itr->second)[0]->ShortName(), (itr->second).size()));
+Fill_MnvReponse_ErrorUniv_Hist_numbers(MnvReponse_Hist_N_Map, error_name);
 //static weightMK *weight_MK;
 //char *mparalocation = std::getenv("MPARAMFILESROOT");
 //string dir_data = string(mparalocation)+"/data/Reweight/";
@@ -407,7 +444,7 @@ std::vector<double> MuonThetabin_vector{0.0,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,
 
 std::cout<< "size MuonThetabin_vector =  "<< MuonThetabin_vector.size()<<std::endl;
 
-std::vector<double> Muon_curvatureSig_vector= GetBinMuonVector(kcurvatureSig);
+std::vector<double> Muon_curvatureSig_vector = GetBinMuonVector(kcurvatureSig);
 std::vector<double> MuonCharge_vector= GetBinMuonVector(kCharge);
 std::vector<double> AnglePhi_vector = GetBinMuonVector(kAnglePhi);
 
@@ -430,10 +467,10 @@ std::vector<double> Muon_LastNode_Z_vector= GetBinMuonVector(kmuonLastNodeZ);
 std::vector<double> VectexTiming_vector = GetBinMuonVector(kmuonVertexTiming);
 std::vector<double> Vertex_ChiSqFit_vector= GetBinvertexVector(kfitConverge);
 ////////////////////////
-std::vector<double> Vertex_Xbin_vector= GetBinvertexVector(kX_eff);
-std::vector<double> Vertex_Ybin_vector= GetBinvertexVector(kY_eff);
-std::vector<double> Vertex_Zbin_vector= GetBinvertexVector(kZ_eff);
-std::vector<double> Vertex_Rbin_vector= GetBinvertexVector(kR_eff);
+std::vector<double> Vertex_Xbin_vector= GetBinvertexVector(kX);
+std::vector<double> Vertex_Ybin_vector= GetBinvertexVector(kY);
+std::vector<double> Vertex_Zbin_vector= GetBinvertexVector(kZ);
+std::vector<double> Vertex_Rbin_vector= GetBinvertexVector(kR);
 std::vector<double> Vertex_RRbin_vector= GetBinvertexVector(kRR_eff);
 
 std::vector<double> Vertex_resolution_Xbin_vector = GetBinvertexVector(kX_resolution);
@@ -444,6 +481,18 @@ std::vector<double> Vertex_resolution_RRbin_vector= GetBinvertexVector(kRR_resol
 
 std::vector<double> Bins_toAddxyr{ -225, -100, 100, 225};
 std::vector<double> Bins_toAddz{-1000, -750, -500, -400, 400, 500, 750, 1000};
+
+
+std::vector<double> Zbins_corse{1400 , 1600 , 1800 , 2000, 2200,2600,3000,3400,3600,3800,4000,4200,4400 };
+std::vector<double> Rbins_corse{0, 200, 400, 600,  700,   800,  1000,  1200};
+
+std::vector<double> Dataoverlay_corse{0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7,0.8, 0.9, 1.0};
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_AverageDataoverlayFraction("h_AverageDataoverlayFraction", "h_AverageDataoverlayFraction",   Dataoverlay_corse, error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_AverageDataoverlayFraction_Avg("h_AverageDataoverlayFraction_Avg", "h_AverageDataoverlayFraction",   Dataoverlay_corse, error_bands);
+
+
+
 
 for(auto cat : Bins_toAddxyr){
 Vertex_resolution_Rbin_vector.push_back(cat);
@@ -507,15 +556,12 @@ recoil_bin_count = recoil_bin_count + 2.54; // bins in [cm]
 std::vector<double> pseudorapidity_muon_vector{1.0, 1.5, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.5, 5.0, 8.0};
 std::vector<double> rapidity_muon_vector{2.25,  2.45,  2.65,   2.85,  3.05,  3.25, 3.45, 3.65};
 
+
+
+
 ////////////////
 //muon Varibles///
 ////////////////
-
-
-
-
-
-
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonE_TRUE_RECO("h_MuonE_TRUE_RECO", "Muon_{E} NEW Method", Ebin_vector , error_bands);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonE_TRUE_RECO_Material =
@@ -527,20 +573,17 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categ
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonE_TRUE_RECO_Particle =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonE_Particle", Ebin_vector ,"MuonE_Particle; [GeV];Events");
 
+std::cout<<"bins1"<<std::endl;
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPZ_TRUE_RECO("h_MuonPZ_TRUE_RECO", "Muon_{PZ} NEW Method",  Pzbin_vector , error_bands);
-
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPT_TRUE_RECO("h_MuonPT_TRUE_RECO", "Muon_{PT} NEW Method",  PTbin_vector , error_bands);
-
-
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonTheta_TRUE_RECO("h_MuonTheta_TRUE_RECO", "MuonTheta [Deg]",  MuonThetabin_vector , error_bands);
-
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPhi_TRUE_RECO("h_MuonPhi_TRUE_RECO", "Muon Phi [Deg]",  AnglePhi_vector , error_bands);
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_tracklength_TRUE_RECO("h_secTrk_tracklength_TRUE_RECO", "Recoil track length  [cm] ", Recoil_track_length_vector , error_bands);
 
-
+std::cout<<"bins2"<<std::endl;
 
 std::vector<double> bigAngle_bins{0.0, 15.0, 30.0, 45.0, 60.0};
 //MnvH2D *h_2d_2ndtrkLength_Angle    =    new MnvH2D("h_2d_2ndtrkLength_Angle", "h_2d_2ndtrkLength_Angle", Recoil_track_length_vector.size()-1, Recoil_track_length_vector.data(), bigAngle_bins.size()-1, bigAngle_bins.data());
@@ -549,6 +592,36 @@ std::vector<double> bigAngle_bins_finner{0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0,
 //MnvH2D *h_2d_2ndtrkLength_finerAngle    =    new MnvH2D("h_2d_2ndtrkLength_finerAngle", "h_2d_2ndtrkLength_finerAngle", Recoil_track_length_vector.size()-1, Recoil_track_length_vector.data(), bigAngle_bins_finner.size()-1, bigAngle_bins_finner.data());
 
 
+std::vector<double> VertexZbins_coarse{1450, 1750.00, 2050.00, 2250, 2450, 2650, 2850, 3000, 3200,  3400, 3650, 3900, 4200, 4350};
+std::vector<double> VertexRbins_coarse{0, 200, 400, 600,  700,   800,  1000,  1200};
+std::vector<double> VertexXYbins_coarse{-1200, -1000, -800, -600, -400, -200, 0, 200, 400, 600, 800, 1000, 1200};
+
+MnvH2D *h_2d_vertexZ_openAngle            =    new MnvH2D("h_2d_vertexZ_openAngle", "h_2d_vertexZ_openAngle",VertexZbins_coarse.size()-1, VertexZbins_coarse.data() ,bigAngle_bins.size()-1, bigAngle_bins.data()  );
+MnvH2D *h_2d_vertexR_openAngle            =    new MnvH2D("h_2d_vertexR_openAngle", "h_2d_vertexR_openAngle",VertexRbins_coarse.size()-1, VertexRbins_coarse.data() ,bigAngle_bins.size()-1, bigAngle_bins.data()  );
+MnvH2D *h_2d_vertexX_openAngle            =    new MnvH2D("h_2d_vertexX_openAngle", "h_2d_vertexX_openAngle",VertexXYbins_coarse.size()-1, VertexXYbins_coarse.data() ,bigAngle_bins.size()-1, bigAngle_bins.data()  );
+MnvH2D *h_2d_vertexY_openAngle            =    new MnvH2D("h_2d_vertexY_openAngle", "h_2d_vertexY_openAngle",VertexXYbins_coarse.size()-1, VertexXYbins_coarse.data() ,bigAngle_bins.size()-1, bigAngle_bins.data()  );
+MnvH2D *h_2d_vertex_Z_mig           =    new MnvH2D("h_2d_vertex_Z_mig", "h_2d_vertex_Z_mig",VertexZbins_coarse.size()-1, VertexZbins_coarse.data() ,VertexZbins_coarse.size()-1, VertexZbins_coarse.data()  );
+MnvH2D *h_2d_vertex_R_mig           =    new MnvH2D("h_2d_vertex_R_mig", "h_2d_vertex_R_mig",VertexRbins_coarse.size()-1, VertexRbins_coarse.data() ,VertexRbins_coarse.size()-1, VertexRbins_coarse.data()  );
+
+MnvH2D *h_2d_vertex_X_mig           =    new MnvH2D("h_2d_vertex_X_mig", "h_2d_vertex_X_mig",VertexZbins_coarse.size()-1, VertexZbins_coarse.data() ,VertexZbins_coarse.size()-1, VertexZbins_coarse.data()  );
+MnvH2D *h_2d_vertex_Y_mig           =    new MnvH2D("h_2d_vertex_Y_mig", "h_2d_vertex_Y_mig",VertexZbins_coarse.size()-1, VertexZbins_coarse.data() ,VertexZbins_coarse.size()-1, VertexZbins_coarse.data()  );
+
+
+
+
+
+MinervaUnfold::MnvResponse *MnvR_Vertex_Z_R = new MinervaUnfold::MnvResponse( "MnvR_Vertex_Z_R",  "MnvR_Vertex_Z_R",  VertexZbins_coarse,       VertexRbins_coarse,  error_name);
+MinervaUnfold::MnvResponse *MnvR_Vertex_Z_X = new MinervaUnfold::MnvResponse( "MnvR_Vertex_Z_X",  "MnvR_Vertex_Z_X",  VertexZbins_coarse,       VertexXYbins_coarse,  error_name);
+MinervaUnfold::MnvResponse *MnvR_Vertex_Z_Y = new MinervaUnfold::MnvResponse( "MnvR_Vertex_Z_Y",  "MnvR_Vertex_Z_Y",  VertexZbins_coarse,       VertexXYbins_coarse,  error_name);
+MinervaUnfold::MnvResponse *MnvR_Vertex_X_Y = new MinervaUnfold::MnvResponse( "MnvR_Vertex_X_Y",  "MnvR_Vertex_X_Y",  VertexXYbins_coarse,       VertexXYbins_coarse,  error_name);
+
+MnvH2D *h_2d_Vertex_Z_R            =    new MnvH2D("h_2d_Vertex_Z_R", "h_2d_Vertex_Z_R",VertexZbins_coarse.size()-1,VertexZbins_coarse.data() ,VertexRbins_coarse.size()-1, VertexRbins_coarse.data()  );
+MnvH2D *h_2d_Vertex_Z_X            =    new MnvH2D("h_2d_Vertex_Z_X", "h_2d_Vertex_Z_X",VertexZbins_coarse.size()-1,VertexZbins_coarse.data() ,VertexXYbins_coarse.size()-1, VertexXYbins_coarse.data()  );
+MnvH2D *h_2d_Vertex_Z_Y            =    new MnvH2D("h_2d_Vertex_Z_Y", "h_2d_Vertex_Z_Y",VertexZbins_coarse.size()-1,VertexZbins_coarse.data() ,VertexXYbins_coarse.size()-1, VertexXYbins_coarse.data()  );
+MnvH2D *h_2d_Vertex_X_Y            =    new MnvH2D("h_2d_Vertex_X_Y", "h_2d_Vertex_X_Y",VertexXYbins_coarse.size()-1,VertexXYbins_coarse.data() ,VertexXYbins_coarse.size()-1, VertexXYbins_coarse.data()  );
+
+
+std::vector<MinervaUnfold::MnvResponse*>  MnvR_vector = {MnvR_Vertex_Z_R,MnvR_Vertex_Z_X, MnvR_Vertex_Z_Y, MnvR_Vertex_X_Y};// , MnvR_cryoVertex_Z_R
 
 ////////////////
 //Vertex Hist///
@@ -557,6 +630,15 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_X_TRUE_RECO("h_CryoVertex_
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_recoX_TRUE_RECO("h_CryoVertex_recoX_TRUE_RECO", "h_CryoVertex_X",  Vertex_Xbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_resolutionX_TRUE_RECO("h_CryoVertex_resolutionX_TRUE_RECO", "h_CryoVertex_resolutionX_TRUE_RECO",  Vertex_resolution_Xbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Percent_resolutionX_TRUE_RECO("h_CryoVertex_Percent_resolutionX_TRUE_RECO", "h_CryoVertex_Percent_resolutionX_TRUE_RECO",  Vertex_Percent_resolution_Xbin_vector , error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_X_upstreamCap_resolution_RECO("h_CryoVertex_X_upstreamCap_resolution_RECO", "h_CryoVertex_X_upstreamCap_resolution_RECO",  Vertex_resolution_Xbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_X_upstreamCap_percentresolution_RECO("h_CryoVertex_X_upstreamCap_percentresolution_RECO", "h_CryoVertex_X_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Xbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_X_barrel_resolution_RECO("h_CryoVertex_X_barrel_resolution_RECO", "h_CryoVertex_X_upstreamCap_resolution_RECO",  Vertex_resolution_Xbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_X_barrel_percentresolution_RECO("h_CryoVertex_X_barrel_percentresolution_RECO", "h_CryoVertex_X_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Xbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_X_downstreamCap_resolution_RECO("h_CryoVertex_X_downstreamCap_resolution_RECO", "h_CryoVertex_X_upstreamCap_resolution_RECO",  Vertex_resolution_Xbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_X_downstreamCap_percentresolution_RECO("h_CryoVertex_X_downstreamCap_percentresolution_RECO", "h_CryoVertex_X_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Xbin_vector , error_bands);
+
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_recoX_RECO("h_CryoVertex_recoX_RECO", "h_CryoVertex_X",  Vertex_Xbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_resolutionX_RECO("h_CryoVertex_resolutionX_RECO", "h_CryoVertex_resolutionX_RECO",  Vertex_resolution_Xbin_vector , error_bands);
@@ -576,6 +658,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_X_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_X_Material", Vertex_Xbin_vector ,"h_CryoVertex_X_Material; [mm];Events");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_X_Material_Purity =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_X_Material_Purity", Vertex_Xbin_vector ,"h_CryoVertex_X_Material_Purity; [mm];Events");
+
+
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_X_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_X_Interaction", Vertex_Xbin_vector ,"h_CryoVertex_X_Interaction; [mm];Events");
 
@@ -591,12 +677,25 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, boolNTrack>(boolNTrack_Category, "h_Cryo
 PlotUtils::HistFolio<PlotUtils::MnvH1D, VertexOptions> h_CryoVertex_X_VertexOptions =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, VertexOptions>(VertexOptions_Category, "h_CryoVertex_X_VertexOptions", Vertex_Xbin_vector ,"h_CryoVertex_X_VertexOptions; [mm];Events");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle> h_CryoVertex_X_OpenAngle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle>(OpenAngle_Category, "h_CryoVertex_X_OpenAngle", Vertex_Ybin_vector ,"h_CryoVertex_X_OpenAngle; [mm];Events");
+
+
 
 //h_CryoVertex_X_Particle.ApplyColorPalette(Helium9_colorScheme);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_TRUE_RECO("h_CryoVertex_Y_TRUE_RECO", "Vertex_Y",  Vertex_Ybin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_recoY_TRUE_RECO("h_CryoVertex_recoY_TRUE_RECO", "Vertex_Y",  Vertex_Ybin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_resolutionY_TRUE_RECO("h_CryoVertex_resolutionY_TRUE_RECO", "h_CryoVertex_resolutionY_TRUE_RECO",  Vertex_resolution_Ybin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Percent_resolutionY_TRUE_RECO("h_CryoVertex_Percent_resolutionY_TRUE_RECO", "h_CryoVertex_Percent_resolutionY_TRUE_RECO",  Vertex_Percent_resolution_Ybin_vector , error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_upstreamCap_resolution_RECO("h_CryoVertex_Y_upstreamCap_resolution_RECO", "h_CryoVertex_Y_upstreamCap_resolution_RECO",  Vertex_resolution_Ybin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_upstreamCap_percentresolution_RECO("h_CryoVertex_Y_upstreamCap_percentresolution_RECO", "h_CryoVertex_Y_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Ybin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_barrel_resolution_RECO("h_CryoVertex_Y_barrel_resolution_RECO", "h_CryoVertex_Y_upstreamCap_resolution_RECO",  Vertex_resolution_Ybin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_barrel_percentresolution_RECO("h_CryoVertex_Y_barrel_percentresolution_RECO", "h_CryoVertex_Y_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Ybin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_downstreamCap_resolution_RECO("h_CryoVertex_Y_downstreamCap_resolution_RECO", "h_CryoVertex_Y_upstreamCap_resolution_RECO",  Vertex_resolution_Ybin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_downstreamCap_percentresolution_RECO("h_CryoVertex_Y_downstreamCap_percentresolution_RECO", "h_CryoVertex_Y_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Ybin_vector , error_bands);
+
+
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_recoY_RECO("h_CryoVertex_recoY_RECO", "Vertex_Y",  Vertex_Ybin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_resolutionY_RECO("h_CryoVertex_resolutionY_RECO", "h_CryoVertex_resolutionY_RECO",  Vertex_resolution_Ybin_vector , error_bands);
@@ -616,6 +715,9 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Y_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_Y_Material", Vertex_Ybin_vector ,"h_CryoVertex_Y_Material; [mm];Events");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Y_Material_Purity =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_Y_Material_Purity", Vertex_Ybin_vector ,"h_CryoVertex_Y_Material_Purity; [mm];Events");
+
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_Y_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_Y_Interaction", Vertex_Ybin_vector ,"h_CryoVertex_Y_Interaction; [mm];Events");
 
@@ -630,6 +732,12 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, boolNTrack>(boolNTrack_Category, "h_Cryo
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, VertexOptions> h_CryoVertex_Y_VertexOptions =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, VertexOptions>(VertexOptions_Category, "h_CryoVertex_Y_VertexOptions", Vertex_Ybin_vector ,"h_CryoVertex_Y_VertexOptions; [mm];Events");
+
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle> h_CryoVertex_Y_OpenAngle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle>(OpenAngle_Category, "h_CryoVertex_Y_OpenAngle", Vertex_Ybin_vector ,"h_CryoVertex_Y_OpenAngle; [mm];Events");
+
+
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_TRUE_RECO("h_CryoVertex_Z_TRUE_RECO", "Vertex_Z",  Vertex_Zbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_recoZ_TRUE_RECO("h_CryoVertex_recoZ_TRUE_RECO", "Vertex_Z",  Vertex_Zbin_vector , error_bands);
@@ -659,8 +767,6 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categ
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_resolutionZ_fidiucal_RECO_Particle =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_resolutionZ_fidiucal_RECO_Particle", Vertex_resolution_Zbin_vector ,"h_CryoVertex_resolutionX_RECO_Particle; [mm];Events");
-
-
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO_Material", Vertex_resolution_Zbin_vector ,"h_CryoVertex_resolutionX_RECO_Material; [mm];Events");
@@ -704,11 +810,25 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Z_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_Z_Material", Vertex_Zbin_vector ,"h_CryoVertex_Z_Material; [mm];Events");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Z_Material_Purity =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_Z_Material_Purity", Vertex_Zbin_vector ,"h_CryoVertex_Z_Material_Purity; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Z_Material_Fiducial_True =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_Z_Material_Fiducial_True", Vertex_Zbin_vector ,"h_CryoVertex_Z_Material_Fiducial_True; [mm];Events");
+
+
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_Z_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_Z_Interaction", Vertex_Zbin_vector ,"h_CryoVertex_Z_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_Z_Particle =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_Z_Particle", Vertex_Zbin_vector ,"h_CryoVertex_Z_Particle; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle> h_CryoVertex_Z_OpenAngle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle>(OpenAngle_Category, "h_CryoVertex_Z_OpenAngle", Vertex_Zbin_vector ,"h_CryoVertex_Z_OpenAngle; [mm];Events");
+
+
+
+
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_CryoVertex_Z_Track =
@@ -730,6 +850,25 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Percent_resolutionR_TRUE_R
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_recoR_RECO("h_CryoVertex_recoR_RECO", "h_CryoVertex_recoR_RECO",  Vertex_Rbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_resolutionR_RECO("h_CryoVertex_resolutionR_RECO", "h_CryoVertex_resolutionR_RECO",  Vertex_resolution_Rbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Percent_resolutionR_RECO("h_CryoVertex_Percent_resolutionR_RECO", "h_CryoVertex_Percent_resolutionR_RECO",  Vertex_Percent_resolution_Rbin_vector , error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_R_upstreamCap_resolution_RECO("h_CryoVertex_R_upstreamCap_resolution_RECO", "h_CryoVertex_R_upstreamCap_resolution_RECO",  Vertex_resolution_Rbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_R_upstreamCap_percentresolution_RECO("h_CryoVertex_R_upstreamCap_percentresolution_RECO", "h_CryoVertex_R_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Rbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_R_barrel_resolution_RECO("h_CryoVertex_R_barrel_resolution_RECO", "h_CryoVertex_R_upstreamCap_resolution_RECO",  Vertex_resolution_Rbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_R_barrel_percentresolution_RECO("h_CryoVertex_R_barrel_percentresolution_RECO", "h_CryoVertex_R_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Rbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_R_downstreamCap_resolution_RECO("h_CryoVertex_R_downstreamCap_resolution_RECO", "h_CryoVertex_R_upstreamCap_resolution_RECO",  Vertex_resolution_Rbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_R_downstreamCap_percentresolution_RECO("h_CryoVertex_R_downstreamCap_percentresolution_RECO", "h_CryoVertex_R_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Rbin_vector , error_bands);
+
+
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_upstreamCap_resolution_RECO("h_CryoVertex_Z_upstreamCap_resolution_RECO", "h_CryoVertex_Z_upstreamCap_resolution_RECO",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_upstreamCap_percentresolution_RECO("h_CryoVertex_Z_upstreamCap_percentresolution_RECO", "h_CryoVertex_R_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Zbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_barrel_resolution_RECO("h_CryoVertex_Z_barrel_resolution_RECO", "h_CryoVertex_Z_upstreamCap_resolution_RECO",  Vertex_resolution_Zbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_barrel_percentresolution_RECO("h_CryoVertex_Z_barrel_percentresolution_RECO", "h_CryoVertex_Z_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Zbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_downstreamCap_resolution_RECO("h_CryoVertex_Z_downstreamCap_resolution_RECO", "h_CryoVertex_Z_upstreamCap_resolution_RECO",  Vertex_resolution_Zbin_vector , error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_downstreamCap_percentresolution_RECO("h_CryoVertex_Z_downstreamCap_percentresolution_RECO", "h_CryoVertex_Z_upstreamCap_percentresolution_RECO",  Vertex_Percent_resolution_Zbin_vector , error_bands);
+
+
 
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_resolutionR_RECO_Material =
@@ -788,60 +927,31 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categ
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_resolutionR_fidiucal_100_RECO_Particle =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_resolutionR_fidiucal_100_RECO_Particle", Vertex_resolution_Rbin_vector ,"h_CryoVertex_resolutionR_RECO_Particle; [mm];Events");
 
-//std::vector<double> CutTOSurface{200,190,180,170,160,150,140,130,120,110,100,90,80,70,60,50,40,30,20,10,0};
-std::vector<double> CutToSurface_bins{-400, -380, -360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120};
 
-std::vector<double> CutToSurface_bins_finner{-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle> h_CryoVertex_R_OpenAngle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle>(OpenAngle_Category, "h_CryoVertex_R_OpenAngle", Vertex_Rbin_vector ,"h_CryoVertex_R_OpenAngle; [mm];Events");
+
+
+//std::vector<double> CutTOSurface{200,190,180,170,160,150,140,130,120,110,100,90,80,70,60,50,40,30,20,10,0};
+std::vector<double> CutToSurface_bins = GetBinvertexVector(kdistance_edge);//{-400, -380, -360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120};
+std::vector<double> Distance_to_innerTank = GetBinvertexVector(kdistance_edge);
+std::vector<double> CutToSurface_bins_finner = Distance_to_innerTank;
+//std::vector<double> CutToSurface_bins_finner{-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
 
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_resolutionR_FidiucalCut("h_resolutionR_FidiucalCut", "h_resolutionR_FidiucalCut",  CutToSurface_bins ,  Vertex_resolution_Rbin_vector, error_bands);
 //PlotUtils::Hist2DWrapper<HeliumCVUniverse> h_resolutionZ_FidiucalCut("h_resolutionZ_FidiucalCut", "h_resolutionZ_FidiucalCut",  CutToSurface_bins , Vertex_resolution_Zbin_vector, error_bands);
-MnvH2D *h_resolutionX_FidiucalCut          =    new MnvH2D("h_resolutionX_FidiucalCut", "h_resolutionX_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Xbin_vector.size()-1, Vertex_resolution_Xbin_vector.data()  );
-MnvH2D *h_resolutionY_FidiucalCut          =    new MnvH2D("h_resolutionY_FidiucalCut", "h_resolutionY_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Ybin_vector.size()-1, Vertex_resolution_Ybin_vector.data()  );
 
 MnvH2D *h_resolutionR_FidiucalCut          =    new MnvH2D("h_resolutionR_FidiucalCut", "h_resolutionR_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
 MnvH2D *h_resolutionZ_FidiucalCut         =     new MnvH2D("h_resolutionZ_FidiucalCut", "h_resolutionZ_FidiucalCut",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
 MnvH2D *h_resolutionR_FidiucalCut_TRUE_RECO          =    new MnvH2D("h_resolutionR_FidiucalCut_TRUE_RECO", "h_resolutionR_FidiucalCut_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
 MnvH2D *h_resolutionZ_FidiucalCut_TRUE_RECO         =    new MnvH2D("h_resolutionZ_FidiucalCut_TRUE_RECO", "h_resolutionZ_FidiucalCut_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
 
-MnvH2D *h_resolutionR_FidiucalCut_helium          =    new MnvH2D("h_resolutionR_FidiucalCut_helium", "h_resolutionR_FidiucalCut_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
-MnvH2D *h_resolutionZ_FidiucalCut_helium         =     new MnvH2D("h_resolutionZ_FidiucalCut_helium", "h_resolutionZ_FidiucalCut_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
-
-MnvH2D *h_resolutionR_FidiucalCut_nonhelium          =    new MnvH2D("h_resolutionR_FidiucalCut_nonhelium", "h_resolutionR_FidiucalCut_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Rbin_vector.size()-1, Vertex_resolution_Rbin_vector.data()  );
-MnvH2D *h_resolutionZ_FidiucalCut_nonhelium         =     new MnvH2D("h_resolutionZ_FidiucalCut_nonhelium", "h_resolutionZ_FidiucalCut_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_resolution_Zbin_vector.size()-1, Vertex_resolution_Zbin_vector.data()  );
-
-MnvH2D *h_FidiucalCut_cryoVertex_R_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_TRUE_RECO", "h_FidiucalCut_cryoVertex_R_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_Z_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_TRUE_RECO", "h_FidiucalCut_cryoVertex_Z_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
-
-MnvH2D *h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO", "h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO", "h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
-
-
-
-MnvH2D *h_FidiucalCut_cryoVertex_R        =    new MnvH2D("h_FidiucalCut_cryoVertex_R", "h_FidiucalCut_cryoVertex_R",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_R_helium         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_helium", "h_FidiucalCut_cryoVertex_R_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_R_nonhelium         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_nonhelium", "h_FidiucalCut_cryoVertex_R_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-
-MnvH2D *h_FidiucalCut_cryoVertex_Z         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z", "h_FidiucalCut_cryoVertex_Z",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_Z_helium         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_helium", "h_FidiucalCut_cryoVertex_Z_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_Z_nonhelium         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_nonhelium", "h_FidiucalCut_cryoVertex_Z_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
-
-
-
-MnvH2D *h_FidiucalCut_cryoVertex_R_RECO            =    new MnvH2D("h_FidiucalCut_cryoVertex_R_RECO", "h_FidiucalCut_cryoVertex_R_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_R_RECO_helium     =    new MnvH2D("h_FidiucalCut_cryoVertex_R_RECO_helium", "h_FidiucalCut_cryoVertex_R_RECO_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_R_RECO_nonhelium  =    new MnvH2D("h_FidiucalCut_cryoVertex_R_RECO_nonhelium", "h_FidiucalCut_cryoVertex_R_RECO_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data()  );
-
-MnvH2D *h_FidiucalCut_cryoVertex_Z_RECO            =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_RECO", "h_FidiucalCut_cryoVertex_Z_RECO",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_Z_RECO_helium     =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_RECO_helium", "h_FidiucalCut_cryoVertex_Z_RECO_helium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
-MnvH2D *h_FidiucalCut_cryoVertex_Z_RECO_nonhelium  =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_RECO_nonhelium", "h_FidiucalCut_cryoVertex_Z_RECO_nonhelium",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data()  );
 
 
 
 //////
 ///TRUE + RECO Cuts
 ////////
-
-
 MnvH2D *h_resolutionX_TRUE_RECO_FidiucalCut          =    new MnvH2D("h_resolutionX_TRUE_RECO_FidiucalCut", "h_resolutionX_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Xbin_vector.size()-1, Vertex_resolution_Xbin_vector.data()  );
 MnvH2D *h_resolutionY_TRUE_RECO_FidiucalCut          =    new MnvH2D("h_resolutionY_TRUE_RECO_FidiucalCut", "h_resolutionY_TRUE_RECO_FidiucalCut",  CutToSurface_bins.size()-1,  CutToSurface_bins.data(), Vertex_resolution_Ybin_vector.size()-1, Vertex_resolution_Ybin_vector.data()  );
 
@@ -869,24 +979,89 @@ PlotUtils::HistFolio<PlotUtils::MnvH2D,Interaction_type> h_resolutionZ_FidiucalC
 PlotUtils::HistFolio<PlotUtils::MnvH2D, Interaction_type>(InteractionGroup_categories, "h_resolutionZ_FidiucalCut_Interaction",  CutToSurface_bins , Vertex_resolution_Zbin_vector ,"h_resolutionZ_FidiucalCut_Interaction");
 
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut("h_FidiucalCut", "h_FidiucalCut",  CutToSurface_bins_finner, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_helium("h_FidiucalCut_helium", "h_FidiucalCut_helium",  CutToSurface_bins_finner, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_nonhelium("h_FidiucalCut_nonhelium", "h_FidiucalCut_nonhelium",  CutToSurface_bins_finner, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_TRUE_RECO("h_FidiucalCut_TRUE_RECO", "h_FidiucalCut_TRUE_RECO",  CutToSurface_bins_finner, error_bands);
-
-std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
-
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank("h_Distance_to_InnerTank", "h_Distance_to_InnerTank",  Distance_to_innerTank, error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_helium("h_Distance_to_InnerTank_helium", "h_Distance_to_InnerTank_helium",  Distance_to_innerTank, error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_nonhelium("h_Distance_to_InnerTank_nonhelium", "h_Distance_to_InnerTank_nonhelium",  Distance_to_innerTank, error_bands);
 
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_RECO_helium("h_Distance_to_InnerTank_RECO_helium", "h_Distance_to_InnerTank_RECO_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_RECO_nonhelium("h_Distance_to_InnerTank_RECO_nonhelium", "h_Distance_to_InnerTank_RECO_nonhelium",  Distance_to_innerTank, error_bands);
+
+
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_Resolution("h_Distance_to_InnerTank_Resolution", "h_Distance_to_InnerTank_Resolution",  Vertex_resolution_Zbin_vector, error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_Resolution_Percent("h_Distance_to_InnerTank_Resolution_Percent", "h_Distance_to_InnerTank_Resolution_Percent",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_Resolution_TRUE_RECO("h_Distance_to_InnerTank_Resolution_TRUE_RECO", "h_Distance_to_InnerTank_Resolution_TRUE_RECO",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_Resolution_Percent_TRUE_RECO("h_Distance_to_InnerTank_Resolution_Percent_TRUE_RECO", "h_Distance_to_InnerTank_Resolution_Percent_TRUE_RECO",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap("h_Distance_to_InnerTank_upstreamCap", "h_Distance_to_InnerTank_upstreamCap",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_helium("h_Distance_to_InnerTank_upstreamCap_helium", "h_Distance_to_InnerTank_upstreamCap_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_nonhelium("h_Distance_to_InnerTank_upstreamCap_nonhelium", "h_Distance_to_InnerTank_upstreamCap_nonhelium",  Distance_to_innerTank, error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_RECO_helium("h_Distance_to_InnerTank_upstreamCap_RECO_helium", "h_Distance_to_InnerTank_upstreamCap_RECO_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_RECO_nonhelium("h_Distance_to_InnerTank_upstreamCap_RECO_nonhelium", "h_Distance_to_InnerTank_upstreamCap_RECO_nonhelium",  Distance_to_innerTank, error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_Resolution("h_Distance_to_InnerTank_upstreamCap_Resolution", "h_Distance_to_InnerTank_upstreamCap_Resolution",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_Resolution_Percent("h_Distance_to_InnerTank_upstreamCap_Resolution_Percent", "h_Distance_to_InnerTank_upstreamCap_Resolution_Percent",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_Resolution_TRUE_RECO("h_Distance_to_InnerTank_upstreamCap_Resolution_TRUE_RECO", "h_Distance_to_InnerTank_upstreamCap_Resolution_TRUE_RECO",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_Resolution_Percent_TRUE_RECO("h_Distance_to_InnerTank_upstreamCap_Resolution_Percent_TRUE_RECO", "h_Distance_to_InnerTank_upstreamCap_Resolution_Percent_TRUE_RECO",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel("h_Distance_to_InnerTank_barrel", "h_Distance_to_InnerTank_barrel",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_helium("h_Distance_to_InnerTank_barrel_helium", "h_Distance_to_InnerTank_barrel_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_nonhelium("h_Distance_to_InnerTank_barrel_nonhelium", "h_Distance_to_InnerTank_barrel_nonhelium",  Distance_to_innerTank, error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_RECO_helium("h_Distance_to_InnerTank_barrel_RECO_helium", "h_Distance_to_InnerTank_barrel_RECO_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_RECO_nonhelium("h_Distance_to_InnerTank_barrel_RECO_nonhelium", "h_Distance_to_InnerTank_barrel_RECO_nonhelium",  Distance_to_innerTank, error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_Resolution("h_Distance_to_InnerTank_barrel_Resolution", "h_Distance_to_InnerTank_barrel_Resolution",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_Resolution_Percent("h_Distance_to_InnerTank_barrel_Resolution_Percent", "h_Distance_to_InnerTank_barrel_Resolution_Percent",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_Resolution_TRUE_RECO("h_Distance_to_InnerTank_barrel_Resolution_TRUE_RECO", "h_Distance_to_InnerTank_barrel_Resolution_TRUE_RECO",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_Resolution_Percent_TRUE_RECO("h_Distance_to_InnerTank_barrel_Resolution_Percent_TRUE_RECO", "h_Distance_to_InnerTank_barrel_Resolution_Percent_TRUE_RECO",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap("h_Distance_to_InnerTank_downstreamCap", "h_Distance_to_InnerTank_downstreamCap",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_helium("h_Distance_to_InnerTank_downstreamCap_helium", "h_Distance_to_InnerTank_downstreamCap_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_nonhelium("h_Distance_to_InnerTank_downstreamCap_nonhelium", "h_Distance_to_InnerTank_downstreamCap_nonhelium",  Distance_to_innerTank, error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_Resolution("h_Distance_to_InnerTank_downstreamCap_Resolution", "h_Distance_to_InnerTank_downstreamCap_Resolution",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_Resolution_Percent("h_Distance_to_InnerTank_downstreamCap_Resolution_Percent", "h_Distance_to_InnerTank_downstreamCap_Resolution_Percent",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_Resolution_TRUE_RECO("h_Distance_to_InnerTank_downstreamCap_Resolution_TRUE_RECO", "h_Distance_to_InnerTank_downstreamCap_Resolution_TRUE_RECO",  Vertex_resolution_Zbin_vector, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_Resolution_Percent_TRUE_RECO("h_Distance_to_InnerTank_downstreamCap_Resolution_Percent_TRUE_RECO", "h_Distance_to_InnerTank_downstreamCap_Resolution_Percent_TRUE_RECO",  Vertex_Percent_resolution_Zbin_vector, error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_RECO_helium("h_Distance_to_InnerTank_downstreamCap_RECO_helium", "h_Distance_to_InnerTank_downstreamCap_RECO_helium",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_RECO_nonhelium("h_Distance_to_InnerTank_downstreamCap_RECO_nonhelium", "h_Distance_to_InnerTank_downstreamCap_RECO_nonhelium",  Distance_to_innerTank, error_bands);
 
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_TRUE("h_Distance_to_InnerTank_TRUE", "h_Distance_to_InnerTank_TRUE",  Distance_to_innerTank, error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_TRUE_RECO("h_Distance_to_InnerTank_TRUE_RECO", "h_Distance_to_InnerTank_TRUE_RECO",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_RECO_TRUE_RECO("h_Distance_to_InnerTank_RECO_TRUE_RECO", "h_Distance_to_InnerTank_RECO_TRUE_RECO",  Distance_to_innerTank, error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_TRUE("h_Distance_to_InnerTank_upstreamCap_TRUE", "h_Distance_to_InnerTank_upstreamCap_TRUE",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_TRUE_RECO("h_Distance_to_InnerTank_upstreamCap_TRUE_RECO", "h_Distance_to_InnerTank_upstreamCap_TRUE_RECO",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_RECO_TRUE_RECO("h_Distance_to_InnerTank_upstreamCap_RECO_TRUE_RECO", "h_Distance_to_InnerTank_upstreamCap_RECO_TRUE_RECO",  Distance_to_innerTank, error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_TRUE("h_Distance_to_InnerTank_barrel_TRUE", "h_Distance_to_InnerTank_barrel_TRUE",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_TRUE_RECO("h_Distance_to_InnerTank_barrel_TRUE_RECO", "h_Distance_to_InnerTank_barrel_TRUE_RECO",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_RECO_TRUE_RECO("h_Distance_to_InnerTank_barrel_RECO_TRUE_RECO", "h_Distance_to_InnerTank_barrel_RECO_TRUE_RECO",  Distance_to_innerTank, error_bands);
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_TRUE("h_Distance_to_InnerTank_downstreamCap_TRUE", "h_Distance_to_InnerTank_downstreamCap_TRUE",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_TRUE_RECO("h_Distance_to_InnerTank_downstreamCap_TRUE_RECO", "h_Distance_to_InnerTank_downstreamCap_TRUE_RECO",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_RECO_TRUE_RECO("h_Distance_to_InnerTank_downstreamCap_RECO_TRUE_RECO", "h_Distance_to_InnerTank_downstreamCap_RECO_TRUE_RECO",  Distance_to_innerTank, error_bands);
 
 
 
@@ -902,26 +1077,84 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categ
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_Distance_to_InnerTank_Track =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_Distance_to_InnerTank_Track", Distance_to_innerTank ,"h_Distance_to_InnerTank_Track; [mm];Events");
 
-
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_TRUE_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_TRUE_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_TRUE_Material");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle> h_Distance_to_InnerTank_OpenAngle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, OpenAngle>(OpenAngle_Category, "h_Distance_to_InnerTank_OpenAngle", Distance_to_innerTank ,"h_Distance_to_InnerTank_OpenAngle; [mm];Events");
+
+
+////////////////
+//upstream Cap
+////////////////
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_upstreamCap_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_upstreamCap_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_upstreamCap_Material");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Distance_to_InnerTank_upstreamCap_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_Distance_to_InnerTank_upstreamCap_Particle",  Distance_to_innerTank ,"h_Distance_to_InnerTank_upstreamCap_Particle");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Distance_to_InnerTank_upstreamCap_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Distance_to_InnerTank_upstreamCap_Interaction",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_upstreamCap_Interaction");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_Distance_to_InnerTank_upstreamCap_Track =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_Distance_to_InnerTank_upstreamCap_Track", Distance_to_innerTank ,"h_Distance_to_InnerTank_upstreamCap_Track; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_upstreamCap_TRUE_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_upstreamCap_TRUE_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_upstreamCap_TRUE_Material");
+
+MnvH2D *h_Mig_Distance_to_InnerTank_upstreamCap      =   new MnvH2D("h_Mig_Distance_to_InnerTank_upstreamCap",     "h_Mig_Distance_to_InnerTank_upstreamCap",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH2D *h_Mig_Distance_to_InnerTank_upstreamCap_TRUE_RECO      =   new MnvH2D("h_Mig_Distance_to_InnerTank_upstreamCap_TRUE_RECO",     "h_Mig_Distance_to_InnerTank_upstreamCap_TRUE_RECO",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+
+//////////
+//Barrel
+////////
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_barrel_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_barrel_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_barrel_Material");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Distance_to_InnerTank_barrel_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_Distance_to_InnerTank_barrel_Particle",  Distance_to_innerTank ,"h_Distance_to_InnerTank_barrel_Particle");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Distance_to_InnerTank_barrel_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Distance_to_InnerTank_barrel_Interaction",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_barrel_Interaction");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_Distance_to_InnerTank_barrel_Track =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_Distance_to_InnerTank_barrel_Track", Distance_to_innerTank ,"h_Distance_to_InnerTank_barrel_Track; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_barrel_TRUE_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_barrel_TRUE_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_barrel_TRUE_Material");
+MnvH2D *h_Mig_Distance_to_InnerTank_barrel      =   new MnvH2D("h_Mig_Distance_to_InnerTank_barrel",     "h_Mig_Distance_to_InnerTank_barrel",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH2D *h_Mig_Distance_to_InnerTank_barrel_TRUE_RECO      =   new MnvH2D("h_Mig_Distance_to_InnerTank_barrel_TRUE_RECO",     "h_Mig_Distance_to_InnerTank_barrel_TRUE_RECO",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+
+/////////////////////////////////////
+// downstream Cap
+///////////////////////////
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_downstreamCap_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_downstreamCap_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_downstreamCap_Material");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Distance_to_InnerTank_downstreamCap_Particle =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_Distance_to_InnerTank_downstreamCap_Particle",  Distance_to_innerTank ,"h_Distance_to_InnerTank_downstreamCap_Particle");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Distance_to_InnerTank_downstreamCap_Interaction =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Distance_to_InnerTank_downstreamCap_Interaction",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_downstreamCap_Interaction");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType> h_Distance_to_InnerTank_downstreamCap_Track =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, TrackType>(TrackType_Category, "h_Distance_to_InnerTank_downstreamCap_Track", Distance_to_innerTank ,"h_Distance_to_InnerTank_downstreamCap_Track; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_Distance_to_InnerTank_downstreamCap_TRUE_Material =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_Distance_to_InnerTank_downstreamCap_TRUE_Material",  Distance_to_innerTank  ,"h_Distance_to_InnerTank_downstreamCap_TRUE_Material");
+
+MnvH2D *h_Mig_Distance_to_InnerTank_downstreamCap      =   new MnvH2D("h_Mig_Distance_to_InnerTank_downstreamCap",     "h_Mig_Distance_to_InnerTank_downstreamCap",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH2D *h_Mig_Distance_to_InnerTank_downstreamCap_TRUE_RECO      =   new MnvH2D("h_Mig_Distance_to_InnerTank_downstreamCap_TRUE_RECO",     "h_Mig_Distance_to_InnerTank_downstreamCap_TRUE_RECO",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+
+//////////////////////
 MnvH2D *h_Mig_Distance_to_InnerTank      =   new MnvH2D("h_Mig_Distance_to_InnerTank",     "h_Mig_Distance_to_InnerTank",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
-MnvH2D *h_Mig_Distance_to_InnerTank_TRUE      =   new MnvH2D("h_Mig_Distance_to_InnerTank_TRUE",     "h_Mig_Distance_to_InnerTank_TRUE",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
+MnvH2D *h_Mig_Distance_to_InnerTank_TRUE_RECO      =   new MnvH2D("h_Mig_Distance_to_InnerTank_TRUE_RECO",     "h_Mig_Distance_to_InnerTank_TRUE_RECO",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(), Distance_to_innerTank.size()-1, Distance_to_innerTank.data());
 
 
-
-  std::vector<Vertex_XYZ> FiducalCut_Neg200;
-  std::vector<Vertex_XYZ> FiducalCut_Neg150;
-  std::vector<Vertex_XYZ> FiducalCut_Neg100;
-  std::vector<Vertex_XYZ> FiducalCut_Neg50;
-  std::vector<Vertex_XYZ> FiducalCut;
-  std::vector<Vertex_XYZ> FiducalCut_20;
-  std::vector<Vertex_XYZ> FiducalCut_30;
-  std::vector<Vertex_XYZ> FiducalCut_50;
-  std::vector<Vertex_XYZ> FiducalCut_100;
-
-
+MnvH2D *h_Mig_Vertex_X      =   new MnvH2D("h_Mig_Vertex_X",     "h_Mig_Vertex_X",  Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data(), Vertex_Xbin_vector.size()-1, Vertex_Xbin_vector.data());
+MnvH2D *h_Mig_Vertex_Y      =   new MnvH2D("h_Mig_Vertex_Y",     "h_Mig_Vertex_Y",  Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data(), Vertex_Ybin_vector.size()-1, Vertex_Ybin_vector.data());
+MnvH2D *h_Mig_Vertex_R      =   new MnvH2D("h_Mig_Vertex_R",     "h_Mig_Vertex_R",  Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data(), Vertex_Rbin_vector.size()-1, Vertex_Rbin_vector.data());
+MnvH2D *h_Mig_Vertex_Z      =   new MnvH2D("h_Mig_Vertex_Z",     "h_Mig_Vertex_Z",  Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data(), Vertex_Zbin_vector.size()-1, Vertex_Zbin_vector.data());
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_RR_TRUE_RECO("h_CryoVertex_RR_TRUE_RECO", "h_CryoVertex_RR_TRUE_RECO",  Vertex_RRbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_recoRR_TRUE_RECO("h_CryoVertex_recoRR_TRUE_RECO", "h_CryoVertex_recoRR_TRUE_RECO",  Vertex_RRbin_vector , error_bands);
@@ -936,6 +1169,11 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Percent_resolutionRR_RECO(
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_R_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_R_Material", Vertex_Rbin_vector ,"h_CryoVertex_R_Material; [mm];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_R_Material_Purity =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_CryoVertex_R_Material_Purity", Vertex_Rbin_vector ,"h_CryoVertex_R_Material_Purity; [mm];Events");
+
+
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_R_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_R_Interaction", Vertex_Rbin_vector ,"h_CryoVertex_R_Interaction; [mm];Events");
@@ -1029,10 +1267,6 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_DOCA_TRUE_RECO_P
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_DOCA_TRUE_RECO_Particle", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_RECO_Particle; [mm];Events");
 
 
-
-
-
-
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PION_TRUE_RECO("h_secTrk_Energy_PION_TRUE_RECO", "h_secTrk_Energy PION(TRUE +RECO)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PION_TRUE_RECO("h_secTrk_Theta_PION_TRUE_RECO", "h_secTrk_Theta PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Openangle_PION_TRUE_RECO("h_secTrk_Openangle_PION_TRUE_RECO", "h_secTrk_Openangle  PION (TRUE+RECO)",  secTrk_Theta_TRUEbin_vector , error_bands);
@@ -1054,6 +1288,24 @@ MnvH2D *h_cryoVertex_R_secTrkTheta_TRUE_RECO =    new MnvH2D("h_cryoVertex_R_sec
 MnvH2D *h_cryoVertex_Z_R_TRUE_RECO           =    new MnvH2D("h_cryoVertex_Z_R_TRUE_RECO", "h_cryoVertex_Z_R_TRUE_RECO", Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(),  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data()  );
 
 
+///////for Purity
+MnvH2D *h_cryoVertex_Z_secTrkTheta_helium =    new MnvH2D("h_cryoVertex_Z_secTrkTheta_helium", "h_cryoVertex_Z_secTrkTheta_helium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_cryoVertex_R_secTrkTheta_helium =    new MnvH2D("h_cryoVertex_R_secTrkTheta_helium", "h_cryoVertex_R_secTrkTheta_helium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_cryoVertex_Z_R_helium           =    new MnvH2D("h_cryoVertex_Z_R_helium", "h_cryoVertex_Z_R_helium", Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(),  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data()  );
+
+MnvH2D *h_cryoVertex_Z_secTrkTheta_nonhelium =    new MnvH2D("h_cryoVertex_Z_secTrkTheta_nonhelium", "h_cryoVertex_Z_secTrkTheta_nonhelium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_cryoVertex_R_secTrkTheta_nonhelium =    new MnvH2D("h_cryoVertex_R_secTrkTheta_nonhelium", "h_cryoVertex_R_secTrkTheta_nonhelium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_cryoVertex_Z_R_nonhelium           =    new MnvH2D("h_cryoVertex_Z_R_nonhelium", "h_cryoVertex_Z_R_nonhelium", Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(),  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data()  );
+
+MnvH2D *h_muonPT_2ndTrkangle_helium     =    new MnvH2D("h_muonPT_2ndTrkangle_helium",    "h_muonPT_2ndTrkangle_helium",     PTbin_vector.size()-1,  PTbin_vector.data(),               Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_muonPZ_2ndTrkangle_helium     =    new MnvH2D("h_muonPZ_2ndTrkangle_helium",    "h_muonPZ_2ndTrkangle_helium",     Pzbin_vector.size()-1,  Pzbin_vector.data(),               Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_muontheta_2ndTrkangle_helium  =    new MnvH2D("h_muontheta_2ndTrkangle_helium", "h_muontheta_2ndTrkangle_helium",  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+
+MnvH2D *h_muonPT_2ndTrkangle_nonhelium     =    new MnvH2D("h_muonPT_2ndTrkangle_nonhelium",    "h_muonPT_2ndTrkangle_nonhelium",     PTbin_vector.size()-1,  PTbin_vector.data(),               Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_muonPZ_2ndTrkangle_nonhelium     =    new MnvH2D("h_muonPZ_2ndTrkangle_nonhelium",    "h_muonPZ_2ndTrkangle_nonhelium",     Pzbin_vector.size()-1,  Pzbin_vector.data(),               Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_muontheta_2ndTrkangle_nonhelium  =    new MnvH2D("h_muontheta_2ndTrkangle_nonhelium", "h_muontheta_2ndTrkangle_nonhelium",  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+
+
 MnvH2D *h_muonPT_2ndTrkangle_TRUE_RECO     =    new MnvH2D("h_muonPT_2ndTrkangle_TRUE_RECO",    "h_muonPT_2ndTrkangle_TRUE_RECO",     PTbin_vector.size()-1,  PTbin_vector.data(),               Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 MnvH2D *h_muonPZ_2ndTrkangle_TRUE_RECO     =    new MnvH2D("h_muonPZ_2ndTrkangle_TRUE_RECO",    "h_muonPZ_2ndTrkangle_TRUE_RECO",     Pzbin_vector.size()-1,  Pzbin_vector.data(),               Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 MnvH2D *h_muontheta_2ndTrkangle_TRUE_RECO  =    new MnvH2D("h_muontheta_2ndTrkangle_TRUE_RECO", "h_muontheta_2ndTrkangle_TRUE_RECO",  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
@@ -1064,6 +1316,16 @@ MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO  =    new MnvH2D("h_2ndTrkE_2ndtr
 MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO    =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO",   "h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO",   Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
 
 
+MnvH2D *h_2ndTrkE_2ndtrkangle_helium         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_helium",        "h_2ndTrkE_2ndtrkangle_helium",        Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_helium  =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Proton_helium", "h_2ndTrkE_2ndtrkangle_Proton_helium", Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_helium    =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_helium",   "h_2ndTrkE_2ndtrkangle_Pion_helium",   Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+
+
+MnvH2D *h_2ndTrkE_2ndtrkangle_nonhelium         =    new MnvH2D("h_2ndTrkE_2ndtrkangle_nonhelium",        "h_2ndTrkE_2ndtrkangle_helium",        Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Proton_nonhelium  =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Proton_nonhelium", "h_2ndTrkE_2ndtrkangle_Proton_nonhelium", Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_2ndTrkE_2ndtrkangle_Pion_nonhelium    =    new MnvH2D("h_2ndTrkE_2ndtrkangle_Pion_nonhelium",   "h_2ndTrkE_2ndtrkangle_Pion_nonhelium",   Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data(), Vertex_secondTrkTheta_Coarse_bins.size()-1, Vertex_secondTrkTheta_Coarse_bins.data()  );
+
+
 MnvH2D *h_cryoVertex_Z_Pathlength_TRUE_RECO        =    new MnvH2D("h_cryoVertex_Z_Pathlength_TRUE_RECO", "h_cryoVertex_Z_Pathlength_TRUE_RECO",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
 MnvH2D *h_cryoVertex_R_Pathlength_TRUE_RECO        =    new MnvH2D("h_cryoVertex_R_Pathlength_TRUE_RECO", "h_cryoVertex_R_Pathlength_TRUE_RECO",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
 
@@ -1072,6 +1334,81 @@ MnvH2D *h_cryoVertex_R_DOCA_TRUE_RECO        =    new MnvH2D("h_cryoVertex_R_DOC
 
 MnvH2D *h_cryoVertex_Z_2ndTrkE_TRUE_RECO        =    new MnvH2D("h_cryoVertex_Z_2ndTrkE_TRUE_RECO", "h_cryoVertex_Z_2ndTrkE_TRUE_RECO",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 MnvH2D *h_cryoVertex_R_2ndTrkE_TRUE_RECO        =    new MnvH2D("h_cryoVertex_R_2ndTrkE_TRUE_RECO", "h_cryoVertex_R_2ndTrkE_TRUE_RECO",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+
+
+MnvH2D *h_cryoVertex_Z_Pathlength_helium        =    new MnvH2D("h_cryoVertex_Z_Pathlength_helium", "h_cryoVertex_Z_Pathlength_helium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_cryoVertex_R_Pathlength_helium        =    new MnvH2D("h_cryoVertex_R_Pathlength_helium", "h_cryoVertex_R_Pathlength_helium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
+
+MnvH2D *h_cryoVertex_Z_DOCA_helium        =    new MnvH2D("h_cryoVertex_Z_DOCA_helium", "h_cryoVertex_Z_DOCA_helium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkDOCA_bins.size()-1, Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_cryoVertex_R_DOCA_helium        =    new MnvH2D("h_cryoVertex_R_DOCA_helium", "h_cryoVertex_R_DOCA_helium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkDOCA_bins.size()-1, Vertex_secondTrkDOCA_bins.data()  );
+
+MnvH2D *h_cryoVertex_Z_2ndTrkE_helium        =    new MnvH2D("h_cryoVertex_Z_2ndTrkE_helium", "h_cryoVertex_Z_2ndTrkE_helium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+MnvH2D *h_cryoVertex_R_2ndTrkE_helium        =    new MnvH2D("h_cryoVertex_R_2ndTrkE_helium", "h_cryoVertex_R_2ndTrkE_helium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+
+MnvH2D *h_cryoVertex_Z_Pathlength_nonhelium        =    new MnvH2D("h_cryoVertex_Z_Pathlength_nonhelium", "h_cryoVertex_Z_Pathlength_nonhelium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_cryoVertex_R_Pathlength_nonhelium        =    new MnvH2D("h_cryoVertex_R_Pathlength_nonhelium", "h_cryoVertex_R_Pathlength_nonhelium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkPathway_bins.size()-1, Vertex_secondTrkPathway_bins.data()  );
+
+MnvH2D *h_cryoVertex_Z_DOCA_nonhelium        =    new MnvH2D("h_cryoVertex_Z_DOCA_nonhelium", "h_cryoVertex_Z_DOCA_nonhelium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkDOCA_bins.size()-1, Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_cryoVertex_R_DOCA_nonhelium        =    new MnvH2D("h_cryoVertex_R_DOCA_nonhelium", "h_cryoVertex_R_DOCA_nonhelium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkDOCA_bins.size()-1, Vertex_secondTrkDOCA_bins.data()  );
+
+MnvH2D *h_cryoVertex_Z_2ndTrkE_nonhelium        =    new MnvH2D("h_cryoVertex_Z_2ndTrkE_nonhelium", "h_cryoVertex_Z_2ndTrkE_nonhelium",  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+MnvH2D *h_cryoVertex_R_2ndTrkE_nonhelium        =    new MnvH2D("h_cryoVertex_R_2ndTrkE_nonhelium", "h_cryoVertex_R_2ndTrkE_nonhelium",  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+
+MnvH2D *h_distanceEdge_cryoVertex_R  =    new MnvH2D("h_distanceEdge_cryoVertex_R", "h_distanceEdge_cryoVertex_R",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data()  );
+MnvH2D *h_distanceEdge_cryoVertex_Z  =    new MnvH2D("h_distanceEdge_cryoVertex_Z", "h_distanceEdge_cryoVertex_Z",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data()  );
+MnvH2D *h_distanceEdge_DOCA         =    new MnvH2D("h_distanceEdge_DOCA", "h_distanceEdge_DOCA",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkDOCA_bins.size()-1,  Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkE       =    new MnvH2D("h_distanceEdge_2ndTrkE", "h_distanceEdge_2ndTrkE",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkEbins.size()-1,  Vertex_secondTrkEbins.data()  );
+MnvH2D *h_distanceEdge_Pathlength   =    new MnvH2D("h_distanceEdge_Pathlength", "h_distanceEdge_Pathlength",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkPathway_bins.size()-1,  Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkAngle   =    new MnvH2D("h_distanceEdge_2ndTrkAngle", "h_distanceEdge_2ndTrkAngle",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkTheta_Coarse_bins.size()-1,  Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_distanceEdge_MuonPT        =    new MnvH2D("h_distanceEdge_MuonPT", "h_distanceEdge_MuonPT",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  PTbin_vector.size()-1,  PTbin_vector.data()  );
+MnvH2D *h_distanceEdge_MuonPZ        =    new MnvH2D("h_distanceEdge_MuonPZ", "h_distanceEdge_MuonPZ",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Pzbin_vector.size()-1,  Pzbin_vector.data()  );
+MnvH2D *h_distanceEdge_Muontheta     =    new MnvH2D("h_distanceEdge_Muontheta", "h_distanceEdge_Muontheta",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data()  );
+MnvH2D *h_distanceEdge_ChiSqFit      =    new MnvH2D("h_distanceEdge_ChiSqFit", "h_distanceEdge_ChiSqFit",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_ChiSqFit_vector.size()-1,  Vertex_ChiSqFit_vector.data()  );
+MnvH2D *h_distanceEdge_2ndTrklength  =    new MnvH2D("h_distanceEdge_2ndTrklength", "h_distanceEdge_2ndTrklength",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Recoil_track_length_vector.size()-1,  Recoil_track_length_vector.data()  );
+
+
+MnvH2D *h_distanceEdge_cryoVertex_R_helium   =    new MnvH2D("h_distanceEdge_cryoVertex_R_helium",  "h_distanceEdge_cryoVertex_R_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data()  );
+MnvH2D *h_distanceEdge_cryoVertex_Z_helium          =    new MnvH2D("h_distanceEdge_cryoVertex_Z_helium",  "h_distanceEdge_cryoVertex_Z_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data()  );
+MnvH2D *h_distanceEdge_DOCA_helium           =    new MnvH2D("h_distanceEdge_DOCA_helium",          "h_distanceEdge_DOCA_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkDOCA_bins.size()-1,  Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkE_helium        =    new MnvH2D("h_distanceEdge_2ndTrkE_helium",       "h_distanceEdge_2ndTrkE_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkEbins.size()-1,  Vertex_secondTrkEbins.data()  );
+MnvH2D *h_distanceEdge_Pathlength_helium     =    new MnvH2D("h_distanceEdge_Pathlength_helium",    "h_distanceEdge_Pathlength_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkPathway_bins.size()-1,  Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkAngle_helium    =    new MnvH2D("h_distanceEdge_2ndTrkAngle_helium",   "h_distanceEdge_2ndTrkAngle_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkTheta_Coarse_bins.size()-1,  Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_distanceEdge_MuonPT_helium         =    new MnvH2D("h_distanceEdge_MuonPT_helium",        "h_distanceEdge_MuonPT_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  PTbin_vector.size()-1,  PTbin_vector.data()  );
+MnvH2D *h_distanceEdge_MuonPZ_helium         =    new MnvH2D("h_distanceEdge_MuonPZ_helium",        "h_distanceEdge_MuonPZ_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Pzbin_vector.size()-1,  Pzbin_vector.data()  );
+MnvH2D *h_distanceEdge_Muontheta_helium      =    new MnvH2D("h_distanceEdge_Muontheta_helium",     "h_distanceEdge_Muontheta_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data()  );
+MnvH2D *h_distanceEdge_ChiSqFit_helium       =    new MnvH2D("h_distanceEdge_ChiSqFit_helium",      "h_distanceEdge_ChiSqFit_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_ChiSqFit_vector.size()-1,  Vertex_ChiSqFit_vector.data()  );
+MnvH2D *h_distanceEdge_2ndTrklength_helium   =    new MnvH2D("h_distanceEdge_2ndTrklength_helium",  "h_distanceEdge_2ndTrklength_helium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Recoil_track_length_vector.size()-1,  Recoil_track_length_vector.data()  );
+
+
+
+
+MnvH2D *h_distanceEdge_cryoVertex_R_nonhelium   =    new MnvH2D("h_distanceEdge_cryoVertex_R_nonhelium",  "h_distanceEdge_cryoVertex_R_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data()  );
+MnvH2D *h_distanceEdge_cryoVertex_Z_nonhelium          =    new MnvH2D("h_distanceEdge_cryoVertex_Z_nonhelium",  "h_distanceEdge_cryoVertex_Z_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data()  );
+MnvH2D *h_distanceEdge_DOCA_nonhelium           =    new MnvH2D("h_distanceEdge_DOCA_nonhelium",          "h_distanceEdge_DOCA_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkDOCA_bins.size()-1,  Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkE_nonhelium        =    new MnvH2D("h_distanceEdge_2ndTrkE_nonhelium",       "h_distanceEdge_2ndTrkE_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkEbins.size()-1,  Vertex_secondTrkEbins.data()  );
+MnvH2D *h_distanceEdge_Pathlength_nonhelium     =    new MnvH2D("h_distanceEdge_Pathlength_nonhelium",    "h_distanceEdge_Pathlength_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkPathway_bins.size()-1,  Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkAngle_nonhelium    =    new MnvH2D("h_distanceEdge_2ndTrkAngle_nonhelium",   "h_distanceEdge_2ndTrkAngle_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkTheta_Coarse_bins.size()-1,  Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_distanceEdge_MuonPT_nonhelium         =    new MnvH2D("h_distanceEdge_MuonPT_nonhelium",        "h_distanceEdge_MuonPT_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  PTbin_vector.size()-1,  PTbin_vector.data()  );
+MnvH2D *h_distanceEdge_MuonPZ_nonhelium         =    new MnvH2D("h_distanceEdge_MuonPZ_nonhelium",        "h_distanceEdge_MuonPZ_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Pzbin_vector.size()-1,  Pzbin_vector.data()  );
+MnvH2D *h_distanceEdge_Muontheta_nonhelium      =    new MnvH2D("h_distanceEdge_Muontheta_nonhelium",     "h_distanceEdge_Muontheta_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data()  );
+MnvH2D *h_distanceEdge_ChiSqFit_nonhelium       =    new MnvH2D("h_distanceEdge_ChiSqFit_nonhelium",      "h_distanceEdge_ChiSqFit_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_ChiSqFit_vector.size()-1,  Vertex_ChiSqFit_vector.data()  );
+MnvH2D *h_distanceEdge_2ndTrklength_nonhelium   =    new MnvH2D("h_distanceEdge_2ndTrklength_nonhelium",  "h_distanceEdge_2ndTrklength_nonhelium",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Recoil_track_length_vector.size()-1,  Recoil_track_length_vector.data()  );
+
+
+
+MnvH2D *h_distanceEdge_cryoVertex_R_TRUE_RECO        =    new MnvH2D("h_distanceEdge_cryoVertex_R_TRUE_RECO", "h_distanceEdge_cryoVertex_R_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Rbin_vector.size()-1,  Vertex_Rbin_vector.data()  );
+MnvH2D *h_distanceEdge_cryoVertex_Z_TRUE_RECO        =    new MnvH2D("h_distanceEdge_cryoVertex_Z_TRUE_RECO", "h_distanceEdge_cryoVertex_Z_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Zbin_vector.size()-1,  Vertex_Zbin_vector.data()  );
+MnvH2D *h_distanceEdge_DOCA_TRUE_RECO        =    new MnvH2D("h_distanceEdge_DOCA_TRUE_RECO", "h_distanceEdge_DOCA_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkDOCA_bins.size()-1,  Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkE_TRUE_RECO        =    new MnvH2D("h_distanceEdge_2ndTrkE_TRUE_RECO", "h_distanceEdge_2ndTrkE_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkEbins.size()-1,  Vertex_secondTrkEbins.data()  );
+MnvH2D *h_distanceEdge_Pathlength_TRUE_RECO        =    new MnvH2D("h_distanceEdge_Pathlength_TRUE_RECO", "h_distanceEdge_Pathlength_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkPathway_bins.size()-1,  Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkAngle_TRUE_RECO        =    new MnvH2D("h_distanceEdge_2ndTrkAngle_TRUE_RECO", "h_distanceEdge_2ndTrkAngle_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkTheta_Coarse_bins.size()-1,  Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_distanceEdge_MuonPT_TRUE_RECO        =    new MnvH2D("h_distanceEdge_MuonPT_TRUE_RECO", "h_distanceEdge_MuonPT_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  PTbin_vector.size()-1,  PTbin_vector.data()  );
+MnvH2D *h_distanceEdge_MuonPZ_TRUE_RECO        =    new MnvH2D("h_distanceEdge_MuonPZ_TRUE_RECO", "h_distanceEdge_MuonPZ_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Pzbin_vector.size()-1,  Pzbin_vector.data()  );
+MnvH2D *h_distanceEdge_Muontheta_TRUE_RECO       =    new MnvH2D("h_distanceEdge_Muontheta_TRUE_RECO", "h_distanceEdge_Muontheta_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data()  );
+//MnvH2D *h_distanceEdge_ChiSqFit_TRUE_RECO       =    new MnvH2D("h_distanceEdge_ChiSqFit_TRUE_RECO", "h_distanceEdge_ChiSqFit_TRUE_RECO",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_ChiSqFit_vector.size()-1,  Vertex_ChiSqFit_vector.data()  );
+
+
+PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonCurvatureSig_TRUE_RECO("h_MuonCurvatureSig_TRUE_RECO", "(q/p) / #sigma(q/p)",  Muon_curvatureSig_vector , error_bands);
 
   //=========================================
   // Entry Loop For MC
@@ -1092,8 +1429,16 @@ MnvH2D *h_cryoVertex_R_2ndTrkE_TRUE_RECO        =    new MnvH2D("h_cryoVertex_R_
   RECO_Cut_Map CountMap_2ndTrkAngle_noFidiucal;
   FillingRecoCountingMap(kCutsVector_2ndtrkAngle_noFidiucal, CountMap_2ndTrkAngle_noFidiucal);
 
+  RECO_Cut_Map CountMap_Fiduical_2;
+  FillingRecoCountingMap(kCutsVector_FiduicalEff, CountMap_Fiduical_2);
+
+
   RECO_Cut_Map CountMap_ALL;
   FillingRecoCountingMap(kCutsVector_ALL, CountMap_ALL);
+
+
+  RECO_Cut_Map CountMap_Dataoverlay;
+  FillingRecoCountingMap(kCutsVectorr_NoOverLay, CountMap_Dataoverlay);
 
   TRUE_Cut_Map Truth_Cut_Map_MuonEnergy;
   TRUE_Cut_Map Truth_Cut_Map_MuonTheta;
@@ -1110,7 +1455,7 @@ MnvH2D *h_cryoVertex_R_2ndTrkE_TRUE_RECO        =    new MnvH2D("h_cryoVertex_R_
   FillingTruthCountingMap(kTRUTHCutsVector_ALL,  Truth_Cut_Map_ALL);
 
 
-
+std::cout<<"here"<<std::endl;
 
   ProcInfo_t procInfo;
   gSystem->GetProcInfo(&procInfo);
@@ -1121,27 +1466,6 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "Systematics Off";}
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
 std::cout<<"~~~~~~~~~ Systematics are =   "<< sysmatics_status <<" ~~~~~~~~~ "<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
-
-
-//RECO_Cut_Map CountMap_RECO_Eff = ConstuctRecoCountingMap(kCutsVector_Eff);
-
-
-//TRUE_Cut_Map CountMap_TRUTH =  ConstuctTRUTHCountingMap(kTRUTHCutsVector);
-//RECO_Cut_Map CountMap_RECO;// = ConstuctRecoCountingMap(kCutsVector);
-//RECO_Cut_Map CountMap_RECO_Helium ;//= ConstuctRecoCountingMap(kCutsVector);
-//RECO_Cut_Map CountMap_RECO_nonHelium;// = ConstuctRecoCountingMap(kCutsVector);
-
-//FillingRecoCountingMap(kCutsVector, CountMap_RECO);
-//FillingRecoCountingMap(kCutsVector, CountMap_RECO_Helium);
-//FillingRecoCountingMap(kCutsVector, CountMap_RECO_nonHelium);
-
-//std::cout << "CountMap_RECO.size() = " << CountMap_RECO.size()<< std::endl;
-//for(const auto & index :CountMap_RECO ){
-//std::cout<<" Cut Name = " <<GetCutName(index.first).c_str() << " Amount = " << index.second << std::endl;
-
-
-//}
-
 
 
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
@@ -1195,14 +1519,6 @@ int PDG_match=0;
             auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
 
             int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
-/*
-            std::cout << "PDG_trklist.size() = " << PDG_trklist.size() << "  Energy_trklist.size() = " << Energy_trklist.size() << "Angle_trklist.size() = " <<  Angle_trklist.size() << "  EnergyFraction_vector.size() = " << EnergyFraction_vector.size()<< std::endl;
-            std::cout<<"where is this bug in secondTrk =  "<< secondTrk<< std::endl;
-            for(int y = 0; y < PDG_trklist.size(); y++){
-              std::cout<< "PDG_trklist = " << PDG_trklist.at(y) <<  "Energy_trklist = "<< Energy_trklist.at(y) << "Energy_trklist = "<< Energy_trklist.at(y) << " EnergyFraction_vector = "<< EnergyFraction_vector.at(y)<< std::endl;
-            }
-*/
-
             h_muontheta_2ndTrkangle_TRUE_RECO->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(), Angle_trklist.at(secondTrk),universe->GetWeight(kWeights_v1tune));
             //std::cout<<"where is this bug out "<< std::endl;
 
@@ -1212,6 +1528,90 @@ int PDG_match=0;
         }// END of Universe Groups
       }// END OF TRUTH + RECO CUTS
     }//END OF TRUTH PASS CUTS
+
+
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_MuonThetaEff_2ndtrkAngle, kWeights_v1tune, CountMap_MuonEnergy) ){
+      for (auto universe : Universe_GROUP){
+        universe->SetEntry(ii);
+
+
+        if(isCV(*universe)){
+          auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+          auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+          auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+          auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+
+          int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
+          double Theta = universe->GetThetamu()*TMath::RadToDeg();
+
+          if( universe->isHeliumInteraction()){
+            h_muontheta_2ndTrkangle_helium->Fill(Theta,universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),universe->GetWeight(kWeights_v1tune));
+          }
+          else{
+            h_muontheta_2ndTrkangle_nonhelium->Fill(Theta,universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),universe->GetWeight(kWeights_v1tune));
+          }
+
+
+        }//end of CV
+
+
+      }// END of Universe Groups
+    }// END OF TRUTH + RECO CUTS
+
+
+    if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_MuonTheta, kWeights_v1tune, Truth_Cut_Map_MuonTheta)){
+      // TRUTH ONLY Cuts
+      if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_MuonThetaEff_noFidiucal, kWeights_v1tune, CountMap_MuonEnergy) ){
+        for (auto universe : Universe_GROUP){
+          universe->SetEntry(ii);
+
+          if(isCV(*universe)){
+            auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+            auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+            auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+            auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+
+            int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
+
+
+            h_distanceEdge_Muontheta_TRUE_RECO->Fill(TRUE_Distance_to_innerTank(*universe), universe->GetTRUE_muANGLE_WRTB_DEG(),universe->GetWeight(kWeights_v1tune));
+
+          }//end of CV
+
+
+        }// END of Universe Groups
+      }// END OF TRUTH + RECO CUTS
+    }//END OF TRUTH PASS CUTS
+
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_MuonThetaEff_noFidiucal, kWeights_v1tune, CountMap_MuonEnergy) ){
+      for (auto universe : Universe_GROUP){
+        universe->SetEntry(ii);
+
+        if(isCV(*universe)){
+          auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+          auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+          auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+          auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+
+          int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
+          double RECO_distance  = RECO_Distance_to_innerTank(*universe);
+          double Theta = universe->GetThetamu();
+          double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+          if( universe->isHeliumInteraction() ){
+            h_distanceEdge_Muontheta_helium->Fill(RECO_distance, Theta*TMath::RadToDeg(),wgt_minerva_v1);
+
+          }
+          else{
+            h_distanceEdge_Muontheta_nonhelium->Fill(RECO_distance, Theta*TMath::RadToDeg(),wgt_minerva_v1);
+
+          }
+
+        }//end of CV
+
+
+      }// END of Universe Groups
+    }// END OF TRUTH + RECO CUTS
+
 
 
     if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_MuonEnergy,  kWeights_v1tune, Truth_Cut_Map_MuonEnergy)){
@@ -1232,6 +1632,106 @@ int PDG_match=0;
         }// END of Universe Groups
       }// END OF TRUTH + RECO CUTS
     }//END OF TRUTH PASS CUTS
+
+
+    if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_MuonEnergy,  kWeights_v1tune, Truth_Cut_Map_MuonEnergy)){
+      // TRUTH ONLY Cuts
+      if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc, kCutsVector_MuonEnergy_noFidiucal, kWeights_v1tune, CountMap_MuonEnergy) ){
+        for (auto universe : Universe_GROUP){
+          universe->SetEntry(ii);
+
+          double wgt_minerva_v1 =   universe->GetWeight(kWeights_v1tune);
+
+          double True_distance = TRUE_Distance_to_innerTank(*universe);
+          h_distanceEdge_MuonPT_TRUE_RECO->Fill(True_distance, universe->GetPmuTransverseTrue(),wgt_minerva_v1);
+          h_distanceEdge_MuonPZ_TRUE_RECO ->Fill(True_distance,universe->GetPmuLongitudinalTrue() ,wgt_minerva_v1);
+
+        }// END of Universe Groups
+      }// END OF TRUTH + RECO CUTS
+    }//END OF TRUTH PASS CUTS
+
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc, kCutsVector_MuonEnergy_noFidiucal, kWeights_v1tune, CountMap_MuonEnergy) ){
+      for (auto universe : Universe_GROUP){
+        universe->SetEntry(ii);
+
+        double wgt_minerva_v1 =   universe->GetWeight(kWeights_v1tune);
+        double Reco_distance = RECO_Distance_to_innerTank(*universe);
+        double Theta = universe->GetThetamu();
+        double Pmu = universe ->GetPmu()/1000;
+
+        if(universe->isHeliumInteraction()){
+
+          h_distanceEdge_MuonPT_helium->Fill(Reco_distance, Pmu*std::sin(Theta),wgt_minerva_v1);
+          h_distanceEdge_MuonPZ_helium ->Fill(Reco_distance, Pmu*std::cos(Theta),wgt_minerva_v1);
+}
+        else{
+          h_distanceEdge_MuonPT_nonhelium->Fill(Reco_distance, Pmu*std::sin(Theta),wgt_minerva_v1);
+          h_distanceEdge_MuonPZ_nonhelium ->Fill(Reco_distance, Pmu*std::cos(Theta),wgt_minerva_v1);
+
+        }
+
+      }// END of Universe Groups
+    }// END OF TRUTH + RECO CUTS
+
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_FiduicalEff , kWeights_v1tune, CountMap_Fiduical_2 ) ){
+      unv_count = 0;
+      for (auto universe : Universe_GROUP){
+
+
+
+        if(isCV(*universe)){
+
+          double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+          double x= universe->GetVertex_x();
+          double x_true= universe->GetTRUE_Vertex_x();
+          double y= universe->GetVertex_y();
+          double y_true= universe->GetTRUE_Vertex_y();
+          double z= universe->GetVertex_z();
+          double z_true= universe->GetTRUE_Vertex_z();
+          double r = universe->GetVertex_r();
+          double r_true = universe->GetTRUE_Vertex_r();
+          int secondTrk = universe->Getindex2ndTrackhighestKE();
+          double OpenAngle = universe->GetOpenAngle(secondTrk);
+          double RECO_distance  = RECO_Distance_to_innerTank(*universe);
+          auto angletype = OpenAngleType(OpenAngle);
+          Material_type Material_type_Event = universe->Get_MaterialStackType();
+          h_CryoVertex_Z_Material_Purity.GetComponentHist(Material_type_Event)->Fill(z, wgt_minerva_v1);
+          h_CryoVertex_X_Material_Purity.GetComponentHist(Material_type_Event)->Fill(x, wgt_minerva_v1);
+          h_CryoVertex_Y_Material_Purity.GetComponentHist(Material_type_Event)->Fill(y, wgt_minerva_v1);
+          h_CryoVertex_R_Material_Purity.GetComponentHist(Material_type_Event)->Fill(r, wgt_minerva_v1);
+
+          h_CryoVertex_Z_OpenAngle.GetComponentHist(angletype)->Fill(z, wgt_minerva_v1);
+          h_CryoVertex_X_OpenAngle.GetComponentHist(angletype)->Fill(x, wgt_minerva_v1);
+          h_CryoVertex_Y_OpenAngle.GetComponentHist(angletype)->Fill(y, wgt_minerva_v1);
+          h_CryoVertex_R_OpenAngle.GetComponentHist(angletype)->Fill(r, wgt_minerva_v1);
+
+          h_Distance_to_InnerTank_OpenAngle.GetComponentHist(angletype)->Fill(RECO_distance, wgt_minerva_v1);
+          h_2d_vertexZ_openAngle->Fill(z,OpenAngle,wgt_minerva_v1);
+          h_2d_vertexR_openAngle->Fill(r,OpenAngle,wgt_minerva_v1);
+          h_2d_vertexX_openAngle->Fill(x,OpenAngle,wgt_minerva_v1);
+          h_2d_vertexY_openAngle->Fill(y,OpenAngle,wgt_minerva_v1);
+          const int  unvHist_count = MnvReponse_Hist_N_Map[unv_count];
+          MnvR_Vertex_Z_R->Fill(z,r, z_true,r_true,universe->ShortName(),unvHist_count,wgt_minerva_v1);
+          MnvR_Vertex_Z_X->Fill(z,x, z_true,x_true,universe->ShortName(),unvHist_count,wgt_minerva_v1);
+          MnvR_Vertex_Z_Y->Fill(z,y, z_true,y_true,universe->ShortName(),unvHist_count,wgt_minerva_v1);
+          MnvR_Vertex_X_Y->Fill(x,y, x_true,y_true,universe->ShortName(),unvHist_count,wgt_minerva_v1);
+          h_2d_vertex_Z_mig->Fill(z,z_true,wgt_minerva_v1);
+          h_2d_vertex_R_mig->Fill(r,r_true,wgt_minerva_v1);
+          h_2d_vertex_X_mig->Fill(x,x_true,wgt_minerva_v1);
+          h_2d_vertex_Y_mig->Fill(y,y_true,wgt_minerva_v1);
+          h_2d_Vertex_Z_R->Fill(z,r,wgt_minerva_v1);
+          h_2d_Vertex_X_Y->Fill(x,y,wgt_minerva_v1);
+          h_2d_Vertex_Z_X->Fill(z,x,wgt_minerva_v1);
+          h_2d_Vertex_Z_Y->Fill(z,y,wgt_minerva_v1);
+
+        }
+        unv_count++;
+      }
+
+
+
+    }
+
 
 
 
@@ -1255,12 +1755,15 @@ int PDG_match=0;
           double z_true= universe->GetTRUE_Vertex_z();
           double r_true= universe->GetTRUE_Vertex_r();
           double rr_true= universe->GetTRUE_Vertex_rr();
+          double True_distance = TRUE_Distance_to_innerTank(*universe);
+          double RECO_distance  = RECO_Distance_to_innerTank(*universe);
 
           double resolutionX = x_true - x;
           double resolutionY = y_true - y;
           double resolutionZ = z_true - z;
           double resolutionR = r_true - r;
           double resolutionRR = rr_true - rr;
+          double resolution_distance = True_distance - RECO_distance;
 
 
 
@@ -1284,26 +1787,62 @@ int PDG_match=0;
 
           h_CryoVertex_recoRR_TRUE_RECO.univHist(universe)->Fill(rr,wgt_minerva_v1);
 
-          h_Distance_to_InnerTank_TRUE_RECO.univHist(universe)->Fill(TRUE_Distance_to_innerTank(*universe),wgt_minerva_v1);
+
+          h_Distance_to_InnerTank_TRUE_RECO.univHist(universe)->Fill(True_distance,wgt_minerva_v1);
+
+          h_Distance_to_InnerTank_RECO_TRUE_RECO.univHist(universe)->Fill(RECO_distance,wgt_minerva_v1);
+
+
+          CryoTank_REGIONS RegionType= Region_of_CryoTank(z_true);
+          CryoTank_REGIONS RegionType_RECO= Region_of_CryoTank(z);
+
+          if(RegionType==kUpstream_head){
+            h_Distance_to_InnerTank_upstreamCap_TRUE_RECO.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_upstreamCap_Resolution_TRUE_RECO.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_upstreamCap_Resolution_Percent_TRUE_RECO.univHist(universe)->Fill(resolution_distance / True_distance, wgt_minerva_v1);
+
+          }
+
+          else if(RegionType==kCenter){
+            h_Distance_to_InnerTank_barrel_TRUE_RECO.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_barrel_Resolution_TRUE_RECO.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_barrel_Resolution_Percent_TRUE_RECO.univHist(universe)->Fill(resolution_distance / True_distance, wgt_minerva_v1);
+
+          }
+
+          else if(RegionType==kDownstream_head){
+            h_Distance_to_InnerTank_downstreamCap_TRUE_RECO.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_downstreamCap_Resolution_TRUE_RECO.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_downstreamCap_Resolution_Percent_TRUE_RECO.univHist(universe)->Fill(resolution_distance / True_distance, wgt_minerva_v1);
+
+          }
+
+          if(RegionType_RECO==kUpstream_head){
+            h_Distance_to_InnerTank_upstreamCap_RECO_TRUE_RECO.univHist(universe)->Fill(RECO_distance, wgt_minerva_v1);
+
+          }
+
+          else if(RegionType_RECO==kCenter){
+            h_Distance_to_InnerTank_barrel_RECO_TRUE_RECO.univHist(universe)->Fill(RECO_distance, wgt_minerva_v1);
+          }
+
+          else if(RegionType_RECO==kDownstream_head){
+            h_Distance_to_InnerTank_downstreamCap_RECO_TRUE_RECO.univHist(universe)->Fill(RECO_distance, wgt_minerva_v1);
+          }
 
           h_CryoVertex_resolutionX_TRUE_RECO.univHist(universe)->Fill(resolutionX,wgt_minerva_v1);
           h_CryoVertex_resolutionY_TRUE_RECO.univHist(universe)->Fill(resolutionY,wgt_minerva_v1);
           h_CryoVertex_resolutionZ_TRUE_RECO.univHist(universe)->Fill(resolutionZ,wgt_minerva_v1);
           h_CryoVertex_resolutionR_TRUE_RECO.univHist(universe)->Fill(resolutionR,wgt_minerva_v1);
           h_CryoVertex_resolutionRR_TRUE_RECO.univHist(universe)->Fill(resolutionRR,wgt_minerva_v1);
-
+          h_Distance_to_InnerTank_Resolution_TRUE_RECO.univHist(universe)->Fill(resolution_distance,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionX_TRUE_RECO.univHist(universe)->Fill(resolutionX/ x_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionY_TRUE_RECO.univHist(universe)->Fill(resolutionY/ y_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionZ_TRUE_RECO.univHist(universe)->Fill(resolutionZ/ z_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionR_TRUE_RECO.univHist(universe)->Fill(resolutionR/ r_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionRR_TRUE_RECO.univHist(universe)->Fill(resolutionRR/ rr_true,wgt_minerva_v1);
+          h_Distance_to_InnerTank_Resolution_Percent_TRUE_RECO.univHist(universe)->Fill(resolution_distance / True_distance,wgt_minerva_v1);
 
-          for(auto Fid_Cut:CutToSurface_bins_finner ){
-            if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut))
-            {
-              h_FidiucalCut_TRUE_RECO.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
-            }
-          }
 
           if(isCV(*universe)){
 
@@ -1318,6 +1857,7 @@ int PDG_match=0;
             if(secondTrk==-999)continue;
 
             double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
+            double secTrkTrueAngle =Angle_trklist.at(secondTrk);
             double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
             int secTrk_PDG = PDG_trklist.at(secondTrk);
             Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
@@ -1326,8 +1866,27 @@ int PDG_match=0;
             double True_distance = TRUE_Distance_to_innerTank(*universe);
             double Reco_distance = RECO_Distance_to_innerTank(*universe);
 
-            h_Mig_Distance_to_InnerTank_TRUE->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+            h_Mig_Distance_to_InnerTank_TRUE_RECO->Fill(Reco_distance, True_distance, wgt_minerva_v1);
 
+
+            if(RegionType==kUpstream_head){
+              h_Mig_Distance_to_InnerTank_upstreamCap_TRUE_RECO->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+            }
+
+            else if(RegionType==kCenter){
+              h_Mig_Distance_to_InnerTank_barrel_TRUE_RECO->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+            }
+
+            else if(RegionType==kDownstream_head){
+              h_Mig_Distance_to_InnerTank_downstreamCap_TRUE_RECO->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+            }
+
+            h_distanceEdge_cryoVertex_R_TRUE_RECO->Fill(True_distance, r_true,wgt_minerva_v1);
+            h_distanceEdge_cryoVertex_Z_TRUE_RECO->Fill(True_distance, z_true,wgt_minerva_v1);
+
+            h_distanceEdge_2ndTrkE_TRUE_RECO->Fill(True_distance, secTrkTrueEnergy ,wgt_minerva_v1);
+            h_distanceEdge_DOCA_TRUE_RECO->Fill(True_distance, universe->GetTRUE_nonMuonDOCA(secondTrk),wgt_minerva_v1);
+            h_distanceEdge_Pathlength_TRUE_RECO->Fill(True_distance, universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_minerva_v1);
 
             h_CryoVertex_X_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
             h_CryoVertex_X_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_x(), wgt_minerva_v1);
@@ -1344,32 +1903,6 @@ int PDG_match=0;
             h_CryoVertex_R_Material.GetComponentHist(Material_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
             h_CryoVertex_R_Interaction.GetComponentHist(Interaction_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
             h_CryoVertex_R_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetVertex_r(), wgt_minerva_v1);
-
-
-            for(auto Fid_Cut:CutToSurface_bins_finner ){
-
-              if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(*universe, Fid_Cut) && IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
-
-              h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
-              h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
-            }
-
-              if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
-
-                h_resolutionX_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionX,  wgt_minerva_v1);
-
-                h_resolutionY_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionY,  wgt_minerva_v1);
-
-                h_resolutionR_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionR,  wgt_minerva_v1);
-
-                h_resolutionZ_TRUE_RECO_FidiucalCut->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
-
-                h_FidiucalCut_cryoVertex_R_TRUE_RECO->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
-
-                h_FidiucalCut_cryoVertex_Z_TRUE_RECO->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
-
-              } // end of Volume Cut
-            } // End of loop
 
         } // ENd of CV
 
@@ -1396,10 +1929,10 @@ int PDG_match=0;
           double r_true= universe->GetTRUE_Vertex_r();
           double rr_true= universe->GetTRUE_Vertex_rr();
 
-          double resolutionX = x_true - x;
-          double resolutionY = y_true - y;
-          double resolutionZ = z_true - z;
-          double resolutionR = r_true - r;
+          double resolutionX  = x_true - x;
+          double resolutionY  = y_true - y;
+          double resolutionZ  = z_true - z;
+          double resolutionR  = r_true - r;
           double resolutionRR = rr_true - rr;
 
           double True_distance = TRUE_Distance_to_innerTank(*universe);
@@ -1410,13 +1943,6 @@ int PDG_match=0;
           h_Distance_to_InnerTank.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
           h_Distance_to_InnerTank_Resolution.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
           h_Distance_to_InnerTank_Resolution_Percent.univHist(universe)->Fill(resolution_distance / True_distance , wgt_minerva_v1);
-
-          if( universe->isHeliumInteraction() ){
-            h_Distance_to_InnerTank_helium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
-          }
-          else{
-            h_Distance_to_InnerTank_nonhelium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
-          }
 
           h_CryoVertex_resolutionX_RECO.univHist(universe)->Fill(resolutionX,wgt_minerva_v1);
           h_CryoVertex_resolutionY_RECO.univHist(universe)->Fill(resolutionY,wgt_minerva_v1);
@@ -1430,19 +1956,113 @@ int PDG_match=0;
           h_CryoVertex_Percent_resolutionR_RECO.univHist(universe)->Fill(resolutionR / r_true,wgt_minerva_v1);
           h_CryoVertex_Percent_resolutionRR_RECO.univHist(universe)->Fill(resolutionRR / rr_true,wgt_minerva_v1);
 
-          for(auto Fid_Cut:CutToSurface_bins_finner ){
-            if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
-              h_FidiucalCut.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
-              if( universe->isHeliumInteraction() ){
-                h_FidiucalCut_helium.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
 
-              }
-              else{
-                h_FidiucalCut_nonhelium.univHist(universe)->Fill(Fid_Cut, wgt_minerva_v1);
 
-              }
+          CryoTank_REGIONS RegionType= Region_of_CryoTank(z);
+          if(RegionType==kUpstream_head){
+            h_Distance_to_InnerTank_upstreamCap_TRUE.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_upstreamCap.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_upstreamCap_Resolution.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_upstreamCap_Resolution_Percent.univHist(universe)->Fill(resolution_distance / True_distance , wgt_minerva_v1);
+
+            h_CryoVertex_R_upstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionR , wgt_minerva_v1);
+            h_CryoVertex_R_upstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionR / r_true , wgt_minerva_v1);
+            h_CryoVertex_Z_upstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionZ , wgt_minerva_v1);
+            h_CryoVertex_Z_upstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionZ / z_true , wgt_minerva_v1);
+
+            h_CryoVertex_X_upstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionX , wgt_minerva_v1);
+            h_CryoVertex_X_upstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionX / x_true , wgt_minerva_v1);
+            h_CryoVertex_Y_upstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionY , wgt_minerva_v1);
+            h_CryoVertex_Y_upstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionY / y_true , wgt_minerva_v1);
+
+
+
+
+            if( universe->isHeliumInteraction() ){
+              h_Distance_to_InnerTank_upstreamCap_helium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_upstreamCap_RECO_helium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
 
             }
+            else{
+              h_Distance_to_InnerTank_upstreamCap_nonhelium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_upstreamCap_RECO_nonhelium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+
+            }
+
+          }
+          else if(RegionType==kCenter){
+            h_Distance_to_InnerTank_barrel_TRUE.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_barrel.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_barrel_Resolution.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_barrel_Resolution_Percent.univHist(universe)->Fill(resolution_distance / True_distance , wgt_minerva_v1);
+
+            h_CryoVertex_R_barrel_resolution_RECO.univHist(universe)->Fill(resolutionR , wgt_minerva_v1);
+            h_CryoVertex_R_barrel_percentresolution_RECO.univHist(universe)->Fill(resolutionR / r_true , wgt_minerva_v1);
+            h_CryoVertex_Z_barrel_resolution_RECO.univHist(universe)->Fill(resolutionZ , wgt_minerva_v1);
+            h_CryoVertex_Z_barrel_percentresolution_RECO.univHist(universe)->Fill(resolutionZ / z_true , wgt_minerva_v1);
+
+            h_CryoVertex_X_barrel_resolution_RECO.univHist(universe)->Fill(resolutionX , wgt_minerva_v1);
+            h_CryoVertex_X_barrel_percentresolution_RECO.univHist(universe)->Fill(resolutionX / x_true , wgt_minerva_v1);
+            h_CryoVertex_Y_barrel_resolution_RECO.univHist(universe)->Fill(resolutionY , wgt_minerva_v1);
+            h_CryoVertex_Y_barrel_percentresolution_RECO.univHist(universe)->Fill(resolutionY / y_true , wgt_minerva_v1);
+
+
+
+
+            if( universe->isHeliumInteraction() ){
+              h_Distance_to_InnerTank_barrel_helium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_barrel_RECO_helium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+
+            }
+            else{
+              h_Distance_to_InnerTank_barrel_nonhelium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_barrel_RECO_nonhelium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+
+            }
+
+          }
+
+          else if(RegionType==kDownstream_head){
+            h_Distance_to_InnerTank_downstreamCap_TRUE.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_downstreamCap.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_downstreamCap_Resolution.univHist(universe)->Fill(resolution_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_downstreamCap_Resolution_Percent.univHist(universe)->Fill(resolution_distance / True_distance , wgt_minerva_v1);
+
+            h_CryoVertex_X_downstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionX , wgt_minerva_v1);
+            h_CryoVertex_X_downstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionX / x_true , wgt_minerva_v1);
+            h_CryoVertex_Y_downstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionY , wgt_minerva_v1);
+            h_CryoVertex_Y_downstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionY / y_true , wgt_minerva_v1);
+
+            h_CryoVertex_R_downstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionR , wgt_minerva_v1);
+            h_CryoVertex_R_downstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionR / r_true , wgt_minerva_v1);
+            h_CryoVertex_Z_downstreamCap_resolution_RECO.univHist(universe)->Fill(resolutionZ , wgt_minerva_v1);
+            h_CryoVertex_Z_downstreamCap_percentresolution_RECO.univHist(universe)->Fill(resolutionZ / z_true , wgt_minerva_v1);
+
+
+
+            if( universe->isHeliumInteraction() ){
+              h_Distance_to_InnerTank_downstreamCap_helium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_downstreamCap_RECO_helium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+
+            }
+            else{
+              h_Distance_to_InnerTank_downstreamCap_nonhelium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_downstreamCap_RECO_nonhelium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+
+            }
+
+          }
+
+
+          if( universe->isHeliumInteraction() ){
+            h_Distance_to_InnerTank_helium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_RECO_helium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+
+          }
+          else{
+            h_Distance_to_InnerTank_nonhelium.univHist(universe)->Fill(True_distance, wgt_minerva_v1);
+            h_Distance_to_InnerTank_RECO_nonhelium.univHist(universe)->Fill(Reco_distance, wgt_minerva_v1);
+
           }
 
 
@@ -1457,12 +2077,17 @@ int PDG_match=0;
             int secondTrk = universe->Get_Index_highestKE_mc_FSPart_WithDeglessthan(54.0, Energy_trklist, Angle_trklist, PDG_trklist);
             //int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
             if(secondTrk==-999){std::cout<<"ERROR got -999 for secondtrk "<<std::endl; assert(false);};
-
+            double secTrkTrueAngle  = Angle_trklist.at(secondTrk);
+            double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
             int secTrk_PDG = PDG_trklist.at(secondTrk);
             Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
             Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
             Material_type Material_type_Event = universe->Get_MaterialStackType();
             TrackType Track_type_Event = universe->GetTrackType();
+
+            double Theta = universe->GetThetamu();
+            double Pmu = universe ->GetPmu()/1000;
+
             h_CryoVertex_resolutionX_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionX, wgt_minerva_v1);
             h_CryoVertex_resolutionX_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionX, wgt_minerva_v1);
             h_CryoVertex_resolutionX_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionX, wgt_minerva_v1);
@@ -1487,7 +2112,85 @@ int PDG_match=0;
             h_Distance_to_InnerTank_Track.GetComponentHist(Track_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
             h_Mig_Distance_to_InnerTank->Fill(Reco_distance, True_distance, wgt_minerva_v1);
 
-            if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, 20)){
+            h_Mig_Vertex_X->Fill(x,x_true,wgt_minerva_v1);
+            h_Mig_Vertex_Y->Fill(y,y_true,wgt_minerva_v1);
+            h_Mig_Vertex_R->Fill(r,r_true,wgt_minerva_v1);
+            h_Mig_Vertex_Z->Fill(z,z_true,wgt_minerva_v1);
+
+            h_distanceEdge_cryoVertex_R->Fill(Reco_distance, r,wgt_minerva_v1);
+            h_distanceEdge_cryoVertex_Z->Fill(Reco_distance, z,wgt_minerva_v1);
+            h_distanceEdge_2ndTrkE->Fill(Reco_distance, universe->GetNonmuTrkE_GeV(secondTrk) ,wgt_minerva_v1);
+            h_distanceEdge_2ndTrkAngle->Fill(Reco_distance, universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            h_distanceEdge_DOCA->Fill(Reco_distance, universe->GetNonmuDOCA(secondTrk),wgt_minerva_v1);
+            h_distanceEdge_Pathlength->Fill(Reco_distance, universe->GetNonmuTrkLength(secondTrk),wgt_minerva_v1);
+            h_distanceEdge_MuonPT->Fill(Reco_distance, Pmu*std::sin(Theta),wgt_minerva_v1);
+            h_distanceEdge_MuonPZ ->Fill(Reco_distance, Pmu*std::cos(Theta),wgt_minerva_v1);
+            h_distanceEdge_ChiSqFit->Fill(Reco_distance, universe->GetVertexChiSqrFit(),wgt_minerva_v1);
+            h_distanceEdge_2ndTrklength->Fill(Reco_distance, universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),wgt_minerva_v1);
+
+
+            if(RegionType==kUpstream_head){
+              h_Distance_to_InnerTank_upstreamCap_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_upstreamCap_Material.GetComponentHist(Material_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_upstreamCap_Particle.GetComponentHist(Particle_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_upstreamCap_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_upstreamCap_Track.GetComponentHist(Track_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Mig_Distance_to_InnerTank_upstreamCap->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+            }
+
+            else if(RegionType==kCenter){
+              h_Distance_to_InnerTank_barrel_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_barrel_Material.GetComponentHist(Material_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_barrel_Particle.GetComponentHist(Particle_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_barrel_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_barrel_Track.GetComponentHist(Track_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Mig_Distance_to_InnerTank_barrel->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+            }
+
+            else if(RegionType==kDownstream_head){
+              h_Distance_to_InnerTank_downstreamCap_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(True_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_downstreamCap_Material.GetComponentHist(Material_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_downstreamCap_Particle.GetComponentHist(Particle_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_downstreamCap_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Distance_to_InnerTank_downstreamCap_Track.GetComponentHist(Track_type_Event)->Fill(Reco_distance, wgt_minerva_v1);
+              h_Mig_Distance_to_InnerTank_downstreamCap->Fill(Reco_distance, True_distance, wgt_minerva_v1);
+            }
+
+
+            if(universe->isHeliumInteraction()){
+              h_cryoVertex_Z_R_helium->Fill(z,r,wgt_minerva_v1);
+              h_cryoVertex_Z_Pathlength_helium->Fill(z, universe->GetNonmuTrkLength(secondTrk), wgt_minerva_v1);
+              h_cryoVertex_R_Pathlength_helium->Fill(r, universe->GetNonmuTrkLength(secondTrk), wgt_minerva_v1);
+              h_cryoVertex_Z_DOCA_helium->Fill(z, universe->GetNonmuDOCA(secondTrk), wgt_minerva_v1);
+              h_cryoVertex_R_DOCA_helium->Fill(r, universe->GetNonmuDOCA(secondTrk), wgt_minerva_v1);
+
+              h_distanceEdge_cryoVertex_R_helium->Fill(Reco_distance, r,wgt_minerva_v1);
+              h_distanceEdge_cryoVertex_Z_helium->Fill(Reco_distance, z,wgt_minerva_v1);
+              h_distanceEdge_DOCA_helium->Fill(Reco_distance, universe->GetNonmuDOCA(secondTrk),wgt_minerva_v1);
+              h_distanceEdge_Pathlength_helium->Fill(Reco_distance, universe->GetNonmuTrkLength(secondTrk),wgt_minerva_v1);
+              h_distanceEdge_ChiSqFit_helium->Fill(Reco_distance, universe->GetVertexChiSqrFit(),wgt_minerva_v1);
+              h_distanceEdge_2ndTrklength_helium->Fill(Reco_distance, universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),wgt_minerva_v1);
+            }
+            else{
+              h_cryoVertex_Z_R_nonhelium->Fill(z,r,wgt_minerva_v1);
+              h_cryoVertex_Z_Pathlength_nonhelium->Fill(z, universe->GetNonmuTrkLength(secondTrk), wgt_minerva_v1);
+              h_cryoVertex_R_Pathlength_nonhelium->Fill(r, universe->GetNonmuTrkLength(secondTrk), wgt_minerva_v1);
+              h_cryoVertex_Z_DOCA_nonhelium->Fill(z, universe->GetNonmuDOCA(secondTrk), wgt_minerva_v1);
+              h_cryoVertex_R_DOCA_nonhelium->Fill(r, universe->GetNonmuDOCA(secondTrk), wgt_minerva_v1);
+
+              h_distanceEdge_cryoVertex_R_nonhelium->Fill(Reco_distance, r,wgt_minerva_v1);
+              h_distanceEdge_cryoVertex_Z_nonhelium->Fill(Reco_distance, z,wgt_minerva_v1);
+              h_distanceEdge_DOCA_nonhelium->Fill(Reco_distance, universe->GetNonmuDOCA(secondTrk),wgt_minerva_v1);
+              h_distanceEdge_Pathlength_nonhelium->Fill(Reco_distance, universe->GetNonmuTrkLength(secondTrk),wgt_minerva_v1);
+              h_distanceEdge_ChiSqFit_nonhelium->Fill(Reco_distance, universe->GetVertexChiSqrFit(),wgt_minerva_v1);
+              h_distanceEdge_2ndTrklength_nonhelium->Fill(Reco_distance, universe->GetNonmuTrkLength_InMinerva_Incm(secondTrk),wgt_minerva_v1);
+
+
+            }
+
+
+
+            if(IsInFiducalVolumeFromtheInnerEdge_new(*universe, 20)){
 
               h_CryoVertex_resolutionR_fidiucal_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionR, wgt_minerva_v1);
               h_CryoVertex_resolutionR_fidiucal_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionR, wgt_minerva_v1);
@@ -1498,128 +2201,6 @@ int PDG_match=0;
               h_CryoVertex_resolutionZ_fidiucal_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
             }
 
-
-            for(auto Fid_Cut:CutToSurface_bins_finner ){
-
-              if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(*universe, Fid_Cut)){
-
-                h_resolutionX_FidiucalCut->Fill(Fid_Cut, resolutionX,  wgt_minerva_v1);
-
-                h_resolutionY_FidiucalCut->Fill(Fid_Cut, resolutionY,  wgt_minerva_v1);
-
-                h_resolutionR_FidiucalCut->Fill(Fid_Cut, resolutionR,  wgt_minerva_v1);
-
-                h_resolutionZ_FidiucalCut->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
-
-                h_FidiucalCut_cryoVertex_R->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
-
-                h_FidiucalCut_cryoVertex_Z->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
-
-                h_FidiucalCut_cryoVertex_R_RECO->Fill(Fid_Cut, r,  wgt_minerva_v1);
-
-                h_FidiucalCut_cryoVertex_Z_RECO->Fill(Fid_Cut, z,  wgt_minerva_v1);
-
-
-                if( universe->isHeliumInteraction() ){
-                  h_resolutionR_FidiucalCut_helium->Fill(Fid_Cut, resolutionR,  wgt_minerva_v1);
-                  h_resolutionZ_FidiucalCut_helium->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_R_helium->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_Z_helium->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_R_RECO_helium->Fill(Fid_Cut, r,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_Z_RECO_helium->Fill(Fid_Cut, z,  wgt_minerva_v1);
-                }
-                else{
-                  h_resolutionR_FidiucalCut_nonhelium->Fill(Fid_Cut, resolutionR,  wgt_minerva_v1);
-                  h_resolutionZ_FidiucalCut_nonhelium->Fill(Fid_Cut, resolutionZ,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_R_nonhelium->Fill(Fid_Cut, r_true,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_Z_nonhelium->Fill(Fid_Cut, z_true,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_R_RECO_nonhelium->Fill(Fid_Cut, r,  wgt_minerva_v1);
-                  h_FidiucalCut_cryoVertex_Z_RECO_nonhelium->Fill(Fid_Cut, z,  wgt_minerva_v1);
-
-              }
-
-
-
-                if(Fid_Cut==-200){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_Neg200.push_back(XYZinput);
-                  //count_fid_neg_200= count_fid_neg_200 + wgt_minerva_v1;
-                  count_fid_neg_200++;
-                }
-                else if(Fid_Cut==-150){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_Neg150.push_back(XYZinput);
-                }
-                else if(Fid_Cut==-100){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_Neg100.push_back(XYZinput);
-                  h_CryoVertex_resolutionR_fidiucal_Neg100_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_Neg100_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_Neg100_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-
-                  h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_Neg100_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-
-                }
-                else if(Fid_Cut==-50){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_Neg50.push_back(XYZinput);
-                  h_CryoVertex_resolutionR_fidiucal_Neg50_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_Neg50_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_Neg50_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-
-                  h_CryoVertex_resolutionZ_fidiucal_Neg50_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_Neg50_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_Neg50_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-
-
-                }
-                else if(Fid_Cut==0){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut.push_back(XYZinput);
-                  //count_fid_0 = count_fid_0 + wgt_minerva_v1;
-                  count_fid_0++;
-                }
-                else if(Fid_Cut==20){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_20.push_back(XYZinput);
-                  //count_fid_0 = count_fid_0 + wgt_minerva_v1;
-                  count_fid_20++;
-                }
-
-                else if(Fid_Cut==30){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_30.push_back(XYZinput);
-                  //count_fid_0 = count_fid_0 + wgt_minerva_v1;
-                  count_fid_30++;
-                }
-                else if(Fid_Cut==50){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_50.push_back(XYZinput);
-                  count_fid_50++;
-                  h_CryoVertex_resolutionR_fidiucal_50_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_50_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_50_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-
-                  h_CryoVertex_resolutionZ_fidiucal_50_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_50_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_50_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-
-                }
-                else if(Fid_Cut==100){
-                  Vertex_XYZ XYZinput{universe->GetVertex_x(),universe->GetVertex_y(),universe->GetVertex_z()};
-                  FiducalCut_100.push_back(XYZinput);
-                  h_CryoVertex_resolutionR_fidiucal_100_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_100_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-                  h_CryoVertex_resolutionR_fidiucal_100_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionR, wgt_minerva_v1);
-
-                  h_CryoVertex_resolutionZ_fidiucal_100_RECO_Material.GetComponentHist(Material_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_100_RECO_Interaction.GetComponentHist(Interaction_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                  h_CryoVertex_resolutionZ_fidiucal_100_RECO_Particle.GetComponentHist(Particle_type_Event)->Fill(resolutionZ, wgt_minerva_v1);
-                }
-              } // end of fiduical cut
-            }// end of loop
 
           } // end of CV
 
@@ -1687,6 +2268,50 @@ int PDG_match=0;
       }// END OF TRUTH + RECO CUTS
     }//END OF TRUTH PASS CUTS
 
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc, kCutsVector_2ndtrkEnergy_noFiduical, kWeights_v1tune, CountMap_2ndTrkEnergy) ){
+      for (auto universe : Universe_GROUP){
+        universe->SetEntry(ii);
+
+        auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+        auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+        auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+        auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+        //int secondTrk = universe->Getindex2ndTrackhighestKE();
+
+
+        int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_muonNotinlist(PDG_trklist, Energy_trklist, Angle_trklist, EnergyFraction_vector);
+        if(secondTrk==-999)continue;
+
+      //  double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
+  //      double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+//        int secTrk_PDG = PDG_trklist.at(secondTrk);
+
+
+
+        if(isCV(*universe)){
+          double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+
+          if(universe->isHeliumInteraction()){
+            h_cryoVertex_Z_2ndTrkE_helium->Fill(universe->GetVertex_z(), universe->GetNonmuTrkE_GeV(secondTrk), wgt_minerva_v1);
+            h_cryoVertex_R_2ndTrkE_helium->Fill(universe->GetVertex_r(), universe->GetNonmuTrkE_GeV(secondTrk), wgt_minerva_v1);
+            h_distanceEdge_2ndTrkE_helium->Fill(RECO_Distance_to_innerTank(*universe), universe->GetNonmuTrkE_GeV(secondTrk) ,wgt_minerva_v1);
+
+          }
+          else{
+            h_cryoVertex_Z_2ndTrkE_nonhelium->Fill(universe->GetVertex_z(), universe->GetNonmuTrkE_GeV(secondTrk), wgt_minerva_v1);
+            h_cryoVertex_R_2ndTrkE_nonhelium->Fill(universe->GetVertex_r(), universe->GetNonmuTrkE_GeV(secondTrk), wgt_minerva_v1);
+            h_distanceEdge_2ndTrkE_nonhelium->Fill(RECO_Distance_to_innerTank(*universe), universe->GetNonmuTrkE_GeV(secondTrk) ,wgt_minerva_v1);
+
+          }
+
+
+
+        }
+
+
+      }// END of Universe Groups
+    }// END OF TRUTH + RECO CUTS
+
 
     if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndTrkAngle, kWeights_v1tune, Truth_Cut_Map_2ndTrkAngle )){
       // TRUTH ONLY Cuts
@@ -1752,6 +2377,66 @@ int PDG_match=0;
       }// END OF TRUTH + RECO CUTS
     }//END OF TRUTH PASS CUTS
 
+
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_2ndtrkAngle, kWeights_v1tune, CountMap_2ndTrkAngle ) ){
+      for (auto universe : Universe_GROUP){
+        universe->SetEntry(ii);
+
+        auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+        auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+        auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+        auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+        //int secondTrk = universe->Getindex2ndTrackhighestKE();
+
+
+        int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
+        if(secondTrk==-999)continue;
+
+        double secTrkTrueAngle  = Angle_trklist.at(secondTrk);
+        double secTrkEnergy = Energy_trklist.at(secondTrk);
+        double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+        int secTrk_PDG = PDG_trklist.at(secondTrk);
+        Particle_type GroupType = GetParticlegroup_type(secTrk_PDG);
+
+        double Theta = universe->GetThetamu();
+        double Pmu = universe ->GetPmu()/1000;
+      if(isCV(*universe)){
+
+          if( universe->isHeliumInteraction() ){
+            h_muonPT_2ndTrkangle_helium->Fill(Pmu*std::sin(Theta),secTrkTrueAngle,wgt_minerva_v1);
+            h_muonPZ_2ndTrkangle_helium->Fill(Pmu*std::cos(Theta),secTrkTrueAngle,wgt_minerva_v1);
+            h_2ndTrkE_2ndtrkangle_helium->Fill(universe->GetNonmuTrkE_GeV(secondTrk), secTrkTrueAngle,wgt_minerva_v1);
+            if(GroupType==kSecondary_particle_vector[0]){
+              h_2ndTrkE_2ndtrkangle_Proton_helium->Fill(universe->GetNonmuTrkE_GeV(secondTrk), universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+
+            }
+            else if(GroupType==kSecondary_particle_vector[3]||GroupType==kSecondary_particle_vector[4]){
+              h_2ndTrkE_2ndtrkangle_Pion_helium->Fill(universe->GetNonmuTrkE_GeV(secondTrk), universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            }
+          }
+
+          else{
+            h_muonPT_2ndTrkangle_nonhelium->Fill(Pmu*std::sin(Theta),universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            h_muonPZ_2ndTrkangle_nonhelium->Fill(Pmu*std::cos(Theta),universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            h_2ndTrkE_2ndtrkangle_nonhelium->Fill(universe->GetNonmuTrkE_GeV(secondTrk), secTrkTrueAngle,wgt_minerva_v1);
+            if(GroupType==kSecondary_particle_vector[0]){
+              h_2ndTrkE_2ndtrkangle_Proton_nonhelium->Fill(universe->GetNonmuTrkE_GeV(secondTrk), universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+
+            }
+            else if(GroupType==kSecondary_particle_vector[3]||GroupType==kSecondary_particle_vector[4]){
+              h_2ndTrkE_2ndtrkangle_Pion_nonhelium->Fill(universe->GetNonmuTrkE_GeV(secondTrk), universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            }
+          }
+
+
+
+        }//END OF CV
+
+      }// END of Universe Groups
+    }// END OF TRUTH + RECO CUTS
+
+
+
     if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndTrkAngle )){
       // TRUTH ONLY Cuts
       if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_2ndtrkAngle_noFidiucal, kWeights_v1tune, CountMap_2ndTrkAngle_noFidiucal ) ){
@@ -1775,6 +2460,7 @@ int PDG_match=0;
           Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
 
           if(isCV(*universe)){
+            h_distanceEdge_2ndTrkAngle_TRUE_RECO->Fill(  TRUE_Distance_to_innerTank(*universe), secTrkTrueAngle,wgt_minerva_v1);
             h_cryoVertex_Z_R_TRUE_RECO->Fill(universe->GetTRUE_Vertex_z(),universe->GetTRUE_Vertex_r(),wgt_minerva_v1);
             h_cryoVertex_Z_secTrkTheta_TRUE_RECO->Fill(universe->GetTRUE_Vertex_z(), secTrkTrueAngle,wgt_minerva_v1);
             h_cryoVertex_R_secTrkTheta_TRUE_RECO->Fill(universe->GetTRUE_Vertex_r(), secTrkTrueAngle,wgt_minerva_v1);
@@ -1791,7 +2477,49 @@ int PDG_match=0;
       }// END OF TRUTH + RECO CUTS
     }//END OF TRUTH PASS CUTS
 
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVector_2ndtrkAngle_noFidiucal, kWeights_v1tune, CountMap_2ndTrkAngle_noFidiucal ) ){
+      for (auto universe : Universe_GROUP){
+        universe->SetEntry(ii);
 
+        auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+        auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+        auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+        auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+        //int secondTrk = universe->Getindex2ndTrackhighestKE();
+
+
+        int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
+        if(secondTrk==-999)continue;
+
+        double secTrkTrueAngle  = Angle_trklist.at(secondTrk);
+        double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
+        double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+        //int secTrk_PDG = PDG_trklist.at(secondTrk);
+        //Particle_type Particle_type_Event = GetParticlegroup_type(secTrk_PDG);
+
+
+        if(isCV(*universe)){
+
+          double z= universe->GetVertex_z();
+          double r= universe->GetVertex_r();
+          double Reco_distance = RECO_Distance_to_innerTank(*universe);
+
+          if(universe->isHeliumInteraction()){
+            h_distanceEdge_2ndTrkAngle_helium->Fill(Reco_distance, universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            h_cryoVertex_Z_secTrkTheta_helium->Fill(z, universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            h_cryoVertex_R_secTrkTheta_helium->Fill(r, universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+
+          }
+          else{
+            h_distanceEdge_2ndTrkAngle_nonhelium->Fill(Reco_distance, universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            h_cryoVertex_Z_secTrkTheta_nonhelium->Fill(z, universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+            h_cryoVertex_R_secTrkTheta_nonhelium->Fill(r, universe->GetNonmuTrkAngleWRTbeamMID(secondTrk),wgt_minerva_v1);
+
+          }
+
+        }//End CV
+      }// END of Universe Groups
+    }// END OF TRUTH + RECO CUTS
 
 
     if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_ALL )){
@@ -1827,7 +2555,7 @@ int PDG_match=0;
             h_secTrk_Pathlength_PION_TRUE_RECO.univHist(universe)->Fill(Pathlength2ndTrk,wgt_minerva_v1);
           }
 
-
+          h_MuonCurvatureSig_TRUE_RECO.univHist(universe)->Fill(universe->GetCurvatureSignificance(),wgt_minerva_v1);
           h_secTrk_DOCA_TRUE_RECO.univHist(universe)->Fill(DOCA_2ndTrk,wgt_minerva_v1);
 
           if(isCV(*universe)){
@@ -1842,7 +2570,42 @@ int PDG_match=0;
       }// END OF TRUTH + RECO CUTS
     }//END OF TRUTH PASS CUTS
 
+  if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_NoOverLay )){
+    if(PassesCutsRECO(*Universe_GROUP.front(),  is_mc , kCutsVectorr_NoOverLay, kWeights_v1tune, CountMap_Dataoverlay) ){
+      for (auto universe : Universe_GROUP){
+        universe->SetEntry(ii);
+        if(isCV(*universe)){
+          auto PDG_trklist = universe->GetVector_nonMuonTk_PDG_Parent();
+          auto Energy_trklist = universe-> GetVector_nonMuonTk_Energy_GeV_Parent();
+          auto Angle_trklist = universe->GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+          auto EnergyFraction_vector = universe->Get_TrueFractionE_vector();
+          //std::cout<<"EnergyFraction_vector.size() = " <<EnergyFraction_vector.size() << std::endl;
+          //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
+          //for(auto fraction : EnergyFraction_vector ){
+            //std::cout<< "fraction: "<< fraction<<std::endl;
 
+        //  }
+
+          //std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
+          int secondTrk = universe->Get_Index_highestKE_mc_FSPart_WithDeglessthan_NO_NeutralParticles(60, Energy_trklist, Angle_trklist,PDG_trklist  );
+          //int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_muonNotinlist(PDG_trklist, Energy_trklist, EnergyFraction_vector);
+          //double RECO_distance  = RECO_Distance_to_innerTank(*universe);
+          //double Theta = universe->GetThetamu();
+          double wgt_minerva_v1 = universe->GetWeight(kWeights_v1tune);
+
+          //std::cout<<"Filling: secondTrk = "<< secondTrk<<std::endl;
+          h_AverageDataoverlayFraction.univHist(universe)->Fill(EnergyFraction_vector.at(secondTrk),wgt_minerva_v1);
+
+          //h_AverageDataoverlayFraction_Avg.univHist(universe)->Fill(EnergyFraction_vector.at(secondTrk),wgt_minerva_v1);
+
+
+
+        }//end of CV
+
+
+      }// END of Universe Groups
+    }
+  }
 
 
 
@@ -1886,11 +2649,8 @@ double countmc= 0.0;
     h_MuonE_TRUE_RECO.SyncCVHistos();
     h_MuonTheta_TRUE_RECO.SyncCVHistos();
 
-    h_FidiucalCut.SyncCVHistos();
-    h_FidiucalCut_helium.SyncCVHistos();
-    h_FidiucalCut_nonhelium.SyncCVHistos();
-    h_FidiucalCut_TRUE_RECO.SyncCVHistos();
-    //h_secTrk_tracklength_TRUE_TRUE_RECO.SyncCVHistos();
+    //h_FidiucalCut.SyncCVHistos();
+
 //////////////////////////////////
 
     h_CryoVertex_X_TRUE_RECO.SyncCVHistos();
@@ -1927,7 +2687,47 @@ double countmc= 0.0;
     h_CryoVertex_Percent_resolutionR_RECO.SyncCVHistos();
     h_CryoVertex_Percent_resolutionRR_RECO.SyncCVHistos();
 
+    h_Distance_to_InnerTank_upstreamCap_Resolution_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_upstreamCap_Resolution_Percent_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_barrel_Resolution_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_barrel_Resolution_Percent_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_downstreamCap_Resolution_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_downstreamCap_Resolution_Percent_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_Resolution_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_Resolution_Percent_TRUE_RECO.SyncCVHistos();
 
+
+    h_CryoVertex_R_upstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_R_upstreamCap_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_R_barrel_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_R_barrel_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_R_downstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_R_downstreamCap_percentresolution_RECO.SyncCVHistos();
+
+
+    h_CryoVertex_X_upstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_X_upstreamCap_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_Y_upstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_Y_upstreamCap_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_X_barrel_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_X_barrel_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_Y_barrel_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_Y_barrel_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_X_downstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_X_downstreamCap_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_Y_downstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_Y_downstreamCap_percentresolution_RECO.SyncCVHistos();
+
+
+    h_CryoVertex_Z_upstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_Z_upstreamCap_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_Z_barrel_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_Z_barrel_percentresolution_RECO.SyncCVHistos();
+    h_CryoVertex_Z_downstreamCap_resolution_RECO.SyncCVHistos();
+    h_CryoVertex_Z_downstreamCap_percentresolution_RECO.SyncCVHistos();
+
+    h_AverageDataoverlayFraction.SyncCVHistos();
+    //h_AverageDataoverlayFraction_Avg.SyncCVHistos();
 
 
     h_CryoVertex_recoZ_TRUE_RECO.SyncCVHistos();
@@ -1956,14 +2756,64 @@ double countmc= 0.0;
     h_secTrk_Pathlength_PROTON_TRUE_RECO.SyncCVHistos();
     h_secTrk_Pathlength_PION_TRUE_RECO.SyncCVHistos();
     h_secTrk_DOCA_TRUE_RECO.SyncCVHistos();
-
+    h_MuonCurvatureSig_TRUE_RECO.SyncCVHistos();
     h_Distance_to_InnerTank_TRUE.SyncCVHistos();
     h_Distance_to_InnerTank_Resolution.SyncCVHistos();
     h_Distance_to_InnerTank_Resolution_Percent.SyncCVHistos();
     h_Distance_to_InnerTank.SyncCVHistos();
     h_Distance_to_InnerTank_TRUE_RECO.SyncCVHistos();
+    h_Distance_to_InnerTank_RECO_TRUE_RECO.SyncCVHistos();
     h_Distance_to_InnerTank_helium.SyncCVHistos();
     h_Distance_to_InnerTank_nonhelium.SyncCVHistos();
+    h_Distance_to_InnerTank_RECO_helium.SyncCVHistos();
+    h_Distance_to_InnerTank_RECO_nonhelium.SyncCVHistos();
+////
+//upstream Cap
+////
+h_Distance_to_InnerTank_upstreamCap_TRUE.SyncCVHistos();
+h_Distance_to_InnerTank_upstreamCap_Resolution.SyncCVHistos();
+h_Distance_to_InnerTank_upstreamCap_Resolution_Percent.SyncCVHistos();
+h_Distance_to_InnerTank_upstreamCap.SyncCVHistos();
+h_Distance_to_InnerTank_upstreamCap_TRUE_RECO.SyncCVHistos();
+h_Distance_to_InnerTank_upstreamCap_RECO_TRUE_RECO.SyncCVHistos();
+
+h_Distance_to_InnerTank_upstreamCap_helium.SyncCVHistos();
+h_Distance_to_InnerTank_upstreamCap_nonhelium.SyncCVHistos();
+
+h_Distance_to_InnerTank_upstreamCap_RECO_helium.SyncCVHistos();
+h_Distance_to_InnerTank_upstreamCap_RECO_nonhelium.SyncCVHistos();
+
+////
+//Barrel
+////
+h_Distance_to_InnerTank_barrel_TRUE.SyncCVHistos();
+h_Distance_to_InnerTank_barrel_Resolution.SyncCVHistos();
+h_Distance_to_InnerTank_barrel_Resolution_Percent.SyncCVHistos();
+h_Distance_to_InnerTank_barrel.SyncCVHistos();
+h_Distance_to_InnerTank_barrel_TRUE_RECO.SyncCVHistos();
+h_Distance_to_InnerTank_barrel_RECO_TRUE_RECO.SyncCVHistos();
+
+h_Distance_to_InnerTank_barrel_helium.SyncCVHistos();
+h_Distance_to_InnerTank_barrel_nonhelium.SyncCVHistos();
+
+h_Distance_to_InnerTank_barrel_RECO_helium.SyncCVHistos();
+h_Distance_to_InnerTank_barrel_RECO_nonhelium.SyncCVHistos();
+
+////
+//downstream Cap
+////
+
+h_Distance_to_InnerTank_downstreamCap_TRUE.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap_Resolution.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap_Resolution_Percent.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap_TRUE_RECO.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap_RECO_TRUE_RECO.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap_helium.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap_nonhelium.SyncCVHistos();
+
+h_Distance_to_InnerTank_downstreamCap_RECO_helium.SyncCVHistos();
+h_Distance_to_InnerTank_downstreamCap_RECO_nonhelium.SyncCVHistos();
 
     //h_secTrkTheta_cryoVertex_Z_TRUE_RECO.SyncCVHistos();
     //h_secTrkTheta_cryoVertex_R_TRUE_RECO.SyncCVHistos();
@@ -2038,7 +2888,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   TGraph *TGraph_Reco_Cut_Map_Fiduical     =  Make_RECOCut_Tgraph_fromCutMap("TGraph_Reco_Cut_Map_Fiduical",         CountMap_Fiduical);
   TGraph *TGraph_Reco_Cut_Map_2ndTrkEnergy =  Make_RECOCut_Tgraph_fromCutMap("TGraph_Reco_Cut_Map_2ndTrkEnergy",     CountMap_2ndTrkEnergy);
   TGraph *TGraph_Reco_Cut_Map_2ndTrkAngle  =  Make_RECOCut_Tgraph_fromCutMap("TGraph_Reco_Cut_Map_2ndTrkAngle",      CountMap_2ndTrkAngle);
-
+  TGraph *TGraph_Reco_Cut_Map_Overlay   =  Make_RECOCut_Tgraph_fromCutMap("TGraph_Reco_Cut_Map_Overlay",       CountMap_MuonEnergy);
 
 
   //TFile *outFile(outFileName, "RECREATE");
@@ -2110,24 +2960,108 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_CryoVertex_resolutionZ_RECO.hist->Write();
   h_CryoVertex_resolutionR_RECO.hist->Write();
   h_CryoVertex_resolutionRR_RECO.hist->Write();
+
+
+  h_Distance_to_InnerTank_upstreamCap_Resolution_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_Resolution_Percent_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_barrel_Resolution_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_barrel_Resolution_Percent_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_Resolution_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_Resolution_Percent_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_Resolution_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_Resolution_Percent_TRUE_RECO.hist->Write();
+
+  h_CryoVertex_X_upstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_X_upstreamCap_percentresolution_RECO.hist->Write();
+  h_CryoVertex_Y_upstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_Y_upstreamCap_percentresolution_RECO.hist->Write();
+  h_CryoVertex_X_barrel_resolution_RECO.hist->Write();
+  h_CryoVertex_X_barrel_percentresolution_RECO.hist->Write();
+  h_CryoVertex_Y_barrel_resolution_RECO.hist->Write();
+  h_CryoVertex_Y_barrel_percentresolution_RECO.hist->Write();
+  h_CryoVertex_X_downstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_X_downstreamCap_percentresolution_RECO.hist->Write();
+  h_CryoVertex_Y_downstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_Y_downstreamCap_percentresolution_RECO.hist->Write();
+
+
+  h_CryoVertex_R_upstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_R_upstreamCap_percentresolution_RECO.hist->Write();
+  h_CryoVertex_R_barrel_resolution_RECO.hist->Write();
+  h_CryoVertex_R_barrel_percentresolution_RECO.hist->Write();
+  h_CryoVertex_R_downstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_R_downstreamCap_percentresolution_RECO.hist->Write();
+
+
+  h_AverageDataoverlayFraction.hist->Write();
+
+
+  h_CryoVertex_Z_upstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_Z_upstreamCap_percentresolution_RECO.hist->Write();
+  h_CryoVertex_Z_barrel_resolution_RECO.hist->Write();
+  h_CryoVertex_Z_barrel_percentresolution_RECO.hist->Write();
+  h_CryoVertex_Z_downstreamCap_resolution_RECO.hist->Write();
+  h_CryoVertex_Z_downstreamCap_percentresolution_RECO.hist->Write();
+
   h_CryoVertex_Percent_resolutionX_RECO.hist->Write();
   h_CryoVertex_Percent_resolutionY_RECO.hist->Write();
   h_CryoVertex_Percent_resolutionZ_RECO.hist->Write();
   h_CryoVertex_Percent_resolutionR_RECO.hist->Write();
   h_CryoVertex_Percent_resolutionRR_RECO.hist->Write();
 
-  h_FidiucalCut.hist->Write();
-  h_FidiucalCut_TRUE_RECO.hist->Write();
-  h_FidiucalCut_helium.hist->Write();
-  h_FidiucalCut_nonhelium.hist->Write();
 
   h_Distance_to_InnerTank_TRUE.hist->Write();
   h_Distance_to_InnerTank_Resolution.hist->Write();
   h_Distance_to_InnerTank_Resolution_Percent.hist->Write();
   h_Distance_to_InnerTank.hist->Write();
   h_Distance_to_InnerTank_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_RECO_TRUE_RECO.hist->Write();
   h_Distance_to_InnerTank_helium.hist->Write();
   h_Distance_to_InnerTank_nonhelium.hist->Write();
+
+  h_Distance_to_InnerTank_RECO_helium.hist->Write();
+  h_Distance_to_InnerTank_RECO_nonhelium.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_TRUE.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_Resolution.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_Resolution_Percent.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_RECO_TRUE_RECO.hist->Write();
+
+  h_Distance_to_InnerTank_upstreamCap_helium.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_nonhelium.hist->Write();
+
+  h_Distance_to_InnerTank_upstreamCap_RECO_helium.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_RECO_nonhelium.hist->Write();
+
+
+  h_Distance_to_InnerTank_barrel_TRUE.hist->Write();
+  h_Distance_to_InnerTank_barrel_Resolution.hist->Write();
+  h_Distance_to_InnerTank_barrel_Resolution_Percent.hist->Write();
+  h_Distance_to_InnerTank_barrel.hist->Write();
+  h_Distance_to_InnerTank_barrel_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_barrel_RECO_TRUE_RECO.hist->Write();
+
+  h_Distance_to_InnerTank_barrel_helium.hist->Write();
+  h_Distance_to_InnerTank_barrel_nonhelium.hist->Write();
+
+  h_Distance_to_InnerTank_barrel_RECO_helium.hist->Write();
+  h_Distance_to_InnerTank_barrel_RECO_nonhelium.hist->Write();
+
+
+  h_Distance_to_InnerTank_downstreamCap_TRUE.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_Resolution.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_Resolution_Percent.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_TRUE_RECO.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_RECO_TRUE_RECO.hist->Write();
+
+  h_Distance_to_InnerTank_downstreamCap_helium.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_nonhelium.hist->Write();
+
+  h_Distance_to_InnerTank_downstreamCap_RECO_helium.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_RECO_nonhelium.hist->Write();
+
 
 
   h_secTrk_Energy_TRUE_RECO.hist->Write();
@@ -2140,23 +3074,103 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_Distance_to_InnerTank_Particle.WriteToFile(*outFile);
   h_Distance_to_InnerTank_Interaction.WriteToFile(*outFile);
   h_Distance_to_InnerTank_Track.WriteToFile(*outFile);
+
+  h_Distance_to_InnerTank_upstreamCap_TRUE_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_upstreamCap_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_upstreamCap_Particle.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_upstreamCap_Interaction.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_upstreamCap_Track.WriteToFile(*outFile);
+
+  h_Distance_to_InnerTank_barrel_TRUE_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_barrel_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_barrel_Particle.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_barrel_Interaction.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_barrel_Track.WriteToFile(*outFile);
+
+  h_Distance_to_InnerTank_downstreamCap_TRUE_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_downstreamCap_Material.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_downstreamCap_Particle.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_downstreamCap_Interaction.WriteToFile(*outFile);
+  h_Distance_to_InnerTank_downstreamCap_Track.WriteToFile(*outFile);
+
   h_Mig_Distance_to_InnerTank->Write();
-  h_Mig_Distance_to_InnerTank_TRUE->Write();
+  h_Mig_Distance_to_InnerTank_TRUE_RECO->Write();
+  h_Mig_Distance_to_InnerTank_upstreamCap->Write();
+  h_Mig_Distance_to_InnerTank_barrel->Write();
+  h_Mig_Distance_to_InnerTank_downstreamCap->Write();
+  h_Mig_Distance_to_InnerTank_upstreamCap_TRUE_RECO->Write();
+  h_Mig_Distance_to_InnerTank_barrel_TRUE_RECO->Write();
+  h_Mig_Distance_to_InnerTank_downstreamCap_TRUE_RECO->Write();
+
+
+  h_Mig_Vertex_X->Write();
+  h_Mig_Vertex_Y->Write();
+  h_Mig_Vertex_R->Write();
+  h_Mig_Vertex_Z->Write();
+  h_distanceEdge_cryoVertex_R->Write();
+  h_distanceEdge_cryoVertex_Z->Write();
+
+  h_distanceEdge_2ndTrkE->Write();
+  h_distanceEdge_2ndTrkAngle->Write();
+  h_distanceEdge_DOCA->Write();
+  h_distanceEdge_Pathlength->Write();
+  h_distanceEdge_MuonPT->Write();
+  h_distanceEdge_MuonPZ->Write();
+  h_distanceEdge_Muontheta->Write();
+  h_distanceEdge_ChiSqFit->Write();
+  h_distanceEdge_2ndTrklength->Write();
+
+
+  h_distanceEdge_2ndTrkE_TRUE_RECO->Write();
+  h_distanceEdge_2ndTrkAngle_TRUE_RECO->Write();
+  h_distanceEdge_DOCA_TRUE_RECO->Write();
+  h_distanceEdge_Pathlength_TRUE_RECO->Write();
+  h_distanceEdge_MuonPT_TRUE_RECO->Write();
+  h_distanceEdge_MuonPZ_TRUE_RECO->Write();
+  h_distanceEdge_Muontheta_TRUE_RECO->Write();
+  //h_distanceEdge_ChiSqFit_TRUE_RECO->Write();
+  h_distanceEdge_cryoVertex_R_TRUE_RECO->Write();
+  h_distanceEdge_cryoVertex_Z_TRUE_RECO->Write();
+
   h_CryoVertex_X_Material.WriteToFile(*outFile);
+  h_CryoVertex_X_Material_Purity.WriteToFile(*outFile);
   h_CryoVertex_X_Interaction.WriteToFile(*outFile);
   h_CryoVertex_X_Particle.WriteToFile(*outFile);
 
   h_CryoVertex_Y_Material.WriteToFile(*outFile);
+  h_CryoVertex_Y_Material_Purity.WriteToFile(*outFile);
   h_CryoVertex_Y_Interaction.WriteToFile(*outFile);
   h_CryoVertex_Y_Particle.WriteToFile(*outFile);
 
+  h_CryoVertex_Z_Material_Purity.WriteToFile(*outFile);
+  h_2d_vertexZ_openAngle->Write();
+  h_2d_vertexR_openAngle->Write();
+  h_2d_vertexX_openAngle->Write();
+  h_2d_vertexY_openAngle->Write();
+  h_2d_vertex_Z_mig->Write();
+  h_2d_vertex_R_mig->Write();
+  h_2d_vertex_X_mig->Write();
+  h_2d_vertex_Y_mig->Write();
+
+
+  h_2d_Vertex_Z_R->Write();
+  h_2d_Vertex_Z_X->Write();
+  h_2d_Vertex_Z_Y->Write();
+  h_2d_Vertex_X_Y->Write();
+
+  h_CryoVertex_Z_OpenAngle.WriteToFile(*outFile);
   h_CryoVertex_Z_Material.WriteToFile(*outFile);
   h_CryoVertex_Z_Interaction.WriteToFile(*outFile);
   h_CryoVertex_Z_Particle.WriteToFile(*outFile);
-
+  h_Distance_to_InnerTank_OpenAngle.WriteToFile(*outFile);
   h_CryoVertex_R_Material.WriteToFile(*outFile);
+  h_CryoVertex_R_Material_Purity.WriteToFile(*outFile);
   h_CryoVertex_R_Interaction.WriteToFile(*outFile);
   h_CryoVertex_R_Particle.WriteToFile(*outFile);
+
+  h_CryoVertex_X_OpenAngle.WriteToFile(*outFile);
+  h_CryoVertex_Y_OpenAngle.WriteToFile(*outFile);
+  h_CryoVertex_R_OpenAngle.WriteToFile(*outFile);
 
   h_secTrk_Energy_Material.WriteToFile(*outFile);
   h_secTrk_Energy_Interaction.WriteToFile(*outFile);
@@ -2236,7 +3250,7 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
   h_secTrk_Pathlength_PROTON_TRUE_RECO.hist->Write();
   h_secTrk_Pathlength_PION_TRUE_RECO.hist->Write();
   h_secTrk_DOCA_TRUE_RECO.hist->Write();
-
+  h_MuonCurvatureSig_TRUE_RECO.hist->Write();
   h_secTrk_Pathlength_TRUE_RECO_Material.WriteToFile(*outFile);
   h_secTrk_Pathlength_TRUE_RECO_Interaction.WriteToFile(*outFile);
   h_secTrk_Pathlength_TRUE_RECO_Particle.WriteToFile(*outFile);
@@ -2251,45 +3265,11 @@ else if (m_RunCodeWithSystematics==false){sysmatics_status= "StatsONLYErrors";}
 h_resolutionR_FidiucalCut->Write();
 h_resolutionZ_FidiucalCut->Write();
 
-h_resolutionX_FidiucalCut->Write();
-h_resolutionY_FidiucalCut->Write();
-
-h_resolutionR_FidiucalCut_helium->Write();
-h_resolutionZ_FidiucalCut_helium->Write();
-h_resolutionR_FidiucalCut_nonhelium->Write();
-h_resolutionZ_FidiucalCut_nonhelium->Write();
-
-h_FidiucalCut_cryoVertex_R->Write();
-h_FidiucalCut_cryoVertex_R_helium->Write();
-h_FidiucalCut_cryoVertex_R_nonhelium->Write();
-
-h_FidiucalCut_cryoVertex_Z->Write();
-h_FidiucalCut_cryoVertex_Z_helium->Write();
-h_FidiucalCut_cryoVertex_Z_nonhelium->Write();
-
-
-h_FidiucalCut_cryoVertex_R_RECO->Write();
-h_FidiucalCut_cryoVertex_R_RECO_helium->Write();
-h_FidiucalCut_cryoVertex_R_RECO_nonhelium->Write();
-
-h_FidiucalCut_cryoVertex_Z_RECO->Write();
-h_FidiucalCut_cryoVertex_Z_RECO_helium->Write();
-h_FidiucalCut_cryoVertex_Z_RECO_nonhelium->Write();
-
-
 h_resolutionR_TRUE_RECO_FidiucalCut->Write();
 h_resolutionZ_TRUE_RECO_FidiucalCut->Write();
 
 h_resolutionX_TRUE_RECO_FidiucalCut->Write();
 h_resolutionY_TRUE_RECO_FidiucalCut->Write();
-
-
-h_FidiucalCut_cryoVertex_R_TRUE_RECO->Write();
-h_FidiucalCut_cryoVertex_Z_TRUE_RECO->Write();
-
-h_FidiucalCut_cryoVertex_R_withTRUE_fidiucal_TRUE_RECO->Write();
-h_FidiucalCut_cryoVertex_Z_withTRUE_fidiucal_TRUE_RECO->Write();
-
 
 h_cryoVertex_Z_secTrkTheta_TRUE_RECO->Write();
 h_cryoVertex_R_secTrkTheta_TRUE_RECO->Write();
@@ -2301,6 +3281,14 @@ h_cryoVertex_R_DOCA_TRUE_RECO->Write();
 h_cryoVertex_Z_2ndTrkE_TRUE_RECO->Write();
 h_cryoVertex_R_2ndTrkE_TRUE_RECO->Write();
 
+h_muonPT_2ndTrkangle_helium->Write();
+h_muonPZ_2ndTrkangle_helium->Write();
+h_muontheta_2ndTrkangle_helium->Write();
+h_2ndTrkE_2ndtrkangle_helium->Write();
+h_muonPT_2ndTrkangle_nonhelium->Write();
+h_muonPZ_2ndTrkangle_nonhelium->Write();
+h_muontheta_2ndTrkangle_nonhelium->Write();
+h_2ndTrkE_2ndtrkangle_nonhelium->Write();
 
 
 h_cryoVertex_Z_R_TRUE_RECO->Write();
@@ -2310,7 +3298,111 @@ h_muontheta_2ndTrkangle_TRUE_RECO->Write();
 h_2ndTrkE_2ndtrkangle_TRUE_RECO->Write();
 h_2ndTrkE_2ndtrkangle_Proton_TRUE_RECO->Write();
 h_2ndTrkE_2ndtrkangle_Pion_TRUE_RECO->Write();
+h_2ndTrkE_2ndtrkangle_Proton_helium->Write();
+h_2ndTrkE_2ndtrkangle_Pion_helium->Write();
+h_2ndTrkE_2ndtrkangle_Proton_nonhelium->Write();
+h_2ndTrkE_2ndtrkangle_Pion_nonhelium->Write();
 
+
+h_cryoVertex_Z_R_helium->Write();
+h_cryoVertex_Z_secTrkTheta_helium->Write();
+h_cryoVertex_R_secTrkTheta_helium->Write();
+h_cryoVertex_Z_Pathlength_helium->Write();
+h_cryoVertex_R_Pathlength_helium->Write();
+h_cryoVertex_Z_DOCA_helium->Write();
+h_cryoVertex_R_DOCA_helium->Write();
+h_cryoVertex_Z_2ndTrkE_helium->Write();
+h_cryoVertex_R_2ndTrkE_helium->Write();
+h_cryoVertex_Z_R_nonhelium->Write();
+h_cryoVertex_Z_secTrkTheta_nonhelium->Write();
+h_cryoVertex_R_secTrkTheta_nonhelium->Write();
+h_cryoVertex_Z_Pathlength_nonhelium->Write();
+h_cryoVertex_R_Pathlength_nonhelium->Write();
+h_cryoVertex_Z_DOCA_nonhelium->Write();
+h_cryoVertex_R_DOCA_nonhelium->Write();
+h_cryoVertex_Z_2ndTrkE_nonhelium->Write();
+h_cryoVertex_R_2ndTrkE_nonhelium->Write();
+
+
+h_distanceEdge_cryoVertex_R_helium->Write();
+h_distanceEdge_cryoVertex_Z_helium->Write();
+h_distanceEdge_2ndTrkE_helium->Write();
+h_distanceEdge_2ndTrkAngle_helium->Write();
+h_distanceEdge_DOCA_helium->Write();
+h_distanceEdge_Pathlength_helium->Write();
+h_distanceEdge_MuonPT_helium->Write();
+h_distanceEdge_MuonPZ_helium->Write();
+h_distanceEdge_Muontheta_helium->Write();
+h_distanceEdge_ChiSqFit_helium->Write();
+h_distanceEdge_2ndTrklength_helium->Write();
+
+h_distanceEdge_cryoVertex_R_nonhelium->Write();
+h_distanceEdge_cryoVertex_Z_nonhelium->Write();
+h_distanceEdge_DOCA_nonhelium->Write();
+h_distanceEdge_2ndTrkE_nonhelium->Write();
+h_distanceEdge_Pathlength_nonhelium->Write();
+h_distanceEdge_2ndTrkAngle_nonhelium->Write();
+h_distanceEdge_MuonPT_nonhelium->Write();
+h_distanceEdge_MuonPZ_nonhelium->Write();
+h_distanceEdge_Muontheta_nonhelium->Write();
+h_distanceEdge_ChiSqFit_nonhelium ->Write();
+h_distanceEdge_2ndTrklength_nonhelium->Write();
+
+//////////////////////
+//Write 2D migrationss
+//////////////////////
+std::cout << " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<< std::endl;
+std::cout << " Starting to write the mresp "<< std::endl;
+std::cout << " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<< std::endl;
+int check=1;
+const bool clear_bands = true;
+
+
+
+for (auto cat: MnvR_vector){
+
+  cout <<"Counter = "<< check << std::endl;
+
+  MnvH2D *migrationH = NULL;
+  MnvH2D *h_reco = NULL;
+  MnvH2D *h_truth = NULL;
+  bool check = cat->GetMigrationObjects(migrationH, h_reco, h_truth );
+
+  std::vector<std::string> errorhreco = h_reco->GetVertErrorBandNames();
+  for(auto dog : errorhreco){std::cout<<"errorhreco error band "<< dog<< std::endl;}
+
+
+
+  std::cout<< "finished bool check = cat->GetMigrationObjects(migrationH, h_reco, h_truth );"<<std::endl;
+  PlotUtils::Hist2DWrapper<HeliumCVUniverse> mresp = PlotUtils::Hist2DWrapper<HeliumCVUniverse>(migrationH, error_bands, clear_bands);
+  PlotUtils::Hist2DWrapper<HeliumCVUniverse> mresp_reco = PlotUtils::Hist2DWrapper<HeliumCVUniverse>(h_reco, error_bands, !clear_bands);
+  PlotUtils::Hist2DWrapper<HeliumCVUniverse> mresp_true = PlotUtils::Hist2DWrapper<HeliumCVUniverse>(h_truth, error_bands, !clear_bands);
+
+  std::cout<< "finihsed  mresp"<<std::endl;
+  mresp.SyncCVHistos();
+  mresp_reco.SyncCVHistos();
+  mresp_true.SyncCVHistos();
+  std::cout<< "finihsed  mresp.SyncCVHistos();"<<std::endl;
+  mresp.hist->Write();
+  std::cout<< "finihsed mresp_reco.hist->Write();  "<<std::endl;
+  //h_reco.SyncCVHistos();
+  mresp_reco.hist->Write();
+  std::vector<std::string> error_names1 = mresp_reco.hist->GetVertErrorBandNames();
+  std::vector<std::string> error_names2 = mresp_true.hist->GetVertErrorBandNames();
+  std::vector<std::string> error_names3 = mresp.hist->GetVertErrorBandNames();
+  //DrawPanel_SystematicErrorPlots_ProjectionY(h_reco,"P_{Z}", "P_{T}", title_char, text_title_pdf2 , .8, true, Print1Dplots );
+  for(auto dog : error_names1){std::cout<<"h_reco error band "<< dog<< std::endl;}
+  //fstd::cout<< "finihsed h_reco->Write();  "<<std::endl;
+  //h_truth.SyncCVHistos();
+  for(auto dog : error_names1){std::cout<<"mresp error band "<< dog<< std::endl;}
+
+  for(auto dog : error_names2){std::cout<<"h_truth error band "<< dog<< std::endl;}
+  mresp_true.hist->Write();
+
+  std::cout<< "finihsed mresp_true->Write();  "<<std::endl;
+  check++;
+
+}
 
   outFile->Close();
 
@@ -2343,16 +3435,15 @@ char pdf_end[1024];
 
     can -> Print(pdf_start);
 
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg200 , c, " Fiduical -200 ", pdf_name , can, mnv_plotter);
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg150 , c, " Fiduical -150 ", pdf_name , can, mnv_plotter);
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg100 , c, " Fiduical -100 ", pdf_name , can, mnv_plotter);
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg50 , c, " Fiduical -50 ", pdf_name , can, mnv_plotter);
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut , c, " Fiduical 0 ", pdf_name , can, mnv_plotter);
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_20 , c, " Fiduical 20 ", pdf_name , can, mnv_plotter);
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_30 , c, " Fiduical 30 ", pdf_name , can, mnv_plotter);
-
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_50 , c, " Fiduical 50 ", pdf_name , can, mnv_plotter);
-  DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_100 , c, " Fiduical 100 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg200 , c, " Fiduical -200 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg150 , c, " Fiduical -150 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg100 , c, " Fiduical -100 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_Neg50 , c, " Fiduical -50 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut , c, " Fiduical 0 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_20 , c, " Fiduical 20 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_30 , c, " Fiduical 30 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_50 , c, " Fiduical 50 ", pdf_name , can, mnv_plotter);
+  //DrawVertex_Cryotank_X_Y_R_Vs_Z(FiducalCut_100 , c, " Fiduical 100 ", pdf_name , can, mnv_plotter);
 
 
 
@@ -2408,7 +3499,7 @@ std::vector<ECuts> GetRECOCutsFor_2ndTrkEnergyVector() {
   ret_vec.push_back(kVertexConverge);
   ret_vec.push_back(kVertex_ConvergedfromAllTracks);
   ret_vec.push_back(kMaxChiSqrt_byTrackType);
-  ret_vec.push_back(kFiducialVolume);
+  ret_vec.push_back(kFiducialVolume_new);
 
   ret_vec.push_back(kVeto );
   ret_vec.push_back(kSix );
@@ -2421,7 +3512,38 @@ std::vector<ECuts> GetRECOCutsFor_2ndTrkEnergyVector() {
   return ret_vec;
 //#endif
 }
+std::vector<ECuts> GetRECOCutsFor_2ndTrkEnergyVector_nofidiucal() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts );
+  ret_vec.push_back(kGoodEnergy );
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
 
+  ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kMu_is_Plausible);
+
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kVertexConverge);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+
+
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
+  ret_vec.push_back(kTrackForwardGoing);
+  //ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+
+  ret_vec.push_back(kAllCuts );
+  return ret_vec;
+//#endif
+}
 std::vector<ECuts> GetVectorRECOCutsEmu_Eff() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECuts> ret_vec;
@@ -2441,7 +3563,7 @@ std::vector<ECuts> GetVectorRECOCutsEmu_Eff() {
   ret_vec.push_back(kVertexConverge);
   ret_vec.push_back(kVertex_ConvergedfromAllTracks);
   ret_vec.push_back(kMaxChiSqrt_byTrackType);
-  ret_vec.push_back(kFiducialVolume);
+  ret_vec.push_back(kFiducialVolume_new);
 
   ret_vec.push_back(kVeto );
   ret_vec.push_back(kSix );
@@ -2475,7 +3597,7 @@ std::vector<ECuts> GetVectorRECOCuts_MuonTheta_Eff() {
   ret_vec.push_back(kVertexConverge);
   ret_vec.push_back(kVertex_ConvergedfromAllTracks);
   ret_vec.push_back(kMaxChiSqrt_byTrackType);
-  ret_vec.push_back(kFiducialVolume);
+  ret_vec.push_back(kFiducialVolume_new);
 
   ret_vec.push_back(kVeto );
   ret_vec.push_back(kSix );
@@ -2488,6 +3610,72 @@ std::vector<ECuts> GetVectorRECOCuts_MuonTheta_Eff() {
   return ret_vec;
 //#endif
 }
+
+std::vector<ECuts> GetVectorRECOCuts_MuonTheta_Eff_noFiducial() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts );
+  ret_vec.push_back(kGoodEnergy );
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
+
+//ret_vec.push_back(kThetaMu );
+  //ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kMu_is_Plausible);
+
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kVertexConverge);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+  //ret_vec.push_back(kFiducialVolume_new);
+
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
+  ret_vec.push_back(kTrackForwardGoing);
+  ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+
+  ret_vec.push_back(kAllCuts );
+  return ret_vec;
+//#endif
+}
+std::vector<ECuts> GetVectorRECOCuts_MuonTheta_no2ndangle() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts );
+  ret_vec.push_back(kGoodEnergy );
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
+
+//ret_vec.push_back(kThetaMu );
+  //ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kMu_is_Plausible);
+
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kVertexConverge);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+  ret_vec.push_back(kFiducialVolume_new);
+
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
+  ret_vec.push_back(kTrackForwardGoing);
+  //ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+
+  ret_vec.push_back(kAllCuts );
+  return ret_vec;
+//#endif
+}
+
 
 std::vector<ECuts> GetVectorRECOCuts_ALL() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
@@ -2510,7 +3698,7 @@ std::vector<ECuts> GetVectorRECOCuts_ALL() {
   ret_vec.push_back(kMinosCharge );
 
   ret_vec.push_back(kVertexConverge);
-  ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kFiducialVolume_new );
   ret_vec.push_back(kTrackForwardGoing );
   ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
   //ret_vec.push_back(kMaxChiSqrt);
@@ -2544,7 +3732,42 @@ std::vector<ECuts> GetVectorRECOCuts_MuonEnergy_Eff() {
   ret_vec.push_back(kMinosCharge );
 
   ret_vec.push_back(kVertexConverge);
-  ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kFiducialVolume_new );
+  ret_vec.push_back(kTrackForwardGoing );
+  ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+  //ret_vec.push_back(kMaxChiSqrt);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+  ret_vec.push_back(kAllCuts );
+
+  //int n = sizeof(kCutsArray) / sizeof(kCutsArray[0]);
+  //static std::vector<ECuts> ret_vec(kCutsArray, kCutsArray + n);
+  return ret_vec;
+//#endif
+}
+
+std::vector<ECuts> GetVectorRECOCuts_MuonEnergy_noFiduical() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts  );
+  //ret_vec.push_back(kGoodEnergy );
+  ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMu_is_Plausible);
+  ret_vec.push_back(kNonMu_is_Plausible);
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
+
+  ret_vec.push_back(kVertexConverge);
+  //ret_vec.push_back(kFiducialVolume_new );
   ret_vec.push_back(kTrackForwardGoing );
   ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
   //ret_vec.push_back(kMaxChiSqrt);
@@ -2579,7 +3802,7 @@ std::vector<ECuts> GetRECOCutsFor2ndTrkAngleVector() {
   ret_vec.push_back(kMinosCharge );
 
   ret_vec.push_back(kVertexConverge);
-  ret_vec.push_back(kFiducialVolume );
+  ret_vec.push_back(kFiducialVolume_new );
   ret_vec.push_back(kTrackForwardGoing );
   //ret_vec.push_back(kMaxChiSqrt);
   ret_vec.push_back(kVertex_ConvergedfromAllTracks);
@@ -2660,6 +3883,57 @@ std::vector<ECuts> GetVectorRECOCutsFidicual_Eff() {
 //#endif
 }
 
+std::vector<ECuts> GetVectorRECOCuts_DataOverLay_Eff() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECuts> ret_vec;
+  ret_vec.push_back(kNoCuts );
+  ret_vec.push_back(kGoodEnergy );
+  ret_vec.push_back(kUsableMuon);
+  ret_vec.push_back(kMinosCoil );
+  ret_vec.push_back(kMinosMatch);
+  ret_vec.push_back(kMinosCurvature);
+  ret_vec.push_back(kMinosCharge );
+
+  ret_vec.push_back(kThetaMu );
+  ret_vec.push_back(kMuonAngle );
+  ret_vec.push_back(kNTracks);
+  ret_vec.push_back(kVertexConverge);
+  ret_vec.push_back(kVertex_ConvergedfromAllTracks);
+  ret_vec.push_back(kMaxChiSqrt_byTrackType);
+  ret_vec.push_back(kFiducialVolume_new);
+
+  ret_vec.push_back(kVeto );
+  ret_vec.push_back(kSix );
+  ret_vec.push_back(kMatchVetoDeadPaddle);
+
+  ret_vec.push_back(kTrackForwardGoing);
+  ret_vec.push_back(ksecTrkwrtblessthanMaxAngle);
+
+  ret_vec.push_back(kAllCuts );
+  return ret_vec;
+//#endif
+}
+
+
+
+std::vector<ECutsTRUTH> GetTRUTH_OverlayMuCutsVector() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECutsTRUTH> True_vec;
+  True_vec.push_back(kTRUTHNoCuts   );
+  True_vec.push_back(kTRUTHMuonEnergy );
+  //True_vec.push_back(kTRUTHMuonAngle );
+  True_vec.push_back(kTRUTHneutrino);
+  True_vec.push_back(kTRUTHCCInteraction );
+  True_vec.push_back(kTRUTHtarget);
+  True_vec.push_back(kTRUTH_greaterthanoneFS);
+  //True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH_NoOverLayFraction);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  True_vec.push_back(kAllTRUTHCuts);
+
+  return True_vec;
+//#endif
+}
 
 
 std::vector<ECutsTRUTH> GetTRUTH_ThetaMuCutsVector() {
@@ -2680,6 +3954,8 @@ std::vector<ECutsTRUTH> GetTRUTH_ThetaMuCutsVector() {
   return True_vec;
 //#endif
 }
+
+
 
 std::vector<ECutsTRUTH> GetTRUTH_FidiucalMuCutsVector() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
@@ -2764,7 +4040,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkAngle() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTHFiduical);
-  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_noAngleCut_RECOBRANCH);
+  //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_noAngleCut_RECOBRANCH);
   //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH);
   //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
   //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
@@ -2789,7 +4065,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTHFiduical);
-  True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
+  //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_RECOBRANCH);
   //True_vec.push_back(kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH);
   //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
   //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);

@@ -9,9 +9,6 @@ std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/CrossSection_Hists
 std::vector<MuonVar> GetCrossSectionVaribles();
 std::vector<ME_helium_Playlists> GetFullPlayListVector();
 std::vector<ME_helium_Playlists> GetEmptyPlayListVector();
-void POT_Normalize_CrossSection_Hist(CrossSection_Hist &inputCross_Hist, double normalize_MC_data, double normalize_fullData_emptyData=1, bool dodata=false);
-void Subtract_CrossSection_Hist(CrossSection_Hist &inputCross_Hist_Full, CrossSection_Hist &inputCross_Hist_Empty);
-void AddErrorBands_TOEffDom(CrossSection_Hist &inputCross_Hist);
 void RunCrossSectionExtractor(bool &my_norm, bool &my_debug, int &Print_Systematics){
 TH1::AddDirectory(false);
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
@@ -57,36 +54,36 @@ Pot_MapStatusList POT_MC_Status, POT_DATA_Status;
 // going to try to find E first
 ///////////////////////////////
 // lets start with two playlist F and G
-auto PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_All_SysErrorsOn.root";
+auto PlaylistME_1L_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_MC_All_SysErrorsOn.root";
 auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_All_SysErrorsOn.root";
 
 
-auto PlaylistME_1F_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1F_Data.root";
+auto PlaylistME_1L_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1L_Data.root";
 auto PlaylistME_1G_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1G_Data.root";
 
 
-auto PlaylistME_1F_TRUTH_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_TRUTH_All_SysErrorsOn.root";
+auto PlaylistME_1L_TRUTH_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_TRUTH_All_SysErrorsOn.root";
 auto PlaylistME_1G_TRUTH_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_TRUTH_All_SysErrorsOn.root";
 
 
-//auto PlaylistME_1F_TRUTH_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_TRUTH_StatsONLY.root";
+//auto PlaylistME_1L_TRUTH_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_TRUTH_StatsONLY.root";
 //auto PlaylistME_1G_TRUTH_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_TRUTH_StatsONLY.root";
 
 
 
-TFile *TFile_ME1F_RECO_MC = new TFile(PlaylistME_1F_MC_path);
+TFile *TFile_ME1L_RECO_MC = new TFile(PlaylistME_1L_MC_path);
 TFile *TFile_ME1G_RECO_MC = new TFile(PlaylistME_1G_MC_path);
 
-TFile *TFile_ME1F_TRUTH_MC = new TFile(PlaylistME_1F_TRUTH_MC_path);
+TFile *TFile_ME1L_TRUTH_MC = new TFile(PlaylistME_1L_TRUTH_MC_path);
 TFile *TFile_ME1G_TRUTH_MC = new TFile(PlaylistME_1G_TRUTH_MC_path);
 
-TFile *TFile_ME1F_DATA = new TFile(PlaylistME_1F_Data_path);
+TFile *TFile_ME1L_DATA = new TFile(PlaylistME_1L_Data_path);
 TFile *TFile_ME1G_DATA = new TFile(PlaylistME_1G_Data_path);
 
 
 auto MuonVaribles = GetCrossSectionVaribles();
 
-auto outFile = TFile::Open("CrossSection.root", "RECREATE");
+auto outFile = TFile::Open("CrossSection_closureTest.root", "RECREATE");
 
 CrossSection_histNames MuonE_names = Constuct_crosssection_Histname(MuonVaribles[0]);
 CrossSection_histNames MuonPZ_names = Constuct_crosssection_Histname(MuonVaribles[1]);
@@ -105,7 +102,7 @@ Print_crosssection_Histname(MuonTheta_names);
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
-CrossSection_Hist MuonE_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonE_names, TFile_ME1F_RECO_MC, TFile_ME1F_TRUTH_MC, TFile_ME1F_DATA);
+CrossSection_Hist MuonE_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonE_names, TFile_ME1L_RECO_MC, TFile_ME1L_TRUTH_MC, TFile_ME1L_DATA);
 std::cout<<"got full hist"<< std::endl;
 CrossSection_Hist MuonE_CrossSection_Hists_Empty = Constuct_crosssection_Hists(MuonE_names, TFile_ME1G_RECO_MC, TFile_ME1G_TRUTH_MC, TFile_ME1G_DATA);
 std::cout<<"got empty hist"<< std::endl;
@@ -116,7 +113,7 @@ WritetoTFile_All(MuonE_CrossSection_Hists_Full, *outFile, "h_MuonE_Full");
 WritetoTFile_All(MuonE_CrossSection_Hists_Empty, *outFile, "h_MuonE_Empty");
 
 
-CrossSection_Hist MuonPZ_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonPZ_names, TFile_ME1F_RECO_MC, TFile_ME1F_TRUTH_MC, TFile_ME1F_DATA);
+CrossSection_Hist MuonPZ_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonPZ_names, TFile_ME1L_RECO_MC, TFile_ME1L_TRUTH_MC, TFile_ME1L_DATA);
 std::cout<<"got full hist"<< std::endl;
 CrossSection_Hist MuonPZ_CrossSection_Hists_Empty = Constuct_crosssection_Hists(MuonPZ_names, TFile_ME1G_RECO_MC, TFile_ME1G_TRUTH_MC, TFile_ME1G_DATA);
 std::cout<<"got empty hist"<< std::endl;
@@ -131,7 +128,7 @@ WritetoTFile_All(MuonPZ_CrossSection_Hists_Empty, *outFile, "h_MuonPZ_Empty");
 
 
 
-CrossSection_Hist MuonPT_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonPT_names, TFile_ME1F_RECO_MC, TFile_ME1F_TRUTH_MC, TFile_ME1F_DATA);
+CrossSection_Hist MuonPT_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonPT_names, TFile_ME1L_RECO_MC, TFile_ME1L_TRUTH_MC, TFile_ME1L_DATA);
 std::cout<<"got full hist"<< std::endl;
 CrossSection_Hist MuonPT_CrossSection_Hists_Empty = Constuct_crosssection_Hists(MuonPT_names, TFile_ME1G_RECO_MC, TFile_ME1G_TRUTH_MC, TFile_ME1G_DATA);
 std::cout<<"got empty hist"<< std::endl;
@@ -141,7 +138,7 @@ Check_NSignalBins(MuonPT_CrossSection_Hists_Empty,"MuonPT_CrossSection_Hists_Emp
 WritetoTFile_All(MuonPT_CrossSection_Hists_Full, *outFile, "h_MuonPT_Full");
 WritetoTFile_All(MuonPT_CrossSection_Hists_Empty, *outFile, "h_MuonPT_Empty");
 
-CrossSection_Hist MuonTheta_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonTheta_names, TFile_ME1F_RECO_MC, TFile_ME1F_TRUTH_MC, TFile_ME1F_DATA);
+CrossSection_Hist MuonTheta_CrossSection_Hists_Full = Constuct_crosssection_Hists(MuonTheta_names, TFile_ME1L_RECO_MC, TFile_ME1L_TRUTH_MC, TFile_ME1L_DATA);
 std::cout<<"got full hist"<< std::endl;
 CrossSection_Hist MuonTheta_CrossSection_Hists_Empty = Constuct_crosssection_Hists(MuonTheta_names, TFile_ME1G_RECO_MC, TFile_ME1G_TRUTH_MC, TFile_ME1G_DATA);
 std::cout<<"got empty hist"<< std::endl;
@@ -156,16 +153,17 @@ std::cout<<"~~~~~~~~~~~~GET POT    ~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
 
-POT_MC_Status[kFULL] = Pot_from_rootpathway(PlaylistME_1F_MC_path, true );
+//POT_MC_Status[kFULL] = Pot_from_rootpathway(PlaylistME_1L_MC_path, true );
 POT_MC_Status[kEMPTY] = Pot_from_rootpathway(PlaylistME_1G_MC_path, true );
 
-POT_DATA_Status[kFULL] = Pot_from_rootpathway(PlaylistME_1F_Data_path, false );
+POT_DATA_Status[kFULL] = Pot_from_rootpathway(PlaylistME_1L_Data_path, false );
 POT_DATA_Status[kEMPTY] = Pot_from_rootpathway(PlaylistME_1G_Data_path, false );
 
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~Normalize Hist ~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
-
+;
+POT_MC_Status[kFULL] =  CountPOT(PlaylistME_1L_MC_path);
 
 POT_Normalize_CrossSection_Hist(MuonE_CrossSection_Hists_Full, POT_DATA_Status[kFULL]/POT_MC_Status[kFULL]);
 POT_Normalize_CrossSection_Hist(MuonE_CrossSection_Hists_Empty, POT_DATA_Status[kFULL]/POT_MC_Status[kEMPTY], POT_DATA_Status[kFULL] / POT_DATA_Status[kEMPTY], true );
@@ -192,14 +190,15 @@ std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 
-POT_Normalize_CrossSection_Hist(MuonPT_CrossSection_Hists_Full, POT_DATA_Status[kFULL]/POT_MC_Status[kFULL]);
+POT_Normalize_CrossSection_Hist(MuonPT_CrossSection_Hists_Full, 1.0);
 POT_Normalize_CrossSection_Hist(MuonPT_CrossSection_Hists_Empty, POT_DATA_Status[kFULL]/POT_MC_Status[kEMPTY], POT_DATA_Status[kFULL] / POT_DATA_Status[kEMPTY], true );
 WritetoTFile_main(MuonPT_CrossSection_Hists_Full, *outFile, "h_MuonPT_Full_potnorm");
 WritetoTFile_main(MuonPT_CrossSection_Hists_Empty, *outFile, "h_MuonPT_Empty_potnorm");
-Subtract_CrossSection_Hist(MuonPT_CrossSection_Hists_Full, MuonPT_CrossSection_Hists_Empty);
+//Subtract_CrossSection_Hist(MuonPT_CrossSection_Hists_Full, MuonPT_CrossSection_Hists_Empty);
 WritetoTFile_main(MuonPT_CrossSection_Hists_Full, *outFile, "h_MuonPT_Full_sub_Empty_potnorm");
-WritetoTFile_NormTRUECrossSection(MuonPT_CrossSection_Hists_Full,*outFile, "h_MuonPT_TrueCrossSection",  NHelium, POT_DATA_Status[kFULL]);
-
+const double trackerAtomsC = 2.22311e+27 * 92.;
+WritetoTFile_NormTRUECrossSection(MuonPT_CrossSection_Hists_Full,*outFile, "h_MuonPT_TrueCrossSection",  NHelium, POT_MC_Status[kFULL]);
+std::cout<<"POT MC PT = "<< POT_MC_Status[kFULL] <<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
@@ -213,9 +212,12 @@ WritetoTFile_main(MuonTheta_CrossSection_Hists_Full, *outFile, "h_MuonTheta_Full
 WritetoTFile_main(MuonTheta_CrossSection_Hists_Empty, *outFile, "h_MuonTheta_Empty_potnorm");
 Subtract_CrossSection_Hist(MuonTheta_CrossSection_Hists_Full, MuonTheta_CrossSection_Hists_Empty);
 WritetoTFile_main(MuonTheta_CrossSection_Hists_Full, *outFile, "h_MuonTheta_Full_sub_Empty_potnorm");
+
+
+
 WritetoTFile_NormTRUECrossSection(MuonTheta_CrossSection_Hists_Full,*outFile, "h_MuonTheta_TrueCrossSection",  NHelium, POT_DATA_Status[kFULL]);
 
-
+/*
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~ UnFolding ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
@@ -292,7 +294,7 @@ h_crossSection_MuonPT->Clone()->Write("h_MuonPT_CrossSection_data_unfolded");
 auto h_crossSection_MuonTheta = normalize(unfoldedMuonTheta_data, MuonTheta_CrossSection_Hists_Full.h_flux, NHelium, POT_DATA_Status[kFULL]);
 h_crossSection_MuonTheta->Clone()->Write("h_MuonTheta_CrossSection_data_unfolded");
 
-
+*/
 outFile->Close();
 
 } // end of RunCrossSectionExtractor
@@ -300,6 +302,7 @@ outFile->Close();
 
 //Unfolding function from Aaron Bercelle
 //TODO: Trim it down a little?  Remove that static?
+/*
 PlotUtils::MnvH1D* UnfoldHist( PlotUtils::MnvH1D* h_folded, PlotUtils::MnvH2D* h_migration, int num_iter )
 {
   static MinervaUnfold::MnvUnfold unfold;
@@ -346,6 +349,8 @@ PlotUtils::MnvH1D* UnfoldHist( PlotUtils::MnvH1D* h_folded, PlotUtils::MnvH2D* h
   return h_unfolded;
 }
 
+*/
+/*
 //The final step of cross section extraction: normalize by flux, bin width, POT, and number of targets
 PlotUtils::MnvH1D* normalize(PlotUtils::MnvH1D* efficiencyCorrected, PlotUtils::MnvH1D* fluxIntegral, const double nNucleons, const double POT)
 {
@@ -357,7 +362,7 @@ PlotUtils::MnvH1D* normalize(PlotUtils::MnvH1D* efficiencyCorrected, PlotUtils::
 
   return efficiencyCorrected;
 }
-
+*/
 /////////////////////////////////////////////
 std::vector<MuonVar> GetCrossSectionVaribles() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
@@ -372,35 +377,6 @@ std::vector<MuonVar> GetCrossSectionVaribles() {
 //#endif
 }
 
-void POT_Normalize_CrossSection_Hist(CrossSection_Hist &inputCross_Hist, double normalize_MC_data, double normalize_fullData_emptyData, bool dodata){
-  if(dodata==true){
-    inputCross_Hist.h_Data_Signal->Scale(normalize_fullData_emptyData);
-  }
-
-  inputCross_Hist.h_RECO_Signal->Scale(normalize_MC_data);
-  inputCross_Hist.h_effNum->Scale(normalize_MC_data);
-  inputCross_Hist.h_effDom->Scale(normalize_MC_data);
-  inputCross_Hist.h_Mig->Scale(normalize_MC_data);
-
-}
-
-void AddErrorBands_TOEffDom(CrossSection_Hist &inputCross_Hist){
-inputCross_Hist.h_effDom->AddMissingErrorBandsAndFillWithCV(*inputCross_Hist.h_effNum);
-return;
-}// end of function
-
-
-
-
-
-void Subtract_CrossSection_Hist(CrossSection_Hist &inputCross_Hist_Full, CrossSection_Hist &inputCross_Hist_Empty){
-
-  inputCross_Hist_Full.h_Data_Signal->Add(inputCross_Hist_Empty.h_Data_Signal,-1);
-  inputCross_Hist_Full.h_RECO_Signal->Add(inputCross_Hist_Empty.h_RECO_Signal,-1);
-  inputCross_Hist_Full.h_effNum->Add(inputCross_Hist_Empty.h_effNum,-1);
-  inputCross_Hist_Full.h_effDom->Add(inputCross_Hist_Empty.h_effDom,-1);
-
-}
 
 
 
@@ -414,9 +390,9 @@ std::vector<ME_helium_Playlists> GetFullPlayListVector() {
 
   //Playlist.push_back(kME1C);
 
-  //Playlist.push_back(kME1F);
+  Playlist.push_back(kME1L);
 
-  Playlist.push_back(kME1F);
+  //Playlist.push_back(kME1F);
   //Playlist.push_back(kME1G);
   return Playlist;
 //#endif

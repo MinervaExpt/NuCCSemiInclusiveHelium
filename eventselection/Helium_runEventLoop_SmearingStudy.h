@@ -36,11 +36,13 @@
 
 #include "../includes/HeliumCVUniverse.h"
 #include "../includes/Helium_VertexSmearing_LateralSystematics_2XY_2Z.h"
+#include "../includes/Helium_Vertex_XYZ_Smearing_LateralSystematics.h"
 #include "../includes/Helium_TargetMassSystematics.h"
 #include "../includes/HeliumCuts.h"
 #include "../includes/HeliumUtils.h"
 #include "../includes/loadLibs.h"
 #include "../includes/CryoTankUtils.h"
+#include "../includes/Helium_ConvolutionTool.h"
 #include <PlotUtils/POTCounter.h>
 #include "TChain.h"
 #include "EventCounting.h"
@@ -57,6 +59,7 @@
 #include <TROOT.h>
 #include <TFile.h>
 #include <algorithm>
+
 //class MnvH1D;
 //class MnvH2D;
 

@@ -4,9 +4,7 @@
 
 #include "HeliumCVUniverse.h"
 
-const double Mev_to_GeV=.001;
-const double True_Start_Znode = 4292.96; // mm
-const double FirstPlaneZPostion = 4337.25; // mm
+
 
 //CTOR
 double HeliumCVUniverse::GetTrueQ0() const{
@@ -14,6 +12,8 @@ double HeliumCVUniverse::GetTrueQ0() const{
   q0 = GetVecElem("mc_incomingPartVec",3) - GetVecElem("mc_primFSLepton",3);
   return q0/1000.0;
 }
+
+
 ///////////////////////////////////////////////////
 
 double HeliumCVUniverse::GetTrueQ3( ) const {
@@ -61,6 +61,34 @@ Interaction_type HeliumCVUniverse::Get_InteractionStackType()const {
   Interaction_type Type =GetInteractionenum(interaction_type);
   return Type;
 }
+
+
+
+
+
+Interaction_type HeliumCVUniverse::Get_Interaction_withDISbreakdown()const {
+  int interaction_type = GetIntactionType();
+  double Wmass = GetExpWTrue();
+  double Qsrt = GetQ2Exp_GeV();
+  int resID = GetresID();
+
+  Interaction_type Type =GetInteractionenum_DISBreakdown(interaction_type , Wmass,Qsrt, resID);
+  return Type;
+}
+
+
+
+Interaction_type HeliumCVUniverse::Get_Interaction_withDISbreakdown_AnaDev()const {
+  int interaction_type = GetIntactionType();
+  double Wmass = GetExpWTrue_AnaDev();
+  double Qsrt = GetQ2Exp_AnaDev_GeV();
+  int resID = GetresID();
+
+  Interaction_type Type = GetInteractionenum_DISBreakdown(interaction_type , Wmass,Qsrt, resID);
+  return Type;
+}
+
+
 ///////////////////////////////////////////////////
 Particle_type HeliumCVUniverse::Get_NonParticleStackType(int trk) const{
   int PDG =   GetNon_muon_PDG(trk );
@@ -115,6 +143,27 @@ double HeliumCVUniverse::GetVertex_r()                 const{
   double y = HeliumCVUniverse::GetVertex_y() ;
   double r = sqrt(pow(x,2)+ pow(y,2));
   return r ;};
+
+  Vertex_XYZ HeliumCVUniverse::VertexPostion() const{
+    return Vertex_XYZ( GetVecElem("cryo_vtx",0), GetVecElem("cryo_vtx",1), GetVecElem("cryo_vtx",2));
+
+  };
+
+   FluxSlices HeliumCVUniverse::GetTRUERegionSliceHelium()const{
+   return  returnRegionSliceType(GetTRUE_Vertex_x(),  GetTRUE_Vertex_y()); };
+
+  
+
+   FluxSlices HeliumCVUniverse::GetTRUERegion12DAISY_SliceHelium()const{
+   return  returnHeliumdaisyType_inputYX(GetTRUE_Vertex_y(),  GetTRUE_Vertex_x()); };
+
+
+ FluxSlices HeliumCVUniverse::GetRECORegionSliceHelium()const{
+  return  returnRegionSliceType(GetVertex_x(), GetVertex_y()); };
+
+
+
+
 //////////////////////////////////////////////////////
 // Get Vertex Opt Type
 //////////////////////////////////
@@ -342,7 +391,7 @@ int HeliumCVUniverse::Getindex2ndTrack_TRUE_highestKE()const{
 //Get TRUTH Info
 //////////////////////////////////////////////////////////////////////////
 double HeliumCVUniverse::GetTRUE_Emu()   const { return GetDouble("truth_true_muon_E")*.001; }
-double HeliumCVUniverse::GetTRUE_Pmu()   const { return sqrt(pow(GetTRUE_Emu(),2.0) - pow(HeliumConsts::MUON_MASS_GEV,2.0)); }
+double HeliumCVUniverse::GetTRUE_Pmu()   const { return sqrt(pow(GetTRUE_Emu(),2.0) - pow(HeliumConsts::MUON_MASS_GEV,2.0)); } // GeV
 double HeliumCVUniverse::GetTRUE_PZmu()  const { return GetVecElem("mc_primFSLepton",2)* .001;}
 ///////////////////////////////////////////////////
 double HeliumCVUniverse::GetTRUE_muANGLE_WRTB_DEG() const{return GetDouble("truth_true_muon_theta") * TMath::RadToDeg(); }
@@ -356,6 +405,64 @@ double HeliumCVUniverse::GetTRUE_PTmu() const
   return pT;
 };
 ///////////////////////////////////////////////////
+
+ double HeliumCVUniverse::GetEhadTrue() const {
+   double Enu = GetEnuTrue();
+   double Emu = GetElepTrue();
+   return Enu - Emu;
+}
+
+ double HeliumCVUniverse::GetQ2Exp() const {
+      double Enu = GetEnuTrue();
+      double Thetamu = GetTRUE_muANGLE_WRTB_rad();
+      double Emu = GetElepTrue();
+      double Pmu = GetPlepTrue();
+
+      double Q2 = 2 * Enu * (Emu - Pmu*cos(Thetamu)) -
+               pow(MinervaUnits::M_mu, 2);
+
+      return Q2;
+   }
+
+   double HeliumCVUniverse::GetQ2Exp_GeV() const {
+     double Q2_GeV = GetQ2Exp()* pow(10,-6);
+     }
+
+
+     double HeliumCVUniverse::GetQ2Exp_AnaDev() const {
+          double Enu = GetEnuTrue();
+          double Thetamu = GetTrueThetamu();
+          double Emu = GetElepTrue();
+          double Pmu = GetPlepTrue();
+
+          double Q2 = 2 * Enu * (Emu - Pmu*cos(Thetamu)) -
+                   pow(MinervaUnits::M_mu, 2);
+
+          return Q2;
+       }
+
+       double HeliumCVUniverse::GetQ2Exp_AnaDev_GeV() const {
+         double Q2_GeV = GetQ2Exp_AnaDev()* pow(10,-6);
+         }
+
+   double HeliumCVUniverse::GetExpWTrue() const {
+      double mnucleon = GetTrgNucleonMass();  //GetTrgNucleonMass();assuming interaction is neutrino so mass would be neutrino
+      double W = pow(mnucleon, 2) - GetQ2Exp() + 2*(mnucleon)*GetEhadTrue();
+      W = W > 0 ? sqrt(W) : -1.0;
+
+      return W/1000; // GeV
+   }
+   double HeliumCVUniverse::GetExpWTrue_AnaDev() const {
+      double mnucleon = GetTrgNucleonMass();  //GetTrgNucleonMass();assuming interaction is neutrino so mass would be neutrino
+      double W = pow(mnucleon, 2) - GetQ2Exp_AnaDev() + 2*(mnucleon)*GetEhadTrue();
+      W = W > 0 ? sqrt(W) : -1.0;
+
+      return W/1000; // GeV
+   }
+
+
+
+
 double HeliumCVUniverse::GetTRUE_Vertex_x() const{return GetVecElem("mc_vtx",0);};
 double HeliumCVUniverse::GetTRUE_Vertex_y() const{return GetVecElem("mc_vtx",1);};
 double HeliumCVUniverse::GetTRUE_Vertex_z() const{return GetVecElem("mc_vtx",2);};
@@ -392,6 +499,9 @@ CryoTank_REGIONS HeliumCVUniverse::Get_TRUE_CryoTank_region() const{
 double HeliumCVUniverse::GetTRUE_Phimu() const{return GetDouble("truth_FSlepton_Phi");};
 int  HeliumCVUniverse::GetIntactionType()const{ return GetInt("mc_intType");};
 int  HeliumCVUniverse::GetTargetType()   const{ return GetInt("mc_targetZ");};
+int  HeliumCVUniverse::GetresID()   const{ return GetInt("mc_resID");};
+int  HeliumCVUniverse::Getcharm()   const{ return GetInt("mc_charm");};
+
 
 bool HeliumCVUniverse::isHeliumInteraction() const {
   int z_nucleus = GetTargetType();
@@ -399,6 +509,26 @@ bool HeliumCVUniverse::isHeliumInteraction() const {
   else{return false;}
 }
 
+int HeliumCVUniverse::GetTargetNucleon()const{ return GetInt("mc_targetNucleon");};
+
+double HeliumCVUniverse::GetTrgNucleonMass()const{
+  int target_pdg = GetTargetNucleon();
+
+  if(target_pdg == 2212 ){return 938.272088;} // MeV Proton
+  else if(target_pdg == 2112){return 939.565; }
+  else if(target_pdg == 0){return 3727; }  // rest mass for  nuclous of 4^He
+  // MeV Neutron
+  else{ return ((938.272088 + 939.565)/ 2.0); } // MeV average
+
+}
+
+
+
+bool HeliumCVUniverse::isAluminiumInteraction() const {
+  int z_nucleus = GetTargetType();
+  if(z_nucleus==HeliumConsts::AluminumZ){return true;}
+  else{return false;}
+}
 
 int  HeliumCVUniverse::GetNon_muon_PDG(int TRKNum)const{ return GetVecElem("truth_nonmu_PDG",TRKNum);};
 ///////////////////////////////////////////////////
@@ -459,17 +589,13 @@ std::vector <int> HeliumCVUniverse::Get_TRUE_indexs() const {
     std::vector<Vertex_XYZ> NpointVector_FS_particles = Construct_EndPointvector_ForTRUE_FS_particle();
     Vertex_XYZ VertexP = GetTRUE_Vertex3Dpoint();
     std::vector<parameterizationEquation_params_bare> PARS_equation_lines = MakeParameterize_bare_lineParasFromPoints(VertexP,  NpointVector_FS_particles);
-    std::vector<double> t_vector = FindVector_TforParameterizeLinesAtZ(PARS_equation_lines, FirstPlaneZPostion  ); // True_Start_Znode
-    std::vector<Vertex_XYZ> True_Start_nodes = GetTrueMinervaStartPostion(PARS_equation_lines, t_vector, FirstPlaneZPostion);
+    std::vector<double> t_vector = FindVector_TforParameterizeLinesAtZ(PARS_equation_lines, HeliumConsts::FirstPlaneZPostion  ); // True_Start_Znode
+    std::vector<Vertex_XYZ> True_Start_nodes = GetTrueMinervaStartPostion(PARS_equation_lines, t_vector, HeliumConsts::FirstPlaneZPostion);
     std::vector<double>  Distance = FindDistance_vector(True_Start_nodes, NpointVector_FS_particles );
 
     //std::cout<< "NpointVector_FS_particles.size() = " << NpointVector_FS_particles.size() << " True_Start_nodes.size() " << True_Start_nodes.size() << "Distance.size() = " << Distance.size()<<std::endl;
 
     return Distance;
-
-
-
-
   }
 
   std::vector <double> HeliumCVUniverse::MakeTRUE_VectorTrackLengthinMinerva_cm() const{
@@ -481,6 +607,10 @@ std::vector <int> HeliumCVUniverse::Get_TRUE_indexs() const {
     return output_vector;
 
   }
+
+double HeliumCVUniverse::GetTrueW() const{return GetDouble("mc_w");}
+
+
 
 
 
@@ -503,19 +633,24 @@ std::vector <double> HeliumCVUniverse::GETvector_KE_mc_FS_particles_MeV( TDataba
     else if (cat == 1000010020)   {mass = 2.01*931.49;} //2 deuterium //MeV
     else if (cat == 1000010060)   {mass = 15.99*931.49;} //16Oxygen) //MeV
     else if (cat == 1000030060)   {mass = 6.02*931.49;} //Li6 //MeV
+    else if (cat == 1000060120)   {mass = 12.0*931.49;} //C12 //MeV
+    else if (cat == 1000170350)   {mass = 34.96*931.49;} //Cl35 //MeV
+    else if (cat > 1000000000 && cat < 2000000000 ){mass=12.0*931.49;}
     else if (cat == 2000000101)   {mass=0;}
+
     else{
+      //std::cout<<"PDG = "<< cat<<std::endl;
       auto Particle_type =  pdg_DATABASEobject->GetParticle(cat);
       mass = Particle_type->Mass()*1000;
       //std::cout<<"PDG = "<< cat <<" totalE = "<< Total_E_particles.at(i) <<" Mass [MeV]= "<< mass<<std::endl;
-      //KE = Total_E_particles.at(i) - Particle_type->Mass()*1000; // Must convert the Mass GeV to MeV
+      KE = Total_E_particles.at(i) - Particle_type->Mass()*1000; // Must convert the Mass GeV to MeV
     }
     double totalE = Total_E_particles.at(i);
     totalE = round( totalE * 100.0 ) / 100.0;
     mass = round( mass * 100.0 ) / 100.0;
     KE = totalE - mass;
     if(mass == -9999 || KE==-999){assert(false && "FAILED TO FIND mass and calculate KE" );}
-    if(KE < 0){std::cout<<"This has a Neg KE ,Thats Weird!! the pdg = "<< cat<<std::endl; }
+    //if(KE < 0){std::cout<<"This has a Neg KE ,Thats Weird!! the pdg = "<< cat<<std::endl; }
       //std::cout<<"[FAILURE] KE is Neg KE = "<< KE << std::endl;assert(false && "KE NEG"); }
     KE_particle.push_back(KE);
     i++;
@@ -1249,12 +1384,119 @@ double HeliumCVUniverse::GetLastNodeY(int TRKNum)  const{return GetVecElem("cryo
 double HeliumCVUniverse::GetFirstNodeZ(int TRKNum) const{return GetVecElem("cryotrackznodes",TRKNum);}
 double HeliumCVUniverse::GetLastNodeZ(int TRKNum)  const{return GetVecElem("cryotrack_lastznodes",TRKNum);}
 
+double HeliumCVUniverse::GetTrackSlopeX(int TRKNum) const{return GetVecElem("cryotrack_slopeX",TRKNum);}
+double HeliumCVUniverse::GetTrackSlopeY(int TRKNum) const{return GetVecElem("cryotrack_slopeY",TRKNum);}
+double HeliumCVUniverse::GetTrackSlopeZ(int TRKNum) const{return GetVecElem("cryotrack_slopeZ",TRKNum);}
+
+
+
 double HeliumCVUniverse::GetNonmuTrkLength_InMinerva(int TRKNum)const{
   double x = GetLastNodeX(TRKNum) - GetFirstNodeX(TRKNum);
   double y = GetLastNodeY(TRKNum) - GetFirstNodeY(TRKNum);
   double z = GetLastNodeZ(TRKNum) - GetFirstNodeZ(TRKNum);
 
   return sqrt( pow(x,2) + pow(y,2) + pow(z,2) );
+}
+
+Vertex_XYZ HeliumCVUniverse::FirstNodePostionsforTrack(int TRKNum)const {
+return Vertex_XYZ(GetFirstNodeX(TRKNum),GetFirstNodeY(TRKNum),GetFirstNodeZ(TRKNum));
+
+}
+
+
+
+Vertex_XYZ HeliumCVUniverse::slopesofTrack(int TRKNum)const{
+  Vertex_XYZ output;
+  output.x = (GetLastNodeX(TRKNum) - GetFirstNodeX(TRKNum)) / (GetLastNodeZ(TRKNum) - GetFirstNodeZ(TRKNum));
+  output.y = (GetLastNodeY(TRKNum) - GetFirstNodeY(TRKNum)) / (GetLastNodeZ(TRKNum) - GetFirstNodeZ(TRKNum));
+  output.z = 1.0;
+  return output;
+}
+
+Vertex_XYZ HeliumCVUniverse::slopesofTrack(int TRKNum, Vertex_XYZ vertex )const{
+  Vertex_XYZ output;
+  output.x = (GetFirstNodeX(TRKNum) - vertex.x) / (GetFirstNodeZ(TRKNum) - vertex.z);
+  output.y = (GetFirstNodeY(TRKNum) - vertex.y) / (GetFirstNodeZ(TRKNum) - vertex.z);
+  output.z = 1.0;
+  return output;
+}
+
+Vertex_XYZ HeliumCVUniverse::slopesofTrack_tuple(int TRKNum)const{
+  Vertex_XYZ output;
+  output.x = GetTrackSlopeX(TRKNum);
+  output.y = GetTrackSlopeY(TRKNum);
+  output.z = GetTrackSlopeZ(TRKNum);
+  return output;
+}
+
+
+double HeliumCVUniverse::Calculated_DOCA_FromCalSlopes(int TRKNum , Vertex_XYZ f) const{
+
+Vertex_XYZ d =  FirstNodePostionsforTrack(TRKNum);
+Vertex_XYZ Slope = slopesofTrack(TRKNum);
+Vertex_XYZ e(d.x+Slope.x, d.y+Slope.y, d.z+Slope.z);
+Vertex_XYZ a;Vertex_XYZ b;Vertex_XYZ c;
+a =  f - e;
+b =  f - d;
+c =  e - d;
+double cross_x = (a.y * b.z) - ( a.z * b.y );
+double cross_y = (a.z * b.x) - ( a.x * b.z );
+double cross_z = (a.x * b.y) - ( a.y * b.x );
+
+//Then we'll get the magnitude of cross, which is our numerator
+double num = sqrt(pow(cross_x,2) + pow(cross_y,2) + pow(cross_z,2));
+//Great now let's get the magnitude of c which is our denominator
+double denom = sqrt(pow(c.x ,2) + pow(c.y ,2) + pow(c.z ,2));
+//Now put num/denom and we're done!
+double DOCA = (num)/(denom);
+return DOCA;
+
+
+
+}
+
+double HeliumCVUniverse::Calculated_DOCA(int TRKNum , Vertex_XYZ f) const{
+
+Vertex_XYZ d =  FirstNodePostionsforTrack(TRKNum);
+Vertex_XYZ Slope = slopesofTrack_tuple(TRKNum);
+Vertex_XYZ e(d.x+Slope.x, d.y+Slope.y, d.z+Slope.z);
+Vertex_XYZ a;Vertex_XYZ b;Vertex_XYZ c;
+a =  f - e;
+b =  f - d;
+c =  e - d;
+double cross_x = (a.y * b.z) - ( a.z * b.y );
+double cross_y = (a.z * b.x) - ( a.x * b.z );
+double cross_z = (a.x * b.y) - ( a.y * b.x );
+
+//Then we'll get the magnitude of cross, which is our numerator
+double num = sqrt(pow(cross_x,2) + pow(cross_y,2) + pow(cross_z,2));
+//Great now let's get the magnitude of c which is our denominator
+double denom = sqrt(pow(c.x ,2) + pow(c.y ,2) + pow(c.z ,2));
+//Now put num/denom and we're done!
+double DOCA = (num)/(denom);
+return DOCA;
+}
+
+double HeliumCVUniverse::Calculated_DOCA_test(int TRKNum , Vertex_XYZ f) const{
+
+Vertex_XYZ d =  FirstNodePostionsforTrack(TRKNum);
+Vertex_XYZ Slope = slopesofTrack( TRKNum, f );
+Vertex_XYZ e(d.x+Slope.x, d.y+Slope.y, d.z+Slope.z);
+Vertex_XYZ a;Vertex_XYZ b;Vertex_XYZ c;
+a =  f - e;
+b =  f - d;
+c =  e - d;
+double cross_x = (a.y * b.z) - ( a.z * b.y );
+double cross_y = (a.z * b.x) - ( a.x * b.z );
+double cross_z = (a.x * b.y) - ( a.y * b.x );
+
+//Then we'll get the magnitude of cross, which is our numerator
+double num = sqrt(pow(cross_x,2) + pow(cross_y,2) + pow(cross_z,2));
+//Great now let's get the magnitude of c which is our denominator
+double denom = sqrt(pow(c.x ,2) + pow(c.y ,2) + pow(c.z ,2));
+//Now put num/denom and we're done!
+double DOCA = (num)/(denom);
+return DOCA;
 }
 
 double HeliumCVUniverse::GetNonmuTrkLength_InMinerva_Incm(int TRKNum)const{
@@ -1400,7 +1642,6 @@ int  HeliumCVUniverse::getindexTrueTrajectors_closestRECO(){
   auto FinalY = GetVector_ALLTrajector_FinalPosition("y");
   auto FinalZ = GetVector_ALLTrajector_FinalPosition("z");
 
-
   return Trajectorindex_leastdistance(reco_x, reco_y, reco_z, FinalX, FinalY, FinalZ );
 
 }//end of function
@@ -1422,6 +1663,24 @@ double HeliumCVUniverse::GetVetoAccpetedWeigh() const{
 	weight *=EffTot;
 	return weight;}
 
+  double HeliumCVUniverse::GetTruthWeightFlux()const{
+
+      double wgt_flux=1.;
+      double wgt_genie=1.;
+
+      double Enu  = GetDouble("mc_incomingE")*1e-3;
+      int nu_type = GetInt("mc_incoming");
+
+      // flux
+      wgt_flux = GetFluxAndCVWeight(Enu, nu_type);
+      // genie
+      wgt_genie = GetGenieWeight();
+
+     return wgt_flux*wgt_genie;
+  }
+
+
+
 
 	//////////////////////////////////////////////////////////////////////////
 	//Get Weights
@@ -1438,6 +1697,7 @@ double HeliumCVUniverse::GetVetoAccpetedWeigh() const{
 
 		double Enu  = GetDouble("mc_incomingE")*1e-3;
 		int nu_type = GetInt("mc_incoming");
+
 		wgt_flux_and_cv = GetFluxAndCVWeight( Enu, nu_type);
 
 		wgt_2p2h = GetLowRecoil2p2hWeight();
@@ -1485,6 +1745,12 @@ double HeliumCVUniverse::GetVetoAccpetedWeigh() const{
       case kweight_HeliumTargetMass:
       return GetTargetMassWeight();
 
+      case kweightZexp:
+      return GetZExpWeight();
+
+      case kweightMK:
+      return GetMKWeight();
+
       case kweightNone:
       return 1.0;
 
@@ -1527,6 +1793,10 @@ double HeliumCVUniverse::GetPmuTransverseTrue() const {
     double pzp = cos( numi_beam_angle_rad )*pzlep + sin( numi_beam_angle_rad )*pylep;
     return 1.0e-3*pzp; //GeV
   }
+
+
+
+
 
 double HeliumCVUniverse::GetQ2forMKmodel() const {
   return GetDouble("mc_Q2") * 1e-6;
@@ -2045,9 +2315,35 @@ TRUE_RECO_Energies_Trajectors  HeliumCVUniverse::TRUE_RECO_Energies_TrajectorsSt
     return output;
 }
 
+double HeliumCVUniverse::GetMuonPT_new() const //GeV/c
+ {
+   return GetPmu()/1000. * sin(GetThetamu());
+ }
 
+ double HeliumCVUniverse::GetMuonPz_new() const //GeV/c
+ {
+   return GetPmu()/1000. * cos(GetThetamu());
+ }
 
+ double HeliumCVUniverse::GetMuonPTTrue_new() const //GeV/c
+ {
+   return GetPlepTrue()/1000. * sin(GetThetalepTrue());
+ }
 
+ double HeliumCVUniverse::GetMuonPzTrue_new() const //GeV/c
+ {
+   return GetPlepTrue()/1000. * cos(GetThetalepTrue());
+ }
+
+ double HeliumCVUniverse::GetCalRecoilEnergy() const {
+   bool neutrinoMode = GetAnalysisNuPDG() > 0;
+   if(neutrinoMode) return (GetDouble("nonvtx_iso_blobs_energy")+GetDouble("dis_id_energy")); // several definitions of this, be careful
+   else {
+     //if(GetVecDouble("recoil_summed_energy").size()==0) return -999.; // protect against bad input,
+     //return (GetVecDouble("recoil_summed_energy")[0] - GetDouble("recoil_energy_nonmuon_vtx100mm"));
+     return GetDouble("recoil_energy_nonmuon_nonvtx100mm");
+   }
+ }
 
 
 // HeliumCVUniverse_cxx

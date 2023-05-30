@@ -30,7 +30,7 @@ tm *ltm = localtime(&now);
  sprintf(timeset_nonstacks,"%i_%i_%i_%i_%s_%s", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min, SysError_printLabel.c_str(),Playlist_names.c_str());
  sprintf(timeset, "%i_%i_%i_%i", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min);
 
-auto PlaylistME_CrossSection_Path = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium/Ana/VetoWallStudies/scripts/ChainWrapper_ME/Make_CrossSection/CrossSection.root";
+auto PlaylistME_CrossSection_Path = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/Make_CrossSection/CrossSection.root";
 bool is_mc=true;bool isNOT_mc=false;
 std::string pdf_CV = string(text_title_pdf4);
 bool Stats_only = false;
@@ -38,11 +38,11 @@ bool Stats_only = false;
 
 
 
-sprintf(text_title_pdf1, "PLOTS_%s_CrossSection.pdf(",timeset_nonstacks );
+sprintf(text_title_pdf1, "PLOTS_%s_CrossSection_new.pdf(","" );
 can -> Print(text_title_pdf1);
-sprintf(text_title_pdf2, "PLOTS_%s_CrossSection.pdf",timeset_nonstacks );
-sprintf(text_title_pdf3, "PLOTS_%s_CrossSection.pdf)",timeset_nonstacks );
-sprintf(text_title_pdf4, "PLOTS_%s_CrossSection",timeset_nonstacks );
+sprintf(text_title_pdf2, "PLOTS_%s_CrossSection_new.pdf","" );
+sprintf(text_title_pdf3, "PLOTS_%s_CrossSection_new.pdf)","" );
+sprintf(text_title_pdf4, "PLOTS_%s_CrossSection_new","" );
  pdf_CV = string(text_title_pdf4);
 
   std::cout<< " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<< std::endl;
@@ -62,6 +62,8 @@ bool isFull = true;
 bool isEmpty = false;
 auto muonE_full_names = Generate_CrossSection_histsNames(muon_vector[0], "Full", isFull);
 auto muonE_Empty_names = Generate_CrossSection_histsNames(muon_vector[0], "Empty", isEmpty);
+
+
 
 auto Map_MuonE_Full_hist = Generate_CrossSection_Hist_Map(*TFile_CrossSection, muonE_full_names);
 //auto Map_MuonE_Empty_hist = Generate_CrossSection_Hist_Map(*TFile_CrossSection, muonE_Empty_names);
@@ -84,7 +86,7 @@ auto muonPZ_Empty_names = Generate_CrossSection_histsNames(muon_vector[1], "Empt
 
 
 auto Map_MuonPZ_Full_hist = Generate_CrossSection_Hist_Map(*TFile_CrossSection, muonPZ_full_names);
-MakeCrossSectionPlots(Map_MuonPZ_Full_hist, "GeV", pdf_CV,false,false ,muon_vector[1], "ME1F - ME1G");
+MakeCrossSectionPlots(Map_MuonPZ_Full_hist, "GeV", pdf_CV,false,false ,muon_vector[1], "F-E");
 
 
 
@@ -93,7 +95,7 @@ auto muonPT_full_names = Generate_CrossSection_histsNames(muon_vector[2], "Full"
 auto muonPT_Empty_names = Generate_CrossSection_histsNames(muon_vector[2], "Empty", isEmpty);
 
 auto Map_MuonPT_Full_hist = Generate_CrossSection_Hist_Map(*TFile_CrossSection, muonPT_full_names);
-MakeCrossSectionPlots(Map_MuonPT_Full_hist, "GeV", pdf_CV,false,false ,muon_vector[2], "ME1F - ME1G");
+MakeCrossSectionPlots(Map_MuonPT_Full_hist, "GeV", pdf_CV,false,false ,muon_vector[2], "F-E");
 
 
 
@@ -102,7 +104,7 @@ auto muonTheta_Empty_names = Generate_CrossSection_histsNames(muon_vector[3], "E
 
 
 auto Map_MuonTheta_Full_hist = Generate_CrossSection_Hist_Map(*TFile_CrossSection, muonTheta_full_names);
-MakeCrossSectionPlots(Map_MuonTheta_Full_hist, "Deg", pdf_CV,false,false ,muon_vector[3], "ME1F - ME1G");
+MakeCrossSectionPlots(Map_MuonTheta_Full_hist, "Deg", pdf_CV,false,false ,muon_vector[3], "F-E");
 
 
 
@@ -272,6 +274,23 @@ CrossSection_name_Map Generate_CrossSection_histsNames(MuonVar MuonVar_type, std
 
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void PrintCrossSection_MapName(CrossSection_name_Map Map , char * outputLabel){
 
  std::map<CrossSectionHist, std::string>::iterator it;
@@ -306,14 +325,16 @@ CrossSection_MnvH1D_Map Generate_CrossSection_Hist_Map(TFile& file, CrossSection
 
   std::map<CrossSectionHist, std::string>::iterator it;
   for (it = Map.begin(); it != Map.end(); it++)
-  {
-    auto hist = GetHist(file, it->second );
+  {std::cout<<"HistName = "<< it->second << std::endl;
+    auto hist = Get1DHist(file, it->second );
+    //MnvH1D *hist = (MnvH1D*)(cat->second)->Get(name);
     Hist_Map.insert(std::make_pair(it->first, hist));
   }
 
   return Hist_Map;
 
 }
+
 
 
 Migration_MnvH2D_Map Generate_CrossSection_Mig_Hist_Map(TFile& file, std::vector<MuonVar> muon_vector){
@@ -347,8 +368,6 @@ char title_Signal_nomEff_char[title_Signal_nomEff.length()+1];
 strcpy(title_Signal_nomEff_char,title_Signal_nomEff.c_str());
 DrawCVAndError_FromHistPointer(CrossSection_map[nom_Eff], title_Signal_nomEff_char ,X_axis, "Event Rate", pdf,  doBinwidth, MakeXaxisLOG);
 std::cout<<"Made CrossSection_map[nom_Eff]" << std::endl;
-
-
 
 
 std::string title_Signal = GetMuonVarTitleName(MuonVar) + " Data Signal Selection";
@@ -410,6 +429,8 @@ CrossSection_map[Data_crosssection]->Scale(1/Scale);
 Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(CrossSection_map[True_crosssection], CrossSection_map[Data_crosssection],
                                            Playlist_name, pdf, title_Cross_Section_char, "", X_axis_char, crossSection_y_axis_char,
                                           doBinwidth, MakeXaxisLOG,  false);
+
+
 
 std::cout<<"CrossSection_map[True_crosssection]" << std::endl;
  //void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC, MnvH1D *hist_Data,

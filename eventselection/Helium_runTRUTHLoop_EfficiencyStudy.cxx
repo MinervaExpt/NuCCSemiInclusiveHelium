@@ -17,11 +17,15 @@ std::string OUTputRoot_pathway = "/minerva/data/users/cnguyen/ME_MC_EventSection
 std::vector<ECuts> GetRECOCutsVector();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonEnergy();
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonEnergy_noFiduical();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonTheta();
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonTheta_noFid();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_Fiduical();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkAngle();
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkAngle_Fidiucal();
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy_Fiduical();
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy_2ndtrkAngle();
 std::vector<MuonVar> GetMUONVaribles();
 std::vector<SecondTrkVar> GetPlayListSecondTrkVector();
 std::vector<CryoVertex> GetCryoVertexVaribles();
@@ -35,7 +39,7 @@ std::vector<Particle_type>  GetParicle_type();
 
 // Get container of systematics
 
-const bool m_RunCodeWithSystematics = true;
+const bool m_RunCodeWithSystematics = false;
 
 
 const std::vector<PlotUtils::NamedCategory<Material_type>>
@@ -185,11 +189,15 @@ void runEventLoop(ME_helium_Playlists &PlayList_iterator , bool &Run_EventLoopOn
 double POT[4];
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_ALL = GetTRUTHCutsVector();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_Energy = GetTRUTHCutsVector_MuonEnergy();
+const std::vector<ECutsTRUTH> kTRUTHCutsVector_Energy_noFid = GetTRUTHCutsVector_MuonEnergy_noFiduical();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_Theta = GetTRUTHCutsVector_MuonTheta();
+const std::vector<ECutsTRUTH> kTRUTHCutsVector_Theta_nofid = GetTRUTHCutsVector_MuonTheta_noFid();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_Fiduical = GetTRUTHCutsVector_Fiduical();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndtrkEnergy =  GetTRUTHCutsVector_2ndtrkEnergy();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndtrkAngle  =   GetTRUTHCutsVector_2ndtrkAngle();
 const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndtrkAngle_Fidiucal  =  GetTRUTHCutsVector_2ndtrkAngle_Fidiucal();
+const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndtrkEnergy_Fidiucal  = GetTRUTHCutsVector_2ndtrkEnergy_Fiduical();
+const std::vector<ECutsTRUTH> kTRUTHCutsVector_2ndtrkEnergy_2ndTrkAngle  =  GetTRUTHCutsVector_2ndtrkEnergy_2ndtrkAngle();
 const std::vector<Weights> kWeightVector = GetWeightVector();
 const std::vector<MuonVar> kMuonVaribles_vector = GetMUONVaribles();
 const std::vector<SecondTrkVar> ksecTrkVaribles_vector = GetPlayListSecondTrkVector();
@@ -335,10 +343,10 @@ std::vector<double> AnglePhi_vector = GetBinMuonVector(kAnglePhi);
 
 
 ////////////////////////
-std::vector<double> Vertex_Xbins  = GetBinvertexVector(kX_eff);
-std::vector<double> Vertex_Ybins  = GetBinvertexVector(kY_eff);
-std::vector<double> Vertex_Zbins  = GetBinvertexVector(kZ_eff);
-std::vector<double> Vertex_Rbins  = GetBinvertexVector(kR_eff);
+std::vector<double> Vertex_Xbins  = GetBinvertexVector(kX);
+std::vector<double> Vertex_Ybins  = GetBinvertexVector(kY);
+std::vector<double> Vertex_Zbins  = GetBinvertexVector(kZ);
+std::vector<double> Vertex_Rbins  = GetBinvertexVector(kR);
 std::vector<double> Vertex_RRbins = GetBinvertexVector(kRR_eff);
 
 std::vector<double> Vertex_DOCAbins = GetBinMuonVector(kDOCA_muon);
@@ -592,7 +600,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_DOCA_TRUE_Partic
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_DOCA_TRUE_Particle", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_Particle; [mm];Events");
 
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_tracklength_TRUE("h_secTrk_tracklength_TRUE", "Recoil track length  [cm] ", Recoil_track_length_vector , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_tracklength_TRUE("h_secTrk_tracklength_TRUE", "Recoil track length  [cm] ", Recoil_track_length_vector , error_bands);
 
 
 ///////////
@@ -625,16 +633,29 @@ MnvH2D *h_cryoVertex_R_DOCA_TRUE        =    new MnvH2D("h_cryoVertex_R_DOCA_TRU
 
 MnvH2D *h_cryoVertex_Z_2ndTrkE_TRUE        =    new MnvH2D("h_cryoVertex_Z_2ndTrkE_TRUE", "h_cryoVertex_Z_2ndTrkE_TRUE",  Vertex_Zbins.size()-1,  Vertex_Zbins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 MnvH2D *h_cryoVertex_R_2ndTrkE_TRUE        =    new MnvH2D("h_cryoVertex_R_2ndTrkE_TRUE", "h_cryoVertex_R_2ndTrkE_TRUE",  Vertex_Rbins.size()-1,  Vertex_Rbins.data(), Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+std::vector<double> Distance_to_innerTank = GetBinvertexVector(kdistance_edge);
 
+MnvH2D *h_distanceEdge_cryoVertex_R_TRUE  =    new MnvH2D("h_distanceEdge_cryoVertex_R_TRUE", "h_distanceEdge_cryoVertex_R_TRUE",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Rbins.size()-1,  Vertex_Rbins.data()  );
+MnvH2D *h_distanceEdge_cryoVertex_Z_TRUE  =    new MnvH2D("h_distanceEdge_cryoVertex_Z_TRUE", "h_distanceEdge_cryoVertex_Z_TRUE",Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_Zbins.size()-1,  Vertex_Zbins.data()  );
+MnvH2D *h_distanceEdge_DOCA_TRUE          =    new MnvH2D("h_distanceEdge_DOCA_TRUE",         "h_distanceEdge_DOCA_TRUE",        Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkDOCA_bins.size()-1,  Vertex_secondTrkDOCA_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkE_TRUE       =    new MnvH2D("h_distanceEdge_2ndTrkE_TRUE",      "h_distanceEdge_2ndTrkE_TRUE",     Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkEbins.size()-1,  Vertex_secondTrkEbins.data()  );
+MnvH2D *h_distanceEdge_Pathlength_TRUE    =    new MnvH2D("h_distanceEdge_Pathlength_TRUE",   "h_distanceEdge_Pathlength_TRUE",  Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkPathway_bins.size()-1,  Vertex_secondTrkPathway_bins.data()  );
+MnvH2D *h_distanceEdge_2ndTrkAngle_TRUE   =    new MnvH2D("h_distanceEdge_2ndTrkAngle_TRUE",  "h_distanceEdge_2ndTrkAngle_TRUE", Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Vertex_secondTrkTheta_Coarse_bins.size()-1,  Vertex_secondTrkTheta_Coarse_bins.data()  );
+MnvH2D *h_distanceEdge_MuonPT_TRUE        =    new MnvH2D("h_distanceEdge_MuonPT_TRUE",       "h_distanceEdge_MuonPT_TRUE",      Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  PTbin_vector.size()-1,  PTbin_vector.data()  );
+MnvH2D *h_distanceEdge_MuonPZ_TRUE        =    new MnvH2D("h_distanceEdge_MuonPZ_TRUE",       "h_distanceEdge_MuonPZ_TRUE",      Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  Pzbin_vector.size()-1,  Pzbin_vector.data()  );
+MnvH2D *h_distanceEdge_Muontheta_TRUE     =    new MnvH2D("h_distanceEdge_Muontheta_TRUE",    "h_distanceEdge_Muontheta_TRUE",   Distance_to_innerTank.size()-1, Distance_to_innerTank.data(),  MuonThetabin_vector.size()-1,  MuonThetabin_vector.data()  );
 //std::vector<double> CutToSurface_bins{-350,-300,-290,-280,-270,-260,-250,-240,-230,-220,-210,-200,-190,-180,-170,-160,-150,-140,-130,-120,-110,-100,-90,-80,-70,-60,-50,-40,-30,-20,-10,0.0,20,30,40,50,60,70,80,90,100,110,120,130,140,150};
 //std::vector<double> CutToSurface_bins{-400, -380, -360, -340, -320, -300, -280, -260, -240, -220, -200, -180, -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120};
-std::vector<double> CutToSurface_bins_finner{-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+
+
+std::vector<double> CutToSurface_bins_finner = GetBinvertexVector(kdistance_edge);// {-400, -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
 MnvH2D *h_FidiucalCut_cryoVertex_R_TRUE         =    new MnvH2D("h_FidiucalCut_cryoVertex_R_TRUE", "h_FidiucalCut_cryoVertex_R_TRUE",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Rbins.size()-1, Vertex_Rbins.data()  );
 MnvH2D *h_FidiucalCut_cryoVertex_Z_TRUE         =    new MnvH2D("h_FidiucalCut_cryoVertex_Z_TRUE", "h_FidiucalCut_cryoVertex_Z_TRUE",  CutToSurface_bins_finner.size()-1,  CutToSurface_bins_finner.data(), Vertex_Zbins.size()-1, Vertex_Zbins.data()  );
 PlotUtils::HistWrapper<HeliumCVUniverse> h_FidiucalCut_TRUE("h_FidiucalCut_TRUE", "h_FidiucalCut_TRUE",  CutToSurface_bins_finner, error_bands);
-std::vector<double> Distance_to_innerTank{-1000,-800,-700,-600,-500,-400,-360,-320,-280,-240,-200,-160,-120,-80,-40,0,40,80,120,160,200,240,280,320,360,400,440,480,520,560,600,640,680,720,760,800,840,880,920,960,1000};
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_TRUE("h_Distance_to_InnerTank_TRUE", "h_Distance_to_InnerTank_TRUE",  Distance_to_innerTank, error_bands);
-
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_upstreamCap_TRUE("h_Distance_to_InnerTank_upstreamCap_TRUE", "h_Distance_to_InnerTank_upstreamCap_TRUE",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_barrel_TRUE("h_Distance_to_InnerTank_barrel_TRUE", "h_Distance_to_InnerTank_barrel_TRUE",  Distance_to_innerTank, error_bands);
+PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_downstreamCap_TRUE("h_Distance_to_InnerTank_downstreamCap_TRUE", "h_Distance_to_InnerTank_downstreamCap_TRUE",  Distance_to_innerTank, error_bands);
 
 
   //=========================================
@@ -668,9 +689,7 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_Distance_to_InnerTank_TRUE("h_Distanc
   for(const auto & index :Truth_Cut_Map ){
   std::cout<<" Cut Name = " <<GetCutNameTRUTH(index.first).c_str() << " Amount = " << index.second << std::endl;
 
-
   }
-
 
 
   int counter_test=20;
@@ -699,439 +718,560 @@ TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
   std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<< std::endl;
 
 
-  for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
-    if(ii%50000==0) std::cout << (ii/1000) << " k " << std::flush;
+for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
+  if(ii==0)std::cout<<"First Entrie Started"<<std::endl;
+  if(ii%50000==0) std::cout << (ii/1000) << " k " << std::flush;
 
-    //=========================================
-    // For every systematic, loop over the universes, and fill the
-    // appropriate histogram in the MnvH1D
-    //=========================================
+  //=========================================
+  // For every systematic, loop over the universes, and fill the
+  // appropriate histogram in the MnvH1D
+  //=========================================
 
 
-    for ( auto  Universe_GROUP: Error_Band_Universe_GROUPS){
+  for ( auto  Universe_GROUP: Error_Band_Universe_GROUPS){
+  Universe_GROUP.front()->SetEntry(ii);
 
-     Universe_GROUP.front()->SetEntry(ii);
 
-      if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Energy, kWeightVector, Truth_Cut_Map_Energy)){
+  //////////////////////////////////////////////////////////////////////////
+  //                    Applying Truth Cuts
+  //////////////////////////////////////////////////////////////////////////
 
-        double Emu = Universe_GROUP.front()->GetTRUE_Emu();
-        double muPT =  Universe_GROUP.front()->GetTRUE_PTmu();
-        double muPZ =  Universe_GROUP.front()->GetTRUE_PZmu();
 
-        for (auto universe : Universe_GROUP){
+  if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Energy, kWeightVector, Truth_Cut_Map_Energy)){
 
-          universe->SetEntry(ii);
+    double Emu = Universe_GROUP.front()->GetTRUE_Emu();
+    double muPT =  Universe_GROUP.front()->GetTRUE_PTmu();
+    double muPZ =  Universe_GROUP.front()->GetTRUE_PZmu();
 
-          double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+    for (auto universe : Universe_GROUP){
 
-          h_MuonE_TRUE.univHist(universe)->Fill(Emu,wgt_mvnV1);
+      universe->SetEntry(ii);
 
-          h_MuonPZ_TRUE.univHist(universe)->Fill(muPZ,wgt_mvnV1);
+      double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
-          h_MuonPT_TRUE.univHist(universe)->Fill(muPT,wgt_mvnV1);
+      h_MuonE_TRUE.univHist(universe)->Fill(Emu,wgt_mvnV1);
 
-        } // end of Universes
-      }// End of Truth Cuts
+      h_MuonPZ_TRUE.univHist(universe)->Fill(muPZ,wgt_mvnV1);
 
+      h_MuonPT_TRUE.univHist(universe)->Fill(muPT,wgt_mvnV1);
 
-      if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Theta, kWeightVector, Truth_Cut_Map_Theta)){
+    } // end of Universes
+  }// End of Truth Cuts
 
-        double muTheta =Universe_GROUP.front()->GetTRUE_muANGLE_WRTB_DEG() ;
 
-        for (auto universe : Universe_GROUP){
-          universe->SetEntry(ii);
-          double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+  //////////////////////////////////////////////////////////////////////////
+  //                    Applying Truth Cuts
+  //////////////////////////////////////////////////////////////////////////
 
-          h_MuonTheta_TRUE.univHist(universe)->Fill(muTheta, wgt_mvnV1);
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Energy_noFid, kWeightVector, Truth_Cut_Map_Energy)){
 
-          ///////////
-          /// Fill CV
-          //////////
+  double muPT =  Universe_GROUP.front()->GetTRUE_PTmu();
+  double muPZ =  Universe_GROUP.front()->GetTRUE_PZmu();
 
-          if(isCV(*universe)){
-            std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
-            std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
-            std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
-            int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
+  for (auto universe : Universe_GROUP){
 
-            h_muontheta_2ndTrkangle_TRUE->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(), Angle_trklist.at(secondTrk ),wgt_mvnV1);
-          } // end of CV
+    universe->SetEntry(ii);
 
-          ///////////
-          /// End CV
-          //////////
+    double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+    double True_distance = TRUE_Distance_to_innerTank(*universe);
 
+    h_distanceEdge_MuonPT_TRUE->Fill(True_distance,universe->GetPmuTransverseTrue(),wgt_mvnV1);
+    h_distanceEdge_MuonPZ_TRUE ->Fill(True_distance, universe->GetPmuLongitudinalTrue() ,wgt_mvnV1);
 
-        } // end of Universes
-      }// End of Truth Cuts
+  } // end of Universes
+}// End of Truth Cuts
 
 
-      if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Fiduical, kWeightVector, Truth_Cut_Map_Fiduical)){
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
-        double VertexX = Universe_GROUP.front()->GetTRUE_Vertex_x();
-        double VertexY = Universe_GROUP.front()->GetTRUE_Vertex_y();
-        double VertexZ = Universe_GROUP.front()->GetTRUE_Vertex_z();
-        double VertexR = Universe_GROUP.front()->GetTRUE_Vertex_r();
-        double VertexRR = Universe_GROUP.front()->GetTRUE_Vertex_rr();
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Theta, kWeightVector, Truth_Cut_Map_Theta)){
 
-        for (auto universe : Universe_GROUP){
+  double muTheta =Universe_GROUP.front()->GetTRUE_muANGLE_WRTB_DEG() ;
 
-          universe->SetEntry(ii);
-          double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+  for (auto universe : Universe_GROUP){
+    universe->SetEntry(ii);
+    double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
-          h_CryoVertex_X_TRUE.univHist(universe)->Fill(VertexX ,wgt_mvnV1);
+    h_MuonTheta_TRUE.univHist(universe)->Fill(muTheta, wgt_mvnV1);
 
-          h_CryoVertex_Y_TRUE.univHist(universe)->Fill(VertexY,wgt_mvnV1);
+    ///////////
+    /// Fill CV
+    //////////
+    if(isCV(*universe)){
+      std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
+      std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
+      std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
+      int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
 
-          h_CryoVertex_Z_TRUE.univHist(universe)->Fill(VertexZ,wgt_mvnV1);
+      h_muontheta_2ndTrkangle_TRUE->Fill(universe->GetTRUE_muANGLE_WRTB_DEG(), Angle_trklist.at(secondTrk ),wgt_mvnV1);
+    } // end of CV
 
-          h_CryoVertex_R_TRUE.univHist(universe)->Fill(VertexR,wgt_mvnV1);
+    ///////////
+    /// End CV
+    //////////
+  } // end of Universes
+}// End of Truth Cuts
 
-          h_CryoVertex_RR_TRUE.univHist(universe)->Fill(VertexRR,wgt_mvnV1);
 
-          h_Distance_to_InnerTank_TRUE.univHist(universe)->Fill(TRUE_Distance_to_innerTank(*universe),wgt_mvnV1);
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Theta_nofid, kWeightVector, Truth_Cut_Map_Theta)){
 
-          ///////////
-          /// Fill CV
-          //////////
-          for(auto Fid_Cut:CutToSurface_bins_finner ){
-            if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(*universe, Fid_Cut)){
-              h_FidiucalCut_TRUE.univHist(universe)->Fill(Fid_Cut, wgt_mvnV1);
-            }
-          }
+  for (auto universe : Universe_GROUP){
+    universe->SetEntry(ii);
+    double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
 
-          if(isCV(*universe)){
-            std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
-            std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
-            std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
+    if(isCV(*universe)){
+      h_distanceEdge_Muontheta_TRUE->Fill(TRUE_Distance_to_innerTank(*universe), universe->GetTRUE_muANGLE_WRTB_DEG(),wgt_mvnV1);
+    } // end of CV
 
+    ///////////
+    /// End CV
+    //////////
+  } // end of Universes
+}// End of Truth Cuts
 
-            int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist);
 
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
-            Particle_type Particle_type_Event = GetParticlegroup_type(PDG_trklist.at(secondTrk));
-            Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
-            Material_type Material_type_Event = universe->Get_MaterialStackType();
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_Fiduical, kWeightVector, Truth_Cut_Map_Fiduical)){
 
-            h_cryoVertex_Z_R_TRUE->Fill(VertexZ, VertexR, wgt_mvnV1);
+  double VertexX = Universe_GROUP.front()->GetTRUE_Vertex_x();
+  double VertexY = Universe_GROUP.front()->GetTRUE_Vertex_y();
+  double VertexZ = Universe_GROUP.front()->GetTRUE_Vertex_z();
+  double VertexR = Universe_GROUP.front()->GetTRUE_Vertex_r();
+  double VertexRR = Universe_GROUP.front()->GetTRUE_Vertex_rr();
 
-            h_CryoVertex_X_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexX , wgt_mvnV1);
-            h_CryoVertex_X_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexX , wgt_mvnV1);
-            h_CryoVertex_X_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexX , wgt_mvnV1);
+  double True_distance = TRUE_Distance_to_innerTank(*Universe_GROUP.front());
+  CryoTank_REGIONS RegionType= Region_of_CryoTank(VertexZ);
 
-            h_CryoVertex_Y_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexY, wgt_mvnV1);
-            h_CryoVertex_Y_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexY, wgt_mvnV1);
-            h_CryoVertex_Y_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexY, wgt_mvnV1);
+  for (auto universe : Universe_GROUP){
 
-            h_CryoVertex_Z_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexZ, wgt_mvnV1);
-            h_CryoVertex_Z_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexZ, wgt_mvnV1);
-            h_CryoVertex_Z_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexZ, wgt_mvnV1);
+    universe->SetEntry(ii);
+    double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
-            h_CryoVertex_R_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexR, wgt_mvnV1);
-            h_CryoVertex_R_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexR, wgt_mvnV1);
-            h_CryoVertex_R_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexR, wgt_mvnV1);
+    h_CryoVertex_X_TRUE.univHist(universe)->Fill(VertexX ,wgt_mvnV1);
 
-            for(auto Fid_Cut:CutToSurface_bins_finner ){
-              if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(*universe, Fid_Cut)){
-                h_FidiucalCut_cryoVertex_R_TRUE->Fill(Fid_Cut, VertexR,  wgt_mvnV1);
-                h_FidiucalCut_cryoVertex_Z_TRUE->Fill(Fid_Cut, VertexZ,  wgt_mvnV1);
+    h_CryoVertex_Y_TRUE.univHist(universe)->Fill(VertexY,wgt_mvnV1);
 
-              } // end of Volume Cut
-            } // End of loop
+    h_CryoVertex_Z_TRUE.univHist(universe)->Fill(VertexZ,wgt_mvnV1);
 
+    h_CryoVertex_R_TRUE.univHist(universe)->Fill(VertexR,wgt_mvnV1);
 
-          }
+    h_CryoVertex_RR_TRUE.univHist(universe)->Fill(VertexRR,wgt_mvnV1);
 
-          ///////////
-          /// End CV
-          //////////
+    h_Distance_to_InnerTank_TRUE.univHist(universe)->Fill(True_distance,wgt_mvnV1);
 
-        } // end of Universes group
-      }// End of Truth Cuts
+    if(RegionType==kUpstream_head){
+      h_Distance_to_InnerTank_upstreamCap_TRUE.univHist(universe)->Fill(True_distance, wgt_mvnV1);
+    }
 
+    else if(RegionType==kCenter){
+      h_Distance_to_InnerTank_barrel_TRUE.univHist(universe)->Fill(True_distance, wgt_mvnV1);
+    }
 
-      if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkEnergy, kWeightVector, Truth_Cut_Map_2ndTrkEnergy)){
+    else if(RegionType==kDownstream_head){
+      h_Distance_to_InnerTank_downstreamCap_TRUE.univHist(universe)->Fill(True_distance, wgt_mvnV1);
+    }
 
-        std::vector <double> Angle_trklist = Universe_GROUP.front()->GETvector_theta_wrtb_FS_particles();
-        std::vector <int> PDG_trklist = Universe_GROUP.front()->GETvector_PDG_FS_particles();
-        std::vector <double> Energy_trklist   = Universe_GROUP.front()->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
+///////////
+/// Fill CV
+//////////
+for(auto Fid_Cut:CutToSurface_bins_finner ){
+  //old if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(*universe, Fid_Cut)){
+  if(IsInFiducalVolumeFromtheInnerEdgeTRUTH_new(*universe, Fid_Cut)){
+    h_FidiucalCut_TRUE.univHist(universe)->Fill(Fid_Cut, wgt_mvnV1);
+  }
+}
 
-        int secondTrk = Universe_GROUP.front()->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist);
 
-        int pdg_2ndTrk = PDG_trklist.at(secondTrk);
-        double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
-        double pathlength = Universe_GROUP.front()->GetTRUE_nonMuoncolumnarDensity(secondTrk);
-        Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
-        Interaction_type Interaction_type_Event =  Universe_GROUP.front()->Get_InteractionStackType();
-        Material_type Material_type_Event = Universe_GROUP.front()->Get_MaterialStackType();
+if(isCV(*universe)){
+  std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
+  std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
+  std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
 
-        for (auto universe : Universe_GROUP){
 
-          universe->SetEntry(ii);
+  int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist);
 
-          double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
-          ///===================
-          // Fill CV
-          ///===================
+  Particle_type Particle_type_Event = GetParticlegroup_type(PDG_trklist.at(secondTrk));
+  Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
+  Material_type Material_type_Event = universe->Get_MaterialStackType();
+  double True_distance = TRUE_Distance_to_innerTank(*universe);
 
+  h_cryoVertex_Z_R_TRUE->Fill(VertexZ, VertexR, wgt_mvnV1);
 
-          if(isCV(*universe)){
+  h_distanceEdge_cryoVertex_R_TRUE->Fill(True_distance, VertexR,wgt_mvnV1);
+  h_distanceEdge_cryoVertex_Z_TRUE->Fill(True_distance, VertexZ,wgt_mvnV1);
+  h_distanceEdge_DOCA_TRUE->Fill(True_distance, universe->GetTRUE_nonMuonDOCA(secondTrk),wgt_mvnV1);
+  h_distanceEdge_Pathlength_TRUE->Fill(True_distance, universe->GetTRUE_nonMuoncolumnarDensity(secondTrk),wgt_mvnV1);
 
-            h_secTrk_Energy_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(secTrkTrueEnergy, wgt_mvnV1);
-            h_secTrk_Energy_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueEnergy, wgt_mvnV1);
-            h_secTrk_Energy_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(secTrkTrueEnergy, wgt_mvnV1);
+  h_CryoVertex_X_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexX , wgt_mvnV1);
+  h_CryoVertex_X_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexX , wgt_mvnV1);
+  h_CryoVertex_X_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexX , wgt_mvnV1);
 
-          }
+  h_CryoVertex_Y_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexY, wgt_mvnV1);
+  h_CryoVertex_Y_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexY, wgt_mvnV1);
+  h_CryoVertex_Y_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexY, wgt_mvnV1);
 
+  h_CryoVertex_Z_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexZ, wgt_mvnV1);
+  h_CryoVertex_Z_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexZ, wgt_mvnV1);
+  h_CryoVertex_Z_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexZ, wgt_mvnV1);
 
-          h_secTrk_Energy_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
-          h_secTrk_EnergyFINEBinning_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+  h_CryoVertex_R_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexR, wgt_mvnV1);
+  h_CryoVertex_R_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(VertexR, wgt_mvnV1);
+  h_CryoVertex_R_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(VertexR, wgt_mvnV1);
 
+  for(auto Fid_Cut:CutToSurface_bins_finner ){
+    //old  if(IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH_new(*universe, Fid_Cut)){
+    if(IsInFiducalVolumeFromtheInnerEdgeTRUTH_new(*universe, Fid_Cut)){
+      h_FidiucalCut_cryoVertex_R_TRUE->Fill(Fid_Cut, VertexR,  wgt_mvnV1);
+      h_FidiucalCut_cryoVertex_Z_TRUE->Fill(Fid_Cut, VertexZ,  wgt_mvnV1);
 
-          if(Particle_type_Event==kSecondary_particle_vector[0])
-          {
-            h_secTrk_Energy_PROTON_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
-            h_secTrk_Pathlength_PROTON_TRUE.univHist(universe)->Fill(pathlength,wgt_mvnV1);
-          }
+    } // end of Volume Cut
+  } // End of loop
 
-          else if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
-          {
-            h_secTrk_Energy_PION_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
-            h_secTrk_Pathlength_PION_TRUE.univHist(universe)->Fill(pathlength,wgt_mvnV1);
-          }
+}
 
-          else if(Particle_type_Event==kSecondary_particle_vector[1])
-          {
-            h_secTrk_Energy_Dimuon_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
-          }
+///////////
+/// End CV
+//////////
 
-        } // end of Universes
-      }// End of Truth Cuts
+} // end of Universes group
+}// End of Truth Cuts
 
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
-      if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkAngle, kWeightVector, Truth_Cut_Map_2ndTrkAngle)){
 
-        std::vector <double> Angle_trklist = Universe_GROUP.front()->GETvector_theta_wrtb_FS_particles();
-        std::vector <int> PDG_trklist = Universe_GROUP.front()->GETvector_PDG_FS_particles();
-        std::vector <double> Energy_trklist   = Universe_GROUP.front()->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkEnergy, kWeightVector, Truth_Cut_Map_2ndTrkEnergy)){
 
-        int secondTrk = Universe_GROUP.front()->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
-        int pdg_2ndTrk = PDG_trklist.at(secondTrk);
-        double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
-        double secTrkTrueAngle = Angle_trklist.at(secondTrk);
-        double openAngle = Universe_GROUP.front()->GetTRUE_NonmuTrkopenangle(secondTrk);
-        Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
+  std::vector <double> Angle_trklist = Universe_GROUP.front()->GETvector_theta_wrtb_FS_particles();
+  std::vector <int> PDG_trklist = Universe_GROUP.front()->GETvector_PDG_FS_particles();
+  std::vector <double> Energy_trklist   = Universe_GROUP.front()->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
 
+  int secondTrk = Universe_GROUP.front()->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist);
 
-        for (auto universe : Universe_GROUP){
+  int pdg_2ndTrk = PDG_trklist.at(secondTrk);
+  double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
+  double pathlength = Universe_GROUP.front()->GetTRUE_nonMuoncolumnarDensity(secondTrk);
+  Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
+  Interaction_type Interaction_type_Event =  Universe_GROUP.front()->Get_InteractionStackType();
+  Material_type Material_type_Event = Universe_GROUP.front()->Get_MaterialStackType();
 
-          universe->SetEntry(ii);
+  for (auto universe : Universe_GROUP){
+    universe->SetEntry(ii);
+    double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
-          double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+    ///===================
+    // Fill CV
+    ///===================
+    if(isCV(*universe)){
 
-          ///===================
-          // Fill CV
-          ///===================
+      h_secTrk_Energy_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(secTrkTrueEnergy, wgt_mvnV1);
+      h_secTrk_Energy_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueEnergy, wgt_mvnV1);
+      h_secTrk_Energy_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(secTrkTrueEnergy, wgt_mvnV1);
 
-          if(isCV(*universe)){
+    }
 
-            Interaction_type Interaction_type_Event = universe->Get_InteractionStackType();
-            Material_type Material_type_Event = universe->Get_MaterialStackType();
 
-            h_secTrk_Theta_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
-            h_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
-            h_secTrk_Theta_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
+    h_secTrk_Energy_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+    h_secTrk_EnergyFINEBinning_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
 
-            h_muonPT_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PTmu(),secTrkTrueAngle,wgt_mvnV1);
-            h_muonPZ_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PZmu(),secTrkTrueAngle,wgt_mvnV1);
+    if(Particle_type_Event==kSecondary_particle_vector[0])
+    {
+      h_secTrk_Energy_PROTON_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+      h_secTrk_Pathlength_PROTON_TRUE.univHist(universe)->Fill(pathlength,wgt_mvnV1);
+    }
 
+    else if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
+    {
+      h_secTrk_Energy_PION_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+      h_secTrk_Pathlength_PION_TRUE.univHist(universe)->Fill(pathlength,wgt_mvnV1);
+    }
 
-          }
+    else if(Particle_type_Event==kSecondary_particle_vector[1])
+    {
+      h_secTrk_Energy_Dimuon_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,wgt_mvnV1);
+    }
 
-          ///===================
-          // End CV
-          ///===================
+  } // end of Universes
+}// End of Truth Cuts
 
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
-          h_secTrk_Theta_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
-          h_secTrk_Openangle_TRUE.univHist(universe)->Fill(openAngle,wgt_mvnV1);
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkAngle, kWeightVector, Truth_Cut_Map_2ndTrkAngle)){
 
-          if(Particle_type_Event==kSecondary_particle_vector[0]){
+  std::vector <double> Angle_trklist = Universe_GROUP.front()->GETvector_theta_wrtb_FS_particles();
+  std::vector <int> PDG_trklist = Universe_GROUP.front()->GETvector_PDG_FS_particles();
+  std::vector <double> Energy_trklist   = Universe_GROUP.front()->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
 
-            h_secTrk_Theta_PROTON_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
-            h_secTrkopenangle_PROTON_TRUE.univHist(universe)->Fill(openAngle,wgt_mvnV1);
+  int secondTrk = Universe_GROUP.front()->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
+  int pdg_2ndTrk = PDG_trklist.at(secondTrk);
+  double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
+  double secTrkTrueAngle = Angle_trklist.at(secondTrk);
+  double openAngle = Universe_GROUP.front()->GetTRUE_NonmuTrkopenangle(secondTrk);
+  Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
 
-          }
-          if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
-          {
-            h_secTrk_Theta_PION_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
-          }
+  for (auto universe : Universe_GROUP){
+    universe->SetEntry(ii);
 
-          if(Particle_type_Event==kSecondary_particle_vector[1]){
-            h_secTrk_Theta_Dimuon_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
-          }
+    double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
+  ///===================
+  // Fill CV
+  ///===================
 
-        } // end of Universes
-      }// End of Truth Cuts
+  if(isCV(*universe)){
 
+    Interaction_type Interaction_type_Event = universe->Get_InteractionStackType();
+    Material_type Material_type_Event = universe->Get_MaterialStackType();
 
+    h_secTrk_Theta_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
+    h_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
+    h_secTrk_Theta_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(secTrkTrueAngle, wgt_mvnV1);
 
+    h_muonPT_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PTmu(),secTrkTrueAngle,wgt_mvnV1);
+    h_muonPZ_2ndTrkangle_TRUE->Fill(universe->GetTRUE_PZmu(),secTrkTrueAngle,wgt_mvnV1);
+  }
+  ///===================
+  // End CV
+  ///===================
 
-      if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkAngle_Fidiucal)){
-        for (auto universe : Universe_GROUP){
 
-          universe->SetEntry(ii);
+  h_secTrk_Theta_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
+  h_secTrk_Openangle_TRUE.univHist(universe)->Fill(openAngle,wgt_mvnV1);
 
+  if(Particle_type_Event==kSecondary_particle_vector[0]){
 
+    h_secTrk_Theta_PROTON_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
+    h_secTrkopenangle_PROTON_TRUE.univHist(universe)->Fill(openAngle,wgt_mvnV1);
 
-          if(isCV(*universe)){
+  }
+  if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
+  {
+    h_secTrk_Theta_PION_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
+  }
 
-          double wgt_mvnV1 = universe->GetWeight(kWeightVector);
-          std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
-          std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
-          std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
-          //std::vector<double> Tracklength = universe->MakeTRUE_VectorTrackLengthinMinerva_cm();
-          int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
-          int pdg_2ndTrk = PDG_trklist.at(secondTrk);
+  if(Particle_type_Event==kSecondary_particle_vector[1]){
+    h_secTrk_Theta_Dimuon_TRUE.univHist(universe)->Fill(secTrkTrueAngle,wgt_mvnV1);
+  }
 
-          double secTrkTrueAngle = Angle_trklist.at(secondTrk);
-          double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
 
-          //Interaction_type Interaction_type_Event =  universe->Get_InteractionStackType();
-          //Material_type Material_type_Event = universe->Get_MaterialStackType();
+} // end of Universes
+}// End of Truth Cuts
 
-          //h_secTrkTheta_cryoVertex_Z_TRUE.univHist(universe)->Fill(universe->GetTRUE_Vertex_z(), secTrkTrueAngle,wgt_mvnV1);
-          //h_secTrkTheta_cryoVertex_R_TRUE.univHist(universe)->Fill(universe->GetTRUE_Vertex_r(), secTrkTrueAngle,wgt_mvnV1);
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
-          ///===================
-          // Fill CV
-          ///===================
 
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkAngle_Fidiucal)){
+  for (auto universe : Universe_GROUP){
+    universe->SetEntry(ii);
 
-            Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
+    if(isCV(*universe)){
 
-            double VertexR = universe->GetTRUE_Vertex_r();
-            double VertexZ = universe->GetTRUE_Vertex_z();
-            double nonMuonDOCA = universe->GetTRUE_nonMuonDOCA(secondTrk);
-            double Pathlength =  universe->GetTRUE_nonMuoncolumnarDensity(secondTrk);
-          //  double trackLength = Tracklength.at(secondTrk);
-            h_2ndTrkE_2ndtrkangle_TRUE ->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
-            h_cryoVertex_Z_Pathlength_TRUE->Fill(VertexZ, Pathlength, wgt_mvnV1);
-            h_cryoVertex_R_Pathlength_TRUE->Fill(VertexR, Pathlength, wgt_mvnV1);
-            h_cryoVertex_Z_DOCA_TRUE->Fill(VertexZ, nonMuonDOCA, wgt_mvnV1);
-            h_cryoVertex_R_DOCA_TRUE->Fill(VertexR, nonMuonDOCA, wgt_mvnV1);
-            h_cryoVertex_Z_2ndTrkE_TRUE->Fill(VertexZ, secTrkTrueEnergy, wgt_mvnV1);
-            h_cryoVertex_R_2ndTrkE_TRUE->Fill(VertexR, secTrkTrueEnergy, wgt_mvnV1);
+      double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+      std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
+      std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
+      std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
+      //std::vector<double> Tracklength = universe->MakeTRUE_VectorTrackLengthinMinerva_cm();
+      int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
+      int pdg_2ndTrk = PDG_trklist.at(secondTrk);
 
-            h_cryoVertex_Z_secTrkTheta_TRUE->Fill(VertexZ, secTrkTrueAngle, wgt_mvnV1);
-            h_cryoVertex_R_secTrkTheta_TRUE->Fill(VertexR, secTrkTrueAngle, wgt_mvnV1);
+      double secTrkTrueAngle = Angle_trklist.at(secondTrk);
+      double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
 
+      ///===================
+      // Fill CV
+      ///===================
 
-            if(Particle_type_Event==kSecondary_particle_vector[0]){
-              h_2ndTrkE_2ndtrkangle_Proton_TRUE->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
-            }
 
-            if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
-            {
-              h_2ndTrkE_2ndtrkangle_Pion_TRUE->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
-            }
+      Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
 
+      double VertexR = universe->GetTRUE_Vertex_r();
+      double VertexZ = universe->GetTRUE_Vertex_z();
+      double nonMuonDOCA = universe->GetTRUE_nonMuonDOCA(secondTrk);
+      double Pathlength =  universe->GetTRUE_nonMuoncolumnarDensity(secondTrk);
+      //  double trackLength = Tracklength.at(secondTrk);
+      h_cryoVertex_Z_Pathlength_TRUE->Fill(VertexZ, Pathlength, wgt_mvnV1);
+      h_cryoVertex_R_Pathlength_TRUE->Fill(VertexR, Pathlength, wgt_mvnV1);
+      h_cryoVertex_Z_DOCA_TRUE->Fill(VertexZ, nonMuonDOCA, wgt_mvnV1);
+      h_cryoVertex_R_DOCA_TRUE->Fill(VertexR, nonMuonDOCA, wgt_mvnV1);
+      h_cryoVertex_Z_secTrkTheta_TRUE->Fill(VertexZ, secTrkTrueAngle, wgt_mvnV1);
+      h_cryoVertex_R_secTrkTheta_TRUE->Fill(VertexR, secTrkTrueAngle, wgt_mvnV1);
+      h_distanceEdge_2ndTrkAngle_TRUE->Fill(TRUE_Distance_to_innerTank(*universe), secTrkTrueAngle,wgt_mvnV1);
 
-          } // End of CV Universe
+    } // End of CV Universe
 
-        } // end of Universes
-      }// End of Truth Cuts
+  } // end of Universes
+}// End of Truth Cuts
 
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
-      if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_ALL, kWeightVector, Truth_Cut_Map_Energy)){
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkEnergy_Fidiucal)){
+  for (auto universe : Universe_GROUP){
+    universe->SetEntry(ii);
 
-        std::vector <double> Angle_trklist = Universe_GROUP.front()->GETvector_theta_wrtb_FS_particles();
-        std::vector <int> PDG_trklist = Universe_GROUP.front()->GETvector_PDG_FS_particles();
-        //std::vector <int> PDG_trklist_trajector = Universe_GROUP.front()->FromTRUTH_branch_GetVector_ALLTrajectors_PDG(); // this is broken
-        std::vector <double> Energy_trklist   = Universe_GROUP.front()->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
-        //std::vector<double> PathLength = Universe_GROUP.front()->MakeTRUE_VectorTrackLengthinMinerva_cm();
-        //std::vector<double> PathLength_MM = Universe_GROUP.front()-> MakeTRUE_VectorTrackLengthinMinerva_mm();
-        //auto Pathlengthvector = Universe_GROUP.front()->FromTRUTH_branch_GetVector_ALLTrajectors_FullPathlenght();
-        //std::cout<<"Pathlengthvector = "<<Pathlengthvector.size() <<" PathLenth.size() = " <<  PathLength.size()<<" PathLength_MM.size() = " <<  PathLength_MM.size() << " Angle_trklist.size() =    " << Angle_trklist.size() << " PDG_trklist.size() = " << PDG_trklist.size()<< "PDG_trklist_trajector.size() = "<< PDG_trklist_trajector.size()<<std::endl;
-        //for(int yy = 0; yy < PDG_trklist.size(); ++yy){
-        //  std::cout<<"pdg = " << PDG_trklist.at(yy) << " Angle_trklist =  " << Angle_trklist.at(yy)<< "Energy_trklist = "<< Energy_trklist.at(yy) <<std::endl;
+    if(isCV(*universe)){
 
-        //}
+      double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+      std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
+      std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
+      std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
+      //std::vector<double> Tracklength = universe->MakeTRUE_VectorTrackLengthinMinerva_cm();
+      int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
+      int pdg_2ndTrk = PDG_trklist.at(secondTrk);
+      double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
 
-      //  for(int yy = 0; yy < PathLength_MM.size(); ++yy){
-        //  std::cout<<"PDG_trklist_trajector = "<<   PDG_trklist_trajector.at(yy)<<"  PathLength_MM = " << PathLength_MM.at(yy) << " PathLenth =  " << PathLength.at(yy)<< std::endl;
-        //}
+      ///===================
+      // Fill CV
+      ///===================
+      Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
 
+      double VertexR = universe->GetTRUE_Vertex_r();
+      double VertexZ = universe->GetTRUE_Vertex_z();
+      //  double trackLength = Tracklength.at(secondTrk);
+      h_cryoVertex_Z_2ndTrkE_TRUE->Fill(VertexZ, secTrkTrueEnergy, wgt_mvnV1);
+      h_cryoVertex_R_2ndTrkE_TRUE->Fill(VertexR, secTrkTrueEnergy, wgt_mvnV1);
+      h_distanceEdge_2ndTrkE_TRUE->Fill(TRUE_Distance_to_innerTank(*universe), secTrkTrueEnergy ,wgt_mvnV1);
 
-        int secondTrk = Universe_GROUP.front()->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist);
+    } // End of CV Universe
 
-        //std::cout<<"secondTrk = " << secondTrk<<std::endl;
-        //std::cout<<"pdg(secondTrk) = " << PDG_trklist.at(secondTrk) << " Angle_trklist =  " << Angle_trklist.at(secondTrk)<< std::endl;
+  } // end of Universes
+}// End of Truth Cuts
 
-        double Pathlength2ndTrk = Universe_GROUP.front()->GetTRUE_nonMuoncolumnarDensity(secondTrk);
-        double DOCA_2ndTrk = Universe_GROUP.front()->GetTRUE_nonMuonDOCA(secondTrk);
-        //double pathLength_2ndTrk = PathLength.at(secondTrk);
-        Particle_type Particle_type_Event = GetParticlegroup_type(PDG_trklist.at(secondTrk));
-        Interaction_type Interaction_type_Event =  Universe_GROUP.front()->Get_InteractionStackType();
-        Material_type Material_type_Event = Universe_GROUP.front()->Get_MaterialStackType();
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_ALL, kWeightVector, Truth_Cut_Map_Energy)){
 
-        for (auto universe : Universe_GROUP){
+  std::vector <double> Angle_trklist = Universe_GROUP.front()->GETvector_theta_wrtb_FS_particles();
+  std::vector <int> PDG_trklist = Universe_GROUP.front()->GETvector_PDG_FS_particles();
+  //std::vector <int> PDG_trklist_trajector = Universe_GROUP.front()->FromTRUTH_branch_GetVector_ALLTrajectors_PDG(); // this is broken
+  std::vector <double> Energy_trklist   = Universe_GROUP.front()->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
 
-          universe->SetEntry(ii);
+  int secondTrk = Universe_GROUP.front()->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist);
 
-          double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+  double Pathlength2ndTrk = Universe_GROUP.front()->GetTRUE_nonMuoncolumnarDensity(secondTrk);
+  double DOCA_2ndTrk = Universe_GROUP.front()->GetTRUE_nonMuonDOCA(secondTrk);
+  //double pathLength_2ndTrk = PathLength.at(secondTrk);
+  Particle_type Particle_type_Event = GetParticlegroup_type(PDG_trklist.at(secondTrk));
+  Interaction_type Interaction_type_Event =  Universe_GROUP.front()->Get_InteractionStackType();
+  Material_type Material_type_Event = Universe_GROUP.front()->Get_MaterialStackType();
 
-          h_secTrk_Pathlength_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,wgt_mvnV1);
-          //h_secTrk_tracklength_TRUE.univHist(universe)->Fill(pathLength_2ndTrk,wgt_mvnV1);
-          h_secTrk_DOCA_TRUE.univHist(universe)->Fill(DOCA_2ndTrk,wgt_mvnV1);
 
-          if(Particle_type_Event==kSecondary_particle_vector[0]){
-            h_secTrk_Pathlength_PROTON_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,wgt_mvnV1);
-          }
+  for (auto universe : Universe_GROUP){
+    universe->SetEntry(ii);
 
-          if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
-          {
-            h_secTrk_Pathlength_PION_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,wgt_mvnV1);
+    double wgt_mvnV1 = universe->GetWeight(kWeightVector);
 
-          }
+    h_secTrk_Pathlength_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,wgt_mvnV1);
+    //h_secTrk_tracklength_TRUE.univHist(universe)->Fill(pathLength_2ndTrk,wgt_mvnV1);
+    h_secTrk_DOCA_TRUE.univHist(universe)->Fill(DOCA_2ndTrk,wgt_mvnV1);
 
-          if(isCV(*universe)){
-            h_secTrk_Pathlength_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(Pathlength2ndTrk, wgt_mvnV1);
-            h_secTrk_Pathlength_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pathlength2ndTrk, wgt_mvnV1);
-            h_secTrk_Pathlength_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(Pathlength2ndTrk, wgt_mvnV1);
-            h_secTrk_DOCA_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(DOCA_2ndTrk, wgt_mvnV1);
-            h_secTrk_DOCA_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(DOCA_2ndTrk, wgt_mvnV1);
-            h_secTrk_DOCA_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(DOCA_2ndTrk, wgt_mvnV1);
-          }
+    if(Particle_type_Event==kSecondary_particle_vector[0]){
+      h_secTrk_Pathlength_PROTON_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,wgt_mvnV1);
+    }
 
+    if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
+    {
+      h_secTrk_Pathlength_PION_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,wgt_mvnV1);
 
+    }
 
-        } // end of Universes
-      }// End of Truth Cuts
+    if(isCV(*universe)){
+      h_secTrk_Pathlength_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(Pathlength2ndTrk, wgt_mvnV1);
+      h_secTrk_Pathlength_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pathlength2ndTrk, wgt_mvnV1);
+      h_secTrk_Pathlength_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(Pathlength2ndTrk, wgt_mvnV1);
+      h_secTrk_DOCA_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(DOCA_2ndTrk, wgt_mvnV1);
+      h_secTrk_DOCA_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(DOCA_2ndTrk, wgt_mvnV1);
+      h_secTrk_DOCA_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(DOCA_2ndTrk, wgt_mvnV1);
+    }
 
+  } // end of Universes
+}// End of Truth Cuts
 
+//////////////////////////////////////////////////////////////////////////
+//                    Applying Truth Cuts
+//////////////////////////////////////////////////////////////////////////
 
+if(PassesCutsTRUTH(*Universe_GROUP.front(), kTRUTHCutsVector_2ndtrkEnergy_2ndTrkAngle)){
+  for (auto universe : Universe_GROUP){
 
+    universe->SetEntry(ii);
 
+    if(isCV(*universe)){
 
+      double wgt_mvnV1 = universe->GetWeight(kWeightVector);
+      std::vector <double> Angle_trklist = universe->GETvector_theta_wrtb_FS_particles();
+      std::vector <int> PDG_trklist = universe->GETvector_PDG_FS_particles();
+      std::vector <double> Energy_trklist   = universe->GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject);
+      //std::vector<double> Tracklength = universe->MakeTRUE_VectorTrackLengthinMinerva_cm();
+      int secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE(PDG_trklist, Energy_trklist);
+      int pdg_2ndTrk = PDG_trklist.at(secondTrk);
+      double secTrkTrueEnergy = Energy_trklist.at(secondTrk);
+      double secTrkTrueAngle = Angle_trklist.at(secondTrk);
+      ///===================
+      // Fill CV
+      ///===================
 
 
-    } // End Band Groups loop
+      Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
 
+      double VertexR = universe->GetTRUE_Vertex_r();
+      double VertexZ = universe->GetTRUE_Vertex_z();
+      //  double trackLength = Tracklength.at(secondTrk);
 
+      h_2ndTrkE_2ndtrkangle_TRUE ->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
 
+      if(Particle_type_Event==kSecondary_particle_vector[0]){
+        h_2ndTrkE_2ndtrkangle_Proton_TRUE->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
+      }
 
+      if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
+      {
+        h_2ndTrkE_2ndtrkangle_Pion_TRUE->Fill(secTrkTrueEnergy, secTrkTrueAngle,wgt_mvnV1);
+      }
 
 
 
+    } // End of CV Universe
 
+  } // end of Universes
+}// End of Truth Cuts
 
-  } //End entries loop
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//                   END of Group Loop
+//////////////////////////////////////////////////////////////////////////
+
+
+} // End Band Groups loop
+
+
+//////////////////////////////////////////////////////////////////////////
+//                   END of Entire Loop
+//////////////////////////////////////////////////////////////////////////
+
+
+} //End entries loop
 
   gSystem->GetProcInfo(&procInfo);
   std::cout << " Done with loop Mem1: " << procInfo.fMemResident/1000 << " MB" << " time = "<<  procInfo.fCpuSys  <<  " sec""\n";
@@ -1166,6 +1306,9 @@ double countmc= 0.0;
     h_CryoVertex_Z_TRUE.SyncCVHistos();
     h_FidiucalCut_TRUE.SyncCVHistos();
     h_Distance_to_InnerTank_TRUE.SyncCVHistos();
+    h_Distance_to_InnerTank_upstreamCap_TRUE.SyncCVHistos();
+    h_Distance_to_InnerTank_barrel_TRUE.SyncCVHistos();
+    h_Distance_to_InnerTank_downstreamCap_TRUE.SyncCVHistos();
     //////////////////////////////////
     h_secTrk_Energy_TRUE.SyncCVHistos();
     h_secTrk_EnergyFINEBinning_TRUE.SyncCVHistos();
@@ -1301,6 +1444,9 @@ double countmc= 0.0;
   h_CryoVertex_RR_TRUE.hist->Write();
   h_FidiucalCut_TRUE.hist->Write();
   h_Distance_to_InnerTank_TRUE.hist->Write();
+  h_Distance_to_InnerTank_upstreamCap_TRUE.hist->Write();
+  h_Distance_to_InnerTank_barrel_TRUE.hist->Write();
+  h_Distance_to_InnerTank_downstreamCap_TRUE.hist->Write();
 
   h_secTrk_Openangle_TRUE.hist->Write();
 
@@ -1363,10 +1509,15 @@ double countmc= 0.0;
   h_cryoVertex_Z_2ndTrkE_TRUE->Write();
   h_cryoVertex_R_2ndTrkE_TRUE->Write();
 
-  h_FidiucalCut_cryoVertex_R_TRUE->Write();
-  h_FidiucalCut_cryoVertex_Z_TRUE->Write();
-
-
+  h_distanceEdge_cryoVertex_R_TRUE->Write();
+  h_distanceEdge_cryoVertex_Z_TRUE->Write();
+  h_distanceEdge_DOCA_TRUE->Write();
+  h_distanceEdge_2ndTrkE_TRUE ->Write();
+  h_distanceEdge_Pathlength_TRUE->Write();
+  h_distanceEdge_2ndTrkAngle_TRUE ->Write();
+  h_distanceEdge_MuonPT_TRUE ->Write();
+  h_distanceEdge_MuonPZ_TRUE->Write();
+  h_distanceEdge_Muontheta_TRUE->Write();
 
 
   outFile->Close();
@@ -1403,7 +1554,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTHMuonEnergy );
   True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTHFiduical_new );
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
@@ -1423,7 +1574,33 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonEnergy() {
   True_vec.push_back(kTRUTHtarget);
   //True_vec.push_back(kTRUTHMuonEnergy );
   True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTHFiduical_new );
+  True_vec.push_back(kTRUTH_greaterthanoneFS);
+  //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
+  //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
+  True_vec.push_back(kAllTRUTHCuts);
+
+
+  //int n = sizeof(kCutsArray) / sizeof(kCutsArray[0]);
+  //static std::vector<ECuts> ret_vec(kCutsArray, kCutsArray + n);
+  return True_vec;
+//#endif
+}
+
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonEnergy_noFiduical() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECutsTRUTH> True_vec;
+  True_vec.push_back(kTRUTHNoCuts);
+  True_vec.push_back(kTRUTHneutrino);
+  True_vec.push_back(kTRUTHCCInteraction );
+  True_vec.push_back(kTRUTHtarget);
+  //True_vec.push_back(kTRUTHMuonEnergy );
+  True_vec.push_back(kTRUTHMuonAngle );
+  //True_vec.push_back(kTRUTHFiduical_new );
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
@@ -1449,7 +1626,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonTheta() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTHMuonEnergy );
   //True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTHFiduical_new );
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTH_atleastone_non_Neutral_secTrk);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
@@ -1466,6 +1643,31 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonTheta() {
 //#endif
 }
 
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_MuonTheta_noFid() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECutsTRUTH> True_vec;
+  True_vec.push_back(kTRUTHNoCuts);
+  True_vec.push_back(kTRUTHneutrino);
+  True_vec.push_back(kTRUTHCCInteraction );
+  True_vec.push_back(kTRUTHtarget);
+  True_vec.push_back(kTRUTHMuonEnergy );
+  //True_vec.push_back(kTRUTHMuonAngle );
+  //True_vec.push_back(kTRUTHFiduical_new );
+  True_vec.push_back(kTRUTH_greaterthanoneFS);
+  //True_vec.push_back(kTRUTH_atleastone_non_Neutral_secTrk);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
+  //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
+  True_vec.push_back(kAllTRUTHCuts);
+
+
+  //int n = sizeof(kCutsArray) / sizeof(kCutsArray[0]);
+  //static std::vector<ECuts> ret_vec(kCutsArray, kCutsArray + n);
+  return True_vec;
+//#endif
+}
 std::vector<ECutsTRUTH> GetTRUTHCutsVector_Fiduical() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<ECutsTRUTH> True_vec;
@@ -1502,7 +1704,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTHMuonEnergy );
   True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTHFiduical_new );
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
@@ -1510,6 +1712,29 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy() {
   True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
   //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
+  True_vec.push_back(kAllTRUTHCuts);
+
+  return True_vec;
+//#endif
+}
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy_2ndtrkAngle() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECutsTRUTH> True_vec;
+  True_vec.push_back(kTRUTHNoCuts);
+  True_vec.push_back(kTRUTHneutrino);
+  True_vec.push_back(kTRUTHCCInteraction );
+  True_vec.push_back(kTRUTHtarget);
+  True_vec.push_back(kTRUTHMuonEnergy );
+  True_vec.push_back(kTRUTHMuonAngle );
+  True_vec.push_back(kTRUTHFiduical_new );
+  True_vec.push_back(kTRUTH_greaterthanoneFS);
+  //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds); // Need to make a kTRUTH_No_Neutral
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
+  //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
+  True_vec.push_back(kTRUTH_atleastone_non_Neutral_secTrk);
   True_vec.push_back(kAllTRUTHCuts);
 
   return True_vec;
@@ -1526,7 +1751,7 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkAngle() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTHMuonEnergy );
   True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTHFiduical_new );
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
@@ -1555,6 +1780,29 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkAngle_Fidiucal() {
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
   True_vec.push_back(kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds);
+  //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
+  //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
+  True_vec.push_back(kAllTRUTHCuts);
+
+  return True_vec;
+//#endif
+}
+
+std::vector<ECutsTRUTH> GetTRUTHCutsVector_2ndtrkEnergy_Fiduical() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<ECutsTRUTH> True_vec;
+  True_vec.push_back(kTRUTHNoCuts);
+  True_vec.push_back(kTRUTHneutrino);
+  True_vec.push_back(kTRUTHCCInteraction );
+  True_vec.push_back(kTRUTHtarget);
+  True_vec.push_back(kTRUTHMuonEnergy );
+  True_vec.push_back(kTRUTHMuonAngle );
+  //True_vec.push_back(kTRUTHFiduical_new );
+  True_vec.push_back(kTRUTH_greaterthanoneFS);
+  //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
+  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
   //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
   True_vec.push_back(kAllTRUTHCuts);

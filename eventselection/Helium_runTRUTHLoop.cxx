@@ -22,7 +22,7 @@ std::vector<Particle_type>  GetParicle_type();
 // Get container of systematics
 
 const bool m_RunCodeWithSystematics = true;
-
+const bool m_RunCodeWithFidCut = true;
 
 const std::vector<PlotUtils::NamedCategory<Material_type>>
 MaterialGroup_categories = {
@@ -34,15 +34,33 @@ PlotUtils::NamedCategory<Material_type>({kAluminium},      "Aluminium"),
 PlotUtils::NamedCategory<Material_type>({kHelium},         "Helium")
 
 };
+
 const std::vector<PlotUtils::NamedCategory<Interaction_type>>
 InteractionGroup_categories = {
   PlotUtils::NamedCategory<Interaction_type>({kInteraction_OTHER},"Other"),
   PlotUtils::NamedCategory<Interaction_type>({kInteraction_NONE}, "None"),
   PlotUtils::NamedCategory<Interaction_type>({kDIS},              "DIS"),
   PlotUtils::NamedCategory<Interaction_type>({k2p2h},             "2p2h"),
-  PlotUtils::NamedCategory<Interaction_type>({kRes_Coh_Pion},     "1Pion"),
-  PlotUtils::NamedCategory<Interaction_type>({kElastic},          "Elastic")
+  PlotUtils::NamedCategory<Interaction_type>({kRes_Coh_Pion},     "Res_Coh"),
+  PlotUtils::NamedCategory<Interaction_type>({kElastic},          "QE")
 };
+
+
+const std::vector<PlotUtils::NamedCategory<Interaction_type>>
+InteractionGroupDISBreakdown_categories = {
+  PlotUtils::NamedCategory<Interaction_type>({kInteraction_OTHER},"Other"),
+  PlotUtils::NamedCategory<Interaction_type>({kInteraction_NONE}, "None"),
+  PlotUtils::NamedCategory<Interaction_type>({kDISSoft},          "SoftDIS"),
+  PlotUtils::NamedCategory<Interaction_type>({kDISHard},          "HardDIS"),
+  PlotUtils::NamedCategory<Interaction_type>({kDISSIS},           "SIS"),
+  PlotUtils::NamedCategory<Interaction_type>({k2p2h},             "2p2h"),
+  PlotUtils::NamedCategory<Interaction_type>({kdeltaRES},         "#DeltaRes"),
+  PlotUtils::NamedCategory<Interaction_type>({kHeavierRES},       "HeavierRes"),
+  PlotUtils::NamedCategory<Interaction_type>({kElastic},          "QE")
+};
+
+
+
 
 
 const std::vector<PlotUtils::NamedCategory<Particle_type>>
@@ -68,25 +86,29 @@ ParticleGroup_categories = {
 
 
 const std::vector<PlotUtils::NamedCategory<Particle_type>>
-ParticleGroup_leadingvsnonleading_categories = {
-  PlotUtils::NamedCategory<Particle_type>({kParticle_OTHER}, "Other"),
-  PlotUtils::NamedCategory<Particle_type>({kPion_0},         "Pi0"),
-  PlotUtils::NamedCategory<Particle_type>({kPion_neg},       "Pi^{-}"),
-  PlotUtils::NamedCategory<Particle_type>({kPion_pos},       "Pi^{+}"),
-  PlotUtils::NamedCategory<Particle_type>({kProton},         "Proton"),
-  PlotUtils::NamedCategory<Particle_type>({kNeutron},   "Neutron")
+ParticleGroup_reduced_categories = {
+  PlotUtils::NamedCategory<Particle_type>({kParticle_N_A},          "N_A"),
+  PlotUtils::NamedCategory<Particle_type>({kParticle_OTHER},        "Other"),
+  PlotUtils::NamedCategory<Particle_type>({kParticle_neutral},      "Neutral"),
+  PlotUtils::NamedCategory<Particle_type>({kMuon},                   "Muon"),
+  PlotUtils::NamedCategory<Particle_type>({kPion_0_Electron_kGamma},"e^{-/+},#gamma,#pi^{0}"),
+  PlotUtils::NamedCategory<Particle_type>({kPion_pos_neg},          "Pi^{-/+}"),
+  PlotUtils::NamedCategory<Particle_type>({kProton},                "Proton")
+
 
 };
 
-/*
-const auto TracksGreaterThan2 = {  NamedCategory<int>({3},   "ThirdTrack"),
-NamedCategory<int>({4},   "FourthTrack"),
-NamedCategory<int>({5},   "FifthTrack"),
-NamedCategory<int>({6},   "SixthTrack"),
-NamedCategory<int>({7},   "SevethTrack"),
-NamedCategory<int>({8},   "EighthTrack")
+const std::vector<PlotUtils::NamedCategory<Topologies_type>>
+Topologies_categories = {
+  PlotUtils::NamedCategory<Topologies_type>({kCCOther},      "CCOther"),
+  PlotUtils::NamedCategory<Topologies_type>({kCC2P0Pi},      "CC2P0#pi"),
+  PlotUtils::NamedCategory<Topologies_type>({kCC1P0Pi},      "CC1P0#pi"),
+  PlotUtils::NamedCategory<Topologies_type>({kCC0P0Pi},      "CC0P0#pi"),
 
-};*/
+};
+
+
+
 
 ///////////////////////////////////
 ////// Number of Flux Universe
@@ -200,7 +222,7 @@ std::vector <ALL_True_Event_info> ALL_EventInfoNu_mu_secTrkParticle;
   MinervaUniverse::SetNuEConstraint(true);
   MinervaUniverse::SetAnalysisNuPDG(14);
   MinervaUniverse::SetNFluxUniverses(n_flux_universes);
-  MinervaUniverse::SetZExpansionFaReweight(false);
+  MinervaUniverse::SetZExpansionFaReweight(true);
   MinervaUniverse::SetNonResPiReweight(true);
   MinervaUniverse::SetDeuteriumGeniePiTune(false);
   std::string playlist = GetPlaylist(PlayList_iterator);
@@ -229,10 +251,11 @@ std::vector <ALL_True_Event_info> ALL_EventInfoNu_mu_secTrkParticle;
 std::map< std::string, std::vector<HeliumCVUniverse*> > error_bands= GetErrorBands(chw_MC);
 for(auto band :error_bands ){std::cout<<"Checking Universe this is universe with name : " << band.first<<std::endl;}
 std::vector<std::vector<HeliumCVUniverse*>> Error_Band_Universe_GROUPS = groupCompatibleUniverses(error_bands);
-
+std::string Zexp = MinervaUniverse::UseZExpansionFaReweight() ? " Zexp set to TRUE ": " Zexp set to FALSE ";
 std::cout<< "error_bands.size() = " << error_bands.size()<<std::endl;
 std::cout<< "Error_Band_GROUPS.size() = " << Error_Band_Universe_GROUPS.size()<<std::endl;
 std::cout<<"Number of Universes set is = "<< 	MinervaUniverse::GetNFluxUniverses()<<std::endl;
+std::cout<< " Set Zexp: " << Zexp<<std::endl;
 //std::string NumU = MinervaUniverse::GetNFluxUniverses()<<std::endl;
 
 //const std::string RootName = GetPlaylist_ROOT_path("1G_Bugfix",  is_mc );
@@ -268,7 +291,7 @@ std::cout<<"The Playlist Root = "<< RootName<<std::endl;
 
   count=1;
   for(auto true_cut_name:kTRUTHCutsVector ){
-    output<< count<<" TRUTHCUT name: "<<GetCutNameTRUTH(true_cut_name) <<endl;
+    output<< count<<" cut Number "<<  true_cut_name <<" TRUTHCUT name: "<<GetCutNameTRUTH(true_cut_name) <<endl;
     count++;
   }
   output<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
@@ -353,8 +376,21 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonE_TRUE_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonE_TRUE_Interaction", Ebin_vector ,"MuonE_TRUE_Interaction; [GeV];Events");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonE_TRUE_InteractionDISBreakdown =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonE_TRUE_InteractionDISBreakdown", Ebin_vector ,"h_MuonE_TRUE_InteractionExtraDIS; [GeV];Events");
+
+
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonE_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonE_TRUE_Particle", Ebin_vector ,"MuonE_TRUE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonE_TRUE_Particle", Ebin_vector ,"MuonE_TRUE_Particle; [GeV];Events");
+
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type> h_MuonE_TRUE_Topologies =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type>(Topologies_categories, "h_MuonE_TRUE_Topologies", Ebin_vector ,"MuonE_TRUE_Topologies; [GeV];Events");
+
+
+
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonE_TRUE_Particlereduced =
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonE_TRUE_Particlereduced", Ebin_vector ,"MuonE_TRUE_Particle; [GeV];Events");
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPZ_TRUE("h_MuonPZ_TRUE", "Muon_{PZ} NEW Method",  Pzbin_vector , error_bands);
@@ -365,8 +401,21 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPZ_TRUE_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonPZ_TRUE_Interaction", Pzbin_vector ,"h_MuonPZ_TRUE_Interaction; [GeV];Events");
 
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPZ_TRUE_InteractionDISBreakdown =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonPZ_TRUE_InteractionDISBreakdown", Pzbin_vector ,"h_MuonPZ_TRUE_Interaction; [GeV];Events");
+
+
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPZ_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonPZ_TRUE_Particle", Pzbin_vector ,"h_MuonPZ_TRUE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPZ_TRUE_Particle", Pzbin_vector ,"h_MuonPZ_TRUE_Particle; [GeV];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type> h_MuonPZ_TRUE_Topologies =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type>(Topologies_categories, "h_MuonPZ_TRUE_Topologies", Pzbin_vector ,"h_MuonPZ_TRUE_Topologies; [GeV];Events");
+
+
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPZ_TRUE_Particlereduced =
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPZ_TRUE_Particlereduced", Pzbin_vector ,"h_MuonPZ_TRUE_Particle; [GeV];Events");
+
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPT_TRUE("h_MuonPT_TRUE", "Muon_{PT} NEW Method",  PTbin_vector , error_bands);
@@ -377,8 +426,21 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPT_TRUE_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonPT_TRUE_Interaction", PTbin_vector ,"h_MuonPT_TRUE_Interaction; [GeV];Events");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPT_TRUE_InteractionDISBreakdown =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonPT_TRUE_InteractionDISBreakdown", PTbin_vector ,"h_MuonPT_TRUE_Interaction; [GeV];Events");
+
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPT_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonPT_TRUE_Particle", PTbin_vector ,"h_MuonPT_TRUE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPT_TRUE_Particle", PTbin_vector ,"h_MuonPT_TRUE_Particle; [GeV];Events");
+
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type> h_MuonPT_TRUE_Topologies =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type>(Topologies_categories, "h_MuonPT_TRUE_Topologies", PTbin_vector ,"h_MuonPT_TRUE_Topologies; [GeV];Events");
+
+
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPT_TRUE_Particlereduced =
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPT_TRUE_Particlereduced", PTbin_vector ,"h_MuonPT_TRUE_Particle; [GeV];Events");
+
+
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonTheta_TRUE("h_MuonTheta_TRUE", "MuonTheta [Deg]",  MuonThetabin_vector , error_bands);
 
@@ -388,8 +450,20 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories,
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonTheta_TRUE_Interaction =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonTheta_TRUE_Interaction", MuonThetabin_vector ,"h_MuonTheta_TRUE_Interaction; [GeV];Events");
 
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonTheta_TRUE_InteractionDISBreakdown =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroupDISBreakdown_categories, "h_MuonTheta_TRUE_InteractionDISBreakdown", MuonThetabin_vector ,"h_MuonTheta_TRUE_Interaction; [GeV];Events");
+
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonTheta_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonTheta_TRUE_Particle", MuonThetabin_vector ,"h_MuonTheta_TRUE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonTheta_TRUE_Particle", MuonThetabin_vector ,"h_MuonTheta_TRUE_Particle; [GeV];Events");
+
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type> h_MuonTheta_TRUE_Topologies =
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Topologies_type>(Topologies_categories, "h_MuonTheta_TRUE_Topologies", MuonThetabin_vector ,"h_MuonTheta_TRUE_Topologies; [GeV];Events");
+
+
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonTheta_TRUE_Particlereduced =
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonTheta_TRUE_Particlereduced", MuonThetabin_vector ,"h_MuonTheta_TRUE_Particle; [GeV];Events");
+
+
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_MuonPhi_TRUE("h_MuonPhi_TRUE", "MuonTheta [Deg]",  MuonThetabin_vector , error_bands);//
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_MuonPhi_TRUE_Material =
@@ -399,7 +473,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_MuonPhi_TRUE_Interac
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_MuonPhi_TRUE_Interaction", AnglePhi_vector ,"h_MuonPhi_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_MuonPhi_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_MuonPhi_TRUE_Particle", AnglePhi_vector ,"h_MuonPhi_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_MuonPhi_TRUE_Particle", AnglePhi_vector ,"h_MuonPhi_Particle; [GeV];Events");
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_Tracksize_TRUE("h_Tracksize_TRUE", "Track size [N]",  TrackSize_vector , error_bands);
 
@@ -410,41 +484,41 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_Tracksize_TRUE_Inter
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_Tracksize_TRUE_Interaction", TrackSize_vector ,"h_Tracksize_TRUE_Interaction; [Tracknumber];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_Tracksize_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_Tracksize_TRUE_Particle", TrackSize_vector ,"h_Tracksize_TRUE_Particle; [Tracknumber];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_Tracksize_TRUE_Particle", TrackSize_vector ,"h_Tracksize_TRUE_Particle; [Tracknumber];Events");
 
 
 /*
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_TracksizeALL_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_TracksizeALL_TRUE_Particle", TrackSize_vector ,"h_TracksizeALL_TRUE_Particle; [Tracknumber];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_TracksizeALL_TRUE_Particle", TrackSize_vector ,"h_TracksizeALL_TRUE_Particle; [Tracknumber];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_TracksizeALL_leadingTRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_TracksizeALL_leadingTRUE_Particle", TrackSize_vector ,"h_TracksizeALL_leadingTRUE_Particle; [Tracknumber];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_TracksizeALL_leadingTRUE_Particle", TrackSize_vector ,"h_TracksizeALL_leadingTRUE_Particle; [Tracknumber];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_TracksizeALL_nonleadingTRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_TracksizeALL_nonleadingTRUE_Particle", TrackSize_vector ,"h_TracksizeALL_nonleadingTRUE_Particle; [Tracknumber];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_TracksizeALL_nonleadingTRUE_Particle", TrackSize_vector ,"h_TracksizeALL_nonleadingTRUE_Particle; [Tracknumber];Events");
 */
 
 
 ///////////////////////////////////////
 //
 ///////////////////////////////////////
-MnvH2D *h_2d_PZ_PT_TRUE            =    new MnvH2D("h_2d_PZ_PT_TRUE", "h_2d_PZ_PT_TRUE",Pzbin_vector.size()-1, Pzbin_vector.data() ,PTbin_vector.size()-1, PTbin_vector.data()  );
+//MnvH2D *h_2d_PZ_PT_TRUE            =    new MnvH2D("h_2d_PZ_PT_TRUE", "h_2d_PZ_PT_TRUE",Pzbin_vector.size()-1, Pzbin_vector.data() ,PTbin_vector.size()-1, PTbin_vector.data()  );
 
-MnvH2D *h_2d_E_PZ_TRUE             =    new MnvH2D("h_2d_E_PZ_TRUE", "h_2d_E_PZ_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Pzbin_vector.size()-1, Pzbin_vector.data()  );
+//MnvH2D *h_2d_E_PZ_TRUE             =    new MnvH2D("h_2d_E_PZ_TRUE", "h_2d_E_PZ_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Pzbin_vector.size()-1, Pzbin_vector.data()  );
 
-MnvH2D *h_2d_Theta_PZ_TRUE         =    new MnvH2D("h_2d_Theta_PZ_TRUE", "h_2d_Theta_PZ_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Pzbin_vector.size()-1, Pzbin_vector.data()  );
+//MnvH2D *h_2d_Theta_PZ_TRUE         =    new MnvH2D("h_2d_Theta_PZ_TRUE", "h_2d_Theta_PZ_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Pzbin_vector.size()-1, Pzbin_vector.data()  );
 
-MnvH2D *h_2d_E_PT_TRUE             =    new MnvH2D("h_2d_E_PT_TRUE", "h_2d_E_PT_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),PTbin_vector.size()-1, PTbin_vector.data()  );
-MnvH2D *h_2d_Theta_PT_TRUE         =    new MnvH2D("h_2d_Theta_PT_TRUE", "h_2d_Theta_PT_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),PTbin_vector.size()-1, PTbin_vector.data()  );
+//MnvH2D *h_2d_E_PT_TRUE             =    new MnvH2D("h_2d_E_PT_TRUE", "h_2d_E_PT_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),PTbin_vector.size()-1, PTbin_vector.data()  );
+//MnvH2D *h_2d_Theta_PT_TRUE         =    new MnvH2D("h_2d_Theta_PT_TRUE", "h_2d_Theta_PT_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),PTbin_vector.size()-1, PTbin_vector.data()  );
 //MnvH2D *h_2d_Theta_PT_TRUE_RECO    =    new MnvH2D("h_2d_Theta_PT_TRUE_RECO", "h_2d_Theta_PT_TRUE_RECO", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),PTbin_vector.size()-1, PTbin_vector.data()  );
 
 ///////////////////////////////////////
 //
 ///////////////////////////////////////
-MnvH2D *h_2d_Theta_2ndTrkE_TRUE         =    new MnvH2D("h_2d_Theta_2ndTrkE_TRUE", "h_2d_Theta_2ndTrkE_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
-MnvH2D *h_2d_muonE_2ndTrkE_TRUE         =    new MnvH2D("h_2d_muonE_2ndTrkE_TRUE", "h_2d_muonE_2ndTrkE_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
-MnvH2D *h_2d_muonPT_2ndTrkE_TRUE         =    new MnvH2D("h_2d_muonPT_2ndTrkE_TRUE", "h_2d_muonPT_2ndTrkE_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
-MnvH2D *h_2d_muonPZ_2ndTrkE_TRUE         =    new MnvH2D("h_2d_muonPZ_2ndTrkE_TRUE", "h_2d_muonPZ_2ndTrkE_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_Theta_2ndTrkE_TRUE         =    new MnvH2D("h_2d_Theta_2ndTrkE_TRUE", "h_2d_Theta_2ndTrkE_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_muonE_2ndTrkE_TRUE         =    new MnvH2D("h_2d_muonE_2ndTrkE_TRUE", "h_2d_muonE_2ndTrkE_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_muonPT_2ndTrkE_TRUE         =    new MnvH2D("h_2d_muonPT_2ndTrkE_TRUE", "h_2d_muonPT_2ndTrkE_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_muonPZ_2ndTrkE_TRUE         =    new MnvH2D("h_2d_muonPZ_2ndTrkE_TRUE", "h_2d_muonPZ_2ndTrkE_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 
 ///////////////////////////////////////
 //Proton
@@ -460,20 +534,20 @@ MnvH2D *h_2d_muonPZ_2ndTrkE_Proton_TRUE         =    new MnvH2D("h_2d_muonPZ_2nd
 ///////////////////////////////////////
 
 
-MnvH2D *h_2d_Theta_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_Theta_2ndTrkE_Pion_TRUE", "h_2d_Theta_2ndTrkE_Pion_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
-MnvH2D *h_2d_muonE_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_muonE_2ndTrkE_Pion_TRUE", "h_2d_muonE_2ndTrkE_Pion_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
-MnvH2D *h_2d_muonPT_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_muonPT_2ndTrkE_Pion_TRUE", "h_2d_muonPT_2ndTrkE_Pion_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
-MnvH2D *h_2d_muonPZ_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_muonPZ_2ndTrkE_Pion_TRUE", "h_2d_muonPZ_2ndTrkE_Pion_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_Theta_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_Theta_2ndTrkE_Pion_TRUE", "h_2d_Theta_2ndTrkE_Pion_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_muonE_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_muonE_2ndTrkE_Pion_TRUE", "h_2d_muonE_2ndTrkE_Pion_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_muonPT_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_muonPT_2ndTrkE_Pion_TRUE", "h_2d_muonPT_2ndTrkE_Pion_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
+//MnvH2D *h_2d_muonPZ_2ndTrkE_Pion_TRUE         =    new MnvH2D("h_2d_muonPZ_2ndTrkE_Pion_TRUE", "h_2d_muonPZ_2ndTrkE_Pion_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(),Vertex_secondTrkEbins.size()-1, Vertex_secondTrkEbins.data()  );
 
 
 
 ///////////////////////////////////////
 //
 ///////////////////////////////////////
-MnvH2D *h_2d_Theta_2ndTrKangle_TRUE         =    new MnvH2D("h_2d_Theta_2ndTrKangle_TRUE", "h_2d_Theta_2ndTrKangle_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_2d_muonE_2ndTrkangle_TRUE         =    new MnvH2D("h_2d_muonE_2ndTrkangle_TRUE", "h_2d_muonE_2ndTrkangle_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_2d_muonPT_2ndTrkangle_TRUE         =    new MnvH2D("h_2d_muonPT_2ndTrkangle_TRUE", "h_2d_muonPT_2ndTrkangle_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
-MnvH2D *h_2d_muonPZ_2ndTrkangle_TRUE         =    new MnvH2D("h_2d_muonPZ_2ndTrkangle_TRUE", "h_2d_muonPZ_2ndTrkangle_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
+//MnvH2D *h_2d_Theta_2ndTrKangle_TRUE         =    new MnvH2D("h_2d_Theta_2ndTrKangle_TRUE", "h_2d_Theta_2ndTrKangle_TRUE", MuonThetabin_vector.size()-1, MuonThetabin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
+//MnvH2D *h_2d_muonE_2ndTrkangle_TRUE         =    new MnvH2D("h_2d_muonE_2ndTrkangle_TRUE", "h_2d_muonE_2ndTrkangle_TRUE", Ebin_vector.size()-1, Ebin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
+//MnvH2D *h_2d_muonPT_2ndTrkangle_TRUE         =    new MnvH2D("h_2d_muonPT_2ndTrkangle_TRUE", "h_2d_muonPT_2ndTrkangle_TRUE",  PTbin_vector.size()-1,  PTbin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
+//MnvH2D *h_2d_muonPZ_2ndTrkangle_TRUE         =    new MnvH2D("h_2d_muonPZ_2ndTrkangle_TRUE", "h_2d_muonPZ_2ndTrkangle_TRUE",  Pzbin_vector.size()-1,  Pzbin_vector.data(),Vertex_secondTrkTheta_bins.size()-1, Vertex_secondTrkTheta_bins.data()  );
 ///////////////////////////////////////
 //
 ///////////////////////////////////////
@@ -521,7 +595,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_X_TRUE_In
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_X_TRUE_Interaction", Vertex_Xbins ,"h_CryoVertex_X_TRUE_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_X_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_X_TRUE_Particle", Vertex_Xbins ,"h_CryoVertex_X_TRUE_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_X_TRUE_Particle", Vertex_Xbins ,"h_CryoVertex_X_TRUE_Particle; [mm];Events");
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Y_TRUE("h_CryoVertex_Y_TRUE", "Vertex_Y",  Vertex_Ybins , error_bands);
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_CryoVertex_Y_TRUE_Material =
@@ -531,7 +605,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_Y_TRUE_In
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_Y_TRUE_Interaction", Vertex_Ybins ,"h_CryoVertex_Y_TRUE_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_Y_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_Y_TRUE_Particle", Vertex_Ybins ,"h_CryoVertex_Y_TRUE_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_Y_TRUE_Particle", Vertex_Ybins ,"h_CryoVertex_Y_TRUE_Particle; [mm];Events");
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_Z_TRUE("h_CryoVertex_Z_TRUE", "Vertex_Z",  Vertex_Zbins , error_bands);//
@@ -542,7 +616,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_Z_TRUE_In
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_Z_TRUE_Interaction", Vertex_Zbins ,"h_CryoVertex_Z_TRUE_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_Z_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_Z_TRUE_Particle", Vertex_Zbins ,"h_CryoVertex_Z_TRUE_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_Z_TRUE_Particle", Vertex_Zbins ,"h_CryoVertex_Z_TRUE_Particle; [mm];Events");
 
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_CryoVertex_R_TRUE("h_CryoVertex_R_TRUE", "h_CryoVertex_R",  Vertex_Rbins , error_bands);
@@ -554,7 +628,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_CryoVertex_R_TRUE_In
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_CryoVertex_R_TRUE_Interaction", Vertex_Rbins ,"h_CryoVertex_R_TRUE_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_CryoVertex_R_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_CryoVertex_R_TRUE_Particle", Vertex_Rbins ,"h_CryoVertex_R_TRUE_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_CryoVertex_R_TRUE_Particle", Vertex_Rbins ,"h_CryoVertex_R_TRUE_Particle; [mm];Events");
 
 
 
@@ -568,7 +642,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Openangle_TRU
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Openangle_TRUE_Interaction", Vertex_secondTrkTheta_bins ,"h_secTrk_Openangle_TRUE_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Openangle_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Openangle_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Openangle_TRUE_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Openangle_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Openangle_TRUE_Particle; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Openangle_TRUE_RECO_Material =
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type>(MaterialGroup_categories, "h_secTrk_Openangle_TRUE_RECO_Material", Vertex_secondTrkTheta_bins ,"h_secTrk_Openangle_TRUE_Material; [mm];Events");
@@ -592,7 +666,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Pathlength_TR
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Pathlength_TRUE_Interaction", Vertex_secondTrkPathway_bins ,"h_secTrk_Pathlength_TRUE_Interaction; [cm^2/g];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Pathlength_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Pathlength_TRUE_Particle", Vertex_secondTrkPathway_bins ,"h_secTrk_Pathlength_TRUE_Particle; [cm^2/g];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Pathlength_TRUE_Particle", Vertex_secondTrkPathway_bins ,"h_secTrk_Pathlength_TRUE_Particle; [cm^2/g];Events");
 
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_TRUE("h_secTrk_Theta_TRUE", "h_secTrk_Theta NEW Method",  Vertex_secondTrkTheta_bins , error_bands);
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Material_type> h_secTrk_Theta_TRUE_Material =
@@ -602,7 +676,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Theta_TRUE_In
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Theta_TRUE_Interaction", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_Interaction; [[GeV;Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Theta_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Theta_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Theta_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_Particle; [GeV];Events");
 
 /*
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Theta_TRUE_leading_Particle =
@@ -612,10 +686,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Theta_TRUE_Nonle
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_leadingvsnonleading_categories, "h_secTrk_Theta_TRUE_Nonleading_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_nonleading_Particle; [Deg];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Theta_TRUE_leadingFULL_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Theta_TRUE_leadingFULL_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_leadingFULL_Particle; [Deg];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Theta_TRUE_leadingFULL_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_leadingFULL_Particle; [Deg];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Theta_TRUE_NonleadingFULL_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Theta_TRUE_NonleadingFULL_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_NonleadingFULL_Particle; [Deg];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Theta_TRUE_NonleadingFULL_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_Theta_TRUE_NonleadingFULL_Particle; [Deg];Events");
 */
 
 
@@ -629,15 +703,15 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_Energy_TRUE_I
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_Energy_TRUE_Interaction", Vertex_secondTrkEbins ,"h_secTrk_Energy_TRUE_Interaction; [GeV];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_Energy_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_Energy_TRUE_Particle", Vertex_secondTrkEbins ,"h_secTrk_Energy_TRUE_Particle; [GeV];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_Energy_TRUE_Particle", Vertex_secondTrkEbins ,"h_secTrk_Energy_TRUE_Particle; [GeV];Events");
 
 /////////////////
 /*
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_ALLKE_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_ALLKE_TRUE_Particle", Vertex_secondTrkEbins ,"h_secTrk_ALLKE_TRUE_Particle; [Deg];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_ALLKE_TRUE_Particle", Vertex_secondTrkEbins ,"h_secTrk_ALLKE_TRUE_Particle; [Deg];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_ALLKEFULL_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories ,"h_secTrk_ALLKEFULL_TRUE_Particle", Vertex_secondTrkEbins ,"h_secTrk_ALLKEFULL_TRUE_Particle; [Deg];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories ,"h_secTrk_ALLKEFULL_TRUE_Particle", Vertex_secondTrkEbins ,"h_secTrk_ALLKEFULL_TRUE_Particle; [Deg];Events");
 */
 /*
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_KE_TRUE_leading_Particle =
@@ -647,10 +721,10 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_KE_TRUE_Nonleadi
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_leadingvsnonleading_categories, "h_secTrk_KE_TRUE_Nonleading_Particle", Vertex_secondTrkEbins ,"h_secTrk_KE_TRUE_nonleading_Particle; [Deg];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_KE_TRUE_leadingFULL_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_KE_TRUE_leadingFULL_Particle", Vertex_secondTrkEbins ,"h_secTrk_KE_TRUE_leadingFULL_Particle; [Deg];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_KE_TRUE_leadingFULL_Particle", Vertex_secondTrkEbins ,"h_secTrk_KE_TRUE_leadingFULL_Particle; [Deg];Events");
 */
 //PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_KE_TRUE_NonleadingFULL_Particle =
-//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_KE_TRUE_NonleadingFULL_Particle", Vertex_secondTrkEbins ,"h_secTrk_KE_TRUE_NonleadingFULL_Particle; [Deg];Events");
+//PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_KE_TRUE_NonleadingFULL_Particle", Vertex_secondTrkEbins ,"h_secTrk_KE_TRUE_NonleadingFULL_Particle; [Deg];Events");
 
 
 
@@ -664,10 +738,10 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrkopenangle_PION_TRUE("h_secTrkop
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_ALLangles_TRUE("h_secTrk_ALLangles_TRUE", "h_secTrk_Theta PION0(TRUE)",  Vertex_secondTrkTheta_bins , error_bands);
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_ALLangles_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_ALLangles_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_ALLangles_TRUE_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_ALLangles_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_ALLangles_TRUE_Particle; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_ALLanglesFULL_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_ALLanglesFULL_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_ALLanglesFULL_TRUE_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_ALLanglesFULL_TRUE_Particle", Vertex_secondTrkTheta_bins ,"h_secTrk_ALLanglesFULL_TRUE_Particle; [mm];Events");
 */
 
 
@@ -675,8 +749,8 @@ PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_PROTON_TRUE("h_secTrk_E
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_PROTON_TRUE("h_secTrk_Theta_PROTON_TRUE", "h_secTrk_Theta Proton(TRUE)",  Vertex_secondTrkTheta_bins , error_bands);
 PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrkopenangle_PROTON_TRUE("h_secTrkopenangle_PROTON_TRUE", "h_secTrkopenangle Proton(TRUE)",  Vertex_secondTrkTheta_bins , error_bands);
 
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_Dimuon_TRUE("h_secTrk_Energy_Dimuon_TRUE", "h_secTrk_Energy Dimuon(TRUE)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
-PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE("h_secTrk_Theta_Dimuon_TRUE", "h_secTrk_Theta Dimuon(TRUE)",  Vertex_secondTrkTheta_bins , error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Energy_Dimuon_TRUE("h_secTrk_Energy_Dimuon_TRUE", "h_secTrk_Energy Dimuon(TRUE)",  Vertex_secondTrkEbin_Proton_vector, error_bands);
+//PlotUtils::HistWrapper<HeliumCVUniverse> h_secTrk_Theta_Dimuon_TRUE("h_secTrk_Theta_Dimuon_TRUE", "h_secTrk_Theta Dimuon(TRUE)",  Vertex_secondTrkTheta_bins , error_bands);
 
 
 
@@ -690,7 +764,7 @@ PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type> h_secTrk_DOCA_TRUE_Int
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Interaction_type>(InteractionGroup_categories, "h_secTrk_DOCA_TRUE_Interaction", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_RECO_Interaction; [mm];Events");
 
 PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type> h_secTrk_DOCA_TRUE_Particle =
-PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_categories, "h_secTrk_DOCA_TRUE_Particle", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_RECO_Particle; [mm];Events");
+PlotUtils::HistFolio<PlotUtils::MnvH1D, Particle_type>(ParticleGroup_reduced_categories, "h_secTrk_DOCA_TRUE_Particle", Vertex_secondTrkDOCA_bins ,"h_secTrk_DOCA_TRUE_RECO_Particle; [mm];Events");
 
 
 
@@ -736,7 +810,7 @@ FillingTruthCountingMap(kTRUTHCutsVector, Truth_Cut_Map);
 
 std::cout << "Truth_Cut_Map.size() = " << Truth_Cut_Map.size()<< std::endl;
 for(const auto & index :Truth_Cut_Map ){
-  std::cout<<" Cut Name = " <<GetCutNameTRUTH(index.first).c_str() << " Amount = " << index.second << std::endl;
+  std::cout<<"number = "<< index.first << " Cut Name = " <<GetCutNameTRUTH(index.first).c_str() << " Amount = " << index.second << std::endl;
 }
 
 
@@ -766,9 +840,11 @@ auto begin = std::chrono::high_resolution_clock::now();
 
 for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
 
-  if(ii%50000==0) std::cout << (ii/1000) << " k " << std::flush;
+  if(ii%100000==0){ std::cout << (ii/1000) << " k " << std::flush;
+  if (ii%300000==0) {std::cout<<" Playlist = "<< playlist<< std::flush;}
+    //=========================================
+}
 
-  //=========================================
   // For every systematic, loop over the universes, and fill the
   // appropriate histogram in the MnvH1D
   //=========================================
@@ -821,13 +897,26 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
       // Muon Varibles ///////
       ///////////////////////
 
-      double MuonE = Universe_GROUP.front()->GetTRUE_Emu();
-      double MuonPZ = Universe_GROUP.front()->GetTRUE_PZmu();
-      double MuonPT = Universe_GROUP.front()->GetTRUE_PTmu();
-      double MuonTheta = Universe_GROUP.front()->GetTRUE_muANGLE_WRTB_DEG();
+      double MuonE = Universe_GROUP.front()->GetElepTrue()*.001; // to GeV
       double OpenAngle = Universe_GROUP.front()->GetTRUE_NonmuTrkopenangle(secondTrk);
-      double PhiMuonAngle = Universe_GROUP.front()->GetTRUE_Phimu();
 
+
+      double Theta = Universe_GROUP.front()->GetThetalepTrue();
+      double phi = Universe_GROUP.front()->GetPhilepTrue();
+      double MuonTheta = Theta* TMath::RadToDeg();
+     //double Pmu = Universe_GROUP.front()->GetTRUE_Pmu();
+      //double px = Pmu * std::sin(Theta) * std::cos(phi);
+      //double py = Pmu * std::sin(Theta) * std::sin(phi);
+
+      //double MuonPT = sqrt(px*px + py*py);
+      //double MuonPZ = Pmu*std::cos(Theta);
+      double MuonPZ = Universe_GROUP.front()->GetPmuLongitudinalTrue();
+      double MuonPT = Universe_GROUP.front()->GetPmuTransverseTrue();
+
+
+
+
+      double PhiMuonAngle = phi * TMath::RadToDeg();
       ////////////////////////
       /// Vertex Varibles ////
       ////////////////////////
@@ -841,10 +930,15 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
       /// Stack Categories
       /////////////
 
-      Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
-      Interaction_type Interaction_type_Event =  Universe_GROUP.front()->Get_InteractionStackType();
-      Material_type Material_type_Event = Universe_GROUP.front()->Get_MaterialStackType();
+      //Particle_type Particle_type_Event = GetParticlegroup_type(pdg_2ndTrk);
+     Particle_type Particle_type_Event =  GetParticlegroup_typeReduced(pdg_2ndTrk);
 
+//std::cout<<"pdg_2ndTrk = "<< pdg_2ndTrk<< "Particle_type_Event =  " << Particle_type_Event << std::endl;
+
+Interaction_type Interaction_type_Event =  Universe_GROUP.front()->Get_InteractionStackType();
+Interaction_type Interaction_type_EventDISbreakdown =  Universe_GROUP.front()->Get_Interaction_withDISbreakdown();
+Material_type Material_type_Event = Universe_GROUP.front()->Get_MaterialStackType();
+Topologies_type Topology_Type_Event =  GetTopologic_type(PDG_trklist);
 
       for (auto universe : Universe_GROUP){
 
@@ -858,7 +952,9 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
         /////////////////
         //
         //////////////////
+        //std::cout<<"universe->ShortName() = " << universe->ShortName()<<std::endl;
 
+        //if(universe->ShortName() == "GENIE_MaCCQE"){std::cout<<"(MaCCQE)weight = "<< V1weight << std::endl;}
 
         if(PDG_trklist.size()==1 || secondTrk==-999 || secondTrk==0){std::cout<<"ERROR"<<std::endl;assert(false); } // Double Checking if the check aren't working
 
@@ -876,7 +972,20 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
 
 
         if( isCV(*universe)){
+/*
+if(universe->GetTargetNucleon()==0){
 
+std::cout<<"universe->GetIntactionType() = "<< universe->GetIntactionType() << std::endl;
+auto vetor = universe->GetVector_nonMuonTk_PDG_Parent();
+for(auto cat : vetor){
+std::cout<< "pdg = " << cat << std::endl;
+
+
+}
+
+}*/
+
+//std::cout <<"GetTargetNucleon = "<< universe->GetTargetNucleon() << std::endl;
           /*
           Don't need to look at all this information
           turing off for now
@@ -911,23 +1020,38 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
 
           h_MuonE_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(MuonE, V1weight);
           h_MuonE_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(MuonE, V1weight);
+          h_MuonE_TRUE_InteractionDISBreakdown.GetComponentHist(Interaction_type_EventDISbreakdown)->Fill(MuonE, V1weight);
           h_MuonE_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(MuonE, V1weight);
+          //h_MuonE_TRUE_Particlereduced.GetComponentHist(Particle_type_Event_reduced)->Fill(MuonE, V1weight);
 
           h_MuonPZ_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(MuonPZ, V1weight);
           h_MuonPZ_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(MuonPZ, V1weight);
+          h_MuonPZ_TRUE_InteractionDISBreakdown.GetComponentHist(Interaction_type_EventDISbreakdown)->Fill(MuonPZ, V1weight);
           h_MuonPZ_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(MuonPZ, V1weight);
+          //h_MuonPZ_TRUE_Particlereduced.GetComponentHist(Particle_type_Event_reduced)->Fill(MuonPZ, V1weight);
 
           h_MuonPT_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(MuonPT, V1weight);
           h_MuonPT_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(MuonPT, V1weight);
+          h_MuonPT_TRUE_InteractionDISBreakdown.GetComponentHist(Interaction_type_EventDISbreakdown)->Fill(MuonPT, V1weight);
           h_MuonPT_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(MuonPT, V1weight);
+          //h_MuonPT_TRUE_Particlereduced.GetComponentHist(Particle_type_Event_reduced)->Fill(MuonPT, V1weight);
 
           h_MuonTheta_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(MuonTheta, V1weight);
           h_MuonTheta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(MuonTheta, V1weight);
+          h_MuonTheta_TRUE_InteractionDISBreakdown.GetComponentHist(Interaction_type_EventDISbreakdown)->Fill(MuonTheta, V1weight);
           h_MuonTheta_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(MuonTheta, V1weight);
+          //h_MuonTheta_TRUE_Particlereduced.GetComponentHist(Particle_type_Event_reduced)->Fill(MuonTheta, V1weight);
 
           h_MuonPhi_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(PhiMuonAngle, V1weight);
           h_MuonPhi_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(PhiMuonAngle, V1weight);
           h_MuonPhi_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(PhiMuonAngle, V1weight);
+
+
+          h_MuonE_TRUE_Topologies.GetComponentHist(Topology_Type_Event)->Fill(MuonE, V1weight);
+          h_MuonPZ_TRUE_Topologies.GetComponentHist(Topology_Type_Event)->Fill(MuonPZ, V1weight);
+          h_MuonPT_TRUE_Topologies.GetComponentHist(Topology_Type_Event)->Fill(MuonPT, V1weight);
+          h_MuonTheta_TRUE_Topologies.GetComponentHist(Topology_Type_Event)->Fill(MuonTheta, V1weight);
+
 
           if(secondTrk!= 0){
 
@@ -948,18 +1072,18 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
             h_secTrk_Pathlength_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(Pathlength2ndTrk, V1weight);
             h_secTrk_Pathlength_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(Pathlength2ndTrk, V1weight);
 
-            h_2d_Theta_2ndTrkE_TRUE->Fill(MuonTheta,secTrkTrueEnergy,V1weight);
-            h_2d_muonE_2ndTrkE_TRUE->Fill(MuonE,secTrkTrueEnergy,V1weight);
-            h_2d_muonPT_2ndTrkE_TRUE->Fill(MuonPT,secTrkTrueEnergy,V1weight);
-            h_2d_muonPZ_2ndTrkE_TRUE->Fill(MuonPZ,secTrkTrueEnergy,V1weight);
-            h_2d_Theta_2ndTrKangle_TRUE->Fill(MuonTheta,secTrkTrueEnergy,V1weight);
-            h_2d_muonE_2ndTrkangle_TRUE->Fill(MuonE,secTrkTrueAngle,V1weight);
-            h_2d_muonPT_2ndTrkangle_TRUE->Fill(MuonPT,secTrkTrueAngle,V1weight);
-            h_2d_muonPZ_2ndTrkangle_TRUE->Fill(MuonPZ,secTrkTrueAngle,V1weight);
-            h_2d_2ndtrkangle_2ndTrkE_TRUE->Fill(secTrkTrueAngle,secTrkTrueEnergy,V1weight);
-            h_2d_2ndtrkPathlength_2ndtrkangle_TRUE->Fill(Pathlength2ndTrk,secTrkTrueAngle,V1weight);
-            h_2d_2ndtrkPathlength_2ndTrkE_TRUE->Fill(Pathlength2ndTrk,secTrkTrueEnergy,V1weight);
-
+            //h_2d_Theta_2ndTrkE_TRUE->Fill(MuonTheta,secTrkTrueEnergy,V1weight);
+            //h_2d_muonE_2ndTrkE_TRUE->Fill(MuonE,secTrkTrueEnergy,V1weight);
+            //h_2d_muonPT_2ndTrkE_TRUE->Fill(MuonPT,secTrkTrueEnergy,V1weight);
+            //h_2d_muonPZ_2ndTrkE_TRUE->Fill(MuonPZ,secTrkTrueEnergy,V1weight);
+            //h_2d_Theta_2ndTrKangle_TRUE->Fill(MuonTheta,secTrkTrueEnergy,V1weight);
+            //h_2d_muonE_2ndTrkangle_TRUE->Fill(MuonE,secTrkTrueAngle,V1weight);
+            //h_2d_muonPT_2ndTrkangle_TRUE->Fill(MuonPT,secTrkTrueAngle,V1weight);
+            //h_2d_muonPZ_2ndTrkangle_TRUE->Fill(MuonPZ,secTrkTrueAngle,V1weight);
+            //h_2d_2ndtrkangle_2ndTrkE_TRUE->Fill(secTrkTrueAngle,secTrkTrueEnergy,V1weight);
+            //h_2d_2ndtrkPathlength_2ndtrkangle_TRUE->Fill(Pathlength2ndTrk,secTrkTrueAngle,V1weight);
+            //h_2d_2ndtrkPathlength_2ndTrkE_TRUE->Fill(Pathlength2ndTrk,secTrkTrueEnergy,V1weight);
+/*
             if(Particle_type_Event==kSecondary_particle_vector[0]){
               h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE->Fill(secTrkTrueAngle,secTrkTrueEnergy,V1weight);
               h_2d_Theta_2ndTrkE_Proton_TRUE->Fill(MuonTheta,secTrkTrueEnergy,V1weight);
@@ -980,13 +1104,9 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
               h_2d_2ndtrkPathlength_2ndTrkE_Pion_TRUE->Fill(Pathlength2ndTrk,secTrkTrueEnergy,V1weight);
 
             }
-
-
             if(Particle_type_Event==kSecondary_particle_vector[1]){
               h_2d_2ndtrkangle_2ndTrkE_dimuon_TRUE->Fill(secTrkTrueAngle,secTrkTrueEnergy,V1weight);
             }
-
-
             if(Particle_type_Event== kElectron){h_Electron_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, V1weight);
               True_Event_info Electron_Event{mc_incoming,
                 mc_current,
@@ -999,7 +1119,6 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
               };
               Electron_secTrkParticle.push_back(Electron_Event);
             }
-
             else if(Particle_type_Event== kPion_0){h_Pion0_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, V1weight);}
             else if(Particle_type_Event== kPion_neg){h_Pion_neg_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, V1weight);}
             else if(Particle_type_Event== kPion_pos){h_Pion_pos_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, V1weight);}
@@ -1057,6 +1176,9 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
         }
         else if(Particle_type_Event== kLamdba){h_Lamdba_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, V1weight);}
         else if(Particle_type_Event== kSigma_plus){h_Sigma_plus_secTrk_Theta_TRUE_Interaction.GetComponentHist(Interaction_type_Event)->Fill(secTrkTrueAngle, V1weight);}
+*/
+
+
       } // End of Second trk condition
 
       h_CryoVertex_X_TRUE_Material.GetComponentHist(Material_type_Event)->Fill(VertexX, V1weight);
@@ -1080,12 +1202,15 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
       h_Tracksize_TRUE_Particle.GetComponentHist(Particle_type_Event)->Fill(universe->GetTRUE_Tracksize(), V1weight);
 
 
-      h_2d_PZ_PT_TRUE->Fill(MuonPZ,MuonPT,V1weight);
-      h_2d_E_PZ_TRUE->Fill(MuonE,MuonPZ,V1weight);
-      h_2d_Theta_PZ_TRUE->Fill(MuonTheta,MuonPZ,V1weight);
-      h_2d_E_PT_TRUE->Fill(MuonE,MuonPT,V1weight);
-      h_2d_Theta_PT_TRUE->Fill(MuonTheta,MuonPT,V1weight);
-      h_2d_Theta_PZ_TRUE->Fill(MuonTheta,MuonPZ,V1weight);
+
+
+
+      //h_2d_PZ_PT_TRUE->Fill(MuonPZ,MuonPT,V1weight);
+      //h_2d_E_PZ_TRUE->Fill(MuonE,MuonPZ,V1weight);
+      //h_2d_Theta_PZ_TRUE->Fill(MuonTheta,MuonPZ,V1weight);
+      //h_2d_E_PT_TRUE->Fill(MuonE,MuonPT,V1weight);
+      //h_2d_Theta_PT_TRUE->Fill(MuonTheta,MuonPT,V1weight);
+      //h_2d_Theta_PZ_TRUE->Fill(MuonTheta,MuonPZ,V1weight);
 
 
     }//end of CV
@@ -1109,7 +1234,7 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
     //secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist ) ;
     //secondTrk = universe->Returnindex_True_2ndTk_NO_NeutralParticles_GreatestKE_lessthanAngle_withKE_thresholdonProtonandPion(PDG_trklist, Energy_trklist, Angle_trklist) ;
     //secondTrk = universe->Returnindex_True_2ndTk_GreatestKE_lessthanAngle(PDG_trklist, Energy_trklist, Angle_trklist);
-
+    //std::cout<<"universe name = "<< universe->ShortName()<<std::endl;
     h_MuonE_TRUE.univHist(universe)->Fill(MuonE,V1weight);
 
     h_MuonPZ_TRUE.univHist(universe)->Fill(MuonPZ,V1weight);
@@ -1142,27 +1267,7 @@ for(int ii=0; ii<chw_MC->GetEntries(); ++ii){
 
     //h_secTrk_tracklength_TRUE.univHist(universe)->Fill(secTrkTruetrackLength,V1weight);
 
-    if(Particle_type_Event==kSecondary_particle_vector[0])
-    {
-      h_secTrk_Energy_PROTON_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,V1weight);
-      h_secTrk_Theta_PROTON_TRUE.univHist(universe)->Fill(secTrkTrueAngle,V1weight);
-      h_secTrkopenangle_PROTON_TRUE.univHist(universe)->Fill(OpenAngle,V1weight);
-      h_secTrk_Pathlength_PROTON_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,V1weight);
-    }
 
-    if(Particle_type_Event==kSecondary_particle_vector[3]||Particle_type_Event==kSecondary_particle_vector[4])
-    {
-      h_secTrk_Energy_PION_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,V1weight);
-      h_secTrk_Theta_PION_TRUE.univHist(universe)->Fill(secTrkTrueAngle,V1weight);
-      h_secTrkopenangle_PION_TRUE.univHist(universe)->Fill(OpenAngle,V1weight);
-      h_secTrk_Pathlength_PION_TRUE.univHist(universe)->Fill(Pathlength2ndTrk,V1weight);
-    }
-
-    if(Particle_type_Event==kSecondary_particle_vector[1])
-    {
-      h_secTrk_Energy_Dimuon_TRUE.univHist(universe)->Fill(secTrkTrueEnergy,V1weight);
-      h_secTrk_Theta_Dimuon_TRUE.univHist(universe)->Fill(secTrkTrueAngle,V1weight);
-    }
 
   } //  End band's individual universe loop
 
@@ -1200,20 +1305,20 @@ h_secTrk_Energy_TRUE.SyncCVHistos();
 h_secTrk_EnergyFINEBinning_TRUE.SyncCVHistos();
 h_secTrk_Theta_TRUE.SyncCVHistos();
 h_secTrk_Openangle_TRUE.SyncCVHistos();
-h_secTrk_Theta_Dimuon_TRUE.SyncCVHistos();
+//h_secTrk_Theta_Dimuon_TRUE.SyncCVHistos();
 h_secTrk_Pathlength_TRUE.SyncCVHistos();
-h_secTrk_Pathlength_PROTON_TRUE.SyncCVHistos();
-h_secTrk_Pathlength_PION_TRUE.SyncCVHistos();
+//h_secTrk_Pathlength_PROTON_TRUE.SyncCVHistos();
+//h_secTrk_Pathlength_PION_TRUE.SyncCVHistos();
 //h_secTrk_tracklength_TRUE.SyncCVHistos();
 
 
-h_secTrk_Energy_Dimuon_TRUE.SyncCVHistos();
-h_secTrk_Energy_PROTON_TRUE.SyncCVHistos();
-h_secTrk_Theta_PROTON_TRUE.SyncCVHistos();
-h_secTrkopenangle_PROTON_TRUE.SyncCVHistos();
-h_secTrk_Energy_PION_TRUE.SyncCVHistos();
-h_secTrk_Theta_PION_TRUE.SyncCVHistos();
-h_secTrkopenangle_PION_TRUE.SyncCVHistos();
+//h_secTrk_Energy_Dimuon_TRUE.SyncCVHistos();
+//h_secTrk_Energy_PROTON_TRUE.SyncCVHistos();
+//h_secTrk_Theta_PROTON_TRUE.SyncCVHistos();
+//h_secTrkopenangle_PROTON_TRUE.SyncCVHistos();
+//h_secTrk_Energy_PION_TRUE.SyncCVHistos();
+//h_secTrk_Theta_PION_TRUE.SyncCVHistos();
+//h_secTrkopenangle_PION_TRUE.SyncCVHistos();
 
 
 //h_secTrk_ALLangles_TRUE.SyncCVHistos();
@@ -1264,7 +1369,7 @@ else if (m_RunCodeWithSystematics==false){
   if(Run_EventLoopOnGrid==true){  sprintf(outFileName, "Histograms_%s_%s_%s.root",c,d,sysmatics_status_char);
 }
 else{
-  sprintf(outFileName, "%s/Histograms_%s_%s_%s.root",rootpathway,c,d,sysmatics_status_char);
+  sprintf(outFileName, "%s/Histograms_%s_%s_%s_Fid.root",rootpathway,c,d,sysmatics_status_char);
 }
 
 std::cout << "Writing output file to: " <<outFileName << std::endl;
@@ -1307,11 +1412,24 @@ h_MuonPT_TRUE_Material.WriteToFile(*outFile);
 h_MuonPT_TRUE_Interaction .WriteToFile(*outFile);
 h_MuonPT_TRUE_Particle.WriteToFile(*outFile);
 
+h_MuonE_TRUE_InteractionDISBreakdown.WriteToFile(*outFile);
+h_MuonPZ_TRUE_InteractionDISBreakdown.WriteToFile(*outFile);
+h_MuonPT_TRUE_InteractionDISBreakdown.WriteToFile(*outFile);
+h_MuonTheta_TRUE_InteractionDISBreakdown.WriteToFile(*outFile);
+
+//h_MuonE_TRUE_Particlereduced.WriteToFile(*outFile);
+//h_MuonPZ_TRUE_Particlereduced.WriteToFile(*outFile);
+//h_MuonPT_TRUE_Particlereduced.WriteToFile(*outFile);
+//h_MuonTheta_TRUE_Particlereduced.WriteToFile(*outFile);
+
 h_MuonTheta_TRUE.hist->Write();
 h_MuonTheta_TRUE_Material.WriteToFile(*outFile);
 h_MuonTheta_TRUE_Interaction.WriteToFile(*outFile);
 h_MuonTheta_TRUE_Particle.WriteToFile(*outFile);
-
+h_MuonE_TRUE_Topologies.WriteToFile(*outFile);
+h_MuonPZ_TRUE_Topologies.WriteToFile(*outFile);
+h_MuonPT_TRUE_Topologies.WriteToFile(*outFile);
+h_MuonTheta_TRUE_Topologies.WriteToFile(*outFile);
 
 h_CryoVertex_X_TRUE.hist->Write();
 h_CryoVertex_X_TRUE_Material.WriteToFile(*outFile);
@@ -1356,14 +1474,14 @@ h_Tracksize_TRUE_Material.WriteToFile(*outFile);
 h_Tracksize_TRUE_Interaction.WriteToFile(*outFile);
 h_Tracksize_TRUE_Particle.WriteToFile(*outFile);
 
-h_secTrk_Energy_Dimuon_TRUE.hist->Write();
-h_secTrk_Theta_Dimuon_TRUE.hist->Write();
-h_secTrk_Energy_PROTON_TRUE.hist->Write();
-h_secTrk_Theta_PROTON_TRUE.hist->Write();
-h_secTrkopenangle_PROTON_TRUE.hist->Write();
-h_secTrk_Energy_PION_TRUE.hist->Write();
-h_secTrk_Theta_PION_TRUE.hist->Write();
-h_secTrkopenangle_PION_TRUE.hist->Write();
+//h_secTrk_Energy_Dimuon_TRUE.hist->Write();
+//h_secTrk_Theta_Dimuon_TRUE.hist->Write();
+//h_secTrk_Energy_PROTON_TRUE.hist->Write();
+//h_secTrk_Theta_PROTON_TRUE.hist->Write();
+//h_secTrkopenangle_PROTON_TRUE.hist->Write();
+//h_secTrk_Energy_PION_TRUE.hist->Write();
+//h_secTrk_Theta_PION_TRUE.hist->Write();
+//h_secTrkopenangle_PION_TRUE.hist->Write();
 
 
 //h_secTrk_Theta_TRUE_leading_Particle.WriteToFile(*outFile);
@@ -1386,62 +1504,62 @@ h_secTrkopenangle_PION_TRUE.hist->Write();
 
 
 
-h_Electron_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Pion_neg_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Pion_pos_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Kaon_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Proton_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Neutron_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Muon_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Particle_OTHER_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Gamma_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Nu_mu_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Nu_e_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Anti_nu_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Particle_N_A_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_4helium_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Lamdba_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
-h_Sigma_plus_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Electron_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Pion_neg_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Pion_pos_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Kaon_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Proton_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Neutron_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Muon_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Particle_OTHER_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Gamma_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Nu_mu_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Nu_e_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Anti_nu_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Particle_N_A_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_4helium_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Lamdba_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
+//h_Sigma_plus_secTrk_Theta_TRUE_Interaction.WriteToFile(*outFile);
 
 
-h_2d_PZ_PT_TRUE->Write();
-h_2d_E_PZ_TRUE->Write();
-h_2d_Theta_PZ_TRUE->Write();
-h_2d_E_PT_TRUE->Write();
-h_2d_Theta_PZ_TRUE->Write();
-h_2d_Theta_PT_TRUE->Write();
-h_2d_Theta_2ndTrkE_TRUE->Write();
-h_2d_muonE_2ndTrkE_TRUE->Write();
-h_2d_muonPT_2ndTrkE_TRUE->Write();
-h_2d_muonPZ_2ndTrkE_TRUE->Write();
+//h_2d_PZ_PT_TRUE->Write();
+//h_2d_E_PZ_TRUE->Write();
+//h_2d_Theta_PZ_TRUE->Write();
+//h_2d_E_PT_TRUE->Write();
+//h_2d_Theta_PZ_TRUE->Write();
+//h_2d_Theta_PT_TRUE->Write();
+//h_2d_Theta_2ndTrkE_TRUE->Write();
+//h_2d_muonE_2ndTrkE_TRUE->Write();
+//h_2d_muonPT_2ndTrkE_TRUE->Write();
+//h_2d_muonPZ_2ndTrkE_TRUE->Write();
 
-h_2d_Theta_2ndTrkE_Pion_TRUE->Write();
-h_2d_muonE_2ndTrkE_Pion_TRUE->Write();
-h_2d_muonPT_2ndTrkE_Pion_TRUE->Write();
-h_2d_muonPZ_2ndTrkE_Pion_TRUE->Write();
-
-h_2d_Theta_2ndTrkE_Proton_TRUE->Write();
-h_2d_muonE_2ndTrkE_Proton_TRUE->Write();
-h_2d_muonPT_2ndTrkE_Proton_TRUE->Write();
-h_2d_muonPZ_2ndTrkE_Proton_TRUE->Write();
-
-h_2d_Theta_2ndTrKangle_TRUE->Write();
-h_2d_muonE_2ndTrkangle_TRUE->Write();
-h_2d_muonPT_2ndTrkangle_TRUE->Write();
-h_2d_muonPZ_2ndTrkangle_TRUE->Write();
-
-h_2d_2ndtrkangle_2ndTrkE_TRUE->Write();
-h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE->Write();
-h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE->Write();
-h_2d_2ndtrkangle_2ndTrkE_dimuon_TRUE->Write();
-
-h_2d_2ndtrkPathlength_2ndtrkangle_TRUE->Write();
-h_2d_2ndtrkPathlength_2ndtrkangle_Proton_TRUE->Write();
-h_2d_2ndtrkPathlength_2ndtrkangle_Pion_TRUE->Write();
-
-h_2d_2ndtrkPathlength_2ndTrkE_TRUE->Write();
-h_2d_2ndtrkPathlength_2ndTrkE_Proton_TRUE->Write();
-h_2d_2ndtrkPathlength_2ndTrkE_Pion_TRUE->Write();
+//h_2d_Theta_2ndTrkE_Pion_TRUE->Write();
+//h_2d_muonE_2ndTrkE_Pion_TRUE->Write();
+//h_2d_muonPT_2ndTrkE_Pion_TRUE->Write();
+//h_2d_muonPZ_2ndTrkE_Pion_TRUE->Write();
+//
+//h_2d_Theta_2ndTrkE_Proton_TRUE->Write();
+//h_2d_muonE_2ndTrkE_Proton_TRUE->Write();
+//h_2d_muonPT_2ndTrkE_Proton_TRUE->Write();
+//h_2d_muonPZ_2ndTrkE_Proton_TRUE->Write();
+//
+//h_2d_Theta_2ndTrKangle_TRUE->Write();
+//h_2d_muonE_2ndTrkangle_TRUE->Write();
+//h_2d_muonPT_2ndTrkangle_TRUE->Write();
+//h_2d_muonPZ_2ndTrkangle_TRUE->Write();
+//
+//h_2d_2ndtrkangle_2ndTrkE_TRUE->Write();
+//h_2d_2ndtrkangle_2ndTrkE_Proton_TRUE->Write();
+//h_2d_2ndtrkangle_2ndTrkE_Pion_TRUE->Write();
+//h_2d_2ndtrkangle_2ndTrkE_dimuon_TRUE->Write();
+//
+//h_2d_2ndtrkPathlength_2ndtrkangle_TRUE->Write();
+//h_2d_2ndtrkPathlength_2ndtrkangle_Proton_TRUE->Write();
+//h_2d_2ndtrkPathlength_2ndtrkangle_Pion_TRUE->Write();
+//
+//h_2d_2ndtrkPathlength_2ndTrkE_TRUE->Write();
+//h_2d_2ndtrkPathlength_2ndTrkE_Proton_TRUE->Write();
+//h_2d_2ndtrkPathlength_2ndTrkE_Pion_TRUE->Write();
 
 outFile->Close();
 
@@ -1468,11 +1586,11 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTHMuonEnergy );
   True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTHFiduical_new);
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
-  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
-  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
   True_vec.push_back(kAllTRUTHCuts);
 
   return True_vec;
@@ -1488,12 +1606,12 @@ std::vector<ECutsTRUTH> GetTRUTHCutsVector_Energy() {
   True_vec.push_back(kTRUTHtarget);
   True_vec.push_back(kTRUTHMuonEnergy );
   True_vec.push_back(kTRUTHMuonAngle );
-  True_vec.push_back(kTRUTHFiduical );
+  True_vec.push_back(kTRUTHFiduical_new );
   True_vec.push_back(kTRUTH_greaterthanoneFS);
   //True_vec.push_back(kTRUTH_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
-  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
-  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
+  True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds);
+  //True_vec.push_back(kTRUTH_No_Neutral_secTrk_Angle_threshold);
   //True_vec.push_back(kTRUTH_2ndTrkProtonEnergythreshold);
   //True_vec.push_back(kTRUTH_2ndTrkPionEnergythreshold);
   True_vec.push_back(kAllTRUTHCuts);
@@ -1534,7 +1652,9 @@ std::vector<Weights> GetWeightVector() {
   weight_vec.push_back(kweight2p2ptune );
   weight_vec.push_back(kweightRPA);
   weight_vec.push_back(kweight_HeliumTargetMass);
+//  weight_vec.push_back(kweightZexp);
   //weight_vec.push_back(kweightLowQ2Pi);
+  weight_vec.push_back(kweightMK);
 
   return weight_vec;
 //#endif
@@ -1545,7 +1665,7 @@ std::vector<std::vector<HeliumCVUniverse*>> groupCompatibleUniverses(const std::
   {
     std::vector<std::vector<HeliumCVUniverse*>> groupedUnivs;
     std::vector<HeliumCVUniverse*> vertical;
-    for(const auto& band: bands)
+    for(const auto& band: bands)band.first
     {
       if(band.first == "cv") vertical.insert(vertical.begin(), band.second.begin(), band.second.end());
       else

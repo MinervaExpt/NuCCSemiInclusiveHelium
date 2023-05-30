@@ -59,24 +59,39 @@ ME_playlist_RootPathMAP MAP_RootPath_Full_MC_TRUTH;
 /////////////////
 // Empty Playlist
 /////////////////
-auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_All_SysErrorsOn.root";
-auto PlaylistME_1A_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1A_MC_All_SysErrorsOn.root";
-auto PlaylistME_1L_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_MC_All_SysErrorsOn.root";
-auto PlaylistME_1M_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1M_MC_All_SysErrorsOn.root";
-auto PlaylistME_1N_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1N_MC_All_SysErrorsOn.root";
+auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1A_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1A_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1L_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1M_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1M_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1N_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1N_MC_StatsONLYErrors_Efficiency.root";
+
+//auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1A_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1A_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1L_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1M_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1M_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1N_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1N_MC_All_SysErrorsOn.root";
 MAP_RootPath_Empty_MC.insert(std::make_pair(kMEPlayList_Vector.at(0), PlaylistME_1G_MC_path));
 MAP_RootPath_Empty_MC.insert(std::make_pair(kMEPlayList_Vector.at(1), PlaylistME_1A_MC_path));
 MAP_RootPath_Empty_MC.insert(std::make_pair(kMEPlayList_Vector.at(2), PlaylistME_1L_MC_path));
 MAP_RootPath_Empty_MC.insert(std::make_pair(kMEPlayList_Vector.at(3), PlaylistME_1M_MC_path));
 MAP_RootPath_Empty_MC.insert(std::make_pair(kMEPlayList_Vector.at(4), PlaylistME_1N_MC_path));
 ////////
-//Full//
+//Full// Histograms_minervame1P_MC_StatsONLYErrors_Efficiency
 ////////
-auto PlaylistME_1P_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1P_MC_All_SysErrorsOn.root";
-auto PlaylistME_1C_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1C_MC_All_SysErrorsOn.root";
-auto PlaylistME_1D_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1D_MC_All_SysErrorsOn.root";
-auto PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_All_SysErrorsOn.root";
-auto PlaylistME_1E_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1E_MC_All_SysErrorsOn.root";
+
+
+
+auto PlaylistME_1P_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1P_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1C_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1C_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1D_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1D_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_StatsONLYErrors_Efficiency.root";
+auto PlaylistME_1E_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1E_MC_StatsONLYErrors_Efficiency.root";
+
+//auto PlaylistME_1P_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1P_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1C_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1C_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1D_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1D_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_All_SysErrorsOn.root";
+//auto PlaylistME_1E_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1E_MC_All_SysErrorsOn.root";
 MAP_RootPath_Full_MC.insert(std::make_pair(kMEPlayList_Vector.at(5), PlaylistME_1P_MC_path));
 MAP_RootPath_Full_MC.insert(std::make_pair(kMEPlayList_Vector.at(6), PlaylistME_1C_MC_path));
 MAP_RootPath_Full_MC.insert(std::make_pair(kMEPlayList_Vector.at(7), PlaylistME_1D_MC_path));
@@ -92,24 +107,40 @@ MAP_RootPath_Full_MC.insert(std::make_pair(kMEPlayList_Vector.at(9), PlaylistME_
 /////////////////
 // Empty Playlist
 /////////////////
-auto PlaylistME_1G_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1A_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1A_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1L_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1M_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1M_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1N_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1N_TRUTH_All_SysErrorsOn.root";
+
+auto PlaylistME_1G_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1A_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1A_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1L_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1M_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1M_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1N_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1N_TRUTH_StatsONLY_Efficiency.root";
+
+//auto PlaylistME_1G_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1A_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1A_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1L_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1L_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1M_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1M_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1N_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1N_TRUTH_All_SysErrorsOn.root";
 MAP_RootPath_Empty_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(0), PlaylistME_1G_MC_TRUTH_path));
 MAP_RootPath_Empty_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(1), PlaylistME_1A_MC_TRUTH_path));
 MAP_RootPath_Empty_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(2), PlaylistME_1L_MC_TRUTH_path));
 MAP_RootPath_Empty_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(3), PlaylistME_1M_MC_TRUTH_path));
 MAP_RootPath_Empty_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(4), PlaylistME_1N_MC_TRUTH_path));
 ////////
-//Full//
+//Full//Histograms_minervame1L_TRUTH_StatsONLY_Efficiency
 ////////
-auto PlaylistME_1P_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1P_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1C_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1C_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1D_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1D_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1F_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_TRUTH_All_SysErrorsOn.root";
-auto PlaylistME_1E_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1E_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1P_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1P_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1C_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1C_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1D_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1D_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1F_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_TRUTH_All_SysErrorsOn.root";
+//auto PlaylistME_1E_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1E_TRUTH_All_SysErrorsOn.root";
+
+auto PlaylistME_1P_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1P_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1C_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1C_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1D_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1D_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1F_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_TRUTH_StatsONLY_Efficiency.root";
+auto PlaylistME_1E_MC_TRUTH_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1E_TRUTH_StatsONLY_Efficiency.root";
+
+
+
 MAP_RootPath_Full_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(5), PlaylistME_1P_MC_TRUTH_path));
 MAP_RootPath_Full_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(6), PlaylistME_1C_MC_TRUTH_path));
 MAP_RootPath_Full_MC_TRUTH.insert(std::make_pair(kMEPlayList_Vector.at(7), PlaylistME_1D_MC_TRUTH_path));
@@ -429,7 +460,7 @@ Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_PANELPLOTS(FullTFile_Map_MC, FullT
                                                          false, false, "P_{T} [GeV] vs P_{#parallel}[GeV]", " ",
                                                           mnv_plot, can3, text_title_pdf2, MakeEffPlotsonly, .3, .25);
 
-  Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_Combined_PanelPlots(FullTFile_Map_MC, FullTFile_Map_MC_TRUTH, FullPOT_local_MC_MAP,
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_Combined_PanelPlots(FullTFile_Map_MC, FullTFile_Map_MC_TRUTH, FullPOT_local_MC_MAP,
                                                                     EmptyTFile_Map_MC, EmptyTFile_Map_MC_TRUTH, EmptyPOT_local_MC_MAP,
                                                                     "h_2d_PZ_PT", "P_{T}" ,"P_{#parallel}","Efficieny",
                                                                      false, false, "P_{T}[GeV] vs P_{#parallel}[GeV]", " ",
@@ -1650,15 +1681,15 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_PANELPLOTS(ME_playlist_TFileM
 
         if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s)[TRUTH] [%s](Full) ", title_type_char,title, Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(FULLTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(FULLTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale);
         sprintf(Title_His, "%s (%s) [True+RECO] [%s](Full)", title_type_char,title,Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth + Reco]", Xaxis_title_string, Yaxis_title_string,Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth + Reco]", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title,1.25, pdf, doBinwidth, logScale);
 
       }
 
         FULLRECO_TRUTHMC->second->Divide(FULLRECO_TRUTHMC->second, FULLTRUTHMC->second, 1.0,1.0,"");
         sprintf(Title_His, " 2D Efficiency %s (%s)  [%s](Full)", title_type_char, title, Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "Efficieny", Xaxis_title_string, Yaxis_title_string,Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "Efficieny", Xaxis_title_string, "", Yaxis_title_string, "", Zaxis_title, 1.25 , pdf, doBinwidth, logScale);
 
 
 
@@ -1674,18 +1705,18 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_PANELPLOTS(ME_playlist_TFileM
 
         sprintf(Title_His, "%s (%s) [TRUTH] [%s](Empty) ", title_type_char, title,Playlist_Name_char);
         if(OnlyEffplot==false){
-        Draw_2D_Panel_MC_Only_frompointer(EMPTYTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(EMPTYTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale);
 
 
         sprintf(Title_His, "%s (%s) [True+RECO] [%s](Empty)", title_type_char, title,Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth+RECO]", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth+RECO]", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title,1.25, pdf, doBinwidth, logScale);
 
 
       }
 
         (EMPTYRECO_TRUTHMC->second)->Divide((EMPTYRECO_TRUTHMC->second), EMPTYTRUTHMC->second, 1.0,1.0,"");
         sprintf(Title_His, "2D Efficiency %s (%s)[%s](Empty) ", title_type_char, title, Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "Efficiency", Xaxis_title_string, Yaxis_title_string,Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "Efficiency", Xaxis_title_string,"", Yaxis_title_string,"",Zaxis_title,1.25, pdf, doBinwidth, logScale);
 
 
       }//End of Empty Loop
@@ -1745,15 +1776,15 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_PANELPLOTS(ME_playlist_TFileM
 
         if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s)[TRUTH] [%s](Full) ", title_type_char,title, Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(FULLTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(FULLTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
         sprintf(Title_His, "%s (%s) [True+RECO] [%s](Full)", title_type_char,title,Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth + Reco]", Xaxis_title_string, Yaxis_title_string,Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth + Reco]", Xaxis_title_string,"", Yaxis_title_string,"",Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
       }
 
         FULLRECO_TRUTHMC->second->Divide(FULLRECO_TRUTHMC->second, FULLTRUTHMC->second, 1.0,1.0,"");
         sprintf(Title_His, " 2D Efficiency %s (%s)  [%s](Full)", title_type_char, title, Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "Efficieny", Xaxis_title_string, Yaxis_title_string,Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(FULLRECO_TRUTHMC->second, Title_His, "Efficieny", Xaxis_title_string,"", Yaxis_title_string,"",Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
 
@@ -1769,18 +1800,18 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_PANELPLOTS(ME_playlist_TFileM
 
         sprintf(Title_His, "%s (%s) [TRUTH] [%s](Empty) ", title_type_char, title,Playlist_Name_char);
         if(OnlyEffplot==false){
-        Draw_2D_Panel_MC_Only_frompointer(EMPTYTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(EMPTYTRUTHMC->second, Title_His, "MC Event Rate[Truth]", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
         sprintf(Title_His, "%s (%s) [True+RECO] [%s](Empty)", title_type_char, title,Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth+RECO]", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "MC Event Rate[Truth+RECO]", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title,1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
       }
 
         (EMPTYRECO_TRUTHMC->second)->Divide((EMPTYRECO_TRUTHMC->second), EMPTYTRUTHMC->second, 1.0,1.0,"");
         sprintf(Title_His, "2D Efficiency %s (%s)[%s](Empty) ", title_type_char, title, Playlist_Name_char);
-        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "Efficiency", Xaxis_title_string, Yaxis_title_string,Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(EMPTYRECO_TRUTHMC->second, Title_His, "Efficiency", Xaxis_title_string,"", Yaxis_title_string,"",Zaxis_title,1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
       }//End of Empty Loop
@@ -1914,46 +1945,46 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_Combined_PanelPlots(ME_playli
 
       if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s)[TRUTH] [combined Full Denom]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_denominator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale );
+        Draw_2D_Panel_MC_Only_frompointer(FULL_denominator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale );
 
         sprintf(Title_His, "%s (%s)[TRUTH+RECO] [combined Full Num]", title_type_char, title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale);
 
       }
       FULL_numerator_Hist->Divide(FULL_numerator_Hist, FULL_denominator_Hist, 1.0,1.0,"");
       sprintf(Title_His, "2D Efficiency %s (%s) (Full Combined) ", title_type_char, title);
-      Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+      Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale);
 
 
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
       if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s) [TRUTH] [combined Empty Denom]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(Empty_denominator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(Empty_denominator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title,1.25, pdf, doBinwidth, logScale);
 
         sprintf(Title_His, "%s  (%s)[TRUTH+RECO] [combined Empty Num]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title,1.25, pdf, doBinwidth, logScale);
 
       }
       Empty_numerator_Hist->Divide(Empty_numerator_Hist, FULL_denominator_Hist, 1.0,1.0,"");
       sprintf(Title_His, "2D Efficiency %s (%s) (Empty Combined) ", title_type_char, title);
-      Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale);
+      Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title,1.25, pdf, doBinwidth, logScale);
 
       FULL_EmptyMC_Hist_numerator->Add(Empty_numerator_Hist,-1);
       FULL_EmptyMC_Hist_denominator->Add(Empty_denominator_Hist,-1);
 
       if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s)[TRUTH] [Denominator(F-E)]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_denominator, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_denominator, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale);
 
 
         sprintf(Title_His, "%s (%s)[TRUTH+RECO] [Numerator(F-E)]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale);
 
 
       }
       FULL_EmptyMC_Hist_numerator->Divide(FULL_EmptyMC_Hist_numerator, FULL_EmptyMC_Hist_denominator, 1.0,1.0,"");
       sprintf(Title_His, "2D Efficiency %s (%s) [Combined (F-E)]", title_type_char, title);
-      Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale);
+      Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale);
 
 
 
@@ -2000,46 +2031,46 @@ void Draw_Efficiency_2D_FULL_EMPTY_TRUTH_FullStats_Combined_PanelPlots(ME_playli
 
       if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s)[TRUTH] [combined Full Denom]", title_type_char, title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_denominator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(FULL_denominator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
         sprintf(Title_His, "%s (%s)[TRUTH+RECO] [combined Full Num]", title_type_char, title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
       }
       FULL_numerator_Hist->Divide(FULL_numerator_Hist, FULL_denominator_Hist, 1.0,1.0,"");
       sprintf(Title_His, "2D Efficiency %s (%s) (Full Combined) ", title_type_char, title);
-      Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+      Draw_2D_Panel_MC_Only_frompointer(FULL_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
       ////////////////////////////////////////////////////////////////////////////////////////////////////////////
       if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s) [TRUTH] [combined Empty Denom]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(Empty_denominator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(Empty_denominator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
         sprintf(Title_His, "%s  (%s)[TRUTH+RECO] [combined Empty Num]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
       }
       Empty_numerator_Hist->Divide(Empty_numerator_Hist, FULL_denominator_Hist, 1.0,1.0,"");
       sprintf(Title_His, "2D Efficiency %s (%s) (Empty Combined) ", title_type_char, title);
-      Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x, max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+      Draw_2D_Panel_MC_Only_frompointer(Empty_numerator_Hist, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
       FULL_EmptyMC_Hist_numerator->Add(Empty_numerator_Hist,-1);
       FULL_EmptyMC_Hist_denominator->Add(Empty_denominator_Hist,-1);
 
       if(OnlyEffplot==false){
         sprintf(Title_His, "%s (%s)[TRUTH] [Denominator(F-E)]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_denominator, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_denominator, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
         sprintf(Title_His, "%s (%s)[TRUTH+RECO] [Numerator(F-E)]", title_type_char,title);
-        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+        Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
       }
       FULL_EmptyMC_Hist_numerator->Divide(FULL_EmptyMC_Hist_numerator, FULL_EmptyMC_Hist_denominator, 1.0,1.0,"");
       sprintf(Title_His, "2D Efficiency %s (%s) [Combined (F-E)]", title_type_char, title);
-      Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string, Yaxis_title_string, Zaxis_title, max_x , max_y, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
+      Draw_2D_Panel_MC_Only_frompointer(FULL_EmptyMC_Hist_numerator, Title_His, "MC", Xaxis_title_string,"", Yaxis_title_string,"", Zaxis_title, 1.25, pdf, doBinwidth, logScale, txt_sizeX, txt_sizeY);
 
 
 

@@ -8,6 +8,7 @@ void Draw_MCRatio_FULL_EMPTY(TFile *inputFile_MCinputFULL, TFile *inputFile_MCin
 void Draw_MC_Efficency_Pur_FULL_EMPTY(TFile *inputFile_MCinputFULL, TFile *inputFile_MCinputEmpty, char *histoName_helium, char *histoName_Other, double Scale_MC,
           const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf, std::string title_type, char * Xaxis_title, char *Yaxis_title,
           ME_helium_Playlists FULL_playlist, ME_helium_Playlists Empty_playlist,  bool MakeXaxisLOG, bool MakeYaxisLOG  );
+          std::vector<CryoVertex> GetCryoVertexVaribles_TrackStacks();
 void Kin(bool &cutsOn, bool &my_norm, bool &my_debug, const char *userDir, int &Print_Systematics ) {
 TH1::AddDirectory(false);
 std::cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
@@ -18,6 +19,7 @@ std::vector<ME_helium_Playlists> GetPlayListVector_DATA();
 const std::vector< ME_helium_Playlists> kPlayListVector_MC = GetPlayListVector_MC();
 std::vector<ME_helium_Playlists> kPlayListVector_DATA =GetPlayListVector_DATA();
 const std::vector<CryoVertex> kCryoVertexVaribles_vector = GetCryoVertexVaribles();
+const std::vector<CryoVertex> kCryoVertexVariblesStacks_vector = GetCryoVertexVaribles_TrackStacks();
 int N_Error_groups;
 if(Print_Systematics==2 || Print_Systematics == 1) {N_Error_groups=0;}
 else if (Print_Systematics==0){N_Error_groups=7;}
@@ -40,13 +42,20 @@ std::string SysError_printLabel = PrintLabel_Systematics(Print_Systematics);
 auto Playlist_names =  MakePlaylistString(kPlayListVector_MC);
 sprintf(timeset_nonstacks,"%i_%i_%i_%i_%s_%s", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min, SysError_printLabel.c_str(), Playlist_names.c_str());
 sprintf(timeset, "%i_%i_%i_%i", 1 + ltm->tm_mon,ltm->tm_mday, ltm->tm_hour,ltm->tm_min);
-
+/*
 sprintf(text_title_pdf1, "Plots_CryoVertex_SystErrors_%s.pdf(",timeset_nonstacks );
 can -> Print(text_title_pdf1);
 sprintf(text_title_pdf2, "Plots_CryoVertex_SystErrors_%s.pdf",timeset_nonstacks );
 sprintf(text_title_pdf2, "Plots_CryoVertex_SystErrors_%s.pdf",timeset_nonstacks );
 sprintf(text_title_pdf3, "Plots_CryoVertex_SystErrors_%s.pdf)",timeset_nonstacks );
 sprintf(text_title_pdf4, "Plots_CryoVertex_SystErrors_%s",timeset_nonstacks );
+*/
+
+sprintf(text_title_pdf1, "Plots_CryoVertex_SystErrors.pdf(" );
+can -> Print(text_title_pdf1);
+sprintf(text_title_pdf2, "Plots_CryoVertex_SystErrors.pdf" );
+sprintf(text_title_pdf3, "Plots_CryoVertex_SystErrors.pdf)" );
+sprintf(text_title_pdf4, "Plots_CryoVertex_SystErrors" );
 //auto rootinputpathfile = "/minerva/app/users/cnguyen/cmtuser/Minerva_v21r1p1Helium/Ana/VetoWallStudies/scripts/ChainWrapper_FW_ME/eventselection/STACKS_Histograms_minervame1G_MC.root";
 /*
 auto minervame1P_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1P_MC.root";
@@ -70,19 +79,23 @@ auto minervame1F_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_R
 
 //auto PlaylistMC_1D_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1D_Data.root";
 //auto PlaylistMC_1A_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1A_Data.root";
-auto PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_All_SysErrorsOn.root";
+// these are the old ones //auto PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_All_SysErrorsOn.root";
 //auto PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_StatsONLYErrors.root";
 //auto PlaylistME_1A_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1A_MC_All_SysErrorsOn.root";
 //auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_All_SysErrorsOn.root";
 //auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_StatsONLYErrors.root";
-auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_All_SysErrorsOn.root";
+// these are the old ones //auto PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_All_SysErrorsOn.root";
 
 
-auto PlaylistMC_1F_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1F_Data.root";
+// these are the old ones //auto PlaylistME_1F_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1F_Data.root";
 //auto PlaylistMC_1D_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1D_Data.root";
 //auto PlaylistMC_1A_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1A_Data.root";
-auto PlaylistMC_1G_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1G_Data.root";
+// these are the old ones //auto PlaylistME_1G_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1G_Data.root";
 
+const char* PlaylistME_1G_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1G_MC_All_SysErrorsOn_ThreeRegion_sideBand.root"; //PlaylistME_1G_MC_path;
+const char* PlaylistME_1G_Data_path = "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1G_Data_SideBand.root"; //(PlaylistME_1G_Data_path);
+const char* PlaylistME_1F_MC_path = "/minerva/data/users/cnguyen/ME_MC_EventSection_RootFiles/Histograms_minervame1F_MC_All_SysErrorsOn_ThreeRegion_sideBand.root"; //PlaylistME_1F_MC_path;
+const char* PlaylistME_1F_Data_path =  "/minerva/data/users/cnguyen/ME_DATA_EventSection_RootFiles/Histograms_minervame1F_Data_SideBand.root"; //(PlaylistME_1F_Data_path);
 
 
 bool is_mc=true;bool isNOT_mc=false;
@@ -125,10 +138,10 @@ POT_DATA[kPlayListVector_DATA[1]] = PlaylistDATA_1G.Get_Pot();
 POT_DATA_Status[kFULL] = PlaylistDATA_1F.Get_Pot();
 POT_DATA_Status[kEMPTY] = PlaylistDATA_1G.Get_Pot();
 
-TFile *Playlist_ME1F_MC     = new TFile(PlaylistME_1F_MC_path);
-TFile *Playlist_ME1G_MC     = new TFile(PlaylistME_1G_MC_path);
-TFile *Playlist_ME1F_DATA     = new TFile(PlaylistMC_1F_Data_path);
-TFile *Playlist_ME1G_DATA     = new TFile(PlaylistMC_1G_Data_path);
+TFile *Playlist_ME1F_MC   = new TFile(PlaylistME_1F_MC_path);
+TFile *Playlist_ME1G_MC   = new TFile(PlaylistME_1G_MC_path);
+TFile *Playlist_ME1F_DATA = new TFile(PlaylistME_1F_Data_path);
+TFile *Playlist_ME1G_DATA = new TFile(PlaylistME_1G_Data_path);
 
 std::cout<< "POT_DATA_Status[kFULL] = "<< POT_DATA_Status[kFULL]<<std::endl;
 std::cout<< "POT_DATA_Status[kEMPTY] = "<< POT_DATA_Status[kEMPTY]<<std::endl;
@@ -167,7 +180,7 @@ for(auto Vertex_vertex: kCryoVertexVaribles_vector ){
 
 
 // make Pie Graph showing the change of track types
-
+/*
 Hist_phyiscs_map_withtrack Chisqrt_Physics_disturbtion_ME1F =  Make_Physics_withTrack_distribution_map_FromTFile(Playlist_ME1F_MC, "h_CryoVertexChiSqFit",false, 1.0, kPlayListVector_MC[0], true );
 
 Hist_map_track Chisqrt_Physics_disturbtion_data_ME1F = Make_Track_distribution_map_FromTFile(Playlist_ME1F_DATA, "h_Data_CryoVertexChiSqFit" , false, 1.0,kPlayListVector_MC[0] , false , true );
@@ -207,7 +220,7 @@ Draw_MC_Efficency_Pur_FULL_EMPTY(Playlist_ME1F_MC, Playlist_ME1G_MC, "h_Efficien
 Draw_MC_Efficency_Pur_FULL_EMPTY(Playlist_ME1F_MC, Playlist_ME1G_MC, "h_Efficiency_h_CryoVertexChiSqFit_short_0", "h_Efficiency_h_CryoVertexChiSqFit_short_1", POT_MC_Status[kFULL]/POT_MC_Status[kEMPTY],
                                 "[Short Tracks]", mnv_plot, can,text_title_pdf2 , "Vertex #Chi^{2}",  "#Chi^{2}", "Efficiency",
                                 kPlayListVector_MC[0], kPlayListVector_MC[1], false, false  );
-
+*/
 
 sprintf(Latex_name, "PLOTS_%s_Latex_CryoVertex_CV_ERRORS", timeset_nonstacks);
 std::string input_Latex_name = Latex_name;
@@ -232,7 +245,7 @@ sprintf(text_title_Material_pdf7, "PLOTS_%s_STACKS_Material_CryoVertex_Varibles.
 sprintf(text_title_Material_pdf8, "PLOTS_%s_STACKS_Material_CryoVertex_Varibles",timeset );
 std::string pdf_stacks_Material = string(text_title_Material_pdf8);
 
-/*
+
 for(auto CryoVertex_vector: kCryoVertexVaribles_vector ){
 
 
@@ -264,7 +277,7 @@ sprintf(Latex_name, "PLOTS_%s_CryoVertex_Latex_stack_Material", timeset);
  input_Latex_name = Latex_name;
 
 MakeLatexForCryoVertexFiguresFORStacks(input_Latex_name ,kCryoVertexVaribles_vector , pdf_stacks_Material );
-
+/*
 std::cout<< " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "<< std::endl;
 
 std::cout<< "  Muon Interaction Stacks "<< std::endl;
@@ -394,10 +407,10 @@ std::vector<StackType> allStacks;
 allStacks.push_back(kTrackType);
 allStacks.push_back(kVertexOptions);
 allStacks.push_back(kboolNTrack);
-
+/*
 for(auto stack_index : allStacks){
 
-for(auto CryoVertex_vector: kCryoVertexVaribles_vector ){
+for(auto CryoVertex_vector: kCryoVertexVariblesStacks_vector ){
 
 
   auto histname = GetVertexCryoVarHistName(CryoVertex_vector);
@@ -431,7 +444,7 @@ for(auto CryoVertex_vector: kCryoVertexVaribles_vector ){
 }
 
 }
-
+*/
 
 
 
@@ -539,6 +552,22 @@ std::vector<ME_helium_Playlists> GetPlayListVector_DATA() {
 //////////////////////////////////////////////////////////////////////////
 //GET Vertex Varibles
 //////////////////////////////////////////////////////////////////////////
+std::vector<CryoVertex> GetCryoVertexVaribles_TrackStacks() {
+//#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
+  std::vector<CryoVertex> CryoVertexVars;
+
+  CryoVertexVars.push_back(kX);
+  CryoVertexVars.push_back(kY);
+  CryoVertexVars.push_back(kZ);
+  CryoVertexVars.push_back(kR);
+  //CryoVertexVars.push_back(kRR);
+  //CryoVertexVars.push_back(kdistance_edge);
+  //CryoVertexVars.push_back(kfitConverge);
+
+
+  return CryoVertexVars;
+//#endif
+}
 std::vector<CryoVertex> GetCryoVertexVaribles() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<CryoVertex> CryoVertexVars;
@@ -547,13 +576,14 @@ std::vector<CryoVertex> GetCryoVertexVaribles() {
   CryoVertexVars.push_back(kY);
   CryoVertexVars.push_back(kZ);
   CryoVertexVars.push_back(kR);
-  CryoVertexVars.push_back(kfitConverge);
+  //CryoVertexVars.push_back(kRR);
+  CryoVertexVars.push_back(kdistance_edge_fiducial);
+  //CryoVertexVars.push_back(kfitConverge);
 
 
   return CryoVertexVars;
 //#endif
 }
-
 
 void MakeLatexForCryoVertexFiguresCVandALLErrors(std::string output_name ,std::vector<CryoVertex> CryoVertex_vector, std::string PDF_cv_name, int NError_Groups){
   double scale= .24;

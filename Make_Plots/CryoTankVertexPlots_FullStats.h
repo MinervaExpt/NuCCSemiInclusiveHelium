@@ -47,7 +47,7 @@
 #include <PlotUtils/MnvNormalization.h>
 #include <PlotUtils/FluxReweighter.h>
 #include <PlotUtils/POTCounter.h>
-
+#include "MinervaUnfold/MnvResponse.h"
 #include <set>
 #include <iterator>
 #include <sstream>
@@ -58,7 +58,9 @@
 #include "../includes/CryoTankUtils.h"
 #include "../includes/HeliumDefaults.h"
 #include "../includes/HeliumUtils.h"
-
+#include "../includes/Helium2DUtils.h"
+#include "../includes/Helium2DPlotUtils.h"
+#include <algorithm>
 
 #include "Common_plots.h"
 

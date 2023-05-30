@@ -12,15 +12,19 @@
    - FHC Mode - Forward Horn Current, foward Focusing of positively changed Pions and Kaons that dominantly decay to Nu mu's    
 3. Produce 1D differential cross section measurement for FHC LE beam configuration
 4. Gain a greater understanding of the Helium nucleus through different  &nu weak interaction pathways including QE, RES, Non-RES pion production, mult-nucleon (2p2h), and DIS. Along with the smearing and that come with FSI.   
+5. Product Cross-Section Ratio of He/CH. 
+
 
 ## Installation
 ### Dependencies
 1. [MAT-PlotUtils](https://github.com/MinervaExpt/MAT)
 2. [MAT-MINERvA](https://github.com/MinervaExpt/MAT-MINERvA)
-2. [UnfoldUtils](https://github.com/MinervaExpt/UnfoldUtils)
-3. [ROOT 6](https://root.cern.ch/building-root)
+3. [UnfoldUtils](https://github.com/MinervaExpt/UnfoldUtils)
+4. [ROOT 6](https://root.cern.ch/building-root)
 
 - Install Package after the dependencies using [NuCCSemiInclusiveHelium](https://github.com/MinervaExpt/NuCCSemiInclusiveHelium).
+
+- * Note - I have modfied my local PlotUtils, would need my local version to run some of the scripts 
 
 ## Macro FrameWork Structure
 - `/playlists`  Currently for Pathways ME Nu Data and MC root ntulples created from HeAnaTupleTool.cpp for Event Selection scripts in  'eventselection' and 'eventselection2D'     
@@ -30,6 +34,7 @@
 - `/Make_Plots` - To make Plots  from the Event Selection from `/eventselection`
 - `/Make_2DPlots` - To make Plots from 2D Event Selection from `/eventselection2D` 
 - `/Make_CrossSection` - Macros to Extract and Plot Helium Cross Section 
+- `/fits` - Macros for plotting reweighed and/or vertex position shifted Al or He Events  
 
 ### Physics Analysis 
 
@@ -54,7 +59,7 @@
 *  Get2p2hSystematicsMap
 *  GetRPASystematicsMap
 *  GetHeliumMassMap 
-*  GetVertexSmearingRandZMap 
+*  GetHELIUMVertex_XYZ_SmearingShiftSystematicsMap 
 
 ### Signal definition: Muon Neutrino Charge Current (CC) Semi-Inclusive Interaction with Helium (<sup>4</sup>He) Nuclei 
 - A Muon Neutrino CC Helium Interaction
@@ -90,7 +95,7 @@
   *  Vertex fit of candidate tracks converges
   *  Number of tracks in the vertex > 1
 *  Tracks don't match to an active on voltage Veto Wall  scintillator paddle with hit activity 
-*  Recoil Tracks are foward going and < 60 [Degs] 
+*  Recoil Tracks are foward going and < 55 [Degs] 
 
 ### To Does
 * add LE

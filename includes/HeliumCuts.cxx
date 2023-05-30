@@ -1,11 +1,11 @@
 #include "HeliumCuts.h"
+
 //#include<map>
 //need to change so all function varibles are got from functions decleared in CVU
 TDatabasePDG *pdg_DATABASEobject_forCUTs = TDatabasePDG::Instance();
 
 std::vector<Particle_type>  GetParicle_typeTRUTH();
 const std::vector<Particle_type> kSecondary_particle_vector = GetParicle_typeTRUTH();
-
 std::vector<Particle_type> GetParicle_typeTRUTH() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<Particle_type> Particle;
@@ -18,7 +18,9 @@ std::vector<Particle_type> GetParicle_typeTRUTH() {
   return Particle;
 //#endif
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts> cuts)
 {
   #ifndef __CINT__
@@ -31,7 +33,9 @@ bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts>
   return pass;
   #endif // __CINT__
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts> cuts, std::vector<Weights> kWeights, RECO_Cut_Map &CountMap)
 {
   #ifndef __CINT__
@@ -45,12 +49,33 @@ bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts>
 
     }
   }
+  return pass;
+  #endif // __CINT__
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts> cuts, std::vector<Weights> kWeights, RECO_Cut_Map &CountMap, double r, double z)
+{
+  #ifndef __CINT__
+  bool pass = true;
+  for (const auto c : cuts){
+    pass = pass && PassesCut(univ, c, is_mc, r , z);
+
+    if(isCV(univ) && pass==true){
+      double weight = univ.GetWeight(kWeights);
+      CountMap[c]+=weight;
+
+    }
+  }
 
 
   return pass;
   #endif // __CINT__
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool PassesCutsRECOData(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts> cuts, RECO_Cut_Map &CountMap)
 {
   #ifndef __CINT__
@@ -68,7 +93,9 @@ bool PassesCutsRECOData(const HeliumCVUniverse& univ, bool is_mc ,std::vector<EC
   return pass;
   #endif // __CINT__
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts> cuts, std::vector<Weights> kWeights, RECO_Cut_Map &CountMap,RECO_Cut_Map &CountMap_TrueHelium, RECO_Cut_Map &CountMap_nonHelium)
 {
   #ifndef __CINT__
@@ -76,6 +103,34 @@ bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts>
 
   for (auto c : cuts){
     pass = pass && PassesCut(univ, c, is_mc);
+    if(isCV(univ) && pass==true){
+      double weight = univ.GetWeight(kWeights);
+      CountMap[c]+=weight;
+
+      if(univ.GetTargetType()==2)
+      {
+        CountMap_TrueHelium[c]+=weight;
+      }
+      else{
+        CountMap_nonHelium[c]+=weight;
+      }
+
+    }
+  }
+
+  return pass;
+  #endif // __CINT__
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts> cuts, std::vector<Weights> kWeights, RECO_Cut_Map &CountMap,RECO_Cut_Map &CountMap_TrueHelium, RECO_Cut_Map &CountMap_nonHelium, double r, double z )
+{
+  #ifndef __CINT__
+  bool pass = true;
+
+  for (auto c : cuts){
+    pass = pass && PassesCut(univ, c, is_mc, r, z);
     if(isCV(univ) && pass==true){
       double weight = univ.GetWeight(kWeights);
       CountMap[c]+=weight;
@@ -93,7 +148,9 @@ bool PassesCutsRECO(const HeliumCVUniverse& univ, bool is_mc ,std::vector<ECuts>
   return pass;
   #endif // __CINT__
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool  PassesCutsTRUTH(const HeliumCVUniverse& univ, std::vector<ECutsTRUTH> TRUTHcuts) {
   #ifndef __CINT__
 
@@ -105,7 +162,9 @@ bool  PassesCutsTRUTH(const HeliumCVUniverse& univ, std::vector<ECutsTRUTH> TRUT
   return pass;
   #endif // __CINT__
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool  PassesCutsTRUTH(const HeliumCVUniverse& univ, std::vector<ECutsTRUTH> TRUTHcuts, std::vector<Weights> kWeights , TRUE_Cut_Map &CountMap) {
   #ifndef __CINT__
 
@@ -122,7 +181,9 @@ bool  PassesCutsTRUTH(const HeliumCVUniverse& univ, std::vector<ECutsTRUTH> TRUT
   #endif // __CINT__
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool  PassesCut(const HeliumCVUniverse& univ, ECuts cut, bool is_mc) {
   #ifndef __CINT__
@@ -138,8 +199,106 @@ bool  PassesCut(const HeliumCVUniverse& univ, ECuts cut, bool is_mc) {
     case kMuonAngle:
     return IsMuonAngleGood(univ);
 
+    case kMuonAngle_CenterForwardGoingAngle:
+    return IsMuonAngleCenteredGoing(univ);
+
     case kFiducialVolume:
     return IsInFiduicalVolume(univ);
+
+    case kFiducialVolume_new:
+    return IsInFiduicalVolume_new(univ);
+
+    case kFiducialVolume_ExtraShell:
+    return IsInExtraFiduicalVolume(univ);
+
+    case kMinosMatch:
+    return IsMinsoMatch( univ);
+
+    case kMinosCharge:
+    return IsMuonChargeGood(univ);
+
+    case kUsableMuon:
+    return IsUsableMuon(univ) ;
+
+    case kMinosCoil:
+    return IsMINOSFiduicalVolumnGood( univ);
+
+    case kMinosCurvature:
+    return IsGoodCurvatureSignificance(univ);
+
+    case kVertexConverge:
+    return IsVertexConvergeGood(univ);
+
+    case kThetaMu:
+    return ISMuonAngle_Cutgood(univ);
+
+    case kSix:
+    return IsSixPushGood( univ);
+
+    case kVeto:
+    return IsVetoGood(univ);
+
+    case kNonMu_is_Plausible:
+    return NonMuon_Plausible(univ,is_mc);
+
+    case kMu_is_Plausible:
+    return Muon_Plausible(univ,is_mc);
+
+    case kTrackForwardGoing:
+    return IsTrackForwardGoing(univ);
+
+    case kNTracks:
+    return IsNTracksGood (univ);
+
+    case kMatchVetoDeadPaddle:
+    return  GetCutExtrapolatetoDeadVetoGood(univ);
+
+    case ksecTrkwrtblessthanMaxAngle:
+    return IssecTrklessthanDeg(univ);
+
+    case kMaxChiSqrt:
+    return IsVertexChiSqrtLessthanMax(univ);
+
+    case kMaxChiSqrt_byTrackType:
+    return IsVertexChiSqrtLessthanMax_ByTrackType(univ);
+
+    case kVertex_ConvergedfromAllTracks:
+    return IsVertexConverge_usingALLTracks(univ);
+
+    case kAllCuts:
+    return true;
+
+    default:
+    std::cout << "PassesCut Error Unknown Cut!" << cut <<   std::endl;
+    return false;
+  };
+  #endif // __CINT__
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  PassesCut(const HeliumCVUniverse& univ, ECuts cut, bool is_mc, double r , double z) {
+  #ifndef __CINT__
+
+  switch (cut) {
+
+    case kNoCuts:
+    return true;
+
+    case kGoodEnergy:
+    return IsGoodEnergy(univ);
+
+    case kMuonAngle:
+    return IsMuonAngleGood(univ);
+
+    case kMuonAngle_CenterForwardGoingAngle:
+    return IsMuonAngleCenteredGoing(univ);
+
+    case kFiducialVolume:
+    return IsInFiduicalVolume(univ);
+
+    case kFiducialVolume_new:
+    return IsInFiducalVolumeFromtheInnerEdge( r, z, HeliumCUTConsts::VextexMiniumDisToCryoTankInnerTank );
 
     case kFiducialVolume_ExtraShell:
     return IsInExtraFiduicalVolume(univ);
@@ -208,7 +367,6 @@ bool  PassesCut(const HeliumCVUniverse& univ, ECuts cut, bool is_mc) {
   #endif // __CINT__
 }
 
-
 //==============================================================================
 // TRUTH Cut functions
 //==============================================================================
@@ -238,6 +396,9 @@ bool  PassesTRUTH(const HeliumCVUniverse& univ, ECutsTRUTH cut) {
 
     case  kTRUTHFiduical:
     return TRUTH_IsINFiduicalVolume( univ);
+
+    case  kTRUTHFiduical_new:
+    return TRUTH_IsINFiduicalVolume_new( univ);
 
     case kTRUTHFiduical_ExtraShell:
     return TRUTH_IsINFiduicalVolume_EXTRA( univ);
@@ -281,6 +442,10 @@ bool  PassesTRUTH(const HeliumCVUniverse& univ, ECutsTRUTH cut) {
     case  kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH:
     return TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_And_KE_proton_pion_thresholdsleading2ndTrk_RECOBRANCH(univ);
 
+    case  kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH_NoOverLayFraction:
+    return TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_And_KE_proton_pion_thresholdsleading2ndTrk_RECOBRANCH_NoOverLayFraction(univ);
+
+
     case kAllTRUTHCuts:
     return true;
 
@@ -296,70 +461,99 @@ bool  PassesTRUTH(const HeliumCVUniverse& univ, ECutsTRUTH cut) {
 /////////////////////////////////////////////////////////////
 
 
-    bool  TRUTH_IsTargetTypeHelium(const HeliumCVUniverse& univ){
-      if (univ.GetInt("mc_targetZ") != HeliumCUTConsts::HeliumZ)
-      {return false;}
-      else{return true;}
-    }
+bool  TRUTH_IsTargetTypeHelium(const HeliumCVUniverse& univ){
+  if (univ.GetInt("mc_targetZ") != HeliumCUTConsts::HeliumZ)
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_IsNeutrino(const HeliumCVUniverse& univ){
+  if (univ.GetInt("mc_incoming") != HeliumCUTConsts::NeutrinoPDGType)
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_IsCCInteractionType(const HeliumCVUniverse& univ){
+  if (univ.GetInt("mc_current") != HeliumCUTConsts::MC_currentType)
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
-    bool  TRUTH_IsNeutrino(const HeliumCVUniverse& univ){
-      if (univ.GetInt("mc_incoming") != HeliumCUTConsts::NeutrinoPDGType)
-      {return false;}
-      else{return true;}
-    }
+bool  TRUTH_IsMuonGoodEnergy(const HeliumCVUniverse& univ){
+  double TrueMuonEnergy = univ.GetDouble("truth_true_muon_E");
+  if (TrueMuonEnergy <= HeliumCUTConsts:: Muon_Minimum_Energy || TrueMuonEnergy >= HeliumCUTConsts:: Muon_Maximum_Energy )
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_IsMuonAngleGood(const HeliumCVUniverse& univ){
+  double TrueMuonAngle = univ.GetDouble("truth_true_muon_theta")* TMath::RadToDeg();
+  if (TrueMuonAngle > HeliumCUTConsts::Maximum_MuonAngle || TrueMuonAngle < 0.0)
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_IsINFiduicalVolume(const HeliumCVUniverse& univ){
+  if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH( univ, HeliumCUTConsts::VextexMiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_IsINFiduicalVolume_new(const HeliumCVUniverse& univ){
+  if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH_new( univ, HeliumCUTConsts::VextexMiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_IsINFiduicalVolume_new(const HeliumCVUniverse& univ , double Cut_MiniumDisToCryoTankInnerTank){
+  if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH_new( univ, Cut_MiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_IsINFiduicalVolume(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
+  if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH( univ, Cut_MiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool TRUTH_IsINFiduicalVolume_EXTRA(const HeliumCVUniverse& univ){
+  if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge_TRUTH( univ, 0.0, HeliumCUTConsts::CryoTankExtraAddRegionOutside))
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
-    bool  TRUTH_IsCCInteractionType(const HeliumCVUniverse& univ){
-      if (univ.GetInt("mc_current") != HeliumCUTConsts::MC_currentType)
-      {return false;}
-      else{return true;}
-    }
-
-
-    bool  TRUTH_IsMuonGoodEnergy(const HeliumCVUniverse& univ){
-      double TrueMuonEnergy = univ.GetDouble("truth_true_muon_E");
-      if (TrueMuonEnergy <= HeliumCUTConsts:: Muon_Minimum_Energy || TrueMuonEnergy >= HeliumCUTConsts:: Muon_Maximum_Energy )
-      {return false;}
-      else{return true;}
-    }
-
-    bool  TRUTH_IsMuonAngleGood(const HeliumCVUniverse& univ){
-      double TrueMuonAngle = univ.GetDouble("truth_true_muon_theta")* TMath::RadToDeg();
-      if (TrueMuonAngle > HeliumCUTConsts::Maximum_MuonAngle || TrueMuonAngle < 0.0)
-      {return false;}
-      else{return true;}
-    }
-
-    bool  TRUTH_IsINFiduicalVolume(const HeliumCVUniverse& univ){
-      if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH( univ, HeliumCUTConsts::VextexMiniumDisToCryoTankInnerTank))
-      {return false;}
-      else{return true;}
-    }
-
-    bool  TRUTH_IsINFiduicalVolume(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
-      if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH( univ, Cut_MiniumDisToCryoTankInnerTank))
-      {return false;}
-      else{return true;}
-    }
-
-
-    bool TRUTH_IsINFiduicalVolume_EXTRA(const HeliumCVUniverse& univ){
-      if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge_TRUTH( univ, 0.0, HeliumCUTConsts::CryoTankExtraAddRegionOutside))
-      {return false;}
-      else{return true;}
-    }
-
-
-    bool  TRUTH_GreaterthanONEFS(const HeliumCVUniverse& univ){
-      auto PDG_vector  = univ.GETvector_PDG_FS_particles();
-      if (PDG_vector.size() == 1 || PDG_vector.size() == 0)
-      {return false;}
-      else{return true;}
-    }
-
-
-
-
-// correct method for Getting Energy TDatabasePDG *pdg_DATABASEobject = TDatabasePDG::Instance();
+bool  TRUTH_GreaterthanONEFS(const HeliumCVUniverse& univ){
+  auto PDG_vector  = univ.GETvector_PDG_FS_particles();
+  if (PDG_vector.size() == 1 || PDG_vector.size() == 0)
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool  TRUTH_Is2ndTrk_maxiumAngle_threshold(const HeliumCVUniverse& univ, double Max_deg){
   std::vector<int> PDG_trklist = univ.GETvector_PDG_FS_particles();
@@ -373,7 +567,9 @@ bool  TRUTH_Is2ndTrk_maxiumAngle_threshold(const HeliumCVUniverse& univ, double 
 
   return false;
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral(const HeliumCVUniverse& univ, double Max_deg){
 
   std::vector<int> PDG_trklist = univ.GETvector_PDG_FS_particles();
@@ -401,12 +597,15 @@ bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral(const HeliumCVUniverse& un
   return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool  TRUTH_IsAtLeastOne_2ndTrk_non_NeutralParticle(const HeliumCVUniverse& univ){
 
   std::vector<int> PDG_trklist = univ.GETvector_PDG_FS_particles();
   if(PDG_trklist.size()==0) return false;
-  for(unsigned int i = 1; i < PDG_trklist.size(); i++ ){
+  for(unsigned int i = 1; i < PDG_trklist.size(); ++i ){
     if (Helium_PDG::pdg_Pi0 != PDG_trklist.at(i) &&
         Helium_PDG::pdg_neutron != PDG_trklist.at(i) &&
         Helium_PDG::pdg_antineutron!= PDG_trklist.at(i) &&
@@ -426,6 +625,9 @@ bool  TRUTH_IsAtLeastOne_2ndTrk_non_NeutralParticle(const HeliumCVUniverse& univ
   return false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_WITHProtonAndPion_thresholds(const HeliumCVUniverse& univ, double Max_deg, double Pion_Energy , double Proton_Energy){
 
@@ -461,7 +663,9 @@ bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_WITHProtonAndPion_threshol
 
   return false;
 }
-///////////////////
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool  TRUTH_Is2ndTrk_No_Neutral_WITHProtonAndPion_thresholds(const HeliumCVUniverse& univ, double Pion_Energy , double Proton_Energy){
 
@@ -496,132 +700,139 @@ bool  TRUTH_Is2ndTrk_No_Neutral_WITHProtonAndPion_thresholds(const HeliumCVUnive
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_leading2ndTrk(const HeliumCVUniverse& univ, double Max_deg){
+  std::vector<int> PDG_trklist = univ.GETvector_PDG_FS_particles();
+  std::vector <double> Angle_trklist = univ.GETvector_theta_wrtb_FS_particles();
+  std::vector<double> Energy_trklist   = univ.GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject_forCUTs);
+  int secondTrk =-999;
 
+  if(PDG_trklist.size()==0) return false;
+  else if(PDG_trklist.size()==1) return false; // only muon no 2nd trk
+  else if( PDG_trklist.size()==2 &&
+  Helium_PDG::pdg_Pi0 != PDG_trklist.at(1) &&
+  Helium_PDG::pdg_neutron != PDG_trklist.at(1) &&
+  Helium_PDG::pdg_antineutron!= PDG_trklist.at(1) &&
+  Helium_PDG::pdg_Genie_bindingE!= PDG_trklist.at(1) &&
+  Helium_PDG::pdg_Sigma0!= PDG_trklist.at(1) &&
+  Helium_PDG::pdg_antiSigma0!= PDG_trklist.at(1) &&
+  Helium_PDG::pdg_Nu_e!= PDG_trklist.at(1) &&
+  Helium_PDG::pdg_Nu_mu!= PDG_trklist.at(1) &&
+  Helium_PDG::pdg_Lambda0!= PDG_trklist.at(1) &&
+  Helium_PDG::pdg_antiLambda0 != PDG_trklist.at(1) &&
+  Helium_PDG::pdg_Photon != PDG_trklist.at(1)){secondTrk =1;}
 
+  else if(PDG_trklist.size() > 2){
+    secondTrk = univ.Get_Index_highestKE_mc_FSPart_WithDeglessthan_NO_NeutralParticles(Max_deg, Energy_trklist, Angle_trklist, PDG_trklist );
+    if(secondTrk == -999){return false;}
+  }
+  double TrueHardonangle_wrtb = Angle_trklist.at(secondTrk);
 
-//////////////////////
-    bool  TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_leading2ndTrk(const HeliumCVUniverse& univ, double Max_deg){
-      std::vector<int> PDG_trklist = univ.GETvector_PDG_FS_particles();
-      std::vector <double> Angle_trklist = univ.GETvector_theta_wrtb_FS_particles();
-      std::vector<double> Energy_trklist   = univ.GETvector_KE_mc_FS_particles_GeV(pdg_DATABASEobject_forCUTs);
-      int secondTrk =-999;
+  if (TrueHardonangle_wrtb > Max_deg )
+  {return false;}
+  else{return true;}
 
-      if(PDG_trklist.size()==0) return false;
-      else if(PDG_trklist.size()==1) return false; // only muon no 2nd trk
-      else if( PDG_trklist.size()==2 &&
-               Helium_PDG::pdg_Pi0 != PDG_trklist.at(1) &&
-               Helium_PDG::pdg_neutron != PDG_trklist.at(1) &&
-               Helium_PDG::pdg_antineutron!= PDG_trklist.at(1) &&
-               Helium_PDG::pdg_Genie_bindingE!= PDG_trklist.at(1) &&
-               Helium_PDG::pdg_Sigma0!= PDG_trklist.at(1) &&
-               Helium_PDG::pdg_antiSigma0!= PDG_trklist.at(1) &&
-               Helium_PDG::pdg_Nu_e!= PDG_trklist.at(1) &&
-               Helium_PDG::pdg_Nu_mu!= PDG_trklist.at(1) &&
-               Helium_PDG::pdg_Lambda0!= PDG_trklist.at(1) &&
-               Helium_PDG::pdg_antiLambda0 != PDG_trklist.at(1) &&
-               Helium_PDG::pdg_Photon != PDG_trklist.at(1)
-             ){secondTrk =1;}
+}
 
-             else if(PDG_trklist.size() > 2){
-               secondTrk = univ.Get_Index_highestKE_mc_FSPart_WithDeglessthan_NO_NeutralParticles(Max_deg, Energy_trklist, Angle_trklist, PDG_trklist );
-               if(secondTrk == -999){return false;}
-             }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
+bool  TRUTH__minimum_Energy_threshold_Pion_GeV(double energy ){
+  if (energy<HeliumCUTConsts::Truth_pion_Minimum_Energy){return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH__minimum_Energy_threshold_Proton_GeV(double energy ){
+  if (energy<HeliumCUTConsts::Truth_proton_Minimum_Energy){return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  TRUTH__minimum_Energy_threshold_dimuon_GeV(double energy ){
+  if (energy<HeliumCUTConsts::Truth_dimuon_Maximum_Energy){return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool Truth_hardonCut_Threshold_EnergyPIONS(const HeliumCVUniverse& univ){
+  auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
+  auto input_type =  univ.GetNon_muon_PDG(secondTrk);
+  Particle_type GroupType = GetParticlegroup_type(input_type);
 
-             double TrueHardonangle_wrtb = Angle_trklist.at(secondTrk);
+  //      bool Energy_2ndtrkPass= false;
+  double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
+  if(GroupType==kSecondary_particle_vector[1]){
+    return TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy);
+  }
+  else{ return true;}
 
-             if (TrueHardonangle_wrtb > Max_deg )
-             {return false;}
-             else{return true;}
-           }
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool Truth_hardonCut_Threshold_EnergyPROTON(const HeliumCVUniverse& univ){
+  auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
+  auto input_type =  univ.GetNon_muon_PDG(secondTrk);
+  Particle_type GroupType = GetParticlegroup_type(input_type);
 
+  double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
+  if(GroupType==kSecondary_particle_vector[0]){
+    return TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy);
+  }
+  else{ return true;}
 
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool Truth_hardonCut_Threshold_EnergyDiMuon(const HeliumCVUniverse& univ){
+  auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
+  auto input_type =  univ.GetNon_muon_PDG(secondTrk);
+  Particle_type GroupType = GetParticlegroup_type(input_type);
 
+  double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
+  if(GroupType==kSecondary_particle_vector[2]){
+    return TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy);
+  }
+  else{ return true;}
 
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool Truth_hardonCut_Threshold_Energy(const HeliumCVUniverse& univ){
+  auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
+  auto input_type =  univ.GetNon_muon_PDG(secondTrk);
+  Particle_type GroupType = GetParticlegroup_type(input_type);
 
+  bool Energy_2ndtrkPass= false;
 
-    bool  TRUTH__minimum_Energy_threshold_Pion_GeV(double energy ){
-      if (energy<HeliumCUTConsts::Truth_pion_Minimum_Energy){return false;}
-      else{return true;}
-    }
+  double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
 
-    bool  TRUTH__minimum_Energy_threshold_Proton_GeV(double energy ){
-      if (energy<HeliumCUTConsts::Truth_proton_Minimum_Energy){return false;}
-      else{return true;}
-    }
+  if(GroupType==kSecondary_particle_vector[0]){
+    Energy_2ndtrkPass=TRUTH__minimum_Energy_threshold_Proton_GeV(Sec_trk_Energy );
+  }
+  else if(GroupType==kSecondary_particle_vector[1]){
+    Energy_2ndtrkPass=TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy );
+  }
+  else if(GroupType==kSecondary_particle_vector[2]){
+    Energy_2ndtrkPass=TRUTH__minimum_Energy_threshold_dimuon_GeV(Sec_trk_Energy );
+  }
+  else{Energy_2ndtrkPass=true;}
 
-    bool  TRUTH__minimum_Energy_threshold_dimuon_GeV(double energy ){
-      if (energy<HeliumCUTConsts::Truth_dimuon_Maximum_Energy){return false;}
-      else{return true;}
-    }
+  return Energy_2ndtrkPass;
 
-    bool Truth_hardonCut_Threshold_EnergyPIONS(const HeliumCVUniverse& univ){
-      auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
-      auto input_type =  univ.GetNon_muon_PDG(secondTrk);
-      Particle_type GroupType = GetParticlegroup_type(input_type);
-
-//      bool Energy_2ndtrkPass= false;
-      double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
-      if(GroupType==kSecondary_particle_vector[1]){
-        return TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy);
-      }
-      else{ return true;}
-
-    }
-
-    bool Truth_hardonCut_Threshold_EnergyPROTON(const HeliumCVUniverse& univ){
-      auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
-      auto input_type =  univ.GetNon_muon_PDG(secondTrk);
-      Particle_type GroupType = GetParticlegroup_type(input_type);
-
-      double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
-      if(GroupType==kSecondary_particle_vector[0]){
-        return TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy);
-      }
-      else{ return true;}
-
-    }
-
-    bool Truth_hardonCut_Threshold_EnergyDiMuon(const HeliumCVUniverse& univ){
-      auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
-      auto input_type =  univ.GetNon_muon_PDG(secondTrk);
-      Particle_type GroupType = GetParticlegroup_type(input_type);
-
-      double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
-      if(GroupType==kSecondary_particle_vector[2]){
-        return TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy);
-      }
-      else{ return true;}
-
-    }
-
-
-    bool Truth_hardonCut_Threshold_Energy(const HeliumCVUniverse& univ){
-      auto secondTrk = univ.Getindex2ndTrack_TRUE_highestKE();
-      auto input_type =  univ.GetNon_muon_PDG(secondTrk);
-      Particle_type GroupType = GetParticlegroup_type(input_type);
-
-      bool Energy_2ndtrkPass= false;
-
-      double Sec_trk_Energy = univ.GetTRUE_NonmuTrkE(secondTrk);
-
-      if(GroupType==kSecondary_particle_vector[0]){
-        Energy_2ndtrkPass=TRUTH__minimum_Energy_threshold_Proton_GeV(Sec_trk_Energy );
-      }
-      else if(GroupType==kSecondary_particle_vector[1]){
-        Energy_2ndtrkPass=TRUTH__minimum_Energy_threshold_Pion_GeV(Sec_trk_Energy );
-      }
-      else if(GroupType==kSecondary_particle_vector[2]){
-        Energy_2ndtrkPass=TRUTH__minimum_Energy_threshold_dimuon_GeV(Sec_trk_Energy );
-      }
-      else{Energy_2ndtrkPass=true;}
-
-      return Energy_2ndtrkPass;
-
-    }//endl function
-
-
-
+}//endl function
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_leading2ndTrk_RECOBRANCH(const HeliumCVUniverse& univ, double Max_deg)
 {
   auto PDG_trklist = univ.GetVector_nonMuonTk_PDG_Parent();
@@ -653,8 +864,9 @@ bool TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_leading2ndTrk_RECOBRANCH(co
 
 }//End of function
 
-
-
+//////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////
 bool TRUTH_Is2ndTrk_threshold_No_Neutral_leading2ndTrk_RECOBRANCH(const HeliumCVUniverse& univ)
 {
   auto PDG_trklist = univ.GetVector_nonMuonTk_PDG_Parent(); // the First entry is -9999
@@ -682,8 +894,9 @@ bool TRUTH_Is2ndTrk_threshold_No_Neutral_leading2ndTrk_RECOBRANCH(const HeliumCV
   return false;
 
 }//End of function
-
-
+//////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////
 bool TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_And_KE_proton_pion_thresholdsleading2ndTrk_RECOBRANCH(const HeliumCVUniverse& univ, double Max_deg, double Pion_Energy  , double Proton_Energy)
 {
   auto PDG_trklist = univ.GetVector_nonMuonTk_PDG_Parent();
@@ -718,95 +931,161 @@ bool TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_And_KE_proton_pion_threshol
 
   return false;
 
-}//End of function
+}
 
+//////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////
+bool TRUTH_Is2ndTrk_maxiumAngle_threshold_No_Neutral_And_KE_proton_pion_thresholdsleading2ndTrk_RECOBRANCH_NoOverLayFraction(const HeliumCVUniverse& univ, double Max_deg, double Pion_Energy  , double Proton_Energy)
+{
+  auto PDG_trklist = univ.GetVector_nonMuonTk_PDG_Parent();
+  auto Angle_trklist = univ.GetVector_nonMuonTk_Angle_wrtb_Degs_Parent();
+  auto Energy_trklist = univ.GetVector_nonMuonTk_Energy_GeV_Parent();
+
+  for(unsigned int i = 0; i < PDG_trklist.size(); i++ ){
+
+    double TrueHardonangle_wrtb = Angle_trklist.at(i);
+    if (TrueHardonangle_wrtb < Max_deg &&
+        Helium_PDG::pdg_Pi0 != PDG_trklist.at(i) &&
+        Helium_PDG::pdg_neutron != PDG_trklist.at(i) &&
+        Helium_PDG::pdg_antineutron!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Genie_bindingE!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Sigma0!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_antiSigma0!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Nu_e!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Nu_mu!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Lambda0!= PDG_trklist.at(i) &&
+        Helium_PDG::pdg_antiLambda0 != PDG_trklist.at(i) &&
+        Helium_PDG::pdg_Photon != PDG_trklist.at(i) &&
+        -9999 != PDG_trklist.at(i))
+        {
+
+          if(PDG_trklist.at(i)== Helium_PDG::pdg_Proton && Energy_trklist.at(i) > Proton_Energy ){return true;}
+          else if((PDG_trklist.at(i) == Helium_PDG::pdg_Pion_pos || PDG_trklist.at(i) == Helium_PDG::pdg_Pion_neg) && Energy_trklist.at(i) > Pion_Energy){return true;}
+          else if(PDG_trklist.at(i) != Helium_PDG::pdg_Pion_pos &&  PDG_trklist.at(i) != Helium_PDG::pdg_Pion_neg && PDG_trklist.at(i) != Helium_PDG::pdg_Proton){return true;}
+        }
+
+
+
+      }// end of loop
+
+  return false;
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool  TRUTH_EnergyFraction_AreTrueDigits(std::vector<double> E_Fraction_vector, int index, double Cut_fraction  ){
-
-
-double E_Fraction = E_Fraction_vector.at(index);
-if(E_Fraction < 0.0){return false;}
-else if(E_Fraction < Cut_fraction ){return false;}
-else{return true;}
-
-
-
-}// End of function
-
-
-
-
-
-/////////////////////////////
-
-    bool GetCutExtrapolatetoDeadVetoGood(const HeliumCVUniverse& univ){
-      bool did_ExtrapolatetoDeadVeto= univ.GetBool("MuonTrkMatchToVETOwalloff");
-      if(did_ExtrapolatetoDeadVeto==true){return false;}
-      else{return true;}
-
-    }
-
-
+  double E_Fraction = E_Fraction_vector.at(index);
+  if(E_Fraction < 0.0){return false;}
+  else if(E_Fraction < Cut_fraction ){return false;}
+  else{return true;}
+}
+//////////////////////////////////////////////////////////////
+//
+//////////////////////////////////////////////////////////////
+bool GetCutExtrapolatetoDeadVetoGood(const HeliumCVUniverse& univ){
+  bool did_ExtrapolatetoDeadVeto= univ.GetBool("MuonTrkMatchToVETOwalloff");
+  if(did_ExtrapolatetoDeadVeto==true){return false;}
+  else{return true;}
+}
 //////////////////////////////////////////////////////////////
 ///RECO FUNCTIONS for Cuts
 /////////////////////////////////////////////////////////////
 // cut on max number of iso prongs
 //making list of varible to cut on
 bool    IsGoodEnergy  ( const HeliumCVUniverse& univ) { return univ.GetBool("cut_goodEnergy"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 int     SixPush       ( const HeliumCVUniverse& univ) { return univ.GetInt("sixPush"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 int     IsVeto        ( const HeliumCVUniverse& univ) { return univ.GetInt("event_IsVeto") ; }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 double  MuonAngle     ( const HeliumCVUniverse& univ) { return univ.GetmuAngleWRTB_Degs(); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool    ISMuonAngle_Cutgood( const HeliumCVUniverse& univ) { return univ.GetBool("cut_thetacut"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool    CoilCut       ( const HeliumCVUniverse& univ) { return univ.GetBool("cut_coilcut"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool    IsMinsoMatch  ( const HeliumCVUniverse& univ) { return univ.GetBool("cut_minosMatchTrack"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool    IsUsableMuon  ( const HeliumCVUniverse& univ) { return univ.GetBool("cut_isUsableMuon"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 int     MuonChange    ( const HeliumCVUniverse& univ) { return univ.GetInt("muonCharge"); }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 int     DidVertexConverge ( const HeliumCVUniverse& univ) { return  univ.GetInt("cryo_vtx_fit_converged");}
-
 //////////////////////////////////////////////////////////////
 ///IS Plausible
 /////////////////////////////////////////////////////////////
-
 bool nonmu_is_plausible( const HeliumCVUniverse& univ) { return univ.GetBool("nonmu_is_plausible");}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool mu_is_plausible ( const HeliumCVUniverse& univ) {return  univ.GetBool("mu_is_plausible");}
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool  NonMuon_Plausible (const HeliumCVUniverse& univ, bool IsMC){
+
   if(IsMC==true){
-  if(nonmu_is_plausible(univ) == false){
-    return false;}
+    if(nonmu_is_plausible(univ) == false){
+      return false;}
 
-    else{return true;}
-  }
+      else{return true;}
+    }
 
-  else if(IsMC==false){return true;}
-  else{std::cout<<"WRONG in Plasible function"<<std::endl; return true;}
+    else if(IsMC==false){return true;}
+
+    else{std::cout<<"WRONG in Plasible function"<<std::endl; return true;}
+
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool  Muon_Plausible (const HeliumCVUniverse& univ, bool IsMC){
   if(IsMC==true){
-  if(mu_is_plausible(univ) == false){
-    return false;}
+    if(mu_is_plausible(univ) == false){
+      return false;}
 
-    else{return true;}
-  }
+      else{return true;}
+    }
 
-  else if(IsMC==false){return true;}
-  else{std::cout<<"WRONG in Plasible function"<<std::endl; return true;}
+    else if(IsMC==false){return true;}
+    else{std::cout<<"WRONG in Plasible function"<<std::endl; return true;}
 }
 
 
-  //////////////////////////////////////////////////////////////
-  ///IS Curvature good
-  /////////////////////////////////////////////////////////////
-
-
-  bool  IsMuon_CurvatureGreater( const HeliumCVUniverse& univ, double CurvatureInput )
+//////////////////////////////////////////////////////////////
+///IS Curvature good
+/////////////////////////////////////////////////////////////
+bool  IsMuon_CurvatureGreater( const HeliumCVUniverse& univ, double CurvatureInput )
 {
   if( abs( univ.GetCurvatureSignificance()) <= abs( CurvatureInput)) {return false;}
   else{return true;}
 }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool  IsGoodCurvatureSignificance (const HeliumCVUniverse& univ){
   if( IsMuon_CurvatureGreater( univ, HeliumCUTConsts::Maximum_SigCurvature ) == true){
@@ -818,19 +1097,41 @@ bool  IsGoodCurvatureSignificance (const HeliumCVUniverse& univ){
 ///IS IN fiduical
 /////////////////////////////////////////////////////////////
 
-  bool  IsInFiduicalVolume(const HeliumCVUniverse& univ){
-    if (false == IsInFiducalVolumeFromtheInnerEdge( univ, HeliumCUTConsts::VextexMiniumDisToCryoTankInnerTank))
-    {return false;}
-    else{return true;}
-  }
+bool  IsInFiduicalVolume(const HeliumCVUniverse& univ){
+  if (false == IsInFiducalVolumeFromtheInnerEdge( univ, HeliumCUTConsts::VextexMiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  IsInFiduicalVolume_new(const HeliumCVUniverse& univ){
+  if (false == IsInFiducalVolumeFromtheInnerEdge_new( univ, HeliumCUTConsts::VextexMiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  IsInFiduicalVolume_new(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
+  if (false == IsInFiducalVolumeFromtheInnerEdge_new( univ, Cut_MiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
 
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
-  bool  IsInFiduicalVolume(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
-    if (false == IsInFiducalVolumeFromtheInnerEdge( univ, Cut_MiniumDisToCryoTankInnerTank))
-    {return false;}
-    else{return true;}
-  }
+bool  IsInFiduicalVolume(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
+  if (false == IsInFiducalVolumeFromtheInnerEdge( univ, Cut_MiniumDisToCryoTankInnerTank))
+  {return false;}
+  else{return true;}
+}
 
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool IsInExtraFiduicalVolume(const HeliumCVUniverse& univ){
   if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge(univ, 0.0, HeliumCUTConsts::CryoTankExtraAddRegionOutside ))
@@ -838,208 +1139,208 @@ bool IsInExtraFiduicalVolume(const HeliumCVUniverse& univ){
   else{return true;}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool IsInExtraFiduicalVolume_Non_seperated_Cryo_regions(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
 
-if(Cut_MiniumDisToCryoTankInnerTank < 0.0){
+  if(Cut_MiniumDisToCryoTankInnerTank < 0.0){
 
-double Cutinput = abs(Cut_MiniumDisToCryoTankInnerTank);
-double ZExtra = Cutinput;  // added a little  length to Zextra but doesnt count for Cut
+    double Cutinput = abs(Cut_MiniumDisToCryoTankInnerTank);
+    double ZExtra = Cutinput;  // added a little  length to Zextra but doesnt count for Cut
 
-if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge(univ, Cutinput, Cutinput, ZExtra ))
-{return false;}
-else{return true;}
+    if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge(univ, Cutinput, Cutinput, ZExtra ))
+    {return false;}
+    else{return true;}
+  }
 }
 
-else if(Cut_MiniumDisToCryoTankInnerTank>= 0.0){
-
-  if (false == IsInFiducalVolumeFromtheInnerEdge( univ, Cut_MiniumDisToCryoTankInnerTank))
-  {return false;}
-  else{return true;}
-
-
-}
-
-
-
-}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 bool IsInExtraFiduicalVolume_Non_seperated_Cryo_regions_TRUTH(const HeliumCVUniverse& univ, double Cut_MiniumDisToCryoTankInnerTank){
 
-if(Cut_MiniumDisToCryoTankInnerTank < 0.0){
+  if(Cut_MiniumDisToCryoTankInnerTank < 0.0){
 
-double Cutinput = abs(Cut_MiniumDisToCryoTankInnerTank);
-double ZExtra = Cutinput;  // added a little  length to Zextra but doesnt count for Cut
+    double Cutinput = abs(Cut_MiniumDisToCryoTankInnerTank);
+    double ZExtra = Cutinput;  // added a little  length to Zextra but doesnt count for Cut
 
-if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge_TRUTH(univ, Cutinput, Cutinput, ZExtra ))
-{return false;}
-else{return true;}
+    if (false == IsInExtendentedFiducalVolumeFromtheInnerEdge_TRUTH(univ, Cutinput, Cutinput, ZExtra ))
+    {return false;}
+    else{return true;}
+  }
+
+  else if(Cut_MiniumDisToCryoTankInnerTank >= 0.0){
+    if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH( univ, Cut_MiniumDisToCryoTankInnerTank)){return false;}
+    else{return true;}
+  }
 }
+//////////////////////////////////////////////////////////////
+///IS forward Going
+/////////////////////////////////////////////////////////////
+bool  IsTrackForwardGoing(const HeliumCVUniverse& univ)  {
 
-else if(Cut_MiniumDisToCryoTankInnerTank >= 0.0){
+  bool timecut = true;
+  int Tracksize = univ.GetInt("tracksize");
+  double startingTrackTime = univ.GetVecElem("tracktimes",0);
 
-  if (false == IsInFiducalVolumeFromtheInnerEdgeTRUTH( univ, Cut_MiniumDisToCryoTankInnerTank))
+  for ( int j = 1; j < Tracksize; j++){
+    if (fabs(startingTrackTime - univ.GetVecElem("tracktimes",j)) > 10) timecut = false;
+  }
+
+  return timecut;
+
+
+}
+//////////////////////////////////////////////////////////////
+///IS Muon angle Good
+/////////////////////////////////////////////////////////////
+bool  IsMuonAngleGood(const HeliumCVUniverse& univ){
+  double MuonAngle = univ.GetThetamu()*TMath::RadToDeg();             // Wrong method need to use the virtual function that can be overridden univ.GetmuAngleWRTB_Degs();
+  if (MuonAngle > HeliumCUTConsts::Maximum_MuonAngle)
   {return false;}
   else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+///IS Muon angle Center Dist foward going
+/////////////////////////////////////////////////////////////
+bool  IsMuonAngleCenteredGoing(const HeliumCVUniverse& univ){
+  double MuonAngle = univ.GetThetamu()*TMath::RadToDeg();             // Wrong method need to use the virtual function that can be overridden univ.GetmuAngleWRTB_Degs();
+  if (MuonAngle > HeliumCUTConsts::Maximum_MuonAngle_reduced || MuonAngle < HeliumCUTConsts::Minimum_MuonAngle_reduced )
+  {return false;}
+  else{return true;}
+}
+//////////////////////////////////////////////////////////////
+///IS Muon charge Good
+/////////////////////////////////////////////////////////////
+bool  IsMuonChargeGood(const HeliumCVUniverse& univ){
+  double MuonCharge = MuonChange( univ);
+  if (MuonCharge != HeliumCUTConsts:: Neutrino_Muon_Chargetype)
+  {return false;}
+  else{return true;}
+}
+//////////////////////////////////////////////////////////////
+///IS Vertexing good
+/////////////////////////////////////////////////////////////
+bool  IsVertexConvergeGood(const HeliumCVUniverse& univ){
+  int VertexConverge = DidVertexConverge(univ);
+  if (VertexConverge != 1)
+  {return false;}
+  else{return true;}
+}
+//////////////////////////////////////////////////////////////
+///IS Six push good
+/////////////////////////////////////////////////////////////
+bool  IsSixPushGood(const HeliumCVUniverse& univ){
+  int sixPush = SixPush( univ);
+  if (sixPush == 1)
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  IsMINOSFiduicalVolumnGood(const HeliumCVUniverse& univ){
+  bool coilCut = CoilCut( univ);
+  if (coilCut == false)
+  {return false;}
+  else{return true;}
+}
+//////////////////////////////////////////////////////////////
+///IS Number of Tracks good
+/////////////////////////////////////////////////////////////
+bool Only1Track( const HeliumCVUniverse& univ) { return univ.GetBool("one_Trk"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+int NumberTracks  ( const HeliumCVUniverse& univ) { return univ.GetInt("tracksize"); }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  IsNTracksGood (const HeliumCVUniverse& univ){
+  if( (Only1Track (univ) == true) || (NumberTracks(univ) == HeliumCUTConsts::GreaterthanNTracks)){
+    return false;}
+    else{return true;}
+  }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool  IsVetoGood(const HeliumCVUniverse& univ){
+  int veto = IsVeto(univ);
+  if (veto != 0)
+  {return false;}
+  else{return true;}
+}
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool IssecTrklessthanDeg(const HeliumCVUniverse& univ , double Max_deg)
+{
+  int secondTrk = univ.Getindex2ndTrackhighestKE();
+  double Angle = univ.GetNonmuTrkAngleWRTbeamMID(secondTrk);
+
+  if (Angle < Max_deg) {
+    return true;
+  }
+  else{return false;}
+
+}//end of function
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool IsVertexChiSqrtLessthanMax(const HeliumCVUniverse& univ , double Max_chisqrt)
+{
+
+  double Chisqrt = univ.GetVertexChiSqrFit();
+
+  if (Chisqrt < Max_chisqrt) {
+    return true;
+  }
+  else{return false;}
 
 
 }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+bool IsVertexChiSqrtLessthanMax_ByTrackType(const HeliumCVUniverse& univ , double Max_chisqrt_long, double Max_chisqrt_otherlong, double Max_chisqrt_short)
+{
 
+  double Chisqrt = univ.GetVertexChiSqrFit();
+  TrackType Track_type = univ.GetTrackType();
 
-
-}
-  //////////////////////////////////////////////////////////////
-  ///IS forward Going
-  /////////////////////////////////////////////////////////////
-
-  bool  IsTrackForwardGoing(const HeliumCVUniverse& univ)  {
-
-    bool timecut = true;
-    int Tracksize = univ.GetInt("tracksize");
-    double startingTrackTime = univ.GetVecElem("tracktimes",0);
-
-    for ( int j = 1; j < Tracksize; j++){
-      if (fabs(startingTrackTime - univ.GetVecElem("tracktimes",j)) > 10) timecut = false;
-    }
-
-    return timecut;
-
-
-  }
-
-  //////////////////////////////////////////////////////////////
-  ///IS Muon angle Good
-  /////////////////////////////////////////////////////////////
-
-  bool  IsMuonAngleGood(const HeliumCVUniverse& univ){
-    double MuonAngle = univ.GetThetamu()*TMath::RadToDeg();             // Wrong method need to use the virtual function that can be overridden univ.GetmuAngleWRTB_Degs();
-    if (MuonAngle > HeliumCUTConsts::Maximum_MuonAngle)
-    {return false;}
-    else{return true;}
-  }
-
-  //////////////////////////////////////////////////////////////
-  ///IS Muon charge Good
-  /////////////////////////////////////////////////////////////
-
-
-  bool  IsMuonChargeGood(const HeliumCVUniverse& univ){
-    double MuonCharge = MuonChange( univ);
-    if (MuonCharge != HeliumCUTConsts:: Neutrino_Muon_Chargetype)
-    {return false;}
-    else{return true;}
-  }
-
-  //////////////////////////////////////////////////////////////
-  ///IS Vertexing good
-  /////////////////////////////////////////////////////////////
-
-
-  bool  IsVertexConvergeGood(const HeliumCVUniverse& univ){
-    int VertexConverge = DidVertexConverge(univ);
-    if (VertexConverge != 1)
-    {return false;}
-    else{return true;}
-  }
-
-  //////////////////////////////////////////////////////////////
-  ///IS Six push good
-  /////////////////////////////////////////////////////////////
-
-  bool  IsSixPushGood(const HeliumCVUniverse& univ){
-    int sixPush = SixPush( univ);
-    if (sixPush == 1)
-    {return false;}
-    else{return true;}
-  }
-
-  bool  IsMINOSFiduicalVolumnGood(const HeliumCVUniverse& univ){
-    bool coilCut = CoilCut( univ);
-    if (coilCut == false)
-    {return false;}
-    else{return true;}
-  }
-
-  //////////////////////////////////////////////////////////////
-  ///IS Number of Tracks good
-  /////////////////////////////////////////////////////////////
-  bool    Only1Track( const HeliumCVUniverse& univ) { return univ.GetBool("one_Trk"); }
-  int     NumberTracks  ( const HeliumCVUniverse& univ) { return univ.GetInt("tracksize"); }
-
-  bool  IsNTracksGood (const HeliumCVUniverse& univ){
-    if( (Only1Track (univ) == true) || (NumberTracks(univ) == HeliumCUTConsts::GreaterthanNTracks)){
-      return false;}
-      else{return true;}
-    }
-
-
-
-    bool  IsVetoGood(const HeliumCVUniverse& univ){
-      int veto = IsVeto(univ);
-      if (veto != 0)
-      {return false;}
-      else{return true;}
-    }
-
-    bool IssecTrklessthanDeg(const HeliumCVUniverse& univ , double Max_deg)
-    {
-
-      int secondTrk = univ.Getindex2ndTrackhighestKE();
-      double Angle = univ.GetNonmuTrkAngleWRTbeamMID(secondTrk);
-
-      if (Angle < Max_deg) {
-        return true;
-      }
-      else{return false;}
-
-    }//end of function
-
-
-  bool IsVertexChiSqrtLessthanMax(const HeliumCVUniverse& univ , double Max_chisqrt)
-  {
-
-    double Chisqrt = univ.GetVertexChiSqrFit();
-
-    if (Chisqrt < Max_chisqrt) {
+  if(kShort==Track_type){
+    if (Chisqrt < Max_chisqrt_short) {
       return true;
     }
     else{return false;}
-
-
   }
 
-
-  bool IsVertexChiSqrtLessthanMax_ByTrackType(const HeliumCVUniverse& univ , double Max_chisqrt_long, double Max_chisqrt_otherlong, double Max_chisqrt_short)
-  {
-
-    double Chisqrt = univ.GetVertexChiSqrFit();
-    TrackType Track_type = univ.GetTrackType();
-
-    if(kShort==Track_type){
-      if (Chisqrt < Max_chisqrt_short) {
-        return true;
-      }
-      else{return false;}
+  else if(kLong==Track_type){
+    if (Chisqrt < Max_chisqrt_long) {
+      return true;
     }
-
-    else if(kLong==Track_type){
-      if (Chisqrt < Max_chisqrt_long) {
-        return true;
-      }
-      else{return false;}
-    }
-
-    else if(kOtherLong==Track_type){
-      if (Chisqrt < Max_chisqrt_otherlong) {
-        return true;
-      }
-      else{return false;}
-    }
-
     else{return false;}
+  }
 
-  }// end of function
-//////////////////////
+  else if(kOtherLong==Track_type){
+    if (Chisqrt < Max_chisqrt_otherlong) {
+      return true;
+    }
+    else{return false;}
+  }
+
+  else{return false;}
+
+}// end of function
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 bool IsVertexConverge_usingALLTracks(const HeliumCVUniverse& univ ){
 
   auto trackType = univ.GetTrackType();
@@ -1060,6 +1361,9 @@ std::string  GetCutName(ECuts cut) {
 
     case kMuonAngle:
     return "Muon Angle < 12 Degs";
+
+    case kMuonAngle_CenterForwardGoingAngle:
+    return "3 Degs < Muon Angle < 6 Degs";
 
     case kMinosMatch:
     return "muon matched MINOS to Minerva";
@@ -1106,6 +1410,9 @@ std::string  GetCutName(ECuts cut) {
     case kFiducialVolume:
     return "Fiducial Volume";
 
+    case kFiducialVolume_new:
+    return "new Fiducial Volume";
+
     case kFiducialVolume_ExtraShell:
     return "EXTENDENTED!!! Fiduical Volmne is begin Appled";
 
@@ -1122,8 +1429,7 @@ std::string  GetCutName(ECuts cut) {
     return "Maxium Vertex Chi sqrt BY Track type";
 
     case kVertex_ConvergedfromAllTracks:
-    return "Vertex Converged using All (Muon and nonMuon) tracks";
-
+    return "All Converged Tracks have defined Type; Short Anchor, Long Anchor, or OtherLong";
 
     case kAllCuts:
     return "All cuts applied ";
@@ -1134,7 +1440,9 @@ std::string  GetCutName(ECuts cut) {
     return "";
   };
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 std::string  GetCutNameforLatex(ECuts cut) {
   switch (cut) {
     case kNoCuts:
@@ -1191,6 +1499,9 @@ std::string  GetCutNameforLatex(ECuts cut) {
     case kFiducialVolume:
     return "Fiducial Volume";
 
+    case kFiducialVolume_new:
+    return "Fiducial Volume";
+
     case kFiducialVolume_ExtraShell:
     return "EXTENDENTED!!! Fiduical Volmne is begin Appled";
 
@@ -1204,10 +1515,10 @@ std::string  GetCutNameforLatex(ECuts cut) {
     return "Maxium Vertex Chi sqrt";
 
     case kMaxChiSqrt_byTrackType:
-    return "Maximum Vertex $\\chi^{2}$ by Track type";
+    return "Maximum $\\chi^{2}$ Convergence by Track Type";
 
     case kVertex_ConvergedfromAllTracks:
-    return "Vertex Converged using All tracks";
+    return "All Converged Tracks have defined Type; Short Anchor, Long Anchor, or OtherLong";
 
 
     case kAllCuts:
@@ -1219,7 +1530,9 @@ std::string  GetCutNameforLatex(ECuts cut) {
     return "";
   };
 }
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 std::string  GetCutNameforRootLatex(ECuts cut) {
   switch (cut) {
@@ -1277,6 +1590,9 @@ std::string  GetCutNameforRootLatex(ECuts cut) {
     case kFiducialVolume:
     return "Fiducial Volume";
 
+    case kFiducialVolume_new:
+    return "Fiducial Volume";
+
     case kFiducialVolume_ExtraShell:
     return "EXTENDENTED!!! Fiduical Volmne is begin Appled";
 
@@ -1284,16 +1600,16 @@ std::string  GetCutNameforRootLatex(ECuts cut) {
     return"Muon Track not Match to off Voltage Veto paddle";
 
     case ksecTrkwrtblessthanMaxAngle:
-    return "#theta_{Recoil} < 60 [Deg] ";
+    return "#theta_{Recoil} < 60 [Deg]";
 
     case kMaxChiSqrt:
     return "Maxium Vertex Chi sqrt";
 
     case kMaxChiSqrt_byTrackType:
-    return "Maximum Vertex #chi^{2} by Track type";
+    return "Maximum #chi^{2} convergence by Track type";
 
     case kVertex_ConvergedfromAllTracks:
-    return "Vertex Converged using All tracks";
+    return "All Converged Tracks have defined Type; Short Anchor, Long Anchor, or OtherLong";
 
 
     case kAllCuts:
@@ -1306,8 +1622,9 @@ std::string  GetCutNameforRootLatex(ECuts cut) {
   };
 }
 
-
-
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 std::string  GetCutNameTRUTH(ECutsTRUTH cut) {
   switch (cut) {
@@ -1315,7 +1632,7 @@ std::string  GetCutNameTRUTH(ECutsTRUTH cut) {
     return "No Cuts";
 
     case kTRUTHMuonEnergy:
-    return " 2Gev <  true Muon Energy < 50Gev";
+    return " 2 Gev <  true Muon Energy < 50 Gev";
 
     case kTRUTHMuonAngle:
     return "True Muon Angle < 12 ";
@@ -1330,6 +1647,9 @@ std::string  GetCutNameTRUTH(ECutsTRUTH cut) {
     return "True Helium Target";
 
     case kTRUTHFiduical:
+    return "True Vertex in Fiduical";
+
+    case kTRUTHFiduical_new:
     return "True Vertex in Fiduical";
 
     case kTRUTHFiduical_ExtraShell:
@@ -1382,6 +1702,9 @@ std::string  GetCutNameTRUTH(ECutsTRUTH cut) {
     return "";
   };
 }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 std::string  GetCutNameLatexTRUTH(ECutsTRUTH cut) {
   switch (cut) {
     case kTRUTHNoCuts:
@@ -1400,9 +1723,12 @@ std::string  GetCutNameLatexTRUTH(ECutsTRUTH cut) {
     return "Charge Current (CC) Interaction";
 
     case kTRUTHtarget:
-    return "True Helium Target";
+    return "$^{4}He$ Target";
 
     case kTRUTHFiduical:
+    return "True Vertex in Fiduical";
+
+    case kTRUTHFiduical_new:
     return "True Vertex in Fiduical";
 
     case kTRUTHFiduical_ExtraShell:
@@ -1430,7 +1756,7 @@ std::string  GetCutNameLatexTRUTH(ECutsTRUTH cut) {
     return "No Netural FS 2nd Trk and angle Threshold for Reco Branch";
 
     case kTRUTH_NoNeutral_FS_2ndTrk_withProtonanPionThresholds_RECOBRANCH:
-    return "No Netural FS 2nd Trk,angle Threshold , threshold KE on Proton and Pions, for Reco Branch";
+    return "[RECOBRANCH]No Neutral Particle, $\\theta_{recoil}$ $<$ 55 [Deg], $T_{p}$ $>$ 105[MeV] , $T_{\\pi}$ $>$ 60[MeV]";
 
     case kTRUTH_atleastone_non_Neutral_secTrk:
     return "At least one Non Neutral Recoil Particle";
@@ -1439,7 +1765,7 @@ std::string  GetCutNameLatexTRUTH(ECutsTRUTH cut) {
     return "At least one Non Neutral Recoil Particle with $\\theta_{wrtb}$ $<$ 60 [Deg] ";
 
     case kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds:
-    return "No Neutral Particle, angle Threshold [60 Deg] , threshold KE on Proton 105[MeV]and Pions 60[MeV]";
+    return "No Neutral Particle, $\\theta_{recoil}$ $<$ 55 [Deg] , $T_{p}$ $>$ 105[MeV] ,  $T_{\\pi}$ $>$ 60[MeV]";
 
     case kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds:
     return "No Neutral Particle and threshold KE on Proton 105[MeV], Charged Pions 60[MeV] and dimuon 60[MeV]";
@@ -1452,9 +1778,9 @@ std::string  GetCutNameLatexTRUTH(ECutsTRUTH cut) {
     return "";
   };
 }
-//////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 //
-/////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 std::string  GetCutNameLatexforRootTRUTH(ECutsTRUTH cut) {
   switch (cut) {
     case kTRUTHNoCuts:
@@ -1476,6 +1802,9 @@ std::string  GetCutNameLatexforRootTRUTH(ECutsTRUTH cut) {
     return "True Helium Target";
 
     case kTRUTHFiduical:
+    return "True Vertex in Fiduical";
+
+    case kTRUTHFiduical_new:
     return "True Vertex in Fiduical";
 
     case kTRUTHFiduical_ExtraShell:
@@ -1512,7 +1841,7 @@ std::string  GetCutNameLatexforRootTRUTH(ECutsTRUTH cut) {
     return "At least one Non Neutral Recoil Particle with #theta_{wrtb} < 60 [Deg] ";
 
     case kTRUTH_No_Neutral_secTrk_Angle_threshold_withProtonanPionThresholds:
-    return "No Neutral Particle, angle Threshold , threshold KE on Proton and Pions";
+    return "No Neutral Particle, angle Threshold [55 Deg] , threshold KE on P 105[MeV]and #pi 60[MeV]";
 
     case kTRUTH_No_Neutral_KEthreshold_withProtonanPionThresholds:
     return "No Neutral Particle and threshold KE on Proton 105[MeV], Charged Pions 60[MeV] and dimuon 60[MeV]";
@@ -1525,3 +1854,6 @@ std::string  GetCutNameLatexforRootTRUTH(ECutsTRUTH cut) {
     return "";
   };
 }
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////

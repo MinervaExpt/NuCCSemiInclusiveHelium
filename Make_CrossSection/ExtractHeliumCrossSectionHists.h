@@ -49,6 +49,7 @@
 #include <PlotUtils/MnvLatErrorBand.h>
 #include <PlotUtils/MnvNormalization.h>
 #include <PlotUtils/FluxReweighter.h>
+#include "PlotUtils/TargetUtils.h"
 
 #include <set>
 #include <iterator>
@@ -57,22 +58,13 @@
 #include <time.h>
 
 #include "../includes/HeliumPlotUtils.h"
+#include "../includes/Helium2DPlotUtils.h"
 #include "../includes/CryoTankUtils.h"
 #include "../includes/HeliumDefaults.h"
-#include "../includes/HeliumUtils.h" 
-
-PlotUtils::MnvH1D* UnfoldHist( PlotUtils::MnvH1D* h_folded, PlotUtils::MnvH2D* h_migration, int num_iter );
-PlotUtils::MnvH1D* normalize(PlotUtils::MnvH1D* efficiencyCorrected, PlotUtils::MnvH1D* fluxIntegral, const double nNucleons, const double POT);
-
-
-
-
-
-
-
-
-
-
+#include "../includes/HeliumUtils.h"
+#include "../includes/Helium2DUtils.h"
+#include "../eventselection/EventCounting.h"
+#include "../includes/CrossSection_Normalization.h"
 
 
 

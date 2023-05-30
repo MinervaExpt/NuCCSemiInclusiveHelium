@@ -18,7 +18,8 @@ void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,Pla
 
 void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayList_INFO FULL_playlist_TRUTHDEM,
   PlayList_INFO EMPTY_playlist_nom, PlayList_INFO EMPTY_playlist_TRUTHDEM , const char *histoName,
-  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name, double Vline_OnXaxis,  bool print_all_errors = false );
+  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name,
+  double Vline_OnXaxis, const std::string &arrow_direction, double arrow_length,  bool print_all_errors = false );
 
 void Draw_Efficiency_2D_FULL_EMPTY(PlayList_INFO FULL_playlist,PlayList_INFO EMPTY_playlist , const char *histoName,const char *Xaxis_title,const char *Yaxis_title,
   int logScale,const char* title ,const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf  );
@@ -35,8 +36,8 @@ void Draw_Efficiency_Muon_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayL
   int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , MuonVar playlist_name, bool PrintallErrorBands );
 
 void Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom,
-  PlayList_INFO EMPTY_playlist_nom,  const char *histoName_Reco, const char *histoName_Reco_Truth,
-  int logScale, const char* title,MnvPlotter *plot, TCanvas *can, const char *pdf , CryoVertex playlist_name );
+  PlayList_INFO EMPTY_playlist_nom,  const char *histoName_diff, const char *histoName_percent,
+  int logScale, MnvPlotter *plot, TCanvas *can, const char *pdf, char *CutsApplied, CryoVertex CryoVertex_type , bool PrintAllErrors, bool doBinwidth );
 
 
 void Draw_Resolution_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom, PlayList_INFO EMPTY_playlist_nom,
@@ -51,7 +52,7 @@ void Draw_Resolution_2D_Helium_nonHelium_FULL_TRUTH(PlayList_INFO FULL_playlist,
     const char* title, const char* title_type_char, MnvPlotter *plot, TCanvas *can, const char *pdf, Double_t ymax , bool include_overflows);
 
 void Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom, PlayList_INFO EMPTY_playlist_nom,
-  const char *histoName_nom, const char *histoName_dem, int logScale, const char* title, MnvPlotter *plot,
+  const char *histoName_nom, const char *histoName_dem, int logScale,  MnvPlotter *plot,
    TCanvas *can, const char *pdf , CryoVertex CryoVertex_type );
 
 void Draw_Migration_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist, PlayList_INFO EMPTY_playlist,
@@ -64,7 +65,7 @@ void Draw_Migration_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist, PlayList_IN
                                                      PlayList_INFO playlist_FULL_Data, PlayList_INFO playlist_EMPTY_Data,
                                                      const char *histoName_MC, const char *histoName_Data,
                                                      const char* title,std::string Xaxis_title, MnvPlotter *plot, bool doBinwidth,
-                                                     TCanvas *can,  char *pdf, bool PrintErrors, bool PrintallErrorBands, std::vector<double> Bins, double EffMax );
+                                                     TCanvas *can,  char *pdf, bool PrintErrors, bool PrintallErrorBands, std::vector<double> Bins, double EffMax , double EffMin  );
 
 void MakeLatexForEffMuonVar_StatsOnly(std::string output_name ,  std::string pdf_name_CV, const std::vector<MuonVar> muon_vector);
 
@@ -86,6 +87,8 @@ void AppendtoLatex(std::string output_name ,  std::string pdf_name_CV, int Figur
 void AppendtoLatex(std::string output_name ,  std::string pdf_name_CV, int Figure_1_page_number, int Figure_2_page_number,
   int Figure_3_page_number,int Figure_4_page_number, int Figure_5_page_number, int Figure_6_page_number, char *slideTitle);
 
+void AppendtoText_Migration(std::string output_name ,  std::string pdf_name_CV, int Figure_1_page_number,int Figure_2_page_number,
+   char *slideTitle, std::vector<double> bins , char * Units_name );
 
 void Draw_2D_Xaxis_FiducialCut_FULL_EMPTY_TRUTH_Eff_Puritry(PlayList_INFO FULL_TRUE_playlist,
                                                             PlayList_INFO EMPTY_TRUE_playlist,
@@ -105,6 +108,12 @@ void AppendtoText_Resolution(std::string output_name ,  std::string pdf_name_CV,
 
 void Make_Resolution_vertex_Latex(std::string output_name ,  std::string pdf_name_CV, std::vector<double>FiducialBins,
      int startingPage_figureLeft, int startingPage_figureCenter, int startingPage_figureRight,char *Resolution_type);
+
+void Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom, PlayList_INFO EMPTY_playlist_nom,
+  const char *histoName_region1, const char *histoName_region2, const char *histoName_region3,
+  int logScale, MnvPlotter *plot, TCanvas *can, const char *pdf, char *CutsApplied,
+  CryoVertex CryoVertex_type ,  bool doBinwidth, bool isFractional, bool isAreaNormalized, double Ymax );
+
 
 std::vector<ME_helium_Playlists> GetPlayListVector_DATA();
 void Kin(bool &cutsOn, bool &my_norm, bool &my_debug, const char *userDir) {
@@ -170,7 +179,7 @@ PlayList_INFO PlaylistMC_1G(kPlayListVector_MC[1],PlaylistME_1G_MC_Efficiency_pa
 POT_MC_Status[kFULL] =  PlaylistMC_1F.Get_Pot();
 POT_MC_Status[kEMPTY] =  PlaylistMC_1G.Get_Pot();
 
-
+double MC_EmptytoFUll = POT_MC_Status[kFULL] / POT_MC_Status[kEMPTY];
 
 PlayList_INFO PlaylistTRUTH_1F(kPlayListVector_MC[0], PlaylistME_1F_MC_TRUTH_Efficiency_path, is_mc, !isRECOBranch, AllSystmaticErrors );
 PlayList_INFO PlaylistTRUTH_1G(kPlayListVector_MC[1], PlaylistME_1G_MC_TRUTH_Efficiency_path, is_mc,  !isRECOBranch, AllSystmaticErrors );
@@ -224,6 +233,7 @@ Efficiency_Playlist.push_back(PlaylistMC_1G);
 //Efficiency_Playlist.push_back(PlaylistMC_1C);
 //Efficiency_Playlist.push_back(PlaylistMC_1D);
 
+bool PrintAllErrors = true;
 
 MnvPlotter *mnv_plot = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
  char text_title_pdf1[2024];
@@ -245,6 +255,14 @@ MnvPlotter *mnv_plot = new MnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
  char Resolution_title_pdf3[2024];
  char Resolution_title_pdf4[2024];
  char Resolution_title_pdf5[2024];
+
+
+  char Resolution_regions_pdf1[2024];
+  char Resolution_regions_pdf2[2024];
+  char Resolution_regions_pdf3[2024];
+  char Resolution_regions_pdf4[2024];
+  char Resolution_regions_pdf5[2024];
+
 
 
   char Fiduical_title_pdf1[2024];
@@ -270,7 +288,8 @@ std::cout<<"Start to Calculate and Plot Efficiency"<<std::endl;
 
 std::string pdf = string(text_title_pdf4);
 
-
+bool printErrors = true;
+bool printALLErrors = false;
 std::cout << std::endl;
 std::cout << "Done WITH EfficiencyPlots " << std::endl;
 
@@ -329,6 +348,12 @@ sprintf(Fiduical_title_pdf5, "PLOTS_Fiduical");
 sprintf(Fiduical_title_pdf3, "PLOTS_Fiduical.pdf)");
 sprintf(Fiduical_title_pdf4, "PLOTS_Fiduical");
 
+sprintf(Resolution_regions_pdf1, "PLOTS_Region_Resolution.pdf(" );
+can2 -> Print(Resolution_regions_pdf1);
+sprintf(Resolution_regions_pdf2, "PLOTS_Region_Resolution.pdf");
+sprintf(Resolution_regions_pdf5, "PLOTS_Region_Resolution");
+sprintf(Resolution_regions_pdf3, "PLOTS_Region_Resolution.pdf)");
+sprintf(Resolution_regions_pdf4, "PLOTS_Region_Resolution");
 
 
 bool PrintAllBands_muon = true;
@@ -358,6 +383,9 @@ MakeLatexForEffMuonVar_StatsOnly("Efficiency_latex" , text_title_pdf2, kMuonVari
   std::vector<double> Vertex_secondTrkThetamidbin_vector= GetSecondTrkVarVector(kThetamid);
   std::vector<double> SecTrk_DOCA_vector= GetSecondTrkVarVector(kDOCA);
   std::vector<double> SecTrk_Pathway_vector= GetSecondTrkVarVector(kPathway);
+  std::vector<double> CutToSurface_bins =  GetBinvertexVector(kdistance_edge);
+bool doBinwidth = true;
+
 
 MakeLatex_CutEfficiency_PurityTable_TGraphs(PlaylistME_1F_TFile, "RECO_Cuts", "RECO_Helium_Cuts", PlaylistME_1F_TRUTH_TFile, "Truth_Cuts", "ME1F", "ME1F" );
 //MakeLatex_WithData_CutTable_TGraphs(PlaylistDATA_1F.TFILE_PLAYLIST, "RECO_Data_Cuts" ,PlaylistME_1F_TFile, "RECO_Cuts", POT_Data_MC_ME1F,"ME1F", "ME1F" );
@@ -379,13 +407,13 @@ Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F
   //  0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] );
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Energy_PROTON",
-  0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0], 0.105 /*[GeV]*/, true);
+  0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0], 0.105 /*[GeV]*/, "R",.1 , true);
 
   Appendtotxt_2ndTrk("Efficiency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk Energy [Proton]" ,"[GeV]", Vertex_secondTrkEbin_Proton_vector);
   start=start+spacing;
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Energy_PION",
-0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] , 0.060 /*[GeV]*/ , true);
+0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[0] , 0.060 /*[GeV]*/ ,"R", .1, true);
 
       Appendtotxt_2ndTrk("Efficiency_latex" ,  text_title_pdf5,start, 4, "Leading Non-muon Trk Energy [#pi^{#pm}]" ,"[GeV]", Vertex_secondTrkEbin_Proton_vector);
   start=start+spacing;
@@ -397,32 +425,32 @@ Appendtotxt_2ndTrk("Efficiency_latex" ,  text_title_pdf5, start, 4, "Leading Non
 start=start+spacing;
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta",
-0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 54.0 /*[Deg]*/ );
+0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 54.0 /*[Deg]*/,"L", 10, true );
 
 Appendtotxt_2ndTrk("Efficiency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta_PROTON",
-0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 54.0 , true  );
+0, "Proton", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1] , 54.0 ,"L", 10, true  );
 
 Appendtotxt_2ndTrk("Efficiency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk [Proton] Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Theta_PION",
-0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1], 54.0 , true );
+0, "Pion", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[1], 54.0, "L", 10, true );
 
 Appendtotxt_2ndTrk("Efficiency_latex" ,  text_title_pdf5, start, 4, "Leading Non-muon Trk [#pi^{#pm}] Theta wrtb" ,"[Deg]", Vertex_secondTrkThetamidbin_vector);
 start=start+spacing;
 
 Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], PlaylistTRUTH_1F, Efficiency_Playlist[1] ,PlaylistTRUTH_1G, "h_secTrk_Pathlength",
-0, "", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[3], 0.0 , true );
+0, "", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[3] );
 
 
 ///////////////////////
 /// CryoTank Efficieny
 ///////////////////////
 
-bool PrintAllErrors = true;
+
 
 Draw_Efficiency_CryoVertex_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], Efficiency_Playlist_TRUTH[0],
  Efficiency_Playlist[1] ,Efficiency_Playlist_TRUTH[1], "h_CryoVertex_X","h_CryoVertex_X",
@@ -454,39 +482,41 @@ Draw_Efficiency_CryoVertex_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], Efficiency_P
 /// CryoTank Resolution
 ///////////////////////
 
-Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-    "h_CryoVertex_resolutionX_TRUE_RECO", "h_CryoVertex_Percent_resolutionX_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector.at(0) );
+
 
 Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_resolutionY_TRUE_RECO", "h_CryoVertex_Percent_resolutionY_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector.at(1) );
+    "h_CryoVertex_resolutionX_TRUE_RECO", "h_CryoVertex_Percent_resolutionX_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5,"TRUE + RECO cuts", kCryoVertexVaribles_vector.at(0), PrintAllErrors,doBinwidth );
 
 Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_resolutionZ_TRUE_RECO", "h_CryoVertex_Percent_resolutionZ_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector.at(2) );
+  "h_CryoVertex_resolutionY_TRUE_RECO", "h_CryoVertex_Percent_resolutionY_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5,"TRUE + RECO cuts", kCryoVertexVaribles_vector.at(1), PrintAllErrors,doBinwidth  );
 
 Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_resolutionR_TRUE_RECO", "h_CryoVertex_Percent_resolutionR_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector.at(3) );
+  "h_CryoVertex_resolutionZ_TRUE_RECO", "h_CryoVertex_Percent_resolutionZ_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5,"TRUE + RECO cuts", kCryoVertexVaribles_vector.at(2), PrintAllErrors,doBinwidth  );
 
 Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-    "h_CryoVertex_resolutionRR_TRUE_RECO", "h_CryoVertex_Percent_resolutionRR_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector.at(4) );
+  "h_CryoVertex_resolutionR_TRUE_RECO", "h_CryoVertex_Percent_resolutionR_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5,"TRUE + RECO cuts", kCryoVertexVaribles_vector.at(3), PrintAllErrors,doBinwidth  );
+
+Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_CryoVertex_resolutionRR_TRUE_RECO", "h_CryoVertex_Percent_resolutionRR_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5,"TRUE + RECO cuts", kCryoVertexVaribles_vector.at(4), PrintAllErrors,doBinwidth  );
 
 Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_recoX_TRUE_RECO", "h_CryoVertex_X_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[0] );
+  "h_CryoVertex_recoX_TRUE_RECO", "h_CryoVertex_X_TRUE_RECO",0, mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[0] );
 
 Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_recoY_TRUE_RECO", "h_CryoVertex_Y_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[1] );
+  "h_CryoVertex_recoY_TRUE_RECO", "h_CryoVertex_Y_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[1] );
 
 Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_recoZ_TRUE_RECO", "h_CryoVertex_Z_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[2] );
+  "h_CryoVertex_recoZ_TRUE_RECO", "h_CryoVertex_Z_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[2] );
 
 Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_recoR_TRUE_RECO", "h_CryoVertex_R_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[3] );
+  "h_CryoVertex_recoR_TRUE_RECO", "h_CryoVertex_R_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[3] );
 
 Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_CryoVertex_recoRR_TRUE_RECO", "h_CryoVertex_RR_TRUE_RECO",0, "",mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[4] );
+  "h_CryoVertex_recoRR_TRUE_RECO", "h_CryoVertex_RR_TRUE_RECO",0,mnv_plot, can2, Resolution_title_pdf5 , kCryoVertexVaribles_vector[4] );
 
 
 //std::vector<double> CutToSurface_bins{-300,-290,-280,-270,-260,-250,-240,-230,-220,-210,-200,-190,-180,-170,-160,-150,-140,-130,-120,-110,-100,-90,-80,-70,-60,-50,-40,-30,-20,-10,0.0,20,30,40,50,60,70,80,90,100,110,120,130,140,150};
-std::vector<double> CutToSurface_bins{ -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+ // { -390, -380, -370, -360, -350, -340, -330, -320, -310, -300, -290, -280, -270, -260, -250, -240, -230, -220, -210, -200, -190, -180, -170, -160, -150, -140, -130, -120, -110, -100, -90, -80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
 bool include_overflows = false;
 
 Draw_Resolution_2D_Helium_nonHelium_FULL_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist[1],"h_resolutionZ_FidiucalCut",
@@ -501,8 +531,7 @@ Draw_Resolution_2D_Helium_nonHelium_FULL_TRUTH(Efficiency_Playlist[0], Efficienc
 "", mnv_plot, can2, Resolution_title_pdf5, 2000.0, include_overflows);
 
 
-
-
+/*
 Draw_2D_Xaxis_FiducialCut_FULL_EMPTY_TRUTH_Eff_Puritry(Efficiency_Playlist_TRUTH[0], Efficiency_Playlist_TRUTH[1],
                                                        Efficiency_Playlist[0],       Efficiency_Playlist[1],
                                                        "h_FidiucalCut_cryoVertex_R",
@@ -531,8 +560,6 @@ Make_Resolution_vertex_Latex("h_FidiucalCut_cryoVertex_R_RECO_latex" ,  "PLOTS_R
                                                               "Fiducial Cut Distance to Cryotank Edge [mm]", "TRUE Vertex Z [mm]",
   "TRUE Vertex Z Vs Fiducial Cut" ,"" , mnv_plot, can2, Resolution_title_pdf5, 35.0 ,160.0);
 
-bool printErrors = true;
-bool printALLErrors = false;
 
 
 Make_Resolution_vertex_Latex("h_FidiucalCut_cryoVertex_Z_TRUE_latex" ,  "PLOTS_Resolution", CutToSurface_bins,
@@ -547,10 +574,14 @@ Draw_2D_Xaxis_FiducialCut_FULL_EMPTY(Efficiency_Playlist[0], Efficiency_Playlist
 
 Make_Resolution_vertex_Latex("h_FidiucalCut_cryoVertex_Z_RECO_latex" ,  "PLOTS_Resolution", CutToSurface_bins,
 1121, 1258, 1305,"RECO Vertex Z");
+
+
 ///////////
 // Total 2D
 ///////////
-bool doBinwidth = true;
+
+bool printErrors = true;
+bool printALLErrors = false;
 
 
 
@@ -559,18 +590,132 @@ Draw_Efficiency_FidiucialCut_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], Efficiency
                                                      PlaylistDATA_1F, PlaylistDATA_1G,
                                                      "h_FidiucalCut", "h_Data_FidiucalCut",
                                                      "Fiducial Cut","Fiducial Cut Distance to Cryotank Edge [mm]", mnv_plot, false,
-                                                     can2,  Fiduical_title_pdf5, printErrors, printALLErrors, CutToSurface_bins , .1 );
+                                                     can2,  Fiduical_title_pdf5, printErrors, printALLErrors, CutToSurface_bins , .05 , .08 );
+*/
 
 Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
-  "h_Distance_to_InnerTank_Resolution", "h_Distance_to_InnerTank_Resolution_Percent",0, "",mnv_plot, can2, Fiduical_title_pdf5 , kCryoVertexVaribles_vector.at(5) );
+  "h_Distance_to_InnerTank_Resolution", "h_Distance_to_InnerTank_Resolution_Percent",0,mnv_plot, can2, Fiduical_title_pdf5,"RECO cuts", kCryoVertexVaribles_vector.at(5) , PrintAllErrors,doBinwidth  );
+
+  Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+      "h_CryoVertex_resolutionX_RECO", "h_CryoVertex_Percent_resolutionX_RECO",0,mnv_plot, can2, Fiduical_title_pdf5,"RECO cuts", kCryoVertexVaribles_vector.at(0), PrintAllErrors,doBinwidth );
+
+  Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_CryoVertex_resolutionY_RECO", "h_CryoVertex_Percent_resolutionY_RECO",0,mnv_plot, can2, Fiduical_title_pdf5,"RECO cuts", kCryoVertexVaribles_vector.at(1), PrintAllErrors,doBinwidth  );
+
+  Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_CryoVertex_resolutionZ_RECO", "h_CryoVertex_Percent_resolutionZ_RECO",0,mnv_plot, can2, Fiduical_title_pdf5,"RECO cuts", kCryoVertexVaribles_vector.at(2), PrintAllErrors,doBinwidth  );
+
+  Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_CryoVertex_resolutionR_RECO", "h_CryoVertex_Percent_resolutionR_RECO",0,mnv_plot, can2, Fiduical_title_pdf5,"RECO cuts", kCryoVertexVaribles_vector.at(3), PrintAllErrors,doBinwidth  );
+
+  Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+      "h_CryoVertex_resolutionRR_RECO", "h_CryoVertex_Percent_resolutionRR_RECO",0,mnv_plot, can2, Fiduical_title_pdf5,"RECO cuts", kCryoVertexVaribles_vector.at(4), PrintAllErrors,doBinwidth  );
+
+bool isAbsoltute = false;
+bool isFractional = true;
+bool doAreaNormalized = true;
+
+Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Distance_to_InnerTank_Resolution", "h_Distance_to_InnerTank_Resolution_Percent",0,mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts", kCryoVertexVaribles_vector.at(5) , PrintAllErrors,doBinwidth  );
+
+  Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_Distance_to_InnerTank_Resolution_TRUE_RECO", "h_Distance_to_InnerTank_Resolution_Percent_TRUE_RECO",0,mnv_plot, can2, Resolution_regions_pdf5," TRUTH+RECO cuts", kCryoVertexVaribles_vector.at(5) , PrintAllErrors,doBinwidth  );
+
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Distance_to_InnerTank_upstreamCap_Resolution",
+  "h_Distance_to_InnerTank_barrel_Resolution",
+  "h_Distance_to_InnerTank_downstreamCap_Resolution",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(5) ,  doBinwidth, isAbsoltute , doAreaNormalized , 6.0  );
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Distance_to_InnerTank_upstreamCap_Resolution_Percent",
+  "h_Distance_to_InnerTank_barrel_Resolution_Percent",
+  "h_Distance_to_InnerTank_downstreamCap_Resolution_Percent",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(5) ,  doBinwidth, isFractional , doAreaNormalized , .5 );
+
+  Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_Distance_to_InnerTank_upstreamCap_Resolution_TRUE_RECO",
+    "h_Distance_to_InnerTank_barrel_Resolution_TRUE_RECO",
+    "h_Distance_to_InnerTank_downstreamCap_Resolution_TRUE_RECO",
+    0, mnv_plot, can2, Resolution_regions_pdf5,"TRUTH+RECO cuts",
+    kCryoVertexVaribles_vector.at(5) ,  doBinwidth, isAbsoltute , doAreaNormalized , 6.0  );
+
+  Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_Distance_to_InnerTank_upstreamCap_Resolution_Percent_TRUE_RECO",
+    "h_Distance_to_InnerTank_barrel_Resolution_Percent_TRUE_RECO",
+    "h_Distance_to_InnerTank_downstreamCap_Resolution_Percent_TRUE_RECO",
+    0, mnv_plot, can2, Resolution_regions_pdf5,"TRUTH+RECO cuts",
+    kCryoVertexVaribles_vector.at(5) ,  doBinwidth, isFractional , doAreaNormalized , .5 );
+
+
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_R_upstreamCap_resolution_RECO",
+  "h_CryoVertex_R_barrel_resolution_RECO",
+  "h_CryoVertex_R_downstreamCap_resolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(3) ,  doBinwidth, isAbsoltute , doAreaNormalized, 8.0 );
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_R_upstreamCap_percentresolution_RECO",
+  "h_CryoVertex_R_barrel_percentresolution_RECO",
+  "h_CryoVertex_R_downstreamCap_percentresolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(3) ,  doBinwidth, isFractional , doAreaNormalized , 1.0);
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_Z_upstreamCap_resolution_RECO",
+  "h_CryoVertex_Z_barrel_resolution_RECO",
+  "h_CryoVertex_Z_downstreamCap_resolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(2) ,  doBinwidth, isAbsoltute , doAreaNormalized, 3.0 );
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_Z_upstreamCap_percentresolution_RECO",
+  "h_CryoVertex_Z_barrel_percentresolution_RECO",
+  "h_CryoVertex_Z_downstreamCap_percentresolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(2) ,  doBinwidth, isFractional , doAreaNormalized , 1.0 );
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_Y_upstreamCap_resolution_RECO",
+  "h_CryoVertex_Y_barrel_resolution_RECO",
+  "h_CryoVertex_Y_downstreamCap_resolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(1) ,  doBinwidth, isAbsoltute , doAreaNormalized , 8.0 );
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_Y_upstreamCap_percentresolution_RECO",
+  "h_CryoVertex_Y_barrel_percentresolution_RECO",
+  "h_CryoVertex_Y_downstreamCap_percentresolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(1) ,  doBinwidth, isFractional , doAreaNormalized , 1.0 );
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_X_upstreamCap_resolution_RECO",
+  "h_CryoVertex_X_barrel_resolution_RECO",
+  "h_CryoVertex_X_downstreamCap_resolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(0) ,  doBinwidth, isAbsoltute , doAreaNormalized , 8.0);
+
+Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_CryoVertex_X_upstreamCap_percentresolution_RECO",
+  "h_CryoVertex_X_barrel_percentresolution_RECO",
+  "h_CryoVertex_X_downstreamCap_percentresolution_RECO",
+  0, mnv_plot, can2, Resolution_regions_pdf5,"RECO cuts",
+  kCryoVertexVaribles_vector.at(0) ,  doBinwidth, isFractional , doAreaNormalized ,  1.0 );
+
 
 
 Draw_Efficiency_FidiucialCut_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], Efficiency_Playlist_TRUTH[0],
                                               Efficiency_Playlist[1], Efficiency_Playlist_TRUTH[1],
                                               PlaylistDATA_1F, PlaylistDATA_1G,
                                               "h_Distance_to_InnerTank", "h_Data_Distance_to_InnerTank",
-                                              "Distance to Cryotank surface","Distance to Cryotank surface [mm]", mnv_plot, doBinwidth,
-                                              can2,  Fiduical_title_pdf5, printErrors, printALLErrors, CutToSurface_bins ,  .3 );
+                                              "Fiducial Distance","Distance to Cryotank surface [mm]", mnv_plot, false,
+                                              can2,  Fiduical_title_pdf5, printErrors, printALLErrors, CutToSurface_bins ,  .5 ,.0 );
 
 DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank",
                                  PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank",
@@ -595,9 +740,222 @@ DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficien
                                 PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank",
                                 POT_MC_Status, POT_DATA_Status, false, "Distance to Cryotank Edge",
                                 "RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kTrackType, my_debug );
+/////////
+//upstream
+////////
+Draw_Efficiency_FidiucialCut_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], Efficiency_Playlist_TRUTH[0],
+                                              Efficiency_Playlist[1], Efficiency_Playlist_TRUTH[1],
+                                              PlaylistDATA_1F, PlaylistDATA_1G,
+                                              "h_Distance_to_InnerTank_upstreamCap", "h_Data_Distance_to_InnerTank_upstreamCap",
+                                              "[UpstreamCap]","Distance to Cryotank surface [mm]", mnv_plot, false,
+                                              can2,  Fiduical_title_pdf5, printErrors, printALLErrors, CutToSurface_bins ,  .5 ,0.0 );
 
-Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Distance_to_InnerTank","Distance to Cryotank Edge [RECO Cuts no Fiduical][F(ME1F)]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Fiduical_title_pdf2, can2, mnv_plot, true);
-Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Distance_to_InnerTank_TRUE","Distance to Cryotank Edge [TRUE+RECO Cuts no Fiduical] [F(ME1F)]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Fiduical_title_pdf2, can2, mnv_plot, true);
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_upstreamCap",
+                                PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_upstreamCap",
+                                POT_MC_Status, POT_DATA_Status, false, "[UpstreamCap]: Distance to Cryotank Edge",
+                                "RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kMaterial, my_debug );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,  "h_Distance_to_InnerTank_upstreamCap_TRUE" ,
+                                      POT_MC_Status, POT_DATA_Status, "TRUE Distance to Cryotank Edge", "TRUE Distance to Cryotank surface [mm]", Fiduical_title_pdf5,
+                                      doBinwidth, "mm", kMaterial, my_debug, false, 9999  );
+/*
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_upstreamCap",
+                                PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_upstreamCap",
+                                POT_MC_Status, POT_DATA_Status, false, "[UpstreamCap] Distance to Cryotank Edge",
+                                "RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kInteraction, my_debug );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_upstreamCap",
+                                PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_upstreamCap",
+                                POT_MC_Status, POT_DATA_Status, false, "[UpstreamCap] Distance to Cryotank Edge",
+                                "RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kParticle, my_debug );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_upstreamCap",
+                                PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_upstreamCap",
+                                POT_MC_Status, POT_DATA_Status, false, "[UpstreamCap] Distance to Cryotank Edge",
+                                "RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kTrackType, my_debug );
+*/
+/////////
+//BARREL
+////////
+Draw_Efficiency_FidiucialCut_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], Efficiency_Playlist_TRUTH[0],
+                                              Efficiency_Playlist[1], Efficiency_Playlist_TRUTH[1],
+                                              PlaylistDATA_1F, PlaylistDATA_1G,
+                                              "h_Distance_to_InnerTank_barrel", "h_Data_Distance_to_InnerTank_barrel",
+                                              "[barrel]","Distance to Cryotank surface [mm]", mnv_plot, false,
+                                              can2,  Fiduical_title_pdf5, printErrors, printALLErrors, CutToSurface_bins ,  .5 ,0.0 );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_barrel",
+                              PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_barrel",
+                              POT_MC_Status, POT_DATA_Status, false, "[barrel] Distance to Cryotank Edge",
+                              "RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kMaterial, my_debug );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,  "h_Distance_to_InnerTank_barrel_TRUE" ,
+POT_MC_Status, POT_DATA_Status, "TRUE Distance to Cryotank Edge", "TRUE Distance to Cryotank surface [mm]", Fiduical_title_pdf5,
+doBinwidth, "mm", kMaterial, my_debug, false, 9999  );
+/*
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_barrel",
+PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_barrel",
+POT_MC_Status, POT_DATA_Status, false, "[barrel] Distance to Cryotank Edge",
+"RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kInteraction, my_debug );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_barrel",
+PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_barrel",
+POT_MC_Status, POT_DATA_Status, false, "[barrel] Distance to Cryotank Edge",
+"RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kParticle, my_debug );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_barrel",
+PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_barrel",
+POT_MC_Status, POT_DATA_Status, false, "[barrel] Distance to Cryotank Edge",
+"RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kTrackType, my_debug );
+*/
+/////////
+//downstreamCap
+////////
+Draw_Efficiency_FidiucialCut_FULL_EMPTY_TRUTH(Efficiency_Playlist[0], Efficiency_Playlist_TRUTH[0],
+  Efficiency_Playlist[1], Efficiency_Playlist_TRUTH[1],
+  PlaylistDATA_1F, PlaylistDATA_1G,
+  "h_Distance_to_InnerTank_downstreamCap", "h_Data_Distance_to_InnerTank_downstreamCap",
+  "[downstreamCap]","Distance to Cryotank surface [mm]", mnv_plot, false,
+  can2,  Fiduical_title_pdf5, printErrors, printALLErrors, CutToSurface_bins ,  .45 ,0.0 );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_downstreamCap",
+PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_downstreamCap",
+POT_MC_Status, POT_DATA_Status, false, "[downstreamCap] Distance to Cryotank Edge",
+"RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kMaterial, my_debug );
+
+DrawSTACKfromHistFilio_FromTFileNoData(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,  "h_Distance_to_InnerTank_downstreamCap_TRUE" ,
+POT_MC_Status, POT_DATA_Status, "[downstreamCap] TRUE Distance to Cryotank Edge", "TRUE Distance to Cryotank surface [mm]", Fiduical_title_pdf5,
+doBinwidth, "mm", kMaterial, my_debug, false, 9999  );
+/*
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_downstreamCap",
+PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_downstreamCap",
+POT_MC_Status, POT_DATA_Status, false, "[downstreamCap] Distance to Cryotank Edge",
+"RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kInteraction, my_debug );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_downstreamCap",
+PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_downstreamCap",
+POT_MC_Status, POT_DATA_Status, false, "[downstreamCap] Distance to Cryotank Edge",
+"RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kParticle, my_debug );
+
+DrawSTACKfromHistFilio_FromTFile(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST, "h_Distance_to_InnerTank_downstreamCap",
+PlaylistDATA_1F.TFILE_PLAYLIST, PlaylistDATA_1G.TFILE_PLAYLIST, "h_Data_Distance_to_InnerTank_downstreamCap",
+POT_MC_Status, POT_DATA_Status, false, "[downstreamCap] Distance to Cryotank Edge",
+"RECO Distance to Cryotank surface [mm]", Fiduical_title_pdf5, doBinwidth, false , "mm", kTrackType, my_debug );
+*/
+
+//Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Distance_to_InnerTank","Distance to Cryotank Edge [RECO][F(ME1F)]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Fiduical_title_pdf5, can2, mnv_plot, false);
+//Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Distance_to_InnerTank_TRUE_RECO","Distance to Cryotank Edge [TRUE+RECO][F(ME1F)]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Fiduical_title_pdf5, can2, mnv_plot, false);
+
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank","Distance to Cryotank Edge [RECO]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Resolution_regions_pdf5, can2, mnv_plot, false);
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank_TRUE_RECO","Distance to Cryotank Edge [TRUE+RECO]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Resolution_regions_pdf5, can2, mnv_plot, false);
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank_upstreamCap","Distance to Cryotank Edge [Upstream Cap]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Resolution_regions_pdf5, can2, mnv_plot, false);
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank_upstreamCap_TRUE_RECO","Distance to Cryotank Edge [Upstream Cap][TRUE+RECO]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Fiduical_title_pdf5, can2, mnv_plot, false);
+
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank_barrel","Distance to Cryotank Edge [Barrel]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Fiduical_title_pdf5, can2, mnv_plot, false);
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank_barrel_TRUE_RECO","Distance to Cryotank Edge [Barrel][TRUE+RECO]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Resolution_regions_pdf5, can2, mnv_plot, false);
+
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank_downstreamCap","Distance to Cryotank Edge [Downstream Cap]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Fiduical_title_pdf5, can2, mnv_plot, false);
+Draw2DHist_Migration_TFILE_FULL_EMPTY(Efficiency_Playlist[0].TFILE_PLAYLIST, Efficiency_Playlist[1].TFILE_PLAYLIST,MC_EmptytoFUll, "h_Mig_Distance_to_InnerTank_downstreamCap_TRUE_RECO","Distance to Cryotank Edge [Downstream Cap][TRUE+RECO]",  "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]", Resolution_regions_pdf5, can2, mnv_plot, false);
+
+
+std::string fiduicalpdf_string(Fiduical_title_pdf5);
+AppendtoText_Migration("migration_latex",  fiduicalpdf_string, 1,2, "Distance to Edge", CutToSurface_bins , " [mm]" );
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Distance_to_InnerTank", "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]","[RECO]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Distance_to_InnerTank_TRUE_RECO", "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]","[TRUE+RECO]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Distance_to_InnerTank_upstreamCap", "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]"," [UpstreamCap][RECO]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Distance_to_InnerTank_upstreamCap_TRUE_RECO", "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]","[UpstreamCap][TRUE+RECO]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Distance_to_InnerTank_barrel", "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]"," [Barrel][RECO]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Distance_to_InnerTank_downstreamCap_TRUE_RECO", "RECO Distance to Cryotank Edge [mm]", "TRUE Distance to Cryotank Edge [mm]","[DownstreamCap][TRUE+RECO]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+
+
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Vertex_X", "RECO Vertex X [mm]", "TRUE Vertex X [mm] ","Vertex X [RECO cuts]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Vertex_Y", "RECO Vertex Y [mm]", "TRUE Vertex Y [mm] ","Vertex Y [RECO cuts]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_Mig_Vertex_R", "RECO Vertex R [mm]", "TRUE Vertex R [mm] ","Vertex R [RECO cuts]",
+  "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_Mig_Vertex_Z", "RECO Vertex Z [mm]", "TRUE Vertex Z [mm] ","Vertex Z [RECO cuts]",
+    "Migration Plot:", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+      "h_distanceEdge_cryoVertex_R", "RECO Distance to Cryotank Edge [mm]","RECO Vertex R [mm]","Event distribution [RECO cuts]",
+      "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+            "h_distanceEdge_cryoVertex_Z", "RECO Distance to Cryotank Edge [mm]","RECO Vertex Z [mm]","Event distribution [RECO cuts]",
+            "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_distanceEdge_2ndTrkE", "RECO Distance to Cryotank Edge [mm]","RECO 2ndTrk KE [GeV]","Event distribution [RECO cuts]",
+  "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_distanceEdge_2ndTrkAngle", "RECO Distance to Cryotank Edge [mm]","RECO #theta_{2ndTrk} [Deg]","Event distribution [RECO cuts]",
+  "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_distanceEdge_DOCA",  "RECO Distance to Cryotank Edge [mm]","RECO DOCA_{2ndTrk} [mm]","Event distribution [RECO cuts]",
+  "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+  "h_distanceEdge_Pathlength", "RECO Distance to Cryotank Edge [mm]","RECO Mass density Traversed [g/cm^{2}] ","Event distribution [RECO cuts]",
+  "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+    "h_distanceEdge_MuonPT", "RECO Distance to Cryotank Edge [mm]","Muon P_{T} [GeV]","Event distribution [RECO cuts]",
+    "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+      "h_distanceEdge_MuonPZ", "RECO Distance to Cryotank Edge [mm]","Muon P_{Z} [GeV]","Event distribution [RECO cuts]",
+      "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+"h_distanceEdge_Muontheta",  "RECO Distance to Cryotank Edge [mm]","#theta_{#mu} [Deg]","Event distribution [RECO cuts]",
+  "", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+"h_distanceEdge_ChiSqFit", "RECO Distance to Cryotank Edge [mm]","Vertex #chi^{2} fit ","Event distribution [RECO cuts]",
+"", mnv_plot, can2, Fiduical_title_pdf2);
+
+Draw_Migration_2D_FULL_EMPTY_TRUTH( Efficiency_Playlist[0], Efficiency_Playlist[1],
+"h_distanceEdge_2ndTrklength",  "RECO Distance to Cryotank Edge [mm]"," 2ndTrack Lenght in MINERvA [mm]","Event distribution [RECO cuts]",
+"", mnv_plot, can2, Fiduical_title_pdf2);
+///////////////////////////////////
+
+
+
+//Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Vertex_X","Migration Vertex X [RECO cuts] ", "RECO Vertex X", "TRUE Vertex X",  Fiduical_title_pdf5, can2, mnv_plot, false);
+//Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Vertex_Y","Migration Vertex Y [RECO cuts] ", "RECO Vertex Y", "TRUE Vertex Y",  Fiduical_title_pdf5, can2, mnv_plot, false);
+//Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Vertex_R","Migration Vertex R [RECO cuts] ", "RECO Vertex R", "TRUE Vertex R",  Fiduical_title_pdf5, can2, mnv_plot, false);
+//Draw2DHist_Migration_TFILE(Efficiency_Playlist[0].TFILE_PLAYLIST, "h_Mig_Vertex_Z","Migration Vertex Z [RECO cuts] ", "RECO Vertex Z", "TRUE Vertex Z",  Fiduical_title_pdf5, can2, mnv_plot, false);
+
 
 
 
@@ -883,53 +1241,81 @@ POT_MC_Status, POT_DATA_Status, "Resolution Stack Vertex Z [Fiducial 100 mm]", "
 
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_cryoVertex_Z_secTrkTheta", "Vertex Z [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Vertex Z vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_cryoVertex_Z_secTrkTheta", "Vertex Z [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Vertex Z vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 14, 15, 16, "Efficiency Vertex Z vs $\\theta_{2ndtrk}$");
 
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_cryoVertex_R_secTrkTheta", "Vertex R [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Vertex R vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_cryoVertex_R_secTrkTheta", "Vertex R [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Vertex R vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 29, 30, 31, "Efficiency Vertex R vs $\\theta_{2ndtrk}$");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_muonPT_2ndTrkangle", "Muon P_{T} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "Muon P_{T} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_muonPT_2ndTrkangle", "Muon P_{T} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "Muon P_{T} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 44, 45, 46, "Efficiency Muon $P_{T}$ vs $\\theta_{2ndtrk}$");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_muonPZ_2ndTrkangle", "Muon P_{Z} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "Muon P_{Z} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_muonPZ_2ndTrkangle", "Muon P_{Z} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "Muon P_{Z} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 59, 60, 61, "Efficiency Muon $P_{Z}$ vs $\\theta_{2ndtrk}$");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_muontheta_2ndTrkangle", "#theta_{#mu} [Deg]", "#theta_{2ndtrk} [Deg](wrtb)", "#theta_{#mu} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
-AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 74, 75, 76, "Efficiency $\\theta_{\\mu}$ vs $\\theta_{2ndtrk}$");
+  "h_muontheta_2ndTrkangle", "#theta_{#mu} [Deg]", "#theta_{2ndtrk} [Deg](wrtb)", "#theta_{#mu} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+//sAppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 74, 75, 76, "Efficiency $\\theta_{\\mu}$ vs $\\theta_{2ndtrk}$");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_2ndTrkE_2ndtrkangle", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_2ndTrkE_2ndtrkangle", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 89, 90, 91, "Efficiency $KE_{2ndTrk}$ vs $\\theta_{2ndtrk}$");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_2ndTrkE_2ndtrkangle_Proton", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk} [Proton]" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_2ndTrkE_2ndtrkangle_Proton", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk} [Proton]" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 104, 105, 106, "Efficiency $KE_{2ndTrk}$ vs $\\theta_{2ndtrk}$[Proton]");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_2ndTrkE_2ndtrkangle_Pion", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk} [Pion]" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_2ndTrkE_2ndtrkangle_Pion", "KE_{2ndTrk} [GeV]", "#theta_{2ndtrk} [Deg](wrtb)", "KE_{2ndTrk} vs #theta_{2ndtrk} [Pion]" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 119, 120, 121, "Efficiency $KE_{2ndTrk}$ vs $\\theta_{2ndtrk}$[Pion]");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-    "h_cryoVertex_Z_Pathlength", "Vertex Z [mm]", "Pathway [g/cm^{2}]", "Vertex Z vs Pathway" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+    "h_cryoVertex_Z_Pathlength", "Vertex Z [mm]", "Pathway [g/cm^{2}]", "Vertex Z vs Pathway" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 134, 135, 136, "Efficiency Vertex Z vs Pathway");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-    "h_cryoVertex_R_Pathlength", "Vertex R [mm]", "Pathway [g/cm^{2}]", "Vertex R vs Pathway" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+    "h_cryoVertex_R_Pathlength", "Vertex R [mm]", "Pathway [g/cm^{2}]", "Vertex R vs Pathway" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 149, 150, 151, "Efficiency Vertex R vs Pathway");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-  "h_cryoVertex_Z_DOCA", "Vertex R [mm]", "DOCA [mm]", "Vertex Z vs DOCA" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+  "h_cryoVertex_Z_DOCA", "Vertex Z [mm]", "DOCA [mm]", "Vertex Z vs DOCA" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 164, 165, 166, " Efficiency Vertex Z vs DOCA");
 
 Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
-    "h_cryoVertex_R_DOCA", "Vertex R [mm]", "DOCA [mm]", "Vertex R vs DOCA" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf2);
+    "h_cryoVertex_R_DOCA", "Vertex R [mm]", "DOCA [mm]", "Vertex R vs DOCA" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 179, 180, 181, " Efficiency Vertex R vs DOCA");
+
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+    "h_distanceEdge_cryoVertex_R", "Distance to Edge [mm]", "Vertex R [mm]", "Distance to edge vs Vertex R" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_distanceEdge_cryoVertex_Z", "Distance to Edge [mm]", "Vertex Z [mm]", "Distance to edge vs Vertex Z" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+      "h_distanceEdge_MuonPT", "Distance to Edge [mm]", "Muon P_{T} [GeV]", "Distance to edge vs Muon P_{T}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_distanceEdge_MuonPZ", "Distance to Edge [mm]", "Muon P_{Z} [GeV]", "Distance to edge vs Muon P_{Z}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+    "h_distanceEdge_Muontheta", "Distance to Edge [mm]", "Muon #theta_{#mu} (wrtb) [Deg]", "Distance to edge vs #theta_{#mu}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_distanceEdge_2ndTrkE", "Distance to Edge [mm]", "T_{2ndTrk} [GeV]", "Distance to edge vs T_{2ndTrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+    "h_distanceEdge_2ndTrkAngle", "Distance to Edge [mm]", "#theta_{2ndtrk} [Deg](wrtb)", "Distance to edge vs #theta_{2ndtrk}" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+  "h_distanceEdge_DOCA", "Distance to Edge [mm]", "DOCA [mm]", "Distance to edge vs DOCA" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
+
+  Draw_Efficiency_2D_FULL_EMPTY_TRUTH(Efficiency_Playlist[0],Efficiency_Playlist_TRUTH[0], Efficiency_Playlist[1],Efficiency_Playlist_TRUTH[1],
+    "h_distanceEdge_Pathlength", "Distance to Edge [mm]", "Pathway [g/cm^{2}]", "Distance to edge vs density Tranversed" ,"Efficiency" , mnv_plot, can2, Eff2D_pdf5);
 
 
   //Draw_Efficiency_2ndTrk_FULL_EMPTY(Efficiency_Playlist[0],Efficiency_Playlist[1] , "h_secTrk_Pathlength",
@@ -938,22 +1324,21 @@ AppendtoLatex("Efficiency2D_latex" , "PLOTS_2D_Efficiency", 179, 180, 181, " Eff
   //Draw_Efficiency_2ndTrk_FULL_EMPTY(Efficiency_Playlist[0],Efficiency_Playlist[1] , "h_secTrk_DOCA",
   //0, " ", mnv_plot, can2, text_title_pdf5, k2ndTrk_vector[4] );
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonE", "Migration", "RECO E_{#mu}", "TRUE E_{#mu}", Migration_title_pdf2, can2, mnv_plot, true);
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonE", "Migration", "RECO E_{#mu}", "TRUE E_{#mu}", Migration_title_pdf5, can2, mnv_plot, true);
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPZ","Migration Muon P_{Z}", "RECO Muon P_{Z}", "TRUE Muon P_{Z}", Migration_title_pdf2, can2, mnv_plot, true);
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPZ","Migration Muon P_{Z}", "RECO Muon P_{Z}", "TRUE Muon P_{Z}", Migration_title_pdf5, can2, mnv_plot, true);
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPT", "Migration Muon P_{T}", "RECO Muon P_{T}", "TRUE Muon P_{T}", Migration_title_pdf2, can2, mnv_plot, true);
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonPT", "Migration Muon P_{T}", "RECO Muon P_{T}", "TRUE Muon P_{T}", Migration_title_pdf5, can2, mnv_plot, true);
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonTheta","Migration Muon #theta_{#mu}", "RECO Muon #theta_{#mu}", "TRUE Muon #theta_{#mu}",  Migration_title_pdf2, can2, mnv_plot, true);
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_MuonTheta","Migration Muon #theta_{#mu}", "RECO Muon #theta_{#mu}", "TRUE Muon #theta_{#mu}",  Migration_title_pdf5, can2, mnv_plot, true);
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_X","Migration Vertex X", "RECO Vertex X", "TRUE Vertex X",  Migration_title_pdf2, can2, mnv_plot, true);
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_X","Migration Vertex X", "RECO Vertex X", "TRUE Vertex X",  Migration_title_pdf5, can2, mnv_plot, true);
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Y","Migration Vertex Y", "RECO Vertex Y", "TRUE Vertex Y",  Migration_title_pdf2, can2, mnv_plot, true);
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Y","Migration Vertex Y", "RECO Vertex Y", "TRUE Vertex Y",  Migration_title_pdf5, can2, mnv_plot, true);
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_R","Migration Vertex R", "RECO Vertex R", "TRUE Vertex R",  Migration_title_pdf2, can2, mnv_plot, true);
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_R","Migration Vertex R", "RECO Vertex R", "TRUE Vertex R",  Migration_title_pdf5, can2, mnv_plot, true);
 
-Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Z","Migration Vertex Z",  "RECO Vertex Z", "TRUE Vertex Z", Migration_title_pdf2, can2, mnv_plot, true);
-
+Draw2DHist_Migration_TFILE(PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "h_Mig_Vertex_Z","Migration Vertex Z",  "RECO Vertex Z", "TRUE Vertex Z", Migration_title_pdf5, can2, mnv_plot, true);
 
 
 DrawPie_Figures_EventCutRate(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST,  "Truth_Cuts",
@@ -961,8 +1346,12 @@ PlaylistMC_1F_piePlots.TFILE_PLAYLIST, "Truth_Cuts" , "TRUE_RECO_Cuts", Playlist
 PlaylistMC_1F_piePlots.m_Helium_status,  text_title_pdf5, can2, mnv_plot, "Event Cuts");
 
 
-Hist_phyiscs_map MAP_stack_TRUTH_F_MFP_pi =  Make_Physics_distribution_map_FromTFile(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST, "h_MuonE_MFP_pi_TRUE" , false, 1.0, kPlayListVector_MC.at(0), false );
+Hist_phyiscs_map MAP_stack_TRUTH_F_MFP_pi =  Make_Physics_distribution_map_FromTFile(PlaylistME_1F_TRUTH_TFile, "h_MuonE_MFP_pi_TRUE" , false, 1.0, kPlayListVector_MC.at(0), false );
 DrawPieFigures(MAP_stack_TRUTH_F_MFP_pi ,  text_title_pdf5, can2, mnv_plot, true, false, "MuonE");
+
+Hist_phyiscs_map MAP_stack_TRUTH_F_allCuts =  Make_Physics_distribution_map_FromTFile(PlaylistTRUTH_1F_piePlots.TFILE_PLAYLIST, "h_MuonE_TRUE" , false, 1.0, kPlayListVector_MC.at(0), true );
+DrawPieFigures(MAP_stack_TRUTH_F_allCuts ,  text_title_pdf5, can2, mnv_plot, false, false, "True Signal Distribution");
+
 
 ///////////////
 // Migration
@@ -1010,7 +1399,7 @@ can2 -> Print(Resolution_title_pdf3);
 can2 -> Print(Fiduical_title_pdf3);
 can2 -> Print(Eff2D_pdf3);
 can2 -> Print(Migration_title_pdf3);
-
+can2 -> Print(Resolution_regions_pdf3);
 can2->Close();
 }// end of Function
 
@@ -1097,7 +1486,8 @@ void Draw_Efficiency_2ndTrk_FULL_EMPTY(PlayList_INFO FULL_playlist,PlayList_INFO
 
 void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayList_INFO FULL_playlist_TRUTHDEM,
   PlayList_INFO EMPTY_playlist_nom, PlayList_INFO EMPTY_playlist_TRUTHDEM , const char *histoName,
-  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name, double Vline_OnXaxis, bool print_all_errors ){
+  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , SecondTrkVar playlist_name,
+  double Vline_OnXaxis, const std::string &arrow_direction, double arrow_length, bool print_all_errors ){
 
       char histoName_TRUE[1024];
       char histoName_TRUE_RECO[1024];
@@ -1188,9 +1578,9 @@ void Draw_Efficiency_2ndTrk_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,Pla
       DrawCVAndError_FromHIST(hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true);
 
       sprintf(Title_His, "%s (%s) (%s-%s)", title_type_char,title,playlistFull_char,playlistEmpty_char);
-      DrawCVAndError_FromHIST_withVLine(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true, false, false, Vline_OnXaxis);
+      DrawCVAndError_FromHIST_withVLine(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true, false, false, Vline_OnXaxis, arrow_direction,  arrow_length);
 
-      DrawCVAndError_FromHIST_withVLine(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true, true, false , Vline_OnXaxis);
+      DrawCVAndError_FromHIST_withVLine(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true, true, false , Vline_OnXaxis, arrow_direction,  arrow_length);
 
 
 }//endl;
@@ -1592,6 +1982,8 @@ void Draw_Efficiency_CryoVertex_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom
       char histoName_TRUE[1024];
       char histoName_TRUE_RECO[1024];
       char Title_His[1024];
+      bool isfull = true;
+      bool isempty = false;
 
       double FULL_POT_Dem = FULL_playlist_TRUTHDEM.Get_Pot();
       double FULL_POT_nom = FULL_playlist_nom.Get_Pot();
@@ -1684,7 +2076,8 @@ void Draw_Efficiency_CryoVertex_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom
 }//endl;
 void Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom,
   PlayList_INFO EMPTY_playlist_nom,  const char *histoName_diff, const char *histoName_percent,
-  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , CryoVertex CryoVertex_type ){
+  int logScale, MnvPlotter *plot, TCanvas *can, const char *pdf, char *CutsApplied,
+   CryoVertex CryoVertex_type , bool PrintAllErrors, bool doBinwidth ){
 
       char Title_His[1024];
 
@@ -1696,21 +2089,18 @@ void Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlis
       bool isempty = false;
 
       std::cout<<"hist_TRUE_RECO_FULL"<<std::endl;
+      MnvH1D *hist_full_diff = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_diff, isfull);
+      MnvH1D *hist_full_Percent_diff = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_percent, isfull);
 
-      MnvH1D *hist_full_diff = (MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_diff);
-      MnvH1D *hist_full_Percent_diff = (MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_percent);
+      std::string pdf_string(pdf);
+      MnvH1D *hist_empty_diff = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_diff, isfull);
+      MnvH1D *hist_empty_Percent_diff = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_percent, isfull);
 
+      MnvH1D *hist_full_diff_clone = (PlotUtils::MnvH1D*)hist_full_diff->Clone("hist_full_diff_clone");
+      MnvH1D *hist_full_Percent_diff_clone = (PlotUtils::MnvH1D*)hist_full_Percent_diff->Clone("hist_full_Percent_diff_clone");
 
-      std::cout<<"hist_TRUE_EMPTY"<<std::endl;
-      MnvH1D *hist_empty_diff = (MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_diff);
-      std::cout<<"hist_TRUE_RECO_EMPTY"<<std::endl;
-      MnvH1D *hist_empty_Percent_diff = (MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_percent);
-
-      MnvH1D* hist_full_diff_clone = (MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_diff);
-      MnvH1D* hist_full_Percent_diff_clone = (MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_percent);
-
-      MnvH1D* hist_empty_diff_clone = (MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_diff);
-      MnvH1D* hist_empty_Percent_diff_clone = (MnvH1D*)EMPTY_playlist_nom.TFILE_PLAYLIST -> Get(histoName_percent);
+      MnvH1D *hist_empty_diff_clone = (PlotUtils::MnvH1D*)hist_empty_diff->Clone("hist_empty_diff_clone");
+      MnvH1D *hist_empty_Percent_diff_clone = (PlotUtils::MnvH1D*)hist_empty_Percent_diff->Clone("hist_empty_Percent_diff_clone");
 
       ///Calculation FOR FINAL Eff
       hist_empty_diff_clone->Scale(Scale_MC);
@@ -1720,7 +2110,9 @@ void Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlis
       hist_full_Percent_diff_clone->Add(hist_empty_Percent_diff_clone,-1);
 
       std::string title_type = GetVertexCryoTitleName(CryoVertex_type);
-      std::string Xaxis_title = GetVertexCryoVarAxisTitle(CryoVertex_type);
+      std::string Xaxis_title =  "Absoltute " + GetVertexCryoVarAxisTitleNoUnits(CryoVertex_type) + " residual (true - reco [mm])" ;
+      std::string Xaxis_title_percent = "Fractional " + GetVertexCryoVarAxisTitleNoUnits(CryoVertex_type) + " residual (true - reco) / true";
+
       auto FULL_name = FULL_playlist_nom.GetPlaylist();
       auto Empty_name = EMPTY_playlist_nom.GetPlaylist();
       std::string playlistFull =   GetPlaylist_InitialName(FULL_name); //FULL_playlist.GetPlaylistName();
@@ -1736,34 +2128,131 @@ void Draw_Resolution_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlis
       char playlistEmpty_char[ playlistEmpty.length()+1];
       strcpy( playlistEmpty_char,  playlistEmpty.c_str());
 
+      bool Setgrid = true;
+      bool PrintallErrorGroups = false;
+      sprintf(Title_His, "%s [%s][F(%s)]", title_type_char, CutsApplied, playlistFull_char);
+      DrawCVAndError_FromHIST_withFit(hist_full_diff, Title_His , Xaxis_title, "NEvents", pdf,true);
+      DrawCVAndError_FromHIST_withRMS(hist_full_diff, Title_His , Xaxis_title, "NEvents", "mm", pdf_string, Setgrid, doBinwidth, PrintAllErrors, PrintallErrorGroups,false);
 
-      sprintf(Title_His, "True - Reco  %s (%s) (%s)(Full)", title_type_char, title , playlistFull_char);
-      DrawCVAndError_FromHIST_withFit(hist_full_diff, Title_His ,Xaxis_title,"Resolution", pdf,true);
+    //  MnvH1D *hist, char *histotitle ,std::string xaxislabel,std::string yaxislabel, char* Units,
+      //        std::string pdf_name, bool Setgrid, bool doBinwidth,  bool PrintErrors , bool PrintallErrorGroups, bool PrintRMS_percentage
 
-      sprintf(Title_His, "(True - Reco) / True  %s (%s) (%s)(Full)", title_type_char, title , playlistFull_char);
-      DrawCVAndError_FromHIST_withFit(hist_full_Percent_diff, Title_His ,Xaxis_title,"Resolution", pdf,true);
+      sprintf(Title_His, "%s [%s] [F(%s)]", title_type_char, CutsApplied,  playlistFull_char);
+      DrawCVAndError_FromHIST_withFit(hist_full_Percent_diff, Title_His ,Xaxis_title_percent, "NEvents", pdf,true);
+      DrawCVAndError_FromHIST_withRMS(hist_full_Percent_diff, Title_His ,Xaxis_title_percent, "NEvents","mm", pdf_string, Setgrid, doBinwidth, PrintAllErrors, PrintallErrorGroups, true);
 
 
-      sprintf(Title_His, "True - Reco  %s (%s) (%s)(Empty)", title_type_char, title , playlistEmpty_char);
-      DrawCVAndError_FromHIST_withFit(hist_empty_diff, Title_His ,Xaxis_title,"Resolution", pdf,true);
+      sprintf(Title_His, "%s [%s][E(%s)]", title_type_char , CutsApplied, playlistEmpty_char);
+      DrawCVAndError_FromHIST_withFit(hist_empty_diff, Title_His ,Xaxis_title,"NEvents", pdf,true);
+      DrawCVAndError_FromHIST_withRMS(hist_empty_diff, Title_His , Xaxis_title, "NEvents","mm", pdf_string,true, doBinwidth, PrintAllErrors, PrintallErrorGroups,false);
 
-      sprintf(Title_His, "(True - Reco) / True  %s (%s) (%s)(Empty)", title_type_char, title , playlistEmpty_char);
-      DrawCVAndError_FromHIST_withFit(hist_empty_Percent_diff, Title_His ,Xaxis_title,"Resolution", pdf,true);
 
-      sprintf(Title_His, " True - Reco %s (%s) (%s-%s)", title_type_char,title,playlistFull_char,playlistEmpty_char);
-      DrawCVAndError_FromHIST_withFit(hist_full_diff_clone, Title_His ,Xaxis_title,"Resolution", pdf,true);
+      sprintf(Title_His, "%s [%s][E(%s)]", title_type_char, CutsApplied, playlistEmpty_char);
+      DrawCVAndError_FromHIST_withFit(hist_empty_Percent_diff, Title_His ,Xaxis_title_percent,"NEvents", pdf,true);
+      DrawCVAndError_FromHIST_withRMS(hist_empty_Percent_diff, Title_His , Xaxis_title_percent, "NEvents","mm", pdf_string,Setgrid,doBinwidth, PrintAllErrors, PrintallErrorGroups,true);
 
-      sprintf(Title_His, " (True - Reco) / True  %s (%s) (%s-%s)", title_type_char,title,playlistFull_char,playlistEmpty_char);
-      DrawCVAndError_FromHIST_withFit(hist_full_Percent_diff_clone, Title_His ,Xaxis_title,"Resolution", pdf,true);
+
+
+      sprintf(Title_His, "%s [%s][F(%s)- E(%s)]", title_type_char, CutsApplied, playlistFull_char, playlistEmpty_char);
+      DrawCVAndError_FromHIST_withFit(hist_full_diff_clone, Title_His ,Xaxis_title,"NEvents", pdf,true);
+      DrawCVAndError_FromHIST_withRMS(hist_full_diff_clone, Title_His , Xaxis_title, "NEvents","mm", pdf_string,Setgrid,doBinwidth, PrintAllErrors, PrintallErrorGroups,false);
+
+
+
+      sprintf(Title_His, "%s [%s][F(%s)- E(%s)]", title_type_char, CutsApplied, playlistFull_char,playlistEmpty_char);
+      DrawCVAndError_FromHIST_withFit(hist_full_Percent_diff_clone, Title_His ,Xaxis_title_percent,"NEvents", pdf,true);
+      DrawCVAndError_FromHIST_withRMS(hist_full_Percent_diff_clone, Title_His , Xaxis_title_percent, "NEvents","mm", pdf_string,Setgrid,doBinwidth, PrintAllErrors, PrintallErrorGroups,true);
 
 
 
 }//endl;
+
+
+void Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom, PlayList_INFO EMPTY_playlist_nom,
+   const char *histoName_region1, const char *histoName_region2, const char *histoName_region3,
+  int logScale, MnvPlotter *plot, TCanvas *can, const char *pdf, char *CutsApplied,
+   CryoVertex CryoVertex_type , bool doBinwidth, bool isFractional , bool isAreaNormalized, double Ymax ){
+
+      char Title_His[1024];
+
+      double FULL_POT_nom = FULL_playlist_nom.Get_Pot();
+      double EMPTY_POT_nom = EMPTY_playlist_nom.Get_Pot();
+      double Scale_MC = FULL_POT_nom / EMPTY_POT_nom;
+
+      bool isfull = true;
+      bool isempty = false;
+
+      std::cout<<"Inside:Draw_3Resolution_CryoVertex_FULL_EMPTY_RecoBranch"<<std::endl;
+
+
+
+      MnvH1D *hist_region1_Full = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_region1, isfull);
+      MnvH1D *hist_region2_Full = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_region2, isfull);
+      MnvH1D *hist_region3_Full = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_region3, isfull);
+
+      MnvH1D *hist_region1_Full_EMPTY = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_region1, isfull);
+      MnvH1D *hist_region2_Full_EMPTY = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_region2, isfull);
+      MnvH1D *hist_region3_Full_EMPTY = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_region3, isfull);
+
+      MnvH1D *hist_region1_EMPTY = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_region1, isempty);
+      MnvH1D *hist_region2_EMPTY = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_region2, isempty);
+      MnvH1D *hist_region3_EMPTY = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_region3, isempty);
+
+      hist_region1_EMPTY->Scale(Scale_MC);
+      hist_region2_EMPTY->Scale(Scale_MC);
+      hist_region3_EMPTY->Scale(Scale_MC);
+
+      hist_region1_Full_EMPTY->Add(hist_region1_EMPTY,-1);
+      hist_region2_Full_EMPTY->Add(hist_region2_EMPTY,-1);
+      hist_region3_Full_EMPTY->Add(hist_region3_EMPTY,-1);
+      std::string pdf_string(pdf);
+
+      std::string title_type = GetVertexCryoTitleName(CryoVertex_type);
+
+      std::string Xaxis_title;
+      if(isFractional==false){Xaxis_title =  "Absoltute " + GetVertexCryoVarAxisTitleNoUnits(CryoVertex_type) + " residual (true - reco [mm])" ;}
+      else{Xaxis_title = "Fractional " + GetVertexCryoVarAxisTitleNoUnits(CryoVertex_type) + " residual (true - reco) / true";}
+
+      auto FULL_name = FULL_playlist_nom.GetPlaylist();
+      auto Empty_name = EMPTY_playlist_nom.GetPlaylist();
+      std::string playlistFull =   GetPlaylist_InitialName(FULL_name); //FULL_playlist.GetPlaylistName();
+      std::string playlistEmpty = GetPlaylist_InitialName(Empty_name); //EMPTY_playlist.GetPlaylistName();
+
+
+      char title_type_char[title_type.length()+1];
+      strcpy( title_type_char, title_type.c_str());
+
+      char playlistFull_char[playlistFull.length()+1];
+      strcpy( playlistFull_char, playlistFull.c_str());
+
+      char playlistEmpty_char[ playlistEmpty.length()+1];
+      strcpy( playlistEmpty_char,  playlistEmpty.c_str());
+
+      bool Setgrid = true;
+
+      sprintf(Title_His, "%s [%s][F(%s)]", title_type_char, CutsApplied, playlistFull_char);
+      DrawCVAndError_3tankRegionsHIST_withRMS(hist_region1_Full, hist_region2_Full, hist_region3_Full,
+         Title_His ,Xaxis_title, "NEvents", "mm", pdf_string, Setgrid, doBinwidth, isFractional , isAreaNormalized , Ymax);
+
+      sprintf(Title_His, "%s [%s][E(%s)]", title_type_char , CutsApplied, playlistEmpty_char);
+      DrawCVAndError_3tankRegionsHIST_withRMS(hist_region1_EMPTY, hist_region2_EMPTY, hist_region3_EMPTY,
+         Title_His ,Xaxis_title, "NEvents", "mm", pdf_string, Setgrid, doBinwidth, isFractional , isAreaNormalized, Ymax );
+
+      sprintf(Title_His, "%s [%s][F(%s)- E(%s)]", title_type_char, CutsApplied, playlistFull_char, playlistEmpty_char);
+      DrawCVAndError_3tankRegionsHIST_withRMS(hist_region1_Full_EMPTY, hist_region2_Full_EMPTY, hist_region3_Full_EMPTY,
+         Title_His ,Xaxis_title, "NEvents", "mm", pdf_string, Setgrid, doBinwidth, isFractional , isAreaNormalized, Ymax );
+
+
+
+}//endl;
+
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 void Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom,
-  PlayList_INFO EMPTY_playlist_nom,  const char *histoName_nom, const char *histoName_dem,
-  int logScale, const char* title, MnvPlotter *plot, TCanvas *can, const char *pdf , CryoVertex CryoVertex_type ){
+                                                 PlayList_INFO EMPTY_playlist_nom,
+                                                 const char *histoName_nom, const char *histoName_dem,
+  int logScale, MnvPlotter *plot, TCanvas *can, const char *pdf , CryoVertex CryoVertex_type ){
 
       char Title_His[1024];
 
@@ -1811,16 +2300,16 @@ void Draw_Ratio_CryoVertex_FULL_EMPTY_RecoBranch(PlayList_INFO FULL_playlist_nom
 
       hist_full_nom->Divide(hist_full_nom,hist_full_dem, 1.0,1.0,"");
 
-      sprintf(Title_His, "Vertex Ratio %s (%s) (%s)(Full)", title_type_char, title , playlistFull_char);
+      sprintf(Title_His, "Vertex Ratio %s [F(%s)]", title_type_char , playlistFull_char);
       DrawCVAndError_FromHIST(hist_full_nom, Title_His ,Xaxis_title,"#frac{reco}{true}", pdf,true);
 
       hist_empty_nom->Divide(hist_empty_nom,hist_empty_dem,1.0,1.0,"");
 
-      sprintf(Title_His, "Vertex Ratio  %s (%s) (%s)(Empty)", title_type_char, title , playlistFull_char);
+      sprintf(Title_His, "Vertex Ratio  %s [E(%s)]", title_type_char,  playlistFull_char);
       DrawCVAndError_FromHIST(hist_empty_nom, Title_His ,Xaxis_title,"#frac{reco}{true}", pdf,true);
 
       hist_full_nom_clone->Divide(hist_full_nom_clone,hist_full_dem_clone,1.0,1.0,"");
-      sprintf(Title_His, "Vertex Ratio %s (%s) (%s-%s)", title_type_char,title,playlistFull_char,playlistEmpty_char);
+      sprintf(Title_His, "Vertex Ratio %s  [F(%s)- E(%s)]", title_type_char, playlistFull_char, playlistEmpty_char);
       DrawCVAndError_FromHIST(hist_full_nom_clone, Title_His ,Xaxis_title,"#frac{reco}{true}", pdf,true);
 
 
@@ -1922,87 +2411,174 @@ void Draw_Efficiency_2D_FULL_EMPTY(PlayList_INFO FULL_playlist, PlayList_INFO EM
 }//endl;
 
 
-void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom,PlayList_INFO FULL_playlist_DemTRUE,
-   PlayList_INFO EMPTY_playlist_nom,PlayList_INFO EMPTY_playlist_DemTRUE, const char *histoName, const char *Xaxis_title,
-   const char *Yaxis_title, const char* title ,const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf)
-   {
+void Draw_Efficiency_2D_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_nom, PlayList_INFO FULL_playlist_DemTRUE,
+                                         PlayList_INFO EMPTY_playlist_nom,PlayList_INFO EMPTY_playlist_DemTRUE,
+const char *histoName, const char *Xaxis_title, const char *Yaxis_title, const char* title ,const char* title_type_char,
+ MnvPlotter *plot, TCanvas *can, const char *pdf)
+{
+  char histoName_TRUE[1024];
+  char histoName_TRUE_RECO[1024];
+  char histoName_helium[1024];
+  char histoName_nonhelium[1024];
+  char Title_His[1024];
 
-      char histoName_TRUE[1024];
-      char histoName_TRUE_RECO[1024];
-      char Title_His[1024];
+  double FULL_POT = FULL_playlist_nom.Get_Pot();
+  double EMPTY_POT = EMPTY_playlist_nom.Get_Pot();
+  double Scale_MC = FULL_POT / EMPTY_POT;
 
-      double FULL_POT = FULL_playlist_nom.Get_Pot();
-      double EMPTY_POT = EMPTY_playlist_nom.Get_Pot();
-      double Scale_MC = FULL_POT / EMPTY_POT;
+  sprintf(histoName_TRUE, "%s_TRUE", histoName);
+  sprintf(histoName_TRUE_RECO, "%s_TRUE_RECO", histoName);
 
-      sprintf(histoName_TRUE, "%s_TRUE", histoName);
-      sprintf(histoName_TRUE_RECO, "%s_TRUE_RECO", histoName);
-      std::cout<< "Getting Hist Named for True = " << histoName_TRUE<<std::endl;
-      std::cout<< "Getting Hist Named for RECO True = " << histoName_TRUE_RECO <<std::endl;
-      bool isfull = true;
-      bool isempty = false;
-      MnvH2D *hist_TRUE_FULL = Get2DHist(*FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isfull);
-      MnvH2D *hist_TRUE_RECO_FULL = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
-      MnvH2D *hist_TRUE_EMPTY = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isempty);
-      MnvH2D *hist_TRUE_RECO_EMPTY = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
-
-      MnvH2D* hist_TRUE_FULL_clone = Get2DHist(*FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isfull);
-      MnvH2D* hist_TRUE_RECO_FULL_clone = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
-      MnvH2D* hist_TRUE_EMPTY_clone = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isempty);
-      MnvH2D* hist_TRUE_RECO_EMPTY_clone = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
-
-            ///Calculation FOR FINAL Eff
-
-      hist_TRUE_EMPTY_clone->Scale(Scale_MC);
-      hist_TRUE_RECO_EMPTY_clone->Scale(Scale_MC);
-      hist_TRUE_FULL_clone->Add(hist_TRUE_EMPTY_clone,-1);
-      hist_TRUE_RECO_FULL_clone->Add(hist_TRUE_RECO_EMPTY_clone,-1);
-      hist_TRUE_RECO_FULL_clone->Divide(hist_TRUE_RECO_FULL_clone,  hist_TRUE_FULL_clone, 1.0, 1.0,"");
+  sprintf(histoName_helium, "%s_helium", histoName);
+  sprintf(histoName_nonhelium, "%s_nonhelium", histoName);
 
 
+  std::cout<< "Getting Hist Named for True = " << histoName_TRUE<<std::endl;
+  std::cout<< "Getting Hist Named for RECO True = " << histoName_TRUE_RECO <<std::endl;
+  bool isfull = true;
+  bool isempty = false;
 
-      //std::string title_type = GetsecondTrkTitleName(playlist_name);
-      //std::string Xaxis_title = GetsecondTrk_AXIS_TitleName(playlist_name);
-      auto FULL_name = FULL_playlist_nom.GetPlaylist();
-      auto Empty_name = EMPTY_playlist_nom.GetPlaylist();
-      std::string playlistFull =   GetPlaylist_InitialName(FULL_name); //FULL_playlist.GetPlaylistName();
-      std::string playlistEmpty = GetPlaylist_InitialName(Empty_name); //EMPTY_playlist.GetPlaylistName();
+  MnvH2D *hist_TRUE_FULL = Get2DHist(*FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isfull);
+  MnvH2D *hist_TRUE_RECO_FULL = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
+  MnvH2D *hist_TRUE_EMPTY = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isempty);
+  MnvH2D *hist_TRUE_RECO_EMPTY = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
 
-    //  char title_type_char[title_type.length()+1];
-      //strcpy( title_type_char, title_type.c_str());
+  MnvH2D* hist_TRUE_FULL_clone = Get2DHist(*FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isfull);
+  MnvH2D* hist_TRUE_RECO_FULL_clone = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
+  MnvH2D* hist_TRUE_EMPTY_clone = Get2DHist(*EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, isempty);
+  MnvH2D* hist_TRUE_RECO_EMPTY_clone = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
 
-      char playlistFull_char[playlistFull.length()+1];
-      strcpy( playlistFull_char, playlistFull.c_str());
-
-      char playlistEmpty_char[ playlistEmpty.length()+1];
-      strcpy( playlistEmpty_char,  playlistEmpty.c_str());
-      // .pdf
-      sprintf(Title_His, "%s (True) (%s)(F) ", title,   playlistFull_char);
-      Draw2DHist_TFILE(FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, Title_His  , Xaxis_title,Yaxis_title, pdf,can, plot,false );
-      sprintf(Title_His, "%s (True+RECO) (%s)(F)", title, playlistFull_char);
-      Draw2DHist_TFILE(FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, Title_His , Xaxis_title,Yaxis_title, pdf ,can, plot,false);
-      sprintf(Title_His, "%s (True) (%s)(E)", title, playlistEmpty_char);
-      Draw2DHist_TFILE(EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE,Title_His, Xaxis_title, Yaxis_title, pdf,can, plot,false );
-      sprintf(Title_His, "%s (True+RECO) (%s)(E)", title,   playlistEmpty_char);
-      Draw2DHist_TFILE(EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO,  Title_His , Xaxis_title, Yaxis_title, pdf,can, plot,false );
+  MnvH2D *h_helium_FULL = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_helium, isfull);
+  MnvH2D* h_Total_FULL_EMPTY = (PlotUtils::MnvH2D*)h_helium_FULL ->Clone("h_Total_FULL_EMPTY");
+  MnvH2D* h_helium_FULL_EMPTY = (PlotUtils::MnvH2D*)h_helium_FULL ->Clone("h_helium_FULL_EMPTY");
+  MnvH2D* h_Total_FULL = (PlotUtils::MnvH2D*)h_helium_FULL ->Clone("h_Total_FULL");
 
 
-      hist_TRUE_RECO_FULL->Divide(hist_TRUE_RECO_FULL, hist_TRUE_FULL, 1.0,1.0,"");
-      hist_TRUE_RECO_EMPTY->Divide(hist_TRUE_RECO_EMPTY, hist_TRUE_EMPTY, 1.0,1.0,"");
+  MnvH2D *h_nonhelium_FULL = Get2DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_nonhelium, isfull);
 
-      sprintf(Title_His, "%s %s (%s)(Full) ", title_type_char, title, playlistFull_char);
-      //DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Efficiency", pdf,true);
-      //DrawMagration_heatMap(hist_TRUE_RECO_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
-      DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot); // need .pdf
-      sprintf(Title_His, "%s %s (%s)(Empty) ", title_type_char, title, playlistEmpty_char);
-    //  DrawCVAndError_FromHIST(hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true);
-      //DrawMagration_heatMap(hist_TRUE_RECO_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
-      DrawMagration_heatMap_noText(hist_TRUE_RECO_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
+  h_Total_FULL->Add(h_nonhelium_FULL,1.0);
+  h_Total_FULL_EMPTY->Add(h_nonhelium_FULL,1.0);
 
-      sprintf(Title_His, "%s %s (%s-%s)",title_type_char, title, playlistFull_char, playlistEmpty_char);
-      //DrawCVAndError_FromHIST(hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf,true);
-      //DrawMagration_heatMap(hist_TRUE_RECO_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
-      DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
+  MnvH2D *h_helium_EMPTY = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_helium, isempty);
+  MnvH2D *h_nonhelium_EMPTY = Get2DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_nonhelium, isempty);
+  MnvH2D* h_Total_EMPTY = (PlotUtils::MnvH2D*)h_helium_EMPTY ->Clone("h_Total_EMPTY");
+  h_Total_EMPTY->Add(h_nonhelium_EMPTY,1.0);
+
+
+  ///Calculation FOR FINAL Eff
+  h_helium_EMPTY->Scale(Scale_MC);
+  h_nonhelium_EMPTY->Scale(Scale_MC);
+  h_Total_EMPTY->Scale(Scale_MC);
+
+  hist_TRUE_EMPTY_clone->Scale(Scale_MC);
+  hist_TRUE_RECO_EMPTY_clone->Scale(Scale_MC);
+  hist_TRUE_FULL_clone->Add(hist_TRUE_EMPTY_clone,-1);
+  hist_TRUE_RECO_FULL_clone->Add(hist_TRUE_RECO_EMPTY_clone,-1);
+  hist_TRUE_RECO_FULL_clone->Divide(hist_TRUE_RECO_FULL_clone,  hist_TRUE_FULL_clone, 1.0, 1.0,"");
+
+  auto FULL_name = FULL_playlist_nom.GetPlaylist();
+  auto Empty_name = EMPTY_playlist_nom.GetPlaylist();
+  std::string playlistFull =   GetPlaylist_InitialName(FULL_name); //FULL_playlist.GetPlaylistName();
+  std::string playlistEmpty = GetPlaylist_InitialName(Empty_name); //EMPTY_playlist.GetPlaylistName();
+
+  //  char title_type_char[title_type.length()+1];
+  //strcpy( title_type_char, title_type.c_str());
+
+  char playlistFull_char[playlistFull.length()+1];
+  strcpy( playlistFull_char, playlistFull.c_str());
+
+  char playlistEmpty_char[ playlistEmpty.length()+1];
+  strcpy( playlistEmpty_char,  playlistEmpty.c_str());
+  // .pdf
+  char pdf_label[1024];
+  sprintf(pdf_label,"%s.pdf",pdf);
+
+  sprintf(Title_His, "%s (True) [F(%s)]", title,   playlistFull_char);
+  Draw2DHist_TFILE(FULL_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE, Title_His  , Xaxis_title,Yaxis_title, pdf_label,can, plot,false );
+  sprintf(Title_His, "%s (True+RECO) [F(%s)]", title, playlistFull_char);
+  Draw2DHist_TFILE(FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, Title_His , Xaxis_title,Yaxis_title, pdf_label ,can, plot,false);
+  sprintf(Title_His, "%s (True) [E(%s)]", title, playlistEmpty_char);
+  Draw2DHist_TFILE(EMPTY_playlist_DemTRUE.TFILE_PLAYLIST, histoName_TRUE,Title_His, Xaxis_title, Yaxis_title, pdf_label,can, plot,false );
+  sprintf(Title_His, "%s (True+RECO) [E(%s)]", title,   playlistEmpty_char);
+  Draw2DHist_TFILE(EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO,  Title_His , Xaxis_title, Yaxis_title, pdf_label,can, plot,false );
+
+
+  hist_TRUE_RECO_FULL->Divide(hist_TRUE_RECO_FULL, hist_TRUE_FULL, 1.0,1.0,"");
+  hist_TRUE_RECO_EMPTY->Divide(hist_TRUE_RECO_EMPTY, hist_TRUE_EMPTY, 1.0,1.0,"");
+  /////////Eff
+  sprintf(Title_His, "%s [F(%s)]", title, playlistFull_char);
+  //DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot, false, "Efficieny"); // need .pdf
+  Draw2DHist_HistpointernoText(hist_TRUE_RECO_FULL, Title_His, Xaxis_title, Yaxis_title,  "Efficieny", pdf, can, plot);
+  sprintf(Title_His, "%s [E(%s)]", title, playlistEmpty_char);
+  //DrawMagration_heatMap_noText(hist_TRUE_RECO_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot, false, "Efficieny");
+  Draw2DHist_HistpointernoText(hist_TRUE_RECO_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Efficieny", pdf, can, plot);
+  sprintf(Title_His, "%s [F(%s)- E(%s)]",title,  playlistFull_char, playlistEmpty_char);
+  //DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot, false, "Efficieny");
+  Draw2DHist_HistpointernoText(hist_TRUE_RECO_FULL_clone, Title_His, Xaxis_title, Yaxis_title,  "Efficieny", pdf, can, plot);
+////////
+//Purity
+////////
+sprintf(Title_His, "%s [Helium] [F(%s)]", title,  playlistFull_char);
+Draw2DHist_HistpointernoText(h_helium_FULL, Title_His, Xaxis_title, Yaxis_title,  "Population", pdf, can, plot);
+
+sprintf(Title_His, "%s [Total] [F(%s)]", title, playlistFull_char);
+Draw2DHist_HistpointernoText(h_Total_FULL, Title_His, Xaxis_title, Yaxis_title,  "Population", pdf, can, plot);
+
+
+ h_helium_FULL->Divide(h_helium_FULL, h_Total_FULL,1.0,1.0,"");
+
+ sprintf(Title_His, "%s [F(%s)]", title,  playlistFull_char);
+ //DrawMagration_heatMap_noText(h_helium_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot,false,"Purity"); // need .pdf
+ Draw2DHist_HistpointernoText(h_helium_FULL, Title_His, Xaxis_title, Yaxis_title,  "Purity", pdf, can, plot);
+
+ sprintf(Title_His, "%s [Helium] [E(%s)]",title,  playlistEmpty_char);
+ Draw2DHist_HistpointernoText(h_helium_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Population", pdf, can, plot);
+
+ sprintf(Title_His, "%s [Total] [E(%s)]",title, playlistEmpty_char);
+ Draw2DHist_HistpointernoText(h_Total_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Population", pdf, can, plot);
+
+
+ MnvH2D* h_helium_EMPTY_clone = (PlotUtils::MnvH2D*)h_helium_EMPTY ->Clone("h_helium_EMPTY_clone");
+ h_helium_EMPTY->Divide(h_helium_EMPTY, h_Total_EMPTY,1.0,1.0,"");
+ sprintf(Title_His, "%s [E(%s)]",title, playlistEmpty_char);
+
+ //DrawMagration_heatMap_noText(hist_TRUE_RECO_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot,false,"Purity");
+ Draw2DHist_HistpointernoText(h_helium_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Purity", pdf, can, plot);
+
+ h_helium_FULL_EMPTY->Add(h_helium_EMPTY_clone,-1.0);
+ h_Total_FULL_EMPTY->Add(h_Total_EMPTY,-1.0);
+
+ sprintf(Title_His, "%s [Helium] [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ Draw2DHist_HistpointernoText( h_helium_FULL_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Population", pdf, can, plot);
+
+ sprintf(Title_His, "%s  [Total] [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ Draw2DHist_HistpointernoText( h_Total_FULL_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Population", pdf, can, plot);
+
+ h_helium_FULL_EMPTY->Divide(h_helium_FULL_EMPTY, h_Total_FULL_EMPTY,1.0,1.0,"");
+ sprintf(Title_His, "%s [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ //DrawMagration_heatMap_noText(h_helium_FULL_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot,false,"Purity");
+ Draw2DHist_HistpointernoText(h_helium_FULL_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Purity", pdf, can, plot);
+
+ //////
+ //
+ /////
+
+ hist_TRUE_RECO_FULL->Multiply(hist_TRUE_RECO_FULL, h_helium_FULL, 1.0, 1.0);
+ sprintf(Title_His, "%s [F(%s)]", title, playlistFull_char);
+ //DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL, Xaxis_title, Yaxis_title, Title_His, pdf, can, plot,false, "Eff*Purity"); // need .pdf
+ Draw2DHist_HistpointernoText(hist_TRUE_RECO_FULL, Title_His, Xaxis_title, Yaxis_title,  "Eff*Purity", pdf, can, plot);
+
+ hist_TRUE_RECO_EMPTY->Multiply(hist_TRUE_RECO_EMPTY,h_helium_EMPTY, 1.0, 1.0 );
+ sprintf(Title_His, "%s [E(%s)]", title, playlistEmpty_char);
+ //DrawMagration_heatMap_noText(hist_TRUE_RECO_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot,false, "Eff*Purity");
+ Draw2DHist_HistpointernoText(hist_TRUE_RECO_EMPTY, Title_His, Xaxis_title, Yaxis_title,  "Eff*Purity", pdf, can, plot);
+
+ hist_TRUE_RECO_FULL_clone->Multiply(hist_TRUE_RECO_FULL_clone, h_helium_FULL_EMPTY, 1.0, 1.0 );
+ sprintf(Title_His, "%s [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ //DrawMagration_heatMap_noText(hist_TRUE_RECO_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot,false, "Eff*Purity");
+ Draw2DHist_HistpointernoText(hist_TRUE_RECO_FULL_clone, Title_His, Xaxis_title, Yaxis_title,  "Eff*Purity", pdf, can, plot);
+
+
 
 }//endl;
 
@@ -2012,8 +2588,7 @@ void Draw_Migration_2D_FULL_EMPTY_TRUTH( PlayList_INFO FULL_playlist, PlayList_I
    const char *histoName, const char *Xaxis_title, const char *Yaxis_title, const char* title,
    const char* title_type_char , MnvPlotter *plot, TCanvas *can, const char *pdf) /*Needs .pdf */
    {
-
-    // gStyle->SetPalette(kGreenPink); //
+     gStyle->SetPalette(kCool); //
      char Title_His[1024];
 
       double FULL_POT = FULL_playlist.Get_Pot();
@@ -2044,19 +2619,22 @@ void Draw_Migration_2D_FULL_EMPTY_TRUTH( PlayList_INFO FULL_playlist, PlayList_I
       char playlistEmpty_char[ playlistEmpty.length()+1];
       strcpy( playlistEmpty_char,  playlistEmpty.c_str());
       // .pdf
-      sprintf(Title_His, "Migration %s [Full(%s)]", title,   playlistFull_char);
-      Draw2DHist_TFILE(FULL_playlist.TFILE_PLAYLIST, histoName, Title_His  , Xaxis_title,Yaxis_title, pdf,can, plot, false );
+      //sprintf(Title_His, "%s %s [F(%s)]",title_type_char, title, playlistFull_char);
+      //Draw2DHist_TFILE(FULL_playlist.TFILE_PLAYLIST, histoName, Title_His  , Xaxis_title,Yaxis_title, pdf,can, plot, false );
+      //DrawMagration_heatMap_noText(hMigration_FULL, Title_His, Xaxis_title ,Yaxis_title, pdf, can, plot); //pdf
 
-      sprintf(Title_His, "Migration %s [Empty(%s)]", title, playlistEmpty_char);
-      Draw2DHist_TFILE(EMPTY_playlist.TFILE_PLAYLIST, histoName,Title_His, Xaxis_title, Yaxis_title, pdf,can, plot, false );
 
-      sprintf(Title_His, "Migration %s [Full(%s)]",  title, playlistFull_char);
+      //sprintf(Title_His, "%s %s [E(%s)]",title_type_char,  title, playlistEmpty_char);
+      //Draw2DHist_TFILE(EMPTY_playlist.TFILE_PLAYLIST, histoName,Title_His, Xaxis_title, Yaxis_title, pdf,can, plot, false );
+      //DrawMagration_heatMap_noText(hMigration_EMPTY, Title_His, Xaxis_title ,Yaxis_title, pdf, can, plot); //pdf
+
+      sprintf(Title_His, "%s %s [F(%s)]",title_type_char,   title, playlistFull_char);
       DrawMagration_heatMap_noText(hMigration_FULL, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot); // need .pdf
 
-      sprintf(Title_His, "Migration %s [Empty(%s)]", title, playlistEmpty_char);
+      sprintf(Title_His, "%s %s [E(%s)]",title_type_char,  title, playlistEmpty_char);
       DrawMagration_heatMap_noText(hMigration_EMPTY, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
 
-      sprintf(Title_His, "Migration %s (%s-%s)", title, playlistFull_char, playlistEmpty_char);
+      sprintf(Title_His, "%s %s [F(%s)- E(%s)]",title_type_char,  title, playlistFull_char, playlistEmpty_char);
       DrawMagration_heatMap_noText(hMigration_FULL_clone, Xaxis_title,Yaxis_title, Title_His, pdf, can, plot);
 
 }//endl;
@@ -2779,9 +3357,6 @@ void MakeLatexForMuonFiguresCVandALLErrors(std::string output_name ,std::vector<
 
     }
   }
-
-
-
     pageCount= pageCount +  Column_Spacing +  Column_Spacing + Column_Spacing;
   }
 
@@ -2853,9 +3428,6 @@ void MakeLatexForEffMuonVar_StatsOnly(std::string output_name ,  std::string pdf
 }//end of
 
 
-
-
-
 void Appendtotxt_2ndTrk(std::string output_name ,  std::string pdf_name_CV, int First_page, int Full_empty_space, char *Var_name ,char *Units_name, std::vector<double>input_vectors)
   {
   double scale= .23;
@@ -2892,15 +3464,7 @@ void Appendtotxt_2ndTrk(std::string output_name ,  std::string pdf_name_CV, int 
     myfile<<"%%%%%%%%%%%%%%%%% \n";
     myfile<<"%%% END FRAME Frame CV and Error groups "<< Var_name<<"\n";
     myfile<<"%%%%%%%%%%%%%%%%% \n";
-
-
-
-
-
     myfile.close();
-
-
-
 
 }//end of
 
@@ -2941,6 +3505,37 @@ void AppendtoText_Resolution(std::string output_name ,  std::string pdf_name_CV,
 
 }//end of
 
+void AppendtoText_Migration(std::string output_name ,  std::string pdf_name_CV, int Figure_1_page_number,int Figure_2_page_number,
+ char *slideTitle, std::vector<double> bins , char * Units_name )
+  {
+  double scale= .27;
+  std::ofstream myfile;
+  std::string fileName = output_name + ".txt";
+  myfile.open(fileName, std::ios_base::app);
+  std::cout<<"Adding to Latex File "<< fileName<<std::endl;
+  LatexFormat Resolution_Latex(scale);
+  myfile<<"\n";
+  myfile<<"\n";
+  myfile<<"%%%%%%%%%%%%%%%%% \n";
+  myfile<<"%%% Begin Migration  \n";
+  myfile<<"%%%%%%%%%%%%%%%%% \n";
+  myfile<<Resolution_Latex.GetBeginFrame(slideTitle)<< "\n";
+  myfile<<Resolution_Latex.GetBeginTabular()<< "\n";
+  myfile<<Resolution_Latex.GetInclude_figure(Figure_1_page_number, pdf_name_CV)<< "\n";
+  myfile<<"& \n";
+  myfile<<Resolution_Latex.Get_hSpace("-1cm")<< "\n";
+  myfile<<Resolution_Latex.GetInclude_figure(Figure_2_page_number, pdf_name_CV )<< "\n";
+  myfile<<Resolution_Latex.GetEndTabular()<< "\n";
+  myfile<<Resolution_Latex.BinningLatexString(bins, slideTitle, Units_name )<< "\n";
+  myfile<<Resolution_Latex.GetEndFrame();
+  myfile<<"\n";
+  myfile<<"%%%%%%%%%%%%%%%%% \n";
+  myfile<<"%%% END FRAME for Resolution \n";
+  myfile<<"%%%%%%%%%%%%%%%%% \n";
+
+  myfile.close();
+
+}//end of
 
 void AppendtoLatex(std::string output_name ,  std::string pdf_name_CV, int Figure_1_page_number,int Figure_2_page_number,
  char *slideTitle , double FiducialCut, double scale )
@@ -3053,8 +3648,6 @@ void AppendtoLatex(std::string output_name ,  std::string pdf_name_CV, int Figur
 
 
 }// end of function
-
-
 
 
 void Make_Resolution_vertex_Latex(std::string output_name ,  std::string pdf_name_CV, std::vector<double>FiducialBins,
@@ -3301,12 +3894,6 @@ void MakeLatex_WithData_CutTable_TGraphs(TFile *inputFile_Data, const char* TGra
   myfile.close();
 }//end of function
 
-
-
-
-
-
-
 /////////////////////////////////////////////
 //Main Function
 /////////////////////////////////////////////
@@ -3344,8 +3931,6 @@ Kin(cutsOn, my_norm, my_debug, inputFileLoc);
 return 0;
 
 }
-
-
 
 std::vector<ME_helium_Playlists> GetPlayListVector_MC() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
@@ -3388,7 +3973,6 @@ std::vector<CryoVertex> GetCryoVertexVaribles() {
 //#endif
 }
 
-
 std::vector<SecondTrkVar> Get2ndTrkVaribles() {
 //#ifndef __CINT__ // related: https://root.cern.ch/faq/how-can-i-fix-problem-leading-error-cant-call-vectorpushback
   std::vector<SecondTrkVar> Vector_Vars;
@@ -3427,263 +4011,381 @@ void Draw_Efficiency_FidiucialCut_FULL_EMPTY_TRUTH(PlayList_INFO FULL_playlist_n
                                                    PlayList_INFO playlist_FULL_Data, PlayList_INFO playlist_EMPTY_Data,
                                                    const char *histoName_MC, const char *histoName_Data,
                                                    const char* title, std::string Xaxis_title, MnvPlotter *plot, bool doBinwidth,
-                                                   TCanvas *can,  char *pdf, bool PrintErrors, bool PrintallErrorBands , std::vector<double> Bins , double EffMax ){
+                                                   TCanvas *can,  char *pdf, bool PrintErrors, bool PrintallErrorBands,
+                                                   std::vector<double> Bins , double EffMax, double EffMin )
+{
+ char histoName_TRUE[1024];
+ char histoName_TRUE_RECO[1024];
+ char histoName_RECO_TRUE_RECO[1024];
+ char histoName_RECO_helium[1024];
+ char histoName_RECO_nonhelium[1024];
+ char histoName_TRUE_helium[1024];
+ char histoName_TRUE_nonhelium[1024];
+ char Title_His[1024];
+ char pdf_char[1024];
+ sprintf(pdf_char, "%s.pdf", pdf);
 
-  char histoName_TRUE[1024];
-  char histoName_TRUE_RECO[1024];
-  char histoName_RECO_helium[1024];
-  char histoName_RECO_nonhelium[1024];
-  char Title_His[1024];
-  char pdf_char[1024];
-  sprintf(pdf_char, "%s.pdf", pdf);
-
-
-  double FULL_POT = FULL_playlist_nom.Get_Pot();
-  double EMPTY_POT = EMPTY_playlist_nom.Get_Pot();
-  double Scale_MC = FULL_POT / EMPTY_POT;
-
-  double FULL_POT_data = playlist_FULL_Data.Get_Pot();
-  double EMPTY_POT_data = playlist_EMPTY_Data.Get_Pot();
-  double Scale_data = FULL_POT_data / EMPTY_POT_data;
-
-  double Scale_FULL_MC_data = FULL_POT_data / FULL_POT;
-  double Scale_Empty_MC_data = FULL_POT_data / EMPTY_POT;
+std::string Xaxis_title_RECO = "[RECO] " + Xaxis_title;
+std::string Xaxis_title_TRUE = "[TRUE] " + Xaxis_title;
 
 
-  sprintf(histoName_TRUE, "%s_TRUE", histoName_MC);
-  sprintf(histoName_TRUE_RECO, "%s_TRUE_RECO", histoName_MC);
+ double FULL_POT = FULL_playlist_nom.Get_Pot();
+ double EMPTY_POT = EMPTY_playlist_nom.Get_Pot();
+ double Scale_MC = FULL_POT / EMPTY_POT;
 
-  sprintf(histoName_RECO_helium, "%s_helium", histoName_MC);
-  sprintf(histoName_RECO_nonhelium, "%s_nonhelium", histoName_MC);
-  bool isfull=true;
-  bool isempty=false;
+ double FULL_POT_data = playlist_FULL_Data.Get_Pot();
+ double EMPTY_POT_data = playlist_EMPTY_Data.Get_Pot();
+ double Scale_data = FULL_POT_data / EMPTY_POT_data;
 
-  MnvH1D* hist_TRUE_FULL = Get1DHist(*FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_TRUE_RECO_FULL = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_FULL = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_MC, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
+ double Scale_FULL_MC_data = FULL_POT_data / FULL_POT;
+ double Scale_Empty_MC_data = FULL_POT_data / EMPTY_POT;
 
-  MnvH1D* hist_RECO_FULL_Total = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_MC, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_FULL_helium = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_RECO_helium, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_FULL_nonhelium = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_RECO_nonhelium, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D *Purity_Dom_Full = (PlotUtils::MnvH1D*)hist_RECO_FULL_Total->Clone("Purity_Dom_Full");
-  MnvH1D *Purity_Dom_Full_EMPTY = (PlotUtils::MnvH1D*)hist_RECO_FULL_Total->Clone("Purity_Dom_Full_EMPTY");
+ sprintf(histoName_TRUE, "%s_TRUE", histoName_MC);
+ sprintf(histoName_TRUE_RECO, "%s_TRUE_RECO", histoName_MC);
+ sprintf(histoName_RECO_TRUE_RECO, "%s_RECO_TRUE_RECO", histoName_MC);
 
-  hist_RECO_FULL_Total->Scale(Scale_FULL_MC_data);
-  hist_RECO_FULL_helium->Scale(Scale_FULL_MC_data);
-  hist_RECO_FULL_nonhelium->Scale(Scale_FULL_MC_data);
+ sprintf(histoName_TRUE_helium, "%s_helium", histoName_MC);
+ sprintf(histoName_TRUE_nonhelium, "%s_nonhelium", histoName_MC);
 
-  MnvH1D* hist_RECO_EMPTY_Total = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_MC, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_EMPTY_helium = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_RECO_helium, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_EMPTY_nonhelium = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_RECO_nonhelium, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D *Purity_Dom_Empty = (PlotUtils::MnvH1D*)hist_RECO_EMPTY_Total->Clone("Purity_Dom_Empty");
-  MnvH1D *Purity_Dom_Empty_clone = (PlotUtils::MnvH1D*)hist_RECO_EMPTY_Total->Clone("Purity_Dom_Empty_clone");
+ sprintf(histoName_RECO_helium, "%s_RECO_helium", histoName_MC);
+ sprintf(histoName_RECO_nonhelium, "%s_RECO_nonhelium", histoName_MC);
 
-  Purity_Dom_Empty->Scale(Scale_MC);
-  Purity_Dom_Empty_clone->Scale(Scale_MC);
+ bool isfull=true;
+ bool isempty=false;
 
-  hist_RECO_EMPTY_Total->Scale(Scale_Empty_MC_data);
-  hist_RECO_EMPTY_helium->Scale(Scale_Empty_MC_data);
-  hist_RECO_EMPTY_nonhelium->Scale(Scale_Empty_MC_data);
+ MnvH1D* hist_TRUE_FULL      = Get1DHist(*FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isfull);
+ MnvH1D* hist_TRUE_RECO_FULL = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
+ //MnvH1D* Acceptance_FULL     = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_RECO_TRUE_RECO, isfull);
+ //MnvH1D *Acceptance_FULL_EMPTY        = (PlotUtils::MnvH1D*)Acceptance_FULL->Clone("Acceptance_FULL_EMPTY");
 
+ //MnvH1D* Acceptance_FULL_DOM = Get1DHist(*FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isfull);
+ //MnvH1D *Acceptance_FULL_EMPTY_DOM        = (PlotUtils::MnvH1D*)Acceptance_FULL_DOM->Clone("Acceptance_FULL_EMPTY_DOM");
 
+ //Acceptance_FULL_DOM->AddMissingErrorBandsAndFillWithCV(*Acceptance_FULL);
+ //Acceptance_FULL_EMPTY_DOM->AddMissingErrorBandsAndFillWithCV(*Acceptance_FULL);
 
-  MnvH1D* Purity_Full = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_RECO_helium, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* Purity_Empty = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_RECO_helium, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* Purity_Full_Empty = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_RECO_helium, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D *Purity_Empty_clone = (PlotUtils::MnvH1D*)Purity_Empty->Clone("Purity_Empty_clone");
+ MnvH1D* hist_RECO_FULL      = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_MC, isfull);
 
-  Purity_Empty->Scale(Scale_MC);
-  Purity_Empty_clone->Scale(Scale_MC);
+ MnvH1D* hist_TRUE_EMPTY      = Get1DHist(*EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isempty);
+ MnvH1D* hist_TRUE_RECO_EMPTY = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
 
-  hist_TRUE_FULL->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_FULL);
+ MnvH1D* Acceptance_EMPTY     = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_RECO_TRUE_RECO, isempty);
+ MnvH1D *Acceptance_EMPTY_clone        = (PlotUtils::MnvH1D*)Acceptance_EMPTY->Clone("Acceptance_EMPTY_clone");
+ MnvH1D* Acceptance_EMPTY_DOM      = Get1DHist(*EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isempty);
+ MnvH1D *Acceptance_EMPTY_DOM_clone        = (PlotUtils::MnvH1D*)Acceptance_EMPTY_DOM->Clone("Acceptance_EMPTY_DOM_clone");
 
-  MnvH1D* hist_TRUE_EMPTY = Get1DHist(*EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_TRUE_RECO_EMPTY = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_EMPTY = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_MC, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-
-  hist_TRUE_EMPTY->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_EMPTY);
-
-  MnvH1D* hist_TRUE_FULL_clone = Get1DHist(*FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_TRUE_RECO_FULL_clone = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_FULL_clone = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_MC, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-
-  hist_TRUE_FULL_clone->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_FULL_clone);
-
-  MnvH1D* hist_TRUE_EMPTY_clone = Get1DHist(*EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_TRUE_RECO_EMPTY_clone = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_RECO_EMPTY_clone = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_MC, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-
-  hist_TRUE_EMPTY_clone->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_EMPTY_clone);
-
-  MnvH1D* hist_FULL_data = Get1DHist(*playlist_FULL_Data.TFILE_PLAYLIST, histoName_Data, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_EMPTY_data = Get1DHist(*playlist_EMPTY_Data.TFILE_PLAYLIST, histoName_Data, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-
-  double Ymax_reco = 1.15 * hist_FULL_data->GetMaximum();
-
-  MnvH1D* hist_FULL_data_clone = Get1DHist(*playlist_FULL_Data.TFILE_PLAYLIST, histoName_Data, isfull);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-  MnvH1D* hist_EMPTY_data_clone = Get1DHist(*playlist_EMPTY_Data.TFILE_PLAYLIST, histoName_Data, isempty);//(MnvH1D*)FULL_playlist_nom.TFILE_PLAYLIST -> Get(histoName_nom);
-
-  ///Calculation FOR FINAL Eff
-  hist_TRUE_EMPTY_clone->Scale(Scale_MC);
-  hist_TRUE_RECO_EMPTY_clone->Scale(Scale_MC);
+ Acceptance_EMPTY_DOM->AddMissingErrorBandsAndFillWithCV(*Acceptance_EMPTY);
+ Acceptance_EMPTY_DOM_clone->AddMissingErrorBandsAndFillWithCV(*Acceptance_EMPTY);
 
 
-  // Data
-  hist_EMPTY_data_clone->Scale(Scale_data);
-  hist_EMPTY_data->Scale(Scale_data);
+ MnvH1D* hist_RECO_EMPTY      = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_MC, isempty);
+
+ MnvH1D* hist_RECO_FULL_Total = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_MC, isfull);
+ MnvH1D* hist_RECO_EMPTY_Total = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_MC, isempty);
+
+ MnvH1D* hist_RECO_FULL_Total_TRUE = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE, isfull);
+ MnvH1D* hist_TRUE_FULL_helium     = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_helium, isfull);
+ MnvH1D* hist_TRUE_FULL_nonhelium  =  Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_nonhelium, isfull);
+
+ MnvH1D* hist_RECO_FULL_helium =     Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_RECO_helium, isfull);
+ MnvH1D* hist_RECO_FULL_nonhelium =  Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_RECO_nonhelium, isfull);
+
+ MnvH1D* hist_RECO_EMPTY_Total_TRUE = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE, isempty);
+ MnvH1D* hist_TRUE_EMPTY_helium =     Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_helium, isempty);
+ MnvH1D* hist_TRUE_EMPTY_nonhelium =  Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_nonhelium, isempty);
+
+ MnvH1D* hist_RECO_EMPTY_helium =     Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_RECO_helium, isempty);
+ MnvH1D* hist_RECO_EMPTY_nonhelium =  Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_RECO_nonhelium, isempty);
+
+ MnvH1D *Purity_Dom_Full_TRUEbins = (PlotUtils::MnvH1D*)hist_RECO_FULL_Total_TRUE->Clone("Purity_Dom_Full_TRUEbins");
+ MnvH1D *Purity_Dom_Full_EMPTY_TRUEbins = (PlotUtils::MnvH1D*)hist_RECO_FULL_Total_TRUE->Clone("Purity_Dom_Full_EMPTY_TRUEbins");
+
+ MnvH1D *Purity_Dom_Empty_TRUEBins = (PlotUtils::MnvH1D*)hist_RECO_EMPTY_Total_TRUE->Clone("Purity_Dom_Empty_TRUEBins");
+ MnvH1D *Purity_Dom_Empty_clone_TRUEbins = (PlotUtils::MnvH1D*)hist_RECO_EMPTY_Total_TRUE->Clone("Purity_Dom_Empty_clone_TRUEbins");
 
 
-  hist_TRUE_FULL_clone->Add(hist_TRUE_EMPTY_clone,-1);
-  hist_TRUE_RECO_FULL_clone->Add(hist_TRUE_RECO_EMPTY_clone,-1);
+ MnvH1D *Purity_Dom_Full_RECObins        = (PlotUtils::MnvH1D*)hist_RECO_FULL->Clone("Purity_Dom_Full_RECObins");
+ MnvH1D *Purity_Dom_Full_EMPTY_RECObins  = (PlotUtils::MnvH1D*)hist_RECO_FULL->Clone("Purity_Dom_Full_EMPTY_RECObins");
+ MnvH1D *Purity_Dom_Empty_RECOBins       = (PlotUtils::MnvH1D*)hist_RECO_EMPTY->Clone("Purity_Dom_Empty_RECOBins");
+ MnvH1D *Purity_Dom_Empty_clone_RECObins = (PlotUtils::MnvH1D*)hist_RECO_EMPTY->Clone("Purity_Dom_Empty_clone_RECObins");
 
-  hist_RECO_EMPTY_clone->Scale(Scale_Empty_MC_data);
-  hist_RECO_FULL_clone->Scale(Scale_FULL_MC_data);
-  hist_RECO_FULL_clone->Add(hist_RECO_EMPTY_clone,-1);
+ hist_RECO_FULL_Total->Scale(Scale_FULL_MC_data);
+ hist_RECO_FULL_Total_TRUE->Scale(Scale_FULL_MC_data);
+ hist_TRUE_FULL_helium->Scale(Scale_FULL_MC_data);
+ hist_TRUE_FULL_nonhelium->Scale(Scale_FULL_MC_data);
 
-  //Data
-
-  hist_FULL_data_clone->Add(hist_EMPTY_data_clone,-1);
-
-
-  std::string title_type = "Fiducial Cut";
-
-  //std::string Xaxis_title = "Fiducial Cut Distance to Cryotank Edge [mm]";
-
-  double binwidth_title = hist_FULL_data -> GetBinWidth(4);
-  char ytitle[1024];
+ hist_RECO_FULL_helium->Scale(Scale_FULL_MC_data);
+ hist_RECO_FULL_nonhelium->Scale(Scale_FULL_MC_data);
 
 
+ Purity_Dom_Empty_TRUEBins->Scale(Scale_MC);
+ Purity_Dom_Empty_clone_TRUEbins->Scale(Scale_MC);
 
-  if(doBinwidth==true){
-    sprintf(ytitle, "Number of Events / %.2f [mm]", binwidth_title); //
-  }
-  else{    sprintf(ytitle, "Number of Events"); //
-}
+ Purity_Dom_Empty_RECOBins->Scale(Scale_Empty_MC_data);
+ Purity_Dom_Empty_clone_RECObins->Scale(Scale_Empty_MC_data);
 
-  std::string Yaxis_title(ytitle);
+ Acceptance_EMPTY->Scale(Scale_MC);
+ Acceptance_EMPTY_clone->Scale(Scale_MC);
 
-  auto FULL_name = FULL_playlist_nom.GetPlaylist();
-  auto Empty_name = EMPTY_playlist_nom.GetPlaylist();
+ Acceptance_EMPTY_DOM->Scale(Scale_MC);
+ Acceptance_EMPTY_DOM_clone->Scale(Scale_MC);
 
-  std::string playlistFull =   GetPlaylist_InitialName(FULL_name); //FULL_playlist.GetPlaylistName();
-  std::string playlistEmpty = GetPlaylist_InitialName(Empty_name); //EMPTY_playlist.GetPlaylistName();
+ hist_RECO_EMPTY_Total     ->Scale(Scale_Empty_MC_data);
+ hist_RECO_EMPTY_Total_TRUE->Scale(Scale_Empty_MC_data);
+ hist_RECO_EMPTY_helium    ->Scale(Scale_Empty_MC_data);
+ hist_RECO_EMPTY_nonhelium ->Scale(Scale_Empty_MC_data);
+
+ hist_TRUE_EMPTY_helium    ->Scale(Scale_Empty_MC_data);
+ hist_TRUE_EMPTY_nonhelium ->Scale(Scale_Empty_MC_data);
+
+ MnvH1D* Purity_Full_RECOBins        = (PlotUtils::MnvH1D*)hist_RECO_FULL_helium->Clone("Purity_Full_RECOBins");
+ MnvH1D* Purity_Full_EMPTY_RECOBins  = (PlotUtils::MnvH1D*)hist_RECO_FULL_helium->Clone("Purity_Full_EMPTY_RECOBins");
+
+ MnvH1D* Purity_EMPTY_RECOBins       = (PlotUtils::MnvH1D*)hist_RECO_EMPTY_helium ->Clone("Purity_EMPTY_RECOBins");
+ MnvH1D* Purity_EMPTY_RECOBins_clone = (PlotUtils::MnvH1D*)hist_RECO_EMPTY_helium ->Clone("Purity_EMPTY_RECOBins_clone");
+
+ hist_TRUE_FULL->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_FULL);
+ hist_TRUE_EMPTY->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_EMPTY);
+
+ MnvH1D* hist_TRUE_FULL_clone = Get1DHist(*FULL_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isfull);
+ MnvH1D* hist_TRUE_RECO_FULL_clone = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isfull);
+ MnvH1D* hist_RECO_FULL_clone = Get1DHist(*FULL_playlist_nom.TFILE_PLAYLIST, histoName_MC, isfull);
+
+ hist_TRUE_FULL_clone->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_FULL_clone);
+
+ MnvH1D* hist_TRUE_EMPTY_clone = Get1DHist(*EMPTY_playlist_TRUTHDEM.TFILE_PLAYLIST, histoName_TRUE, isempty);
+ MnvH1D* hist_TRUE_RECO_EMPTY_clone = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_TRUE_RECO, isempty);
+ MnvH1D* hist_RECO_EMPTY_clone = Get1DHist(*EMPTY_playlist_nom.TFILE_PLAYLIST, histoName_MC, isempty);
+
+ hist_TRUE_EMPTY_clone->AddMissingErrorBandsAndFillWithCV(*hist_TRUE_RECO_EMPTY_clone);
+
+ MnvH1D* hist_FULL_data = Get1DHist(*playlist_FULL_Data.TFILE_PLAYLIST, histoName_Data, isfull);
+ MnvH1D* hist_EMPTY_data = Get1DHist(*playlist_EMPTY_Data.TFILE_PLAYLIST, histoName_Data, isempty);
+
+ MnvH1D* hist_FULL_data_clone = Get1DHist(*playlist_FULL_Data.TFILE_PLAYLIST, histoName_Data, isfull);
+ MnvH1D* hist_EMPTY_data_clone = Get1DHist(*playlist_EMPTY_Data.TFILE_PLAYLIST, histoName_Data, isempty);
+
+ ///Calculation FOR FINAL Eff
+ hist_TRUE_EMPTY_clone->Scale(Scale_MC);
+ hist_TRUE_RECO_EMPTY_clone->Scale(Scale_MC);
+
+ // Data
+ hist_EMPTY_data_clone->Scale(Scale_data);
+ hist_EMPTY_data->Scale(Scale_data);
+
+ hist_TRUE_FULL_clone->Add(hist_TRUE_EMPTY_clone,-1);
+ hist_TRUE_RECO_FULL_clone->Add(hist_TRUE_RECO_EMPTY_clone,-1);
+
+ hist_RECO_EMPTY_clone->Scale(Scale_Empty_MC_data);
+ hist_RECO_FULL_clone->Scale(Scale_FULL_MC_data);
+ hist_RECO_FULL_clone->Add(hist_RECO_EMPTY_clone,-1);
+
+ //Data
+ hist_FULL_data_clone->Add(hist_EMPTY_data_clone,-1);
+
+ std::string title_type = "Fiducial Cut";
+
+ double binwidth_title = hist_FULL_data -> GetBinWidth(4);
+ char ytitle[1024];
+ if(doBinwidth==true){
+   sprintf(ytitle, "Number of Events / %.2f [mm]", binwidth_title); //
+ }
+ else{
+   sprintf(ytitle, "Number of Events"); //
+ }
+
+ std::string Yaxis_title(ytitle);
+
+ auto FULL_name = FULL_playlist_nom.GetPlaylist();
+ auto Empty_name = EMPTY_playlist_nom.GetPlaylist();
+
+ std::string playlistFull =   GetPlaylist_InitialName(FULL_name); //FULL_playlist.GetPlaylistName();
+ std::string playlistEmpty = GetPlaylist_InitialName(Empty_name); //EMPTY_playlist.GetPlaylistName();
 
 
-  char title_type_char[title_type.length()+1];
-  strcpy( title_type_char, title_type.c_str());
+ char title_type_char[title_type.length()+1];
+ strcpy( title_type_char, title_type.c_str());
 
-  char playlistFull_char[playlistFull.length()+1];
-  strcpy( playlistFull_char, playlistFull.c_str());
+ char playlistFull_char[playlistFull.length()+1];
+ strcpy( playlistFull_char, playlistFull.c_str());
 
-  char playlistEmpty_char[ playlistEmpty.length()+1];
-  strcpy( playlistEmpty_char,  playlistEmpty.c_str());
-
-  std::string pdf_string(pdf);
-
-  hist_RECO_FULL->Scale(Scale_FULL_MC_data);
-  sprintf(Title_His, "Fiducial Cut Event Rate [F(%s)]",playlistFull_char);
-  DrawCVAndError_FromHistPointer(hist_RECO_FULL , hist_FULL_data, Title_His ,Xaxis_title, Yaxis_title,
-    pdf_string, doBinwidth, false , PrintErrors, Ymax_reco, PrintallErrorBands );
-
-  hist_RECO_EMPTY->Scale(Scale_Empty_MC_data);
-  Ymax_reco = .6* Ymax_reco;
-  sprintf(Title_His, "Fiducial Cut Event Rate [E(%s)]",playlistEmpty_char);
-  DrawCVAndError_FromHistPointer(hist_RECO_EMPTY , hist_EMPTY_data, Title_His ,Xaxis_title, Yaxis_title,
-  pdf_string, doBinwidth, false , PrintErrors, Ymax_reco, PrintallErrorBands );
+ char playlistEmpty_char[ playlistEmpty.length()+1];
+ strcpy( playlistEmpty_char,  playlistEmpty.c_str());
 
 
 
-sprintf(Title_His, "Fiducial Cut Event Rate [F(%s)- E(%s)]", playlistFull_char, playlistEmpty_char);
-DrawCVAndError_FromHistPointer(hist_RECO_FULL_clone, hist_FULL_data_clone, Title_His ,Xaxis_title, Yaxis_title,
-    pdf_string, doBinwidth, false , PrintErrors, Ymax_reco, PrintallErrorBands );
+ std::string pdf_string(pdf);
+
+ hist_RECO_FULL->Scale(Scale_FULL_MC_data);
+ double Ymax_reco = 1.10 * hist_RECO_FULL->GetMaximum();
+ sprintf(Title_His, "%s Event Rate [F(%s)]",title, playlistFull_char);
+ DrawCVAndError_FromHistPointer(hist_RECO_FULL , hist_FULL_data, Title_His ,Xaxis_title_RECO, Yaxis_title,
+   pdf_string, doBinwidth, false , PrintErrors, Ymax_reco, PrintallErrorBands );
+
+ hist_RECO_EMPTY->Scale(Scale_Empty_MC_data);
+
+ sprintf(Title_His, "%s Event Rate [E(%s)]",title, playlistEmpty_char);
+ DrawCVAndError_FromHistPointer(hist_RECO_EMPTY , hist_EMPTY_data, Title_His ,Xaxis_title_RECO, Yaxis_title,
+   pdf_string, doBinwidth, false , PrintErrors, Ymax_reco, PrintallErrorBands );
+
+ sprintf(Title_His, "%s Event Rate [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ DrawCVAndError_FromHistPointer(hist_RECO_FULL_clone, hist_FULL_data_clone, Title_His ,Xaxis_title_RECO, Yaxis_title,
+   pdf_string, doBinwidth, false , PrintErrors, Ymax_reco, PrintallErrorBands );
 ///////////////////////////////////////////////////////////////////////////////
-sprintf(Title_His, "Fiducial Cut Event Rate [F(%s)]",playlistFull_char);
-Ymax_reco = hist_RECO_FULL_Total->GetMaximum();
-DrawCVAndError_From2HIST(hist_RECO_FULL_Total, hist_RECO_FULL_helium , hist_RECO_FULL_nonhelium ,
-  Title_His ,Xaxis_title,Yaxis_title,
-  pdf_string, false , PrintallErrorBands , false , doBinwidth, Ymax_reco );
+ sprintf(Title_His, "%s Event Rate [F(%s)]",title, playlistFull_char);
+ double Ymax_reco_helium = hist_RECO_FULL_Total_TRUE->GetMaximum()*1.25;
 
-Ymax_reco = hist_TRUE_FULL->GetMaximum();
-sprintf(Title_His, "Numerator and Denominator [F(%s)]",playlistFull_char);
-DrawCVAndError_From2HIST(hist_TRUE_FULL, "Denominator" ,hist_TRUE_RECO_FULL, "Numerator",  Title_His , Xaxis_title, "Nevents",
-pdf_string, true,  PrintallErrorBands , false , doBinwidth, Ymax_reco );
+ DrawCVAndError_From6HIST_RECO_vs_TRUE(hist_RECO_FULL_Total_TRUE, hist_TRUE_FULL_helium , hist_TRUE_FULL_nonhelium ,
+                         hist_RECO_FULL, hist_RECO_FULL_helium, hist_RECO_FULL_nonhelium,
+  Title_His ,Xaxis_title_TRUE, Yaxis_title,
+  pdf_string, false , PrintallErrorBands , false , doBinwidth, Ymax_reco_helium );
+
+ double Ymax_reco_Denominator = hist_TRUE_FULL->GetMaximum() * 1.75;
+
+ sprintf(Title_His, "%s Numerator and Denominator [F(%s)]", title, playlistFull_char);
+ DrawCVAndError_From2HIST(hist_TRUE_FULL, "Denominator" ,hist_TRUE_RECO_FULL, "Numerator",  Title_His , Xaxis_title_TRUE, "Nevents",
+ pdf_string, true,  PrintallErrorBands , false , doBinwidth, Ymax_reco_Denominator, true );
 ////////////////////
+ sprintf(Title_His, "%s Event Rate [E(%s)]",title, playlistEmpty_char);
+ DrawCVAndError_From6HIST_RECO_vs_TRUE(hist_RECO_EMPTY_Total_TRUE, hist_TRUE_EMPTY_helium , hist_TRUE_EMPTY_nonhelium,
+                                       hist_RECO_EMPTY, hist_RECO_EMPTY_helium, hist_RECO_EMPTY_nonhelium,
+                                       Title_His , Xaxis_title,Yaxis_title,
+ pdf_string, false , PrintallErrorBands , false , doBinwidth, Ymax_reco_helium );
 
-sprintf(Title_His, "Fiducial Cut Event Rate [E(%s)]",playlistEmpty_char);
-DrawCVAndError_From2HIST(hist_RECO_EMPTY_Total, hist_RECO_EMPTY_helium , hist_RECO_EMPTY_nonhelium,
-                                Title_His ,Xaxis_title,Yaxis_title,
- pdf_string, false , PrintallErrorBands , false , doBinwidth, Ymax_reco );
+ sprintf(Title_His, " %s Numerator and Denominator [E(%s)]", title, playlistEmpty_char);
+ DrawCVAndError_From2HIST(hist_TRUE_EMPTY, "Denominator" ,hist_TRUE_RECO_EMPTY, "Numerator",  Title_His , Xaxis_title_RECO, "Nevents",
+ pdf_string, true,  PrintallErrorBands , false , doBinwidth, Ymax_reco_Denominator, true );
+ //////////////////////////
+ hist_RECO_FULL_Total_TRUE->Add(hist_RECO_EMPTY_Total_TRUE,-1.0);
+ hist_TRUE_FULL_helium->Add(hist_TRUE_EMPTY_helium,-1.0);
+ hist_TRUE_FULL_nonhelium->Add(hist_TRUE_EMPTY_nonhelium,-1.0);
 
-sprintf(Title_His, "Numerator and Denominator [E(%s)]", playlistEmpty_char);
-DrawCVAndError_From2HIST(hist_TRUE_EMPTY, "Denominator" ,hist_TRUE_RECO_EMPTY, "Numerator",  Title_His , Xaxis_title, "Nevents",
-pdf_string, true,  PrintallErrorBands , false , doBinwidth, Ymax_reco );
-//////////////////////////
-hist_RECO_FULL_Total->Add(hist_RECO_EMPTY_Total,-1.0);
-hist_RECO_FULL_helium->Add(hist_RECO_EMPTY_helium,-1.0);
-hist_RECO_FULL_nonhelium->Add(hist_RECO_EMPTY_nonhelium,-1.0);
+ hist_RECO_FULL_helium->Add(hist_RECO_EMPTY_helium,-1.0);
+ hist_RECO_FULL_nonhelium->Add(hist_RECO_EMPTY_nonhelium,-1.0);
+ MnvH1D* Background = (PlotUtils::MnvH1D*)hist_RECO_FULL_nonhelium->Clone("Background");
 
-sprintf(Title_His, "Fiducial Cut Event Rate [F(%s)- E(%s)]", playlistFull_char, playlistEmpty_char);
-DrawCVAndError_From2HIST(hist_RECO_FULL_Total, hist_RECO_FULL_helium, hist_RECO_FULL_nonhelium,
-                                Title_His ,Xaxis_title, Yaxis_title,
- pdf_string, false , PrintallErrorBands , false , doBinwidth, Ymax_reco );
+ sprintf(Title_His, "%s Event Rate [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+DrawCVAndError_From6HIST_RECO_vs_TRUE(hist_RECO_FULL_Total_TRUE, hist_TRUE_FULL_helium, hist_TRUE_FULL_nonhelium,
+                          hist_RECO_FULL_clone, hist_RECO_FULL_helium, hist_RECO_FULL_nonhelium,
+   Title_His ,Xaxis_title, Yaxis_title,
+   pdf_string, false , PrintallErrorBands , false , doBinwidth, Ymax_reco_helium );
 
-sprintf(Title_His, "Numerator and Denominator [F(%s)- E(%s)]", playlistFull_char, playlistEmpty_char);
-DrawCVAndError_From2HIST(hist_TRUE_FULL_clone, "Denominator" ,hist_TRUE_RECO_FULL_clone, "Numerator",  Title_His , Xaxis_title, "Nevents",
-pdf_string, true,  PrintallErrorBands , false , doBinwidth, Ymax_reco );
-///////////////////////////////
-hist_TRUE_RECO_FULL->Divide(hist_TRUE_RECO_FULL, hist_TRUE_FULL, 1.0,1.0,""); // cl=0.683 b(1,1) mode , this is suppose to be the bayesdividion but didnn't work , if using biomional error if universe are equal then dividion cancels them to equal  zero
-hist_TRUE_RECO_EMPTY->Divide(hist_TRUE_RECO_EMPTY, hist_TRUE_EMPTY, 1.0,1.0,"");
-hist_TRUE_RECO_FULL_clone->Divide(hist_TRUE_RECO_FULL_clone, hist_TRUE_FULL_clone, 1.0,1.0,"");
-bool SetYAxis = true;
-double yMax = EffMax;
-double yMin = .05;
-sprintf(Title_His, "Efficiency %s [F(%s)] ", title_type_char, playlistFull_char);
-DrawCVAndError_FromHIST(PrintallErrorBands,hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Efficiency", pdf,true, doBinwidth, SetYAxis,yMax, yMin );
-sprintf(Title_His, "Efficiency  %s [E(%s)]", title_type_char, playlistEmpty_char);
-DrawCVAndError_FromHIST(PrintallErrorBands,hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true, doBinwidth, SetYAxis,yMax, yMin );
-sprintf(Title_His, "Efficiency %s [F(%s)- E(%s)]", title_type_char, playlistFull_char,playlistEmpty_char);
-DrawCVAndError_FromHIST(PrintallErrorBands, hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf, true, doBinwidth, SetYAxis,yMax, yMin );
+ sprintf(Title_His, "%s Numerator and Denominator [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ DrawCVAndError_From2HIST(hist_TRUE_FULL_clone, "Denominator" ,hist_TRUE_RECO_FULL_clone, "Numerator",  Title_His , Xaxis_title_TRUE, "Nevents",
+ pdf_string, true,  PrintallErrorBands , false , doBinwidth, Ymax_reco_Denominator, true );
+  ///////////////////////////////
+ hist_TRUE_RECO_FULL->Divide(hist_TRUE_RECO_FULL, hist_TRUE_FULL, 1.0,1.0,""); // cl=0.683 b(1,1) mode , this is suppose to be the bayesdividion but didnn't work , if using biomional error if universe are equal then dividion cancels them to equal  zero
+ hist_TRUE_RECO_EMPTY->Divide(hist_TRUE_RECO_EMPTY, hist_TRUE_EMPTY, 1.0,1.0,"");
+ hist_TRUE_RECO_FULL_clone->Divide(hist_TRUE_RECO_FULL_clone, hist_TRUE_FULL_clone, 1.0,1.0,"");
+ bool SetYAxis = true;
+ double yMax = EffMax;
+ double yMin = EffMin;
 
-
-sprintf(Title_His, "Purity %s [F(%s)] ", title_type_char, playlistFull_char);
-Purity_Full->Divide(Purity_Full, Purity_Dom_Full ,  1.0,1.0,"");
-DrawCVAndError_FromHIST(PrintallErrorBands, Purity_Full, Title_His ,Xaxis_title, "Purity", pdf,true, doBinwidth);
-sprintf(Title_His, "Purity %s [E(%s)]", title_type_char,playlistEmpty_char);
-Purity_Empty->Divide(Purity_Empty, Purity_Dom_Empty ,  1.0,1.0,"");
-DrawCVAndError_FromHIST(PrintallErrorBands, Purity_Empty, Title_His ,Xaxis_title, "Purity", pdf,true, doBinwidth);
-
-sprintf(Title_His, "Purity %s [F(%s)- E(%s)]", title_type_char, playlistFull_char, playlistEmpty_char);
-Purity_Full_Empty->Add(Purity_Empty_clone,-1.0);
-Purity_Dom_Full_EMPTY->Add(Purity_Dom_Empty_clone,-1.0);
-Purity_Full_Empty->Divide(Purity_Full_Empty, Purity_Dom_Full_EMPTY ,  1.0,1.0,"");
-
-DrawCVAndError_FromHIST(PrintallErrorBands, Purity_Full_Empty, Title_His ,Xaxis_title, "Purity", pdf,true, doBinwidth);
-
-sprintf(Title_His, "Fractional uncertainty %s [F(%s)] ", title_type_char, playlistFull_char);
-DrawCVAndError_eff_purity_EOM_ERROR(hist_TRUE_RECO_FULL,  Purity_Full, Title_His ,Xaxis_title,
-pdf_char, doBinwidth, EffMax , Bins);
-
-sprintf(Title_His, "Fractional uncertainty %s [E(%s)] ", title_type_char, playlistEmpty_char);
-DrawCVAndError_eff_purity_EOM_ERROR(hist_TRUE_RECO_EMPTY,  Purity_Empty, Title_His ,Xaxis_title,
-pdf_char, doBinwidth, .5 , Bins);
-
-sprintf(Title_His, "Fractional uncertainty %s [F(%s)- E(%s)]", title_type_char, playlistFull_char, playlistEmpty_char);
-DrawCVAndError_eff_purity_EOM_ERROR(hist_TRUE_RECO_FULL_clone,  Purity_Full_Empty, Title_His ,Xaxis_title,
-pdf_char, doBinwidth, EffMax , Bins);
-
-
-hist_TRUE_RECO_FULL->Multiply(hist_TRUE_RECO_FULL, Purity_Full, 1.0, 1.0);
-hist_TRUE_RECO_EMPTY->Multiply(hist_TRUE_RECO_EMPTY, Purity_Empty, 1.0, 1.0);
-hist_TRUE_RECO_FULL_clone->Multiply(hist_TRUE_RECO_FULL_clone, Purity_Full_Empty, 1.0, 1.0);
-
-sprintf(Title_His, "Eff*Purity %s [F(%s)] ", title_type_char, playlistFull_char);
-DrawCVAndError_FromHIST(PrintallErrorBands,hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Eff*Purity", pdf,true, doBinwidth);
-sprintf(Title_His, "Eff*Purity  %s [E(%s)]", title_type_char, playlistEmpty_char);
-DrawCVAndError_FromHIST(PrintallErrorBands,hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Eff*Purity", pdf,true, doBinwidth);
-sprintf(Title_His, "Eff*Purity %s [F(%s)- E(%s)]", title_type_char, playlistFull_char, playlistEmpty_char);
-DrawCVAndError_FromHIST(PrintallErrorBands, hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Eff*Purity", pdf,true, doBinwidth);
+ sprintf(Title_His, "%s Efficiency [F(%s)] ",title, playlistFull_char);
+ DrawCVAndError_FromHIST(PrintallErrorBands,hist_TRUE_RECO_FULL, Title_His ,Xaxis_title,"Efficiency", pdf,true, doBinwidth, SetYAxis, yMin, yMax);
+ sprintf(Title_His, "%s Efficiency [E(%s)]",title, playlistEmpty_char);
+ DrawCVAndError_FromHIST(PrintallErrorBands,hist_TRUE_RECO_EMPTY, Title_His ,Xaxis_title,"Efficiency", pdf,true, doBinwidth, SetYAxis,yMin, yMax);
+ sprintf(Title_His, "%s Efficiency [F(%s)- E(%s)]",title, playlistFull_char,playlistEmpty_char);
+ DrawCVAndError_FromHIST(PrintallErrorBands, hist_TRUE_RECO_FULL_clone, Title_His ,Xaxis_title,"Efficiency", pdf, true, doBinwidth, SetYAxis,yMin, yMax);
+ MnvH1D* Final_Efficiency_CLONE = (PlotUtils::MnvH1D*)hist_TRUE_RECO_FULL_clone ->Clone("Final_Efficiency_CLONE");
 
 
 
+ //Acceptance_FULL ->Divide(Acceptance_FULL,Acceptance_FULL_DOM,1.0, 1.0, "");
+ //Acceptance_EMPTY ->Divide(Acceptance_EMPTY,Acceptance_EMPTY_DOM,1.0, 1.0, "");
+ //Acceptance_FULL_EMPTY_DOM->Add(Acceptance_EMPTY_DOM_clone,-1);
+ //Acceptance_FULL_EMPTY->Add(Acceptance_EMPTY_clone,-1);
+ //Acceptance_FULL_EMPTY->Divide(Acceptance_FULL_EMPTY,Acceptance_FULL_EMPTY_DOM,1.0, 1.0, "");
 
-}//endl;B
+ //sprintf(Title_His, "%s Acceptance [F(%s)] ",title, playlistFull_char);
+ //DrawCVAndError_FromHIST(PrintallErrorBands,Acceptance_FULL, Title_His ,Xaxis_title,"Acceptance", pdf,true, doBinwidth, SetYAxis, yMin, yMax);
+ //sprintf(Title_His, "%s Acceptance [E(%s)]",title, playlistEmpty_char);
+ //DrawCVAndError_FromHIST(PrintallErrorBands,Acceptance_EMPTY, Title_His ,Xaxis_title,"Acceptance", pdf,true, doBinwidth, SetYAxis,yMin, yMax);
+ //sprintf(Title_His, "%s Acceptance [F(%s)- E(%s)]",title, playlistFull_char,playlistEmpty_char);
+ //DrawCVAndError_FromHIST(PrintallErrorBands, Acceptance_FULL_EMPTY, Title_His ,Xaxis_title,"Acceptance", pdf, true, doBinwidth, SetYAxis,yMin, yMax);
+
+///////////////////
+sprintf(Title_His, "%s Purity [F(%s)] ",title, playlistFull_char);
+Purity_Full_RECOBins->Divide(Purity_Full_RECOBins, Purity_Dom_Full_RECObins  ,  1.0,1.0,"");
+DrawCVAndError_FromHIST(PrintallErrorBands, Purity_Full_RECOBins, Title_His ,Xaxis_title, "Purity", pdf,true, doBinwidth, SetYAxis,0.0, .5);
+sprintf(Title_His, "%s Purity [E(%s)]",title, playlistEmpty_char);
+
+Purity_EMPTY_RECOBins->Divide(Purity_EMPTY_RECOBins, Purity_Dom_Empty_RECOBins ,  1.0,1.0,"");
+DrawCVAndError_FromHIST(PrintallErrorBands, Purity_EMPTY_RECOBins, Title_His ,Xaxis_title, "Purity", pdf,true, doBinwidth, SetYAxis,0.0, .5);
+sprintf(Title_His, "%s Purity [F(%s)- E(%s)]",title,  playlistFull_char, playlistEmpty_char);
+
+Purity_Full_EMPTY_RECOBins->Add(Purity_EMPTY_RECOBins_clone,-1.0);
+Purity_Dom_Full_EMPTY_RECObins->Add(Purity_Dom_Empty_clone_RECObins,-1.0);
+MnvH1D* Signal = (PlotUtils::MnvH1D*)Purity_Full_EMPTY_RECOBins->Clone("Signal");
+
+Purity_Full_EMPTY_RECOBins->Divide(Purity_Full_EMPTY_RECOBins, Purity_Dom_Full_EMPTY_RECObins ,  1.0, 1.0, "");
+std::vector<double> Signal_bins = GetXBinningfrom1DHist(Signal, false);
+std::vector<double> Signal_vector = GetYContentfrom1DHist(Signal, false);
+std::vector<double> Background_vector = GetYContentfrom1DHist(Background, false);
+
+std::vector<double> Significance_vector = GetSignificance(Signal_vector ,Background_vector );
+std::vector<double> Significance_vector_error = GetSignificanceError(Signal_vector ,Background_vector);
+TGraphErrors  *TG_Significance = MakeTGraph_from_VectorsErrors(Significance_vector, Significance_vector_error,  Signal_bins);
+sprintf(Title_His, "%s Significance [F(%s)- E(%s)]",title,  playlistFull_char, playlistEmpty_char);
+char Xaxis_title_char[Xaxis_title.length()+1];
+ strcpy( Xaxis_title_char,  Xaxis_title.c_str());
+ const double  y1_arrow = 0.0;
+ const double  y2_arrow = 0.015;
+  const double  y2_arrow_Significance = TG_Significance->GetHistogram()->GetMaximum();
+ const double  arrowLength = 100;
+
+DrawTGraph_withArrow(TG_Significance, Xaxis_title_char, "Significance", Title_His, "",pdf_char, can, plot, false, false, 50, y1_arrow,  y2_arrow_Significance, arrowLength, "R" );
+
+sprintf(Title_His, "%s Purity [F(%s)- E(%s)]",title,  playlistFull_char, playlistEmpty_char);
+DrawCVAndError_FromHIST(PrintallErrorBands, Purity_Full_EMPTY_RECOBins, Title_His ,Xaxis_title, "Purity", pdf,true, doBinwidth, SetYAxis, 0.0, .5);
+//////////////////////
+MnvH1D* Final_Purity_CLONE = (PlotUtils::MnvH1D*)Purity_Full_EMPTY_RECOBins ->Clone("Final_Efficiency_CLONE");
+std::vector<double> Purity_vector = GetYContentfrom1DHist(Final_Purity_CLONE, false);
+std::vector<double> Eff_vector = GetYContentfrom1DHist(Final_Efficiency_CLONE, false);
+TGraphErrors  *TG_Purity_VsEff = MakeTGraph_from_Vectors(Purity_vector,  Eff_vector);
+DrawTGraph(TG_Purity_VsEff,"Efficieny","Purity", "Purity vs Efficieny", "",pdf_char, can, plot, false, false );
+
+MnvH1D* Efficieny_FULL_clone = (PlotUtils::MnvH1D*)hist_TRUE_RECO_FULL ->Clone("Efficieny_FULL_clone");
+MnvH1D* Efficieny_EMPTY_clone = (PlotUtils::MnvH1D*)hist_TRUE_RECO_EMPTY ->Clone("Efficieny_EMPTY_clone");
+MnvH1D* Efficieny_FULL_EMPTY_clone = (PlotUtils::MnvH1D*)hist_TRUE_RECO_FULL_clone ->Clone("Efficieny_FULL_EMPTY_clone");
+
+Efficieny_FULL_clone->Multiply(Efficieny_FULL_clone,Purity_Full_RECOBins, 1.0, 1.0 );
+Efficieny_EMPTY_clone->Multiply(Efficieny_EMPTY_clone,Purity_EMPTY_RECOBins, 1.0, 1.0 );
+Efficieny_FULL_EMPTY_clone->Multiply(Efficieny_FULL_EMPTY_clone,Purity_Full_EMPTY_RECOBins, 1.0, 1.0 );
+
+
+
+
+ sprintf(Title_His, "%s [F(%s)] ",title, playlistFull_char);
+ DrawCVAndError_FromHIST(PrintallErrorBands,Efficieny_FULL_clone, Title_His ,Xaxis_title, "Eff*Purity", pdf,true, doBinwidth, SetYAxis, 0.0, .025, 50, y1_arrow,  y2_arrow, arrowLength, "R");
+ sprintf(Title_His, "%s [E(%s)]",title, playlistEmpty_char);
+ DrawCVAndError_FromHIST(PrintallErrorBands,Efficieny_EMPTY_clone, Title_His ,Xaxis_title, "Eff*Purity", pdf,true, doBinwidth, SetYAxis, 0.0, .025, 50, y1_arrow,  y2_arrow, arrowLength, "R");
+ sprintf(Title_His, "%s [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ DrawCVAndError_FromHIST(PrintallErrorBands, Efficieny_FULL_EMPTY_clone, Title_His ,Xaxis_title, "Eff*Purity", pdf,true, doBinwidth, SetYAxis, 0.0, .025, 50, y1_arrow,  y2_arrow, arrowLength, "R");
+
+
+ //Acceptance_FULL->Multiply(Acceptance_FULL,Purity_Full_RECOBins, 1.0, 1.0);
+ //Acceptance_EMPTY->Multiply(Acceptance_EMPTY,Purity_EMPTY_RECOBins, 1.0, 1.0);
+ //Acceptance_FULL_EMPTY->Multiply(Acceptance_FULL_EMPTY,Purity_Full_EMPTY_RECOBins, 1.0, 1.0);
+
+
+
+ //sprintf(Title_His, "%s [F(%s)] ",title, playlistFull_char);
+ //DrawCVAndError_FromHIST(PrintallErrorBands,Acceptance_FULL, Title_His ,Xaxis_title, "Acceptance*Purity", pdf,true, doBinwidth, SetYAxis, 0.0, .045, 50, y1_arrow,  y2_arrow, arrowLength, "R");
+ //sprintf(Title_His, "%s [E(%s)]",title, playlistEmpty_char);
+ //DrawCVAndError_FromHIST(PrintallErrorBands, Acceptance_EMPTY, Title_His ,Xaxis_title, "Acceptance*Purity", pdf,true, doBinwidth, SetYAxis, 0.0, .045, 50, y1_arrow,  y2_arrow, arrowLength, "R");
+ //sprintf(Title_His, "%s [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+ //DrawCVAndError_FromHIST(PrintallErrorBands, Acceptance_FULL_EMPTY, Title_His ,Xaxis_title, "Acceptance*Purity", pdf,true, doBinwidth, SetYAxis, 0.0, .045, 50, y1_arrow,  y2_arrow, arrowLength, "R");
+
+//BinByBinMuplication_byVector(*Acceptance_FULL_EMPTY, Significance_vector , false );
+//BinByBinMuplication_byVector(*Efficieny_FULL_EMPTY_clone, Significance_vector , false );
+
+double y2_arrow_new =.15;
+
+//sprintf(Title_His, "%s [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+//DrawCVAndError_FromHIST(PrintallErrorBands, Efficieny_FULL_EMPTY_clone, Title_His ,Xaxis_title, "Eff*Purity*Significance", pdf,true, doBinwidth, SetYAxis, 0.0, .25, 50, y1_arrow,  y2_arrow_new, arrowLength, "R");
+//y2_arrow_new =.12;
+//sprintf(Title_His, "%s [F(%s)- E(%s)]",title, playlistFull_char, playlistEmpty_char);
+//DrawCVAndError_FromHIST(PrintallErrorBands, Acceptance_FULL_EMPTY, Title_His ,Xaxis_title, "Acceptance*Purity*Significance", pdf,true, doBinwidth, SetYAxis, 0.0, .25, 50, y1_arrow,  y2_arrow_new, arrowLength, "R");
+
+}//end of function

@@ -17,7 +17,7 @@
 #include "PlotUtils/HistFolio.h"
 #include "PlotUtils/MnvColors.h"
 #include "PlotUtils/NamedCategory.h"
-
+#include "MinervaUnfold/MnvResponse.h"
 
 
 // Systematics lib
@@ -35,7 +35,8 @@
 
 
 #include "../includes/HeliumCVUniverse.h"
-#include "../includes/Helium_VertexSmearing_LateralSystematics_2XY_2Z.h"
+//#include "../includes/Helium_VertexSmearing_LateralSystematics_2XY_2Z.h"
+#include "../includes/Helium_Vertex_XYZ_Smearing_LateralSystematics.h"
 #include "../includes/Helium_TargetMassSystematics.h"
 
 #include "../includes/HeliumCuts.h"
@@ -44,6 +45,7 @@
 #include "../includes/CryoTankUtils.h"
 #include "TChain.h"
 #include "EventCounting.h"
+#include "../includes/Helium_ConvolutionTool.h"
 
 //#include "../src/loadLibs.h"
 //#include "../src/Catgorized.h"

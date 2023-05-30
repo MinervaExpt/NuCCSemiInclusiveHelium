@@ -18,6 +18,8 @@
 
 #include <iostream>
 
+
+
 class TLatex;
 class TPad;
 class TH1;
@@ -43,6 +45,9 @@ public:
 
   void SetXLimits(double xmin, double xmax);
   void SetYLimits(double ymin, double ymax);
+  void SetYLabel_Size(double size);
+  void SetXLabel_Size(double size);
+
 
   enum ETitleAlignment { kAlignRight, kAlignCenter };
 
@@ -73,13 +78,19 @@ public:
   int  GetTitleFont() const { return fTitleFont; }
 
   void   SetTitleSize(double size) { fTitleSize=size; }
+  void   SetXTitleSize(double size) { fXTitleSize=size; }
+  void   SetYTitleSize(double size) { fYTitleSize=size; }
   double GetTitleSize() const { return fTitleSize; }
+  double GetXTitleSize() const { return fXTitleSize; }
+  double GetYTitleSize() const { return fYTitleSize; }
 
+
+
+  double GetPadMax();
   void Remax(double ymin=0);
 
   void SetManualXLabels(int nLabels, const double* positions, const char** valueStrings, double yoffset=0.1);
-  void SetYLabel_Size(double size);
-  void SetXLabel_Size(double size);
+  void SetManualYLabels(int nLabels, const double* positions, const char** valueStrings, double xoffset=0.1);
 
 private:
 
@@ -100,8 +111,12 @@ private:
 
   int fTitleFont;
   double fTitleSize;
+  bool UseIndividualTitlesize = true;
+  double fXTitleSize = -1;
+  double fYTitleSize = -1;
 
   bool fManualXLabels;
+  bool fManualYLabels;
 
   ClassDef(GridCanvas, 0);
 };

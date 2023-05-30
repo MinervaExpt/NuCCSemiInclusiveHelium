@@ -43,7 +43,7 @@ class HeliumCVUniverse_LENX_validation: public PlotUtils::MinervaUniverse {
 public:
   #include "PlotUtils/WeightFunctions.h"
   #include "PlotUtils/MuonFunctions.h"
-  #include "PlotUtils/TruthFunctions.h"
+  //#include "PlotUtils/TruthFunctions.h"
   // Constructor
   HeliumCVUniverse_LENX_validation(PlotUtils::ChainWrapper* chw, double nsigma=0)
   : PlotUtils::MinervaUniverse(chw, nsigma)

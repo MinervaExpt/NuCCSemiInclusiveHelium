@@ -227,13 +227,13 @@ for(auto VetoWall_index: kVetoWallVaribles_vector ){
   char XAxis_name_char[XAxis_name.length()+1];
   strcpy(XAxis_name_char,XAxis_name.c_str());
 
-    DrawFULLStat_CV_SystematicErr(FullTFile_Map_MC,  FullPOT_local_MC_ScaledMAP,
-                                  EmptyTFile_Map_MC,  EmptyPOT_local_MC_ScaledMAP,
-                                  FullTFile_Map_Data, FullPOT_local_Data_ScaledMAP,
-                                  EmptyTFile_Map_Data, EmptyPOT_local_Data_ScaledMAP,
-       histnameMC_char ,histnameDATA_char,
-       GetVetowall_UnitType(VetoWall_index), pdf_CV, TITLE_char,
-       XAxis_name_char, "",  DoBinwidthNorm, MakeXaxisLOG, PrintallErrorGroups);
+    //DrawFULLStat_CV_SystematicErr(FullTFile_Map_MC,  FullPOT_local_MC_ScaledMAP,
+    //                              EmptyTFile_Map_MC,  EmptyPOT_local_MC_ScaledMAP,
+    //                              FullTFile_Map_Data, FullPOT_local_Data_ScaledMAP,
+    //                              EmptyTFile_Map_Data, EmptyPOT_local_Data_ScaledMAP,
+    //   histnameMC_char ,histnameDATA_char,
+    //   GetVetowall_UnitType(VetoWall_index), pdf_CV, TITLE_char,
+    //   XAxis_name_char, "",  DoBinwidthNorm, MakeXaxisLOG, PrintallErrorGroups);
 
     DrawFULLStatCOMBINED_CV_SystematicErr(FullTFile_Map_MC,  FullPOT_local_MC_MAP,
                                 EmptyTFile_Map_MC,  EmptyPOT_local_MC_MAP,

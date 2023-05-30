@@ -32,7 +32,8 @@
 #include "PlotUtils/MuonSystematics.h"
 #include "PlotUtils/weightMK.h"
 #include "PlotUtils/HyperDimLinearizer.h"
-#include "../includes/Helium_VertexSmearing_LateralSystematics_2XY_2Z.h"
+//#include "../includes/Helium_VertexSmearing_LateralSystematics_2XY_2Z.h"
+#include "../includes/Helium_Vertex_XYZ_Smearing_LateralSystematics.h"
 #include "../includes/Helium_TargetMassSystematics.h"
 
 //local Helium tools
@@ -43,6 +44,7 @@
 #include "../includes/loadLibs.h"
 #include "../includes/CryoTankUtils.h"
 #include "../includes/Helium2DUtils.h"
+#include "../includes/Helium_ConvolutionTool.h"
 
 
 #include <PlotUtils/POTCounter.h>
