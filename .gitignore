@@ -119,6 +119,8 @@ MasterAnaCVUniverse.hh
 MasterAna_CCQE_CVFunctions.h
 HeliumTransWrap/scriptholder/
 MasterAnaDev.cpp
+Chisqrt_fit_results
+CryoTank_EmptyHelium_Fit_withXYShifts
 
 #EventSelection
 Helium_runEventLoopForDATA
