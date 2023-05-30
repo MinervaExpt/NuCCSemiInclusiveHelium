@@ -42,6 +42,8 @@ LogFile_TRUTH.txt
 *.out
 *.appeinclude "../includes/common_functions.h"
 
+# figures 
+*.png
 
 #root files 
 *.root
@@ -58,8 +60,8 @@ flux_calculation_2D.py
 flux_calculation_rebinTracker.py
 flux_prism_2d.py
 playlists/MC_Playlist/xrootdfy.sh
-
-
+ExtractHeliumHist_TransWarp
+tryToRead
 
 #EventSelection
 Helium_runEventLoopForDATA
@@ -115,7 +117,7 @@ NukeCC_Cuts.hh
 MasterAnaCVUniverse.cpp
 MasterAnaCVUniverse.hh
 MasterAna_CCQE_CVFunctions.h
-
+HeliumTransWrap/scriptholder/
 MasterAnaDev.cpp
 
 #EventSelection
