@@ -119,10 +119,23 @@ hist->SetMaximum(hist->GetMaximum() * 1.25);
 
 void SetMaxforDraw(PlotUtils::MnvH1D* hist_to_Draw, PlotUtils::MnvH1D* hist,PlotUtils::MnvH1D* hist3  ){
 
-if(hist_to_Draw->GetMaximum() > hist->GetMaximum() && hist_to_Draw->GetMaximum() > hist3->GetMaximum() ){
- hist_to_Draw->SetMaximum(hist_to_Draw->GetMaximum() * 1.35);}
-else if (hist_to_Draw->GetMaximum() > hist->GetMaximum() && hist_to_Draw->GetMaximum() < hist3->GetMaximum()) {hist_to_Draw->SetMaximum(hist3->GetMaximum() * 1.35);}
-else if (hist_to_Draw->GetMaximum() < hist->GetMaximum() && hist->GetMaximum() > hist3->GetMaximum()) {hist_to_Draw->SetMaximum(hist->GetMaximum() * 1.35);}
+if(hist_to_Draw->GetMaximum() > hist->GetMaximum() &&
+ hist_to_Draw->GetMaximum() > hist3->GetMaximum() )
+ {
+   hist_to_Draw->SetMaximum(hist_to_Draw->GetMaximum() * 1.35);
+ }
+
+else if (hist_to_Draw->GetMaximum() > hist->GetMaximum()
+&& hist_to_Draw->GetMaximum() < hist3->GetMaximum())
+{
+  hist_to_Draw->SetMaximum(hist3->GetMaximum() * 1.35);
+}
+
+else if (hist_to_Draw->GetMaximum() < hist->GetMaximum() &&
+hist->GetMaximum() > hist3->GetMaximum())
+{
+  hist_to_Draw->SetMaximum(hist->GetMaximum() * 1.35);
+}
 
 }//end of function
 
@@ -375,91 +388,90 @@ return;
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-
-void PlotErrorSummaryNew(PlotUtils::MnvH1D* hist,
+void PlotErrorSummaryNew(
+  PlotUtils::MnvH1D* hist,
   std::string pdf, std::string title,
   std::string xaxis, TCanvas *cE,
-   MnvPlotter *mnvPlotter, bool Debug ,bool PrintAllGroupErrors)
-{
+  MnvPlotter *mnvPlotter, bool Debug ,bool PrintAllGroupErrors)
+  {
 
-if(Debug==true){}
-  const auto allBandNames = hist->GetVertErrorBandNames();
+    if(Debug==true){}
+    const auto allBandNames = hist->GetVertErrorBandNames();
   for(const auto& name: allBandNames)
   {
     //std::cout << "name = " << name<< std::endl;
   }
 
-//std::cout << "FINISHED PlotErrorSummaryNeW FOR" << name<< std::endl;
+  //std::cout << "FINISHED PlotErrorSummaryNeW FOR" << name<< std::endl;
 
 
-//  for(auto cat :mnvPlotter->error_summary_group_map)
-//  {
-//    std::cout << "cat.first =  " << cat.first <<std::endl;
-//    for(auto cat2: cat.second)
-//    {
-//      std::cout << "cat.second =  " << cat2 <<std::endl;
-//    }
-//  }
-//}
+  //  for(auto cat :mnvPlotter->error_summary_group_map)
+  //  {
+  //    std::cout << "cat.first =  " << cat.first <<std::endl;
+  //    for(auto cat2: cat.second)
+  //    {
+  //      std::cout << "cat.second =  " << cat2 <<std::endl;
+  //    }
+  //  }
+  //}
 
 
 
 
-hist->GetXaxis()->SetTitle(xaxis.c_str());
-mnvPlotter->DrawErrorSummary(hist, "TL", true, true, .00001, false , "" , true, "" , false);
-mnvPlotter->AddHistoTitle(Form("Error Summary (%s)", title.c_str()) ,.03);
-mnvPlotter->WritePreliminary("TR", .025, 0, 0, false);
-mnvPlotter->MultiPrint(cE, pdf, "pdf");
+  hist->GetXaxis()->SetTitle(xaxis.c_str());
+  mnvPlotter->DrawErrorSummary(hist, "TL", true, true, .00001, false , "" , true, "" , false);
+  mnvPlotter->AddHistoTitle(Form("Error Summary (%s)", title.c_str()) ,.03);
+  mnvPlotter->WritePreliminary("TR", .025, 0, 0, false);
+  mnvPlotter->MultiPrint(cE, pdf, "pdf");
 
-double maxPlace = mnvPlotter->axis_maximum;
-mnvPlotter->axis_maximum = .08;
+  double maxPlace = mnvPlotter->axis_maximum;
+  mnvPlotter->axis_maximum = .08;
 
-if(PrintAllGroupErrors==true){
-  //std::cout<<"Printing Error Groups"<<std::endl;
-  for(const auto& cat: mnvPlotter->error_summary_group_map)
-  {   cE->Clear();
-    if(Debug==true){
-      //  std::cout<< "Printing Error group: "<< cat.first<<std::endl;
+  if(PrintAllGroupErrors==true){
+    //std::cout<<"Printing Error Groups"<<std::endl;
+    for(const auto& cat: mnvPlotter->error_summary_group_map)
+    {   cE->Clear();
+      if(Debug==true){
+        //  std::cout<< "Printing Error group: "<< cat.first<<std::endl;
+      }
+
+      cE->SetTitle(cat.first.c_str());
+      char ErrorTitle[1024];
+      if (cat.first=="Muon Reconstruction") {
+        mnvPlotter->legend_n_columns = 1;
+      }
+      else {mnvPlotter->legend_n_columns = 2;}
+
+      //  else{mnvPlotter->legend_n_columns = 2;}
+      if (cat.first=="GENIE CrossSection RES") {
+        mnvPlotter->axis_maximum = .1;
+      }
+      else if (cat.first=="GENIE CrossSection DIS"){
+        mnvPlotter->axis_maximum = .1;
+      }
+      else if (cat.first=="GENIE CrossSection QE"){
+        mnvPlotter->axis_maximum = .1;
+      }
+      else if (cat.first=="GENIE Nucleon FSI"){
+        mnvPlotter->axis_maximum = .1;
+      }
+      else{mnvPlotter->axis_maximum = .1;
+      }
+      mnvPlotter->legend_text_size = .02;
+      mnvPlotter->height_nspaces_per_hist = .9;
+
+      mnvPlotter->DrawErrorSummary( hist, "TL", true, true,
+       .00001, false , cat.first , true, "" , false);
+      sprintf(ErrorTitle, "%s Error Group %s", title.c_str(), cat.first.c_str());
+      mnvPlotter->AddHistoTitle(ErrorTitle,.025);
+      mnvPlotter->WritePreliminary("TR", .025, 0, 0, false);
+      mnvPlotter->MultiPrint(cE, pdf, "pdf");
     }
-
-    cE->SetTitle(cat.first.c_str());
-    char ErrorTitle[1024];
-    if (cat.first=="Muon Reconstruction") {
-      mnvPlotter->legend_n_columns = 1;
-    }
-    else {mnvPlotter->legend_n_columns = 2;}
-
-  //  else{mnvPlotter->legend_n_columns = 2;}
-  if (cat.first=="GENIE CrossSection RES") {
-      mnvPlotter->axis_maximum = .1;
-    }
-    else if (cat.first=="GENIE CrossSection DIS"){
-      mnvPlotter->axis_maximum = .1;
-    }
-    else if (cat.first=="GENIE CrossSection QE"){
-      mnvPlotter->axis_maximum = .1;
-    }
-    else if (cat.first=="GENIE Nucleon FSI"){
-      mnvPlotter->axis_maximum = .1;
-    }
-  else{mnvPlotter->axis_maximum = .1;
-    }
-    mnvPlotter->legend_text_size = .02;
-    mnvPlotter->height_nspaces_per_hist = .9;
-
-    mnvPlotter->DrawErrorSummary( hist, "TL", true, true, .00001, false , cat.first , true, "" , false);
-    sprintf(ErrorTitle, "%s Error Group %s", title.c_str(), cat.first.c_str());
-    mnvPlotter->AddHistoTitle(ErrorTitle,.025);
-    mnvPlotter->WritePreliminary("TR", .025, 0, 0, false);
-    mnvPlotter->MultiPrint(cE, pdf, "pdf");
   }
-}
 
 else{
   std::cout<<"Skipped Printing Individal Group Errors"<<std::endl;
 }
-
 
 mnvPlotter->axis_maximum = maxPlace;
 
@@ -471,10 +483,11 @@ cE->Closed();
 //
 /////////////////////////////////////////////////////////////////////////////////
 void PlotErrorSummaryNew(
-  PlotUtils::MnvH1D* hist, std::string pdf, std::string title,
+  PlotUtils::MnvH1D* hist,
+  std::string pdf, std::string title,
   std::string xaxis, TCanvas *cE,MnvPlotter *mnvPlotter)
-{
-std::cout<< " title = "<< title<< std::endl;
+  {
+    std::cout<< " title = "<< title<< std::endl;
 
    //const auto allBandNames = hist->GetVertErrorBandNames();
    //for(const auto& name: allBandNames){}
@@ -561,12 +574,12 @@ void PlotVertBand(std::string band,
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void PlotVertBand(std::string band,
+void PlotVertBand(
+  std::string band,
   std::string method_str,
   std::string title, std::string Xaxis ,
-  std::string Yaxis,  PlotUtils::MnvH1D* hist){
-  //TH1* h1 = (TH1*)hist->GetVertErrorBand(band.c_str())->GetErrorBand(do_fractional_uncertainty, do_cov_area_norm).Clone(Form("Enu_%s_%s", band.c_str(), method_str.c_str()));
-  //TH1* h1 = (TH1*)hist->GetVertErrorBand(band.c_str());
+  std::string Yaxis,  PlotUtils::MnvH1D* hist)
+  {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   auto Errorband = hist->GetVertErrorBand( band.c_str() );
@@ -590,38 +603,46 @@ void PlotVertBand(std::string band,
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-
-void PlotLatBand(std::string band,
-   std::string method_str, PlotUtils::MnvH1D* hist){
-  //TH1* h1 = (TH1*)hist->GetLatErrorBand(band.c_str())->GetErrorBand(do_fractional_uncertainty, do_cov_area_norm).Clone(Form("Enu_%s_%s", band.c_str(), method_str.c_str()));
-  TH1* h1 = (TH1*)hist->GetLatErrorBand(band.c_str());
-  TCanvas cF ("c1","c1");
-  h1->SetTitle(Form("%s Uncertainty (%s); (GeV)", band.c_str(), method_str.c_str()));
-  h1->Draw("h");
-  cF.Print(Form("Lat_%s_band_%s.pdf", band.c_str(), method_str.c_str()));
-}
+void PlotLatBand(
+  std::string band,
+  std::string method_str,
+  PlotUtils::MnvH1D* hist)
+  {
+    TH1* h1 = (TH1*)hist->GetLatErrorBand(band.c_str());
+    TCanvas cF ("c1","c1");
+    h1->SetTitle(Form("%s Uncertainty (%s); (GeV)", band.c_str(), method_str.c_str()));
+    h1->Draw("h");
+    cF.Print(Form("Lat_%s_band_%s.pdf", band.c_str(), method_str.c_str()));
+  }
 
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 void PlotVertUniverse(std::string band,
-  unsigned int universe, std::string method_str, PlotUtils::MnvH1D* hist){
+  unsigned int universe,
+   std::string method_str,
+   PlotUtils::MnvH1D* hist)
+   {
   TH1D* h1 = hist->GetVertErrorBand(band.c_str())->GetHist(universe);
 
   TCanvas cF ("c1","c1");
   h1->SetLineColor(kBlack);
   h1->SetLineStyle(1);
   h1->Draw("hist");
-  cF.Print(Form("Enu_%s_band_universe%i_%s.pdf", band.c_str(), universe+1, method_str.c_str()));
+  cF.Print(Form("Enu_%s_band_universe%i_%s.pdf",
+   band.c_str(), universe+1, method_str.c_str()));
 }
 
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-void PlotLatUniverse(std::string band, unsigned int universe, std::string method_str, PlotUtils::MnvH1D* hist){
+void PlotLatUniverse(
+  std::string band,
+  unsigned int universe,
+  std::string method_str,
+  PlotUtils::MnvH1D* hist)
+   {
   TH1D* h1 = hist->GetLatErrorBand(band.c_str())->GetHist(universe);
   TCanvas cF ("c1","c1");
   h1->SetLineColor(kBlack);
@@ -633,8 +654,10 @@ void PlotLatUniverse(std::string band, unsigned int universe, std::string method
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
+void PlotCVAndError(
+  PlotUtils::MnvH1D* hist,
+  std::string label){
 
-void PlotCVAndError(PlotUtils::MnvH1D* hist, std::string label){
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCNuPionIncStyle);
   TCanvas cE ("c1","c1");
   hist->GetXaxis()->SetTitle(Form("%s",label.c_str()));
@@ -643,7 +666,8 @@ void PlotCVAndError(PlotUtils::MnvH1D* hist, std::string label){
   int mcScale                = 1.;
   bool useHistTitles         = false;
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale,
+    "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   //mnvPlotter.DrawMCWithErrorBand(hist); //I think that this call only shows stat errors.
   std::string plotname = Form("%s",label.c_str());
   mnvPlotter.MultiPrint(&cE, plotname, "pdf");
@@ -653,12 +677,13 @@ void PlotCVAndError(PlotUtils::MnvH1D* hist, std::string label){
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void PlotCVAndError_second_Track(PlotUtils::MnvH1D* hist, std::string label, SecondTrkVar second_Track, TCanvas *can, std::string title){
-auto axis_title = GetsecondTrk_AXIS_TitleName(second_Track);
-
-  PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kDefaultStyle );
-  //TCanvas *cE ("c1","c1");
-
+void PlotCVAndError_second_Track(
+  PlotUtils::MnvH1D* hist, std::string label,
+  SecondTrkVar second_Track,
+  TCanvas *can, std::string title)
+{
+  auto axis_title = GetsecondTrk_AXIS_TitleName(second_Track);
+    PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kDefaultStyle );
   hist->GetXaxis()->SetTitle(Form("%s",axis_title.c_str()));
   hist->GetXaxis()->CenterTitle();
   PlotUtils::MnvH1D* datahist =new PlotUtils::MnvH1D("fake", " ", nbins, xmin, xmax);
@@ -666,7 +691,8 @@ auto axis_title = GetsecondTrk_AXIS_TitleName(second_Track);
   int mcScale                = 1.;
   bool useHistTitles         = false;
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   //mnvPlotter.DrawMCWithErrorBand(hist); //I think that this call only shows stat errors.
   std::string plotname = Form("%s",label.c_str());
   mnvPlotter.AddHistoTitle(title.c_str(), .04);
@@ -682,7 +708,8 @@ auto axis_title = GetsecondTrk_AXIS_TitleName(second_Track);
 /////////////////////////////////////////////////////////////////////////////////
 
 void Plot_MuonCVAndErrorWITHDATA(
-  PlotUtils::MnvH1D* histFullMC,PlotUtils::MnvH1D* histEmptyMC,
+  PlotUtils::MnvH1D* histFullMC,
+  PlotUtils::MnvH1D* histEmptyMC,
   PlotUtils::MnvH1D* datahist_Full,
   PlotUtils::MnvH1D* datahist_Empty,std::string label,
   double POT[], MuonVar Muontype, int order,TCanvas * cE)
@@ -724,7 +751,8 @@ void Plot_MuonCVAndErrorWITHDATA(
   histFullMC->GetYaxis()->CenterTitle();
   histFullMC->GetYaxis()->SetTitleSize(0.038);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale,
+    "TL", useHistTitles, NULL, NULL, false, statPlusSys);
 
   char total_title[1024];
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
@@ -755,7 +783,8 @@ void Plot_MuonCVAndErrorWITHDATA(
   //histEmptyMC->GetYaxis()->SetTitleOffset(offset);
   //histEmptyMC->GetXaxis()->SetTitleOffset(offset);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Empty, histEmptyMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Empty, histEmptyMC, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
 
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
   mnvPlotter.AddHistoTitle(total_title, .04);
@@ -766,8 +795,6 @@ void Plot_MuonCVAndErrorWITHDATA(
 
   sprintf(xError, "%s (%s)(Empty)", MuonVarType.c_str(), myunits.c_str());
   PlotErrorSummary(histEmptyMC, plotname,plotname, xError,cE);
-
-
 
   histFullMC->Add(EmptyMC,-1);
   datahist_Full->Add(EmptyData,-1);
@@ -793,7 +820,8 @@ void Plot_MuonCVAndErrorWITHDATA(
   histFullMC->GetYaxis()->CenterTitle();
   histFullMC->GetYaxis()->SetTitleSize(0.038);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale, "TL",
+  useHistTitles, NULL, NULL, false, statPlusSys);
   mnvPlotter.AddHistoTitle(total_title, .04);
   mnvPlotter.MultiPrint(cE, plotname, pdf);
   cE->Closed();
@@ -805,10 +833,12 @@ void Plot_MuonCVAndErrorWITHDATA(
 /////////////////////////////////////////////////////////////////////////////////
 
 void Plot_VectexCVAndErrorWITHDATA(
-  PlotUtils::MnvH1D* histFullMC,PlotUtils::MnvH1D* histEmptyMC,
+  PlotUtils::MnvH1D* histFullMC,
+  PlotUtils::MnvH1D* histEmptyMC,
   PlotUtils::MnvH1D* datahist_Full,
-  PlotUtils::MnvH1D* datahist_Empty,std::string label,
-  double POT[], CryoVertex CryoVertex_type, int order,TCanvas * cE)
+  PlotUtils::MnvH1D* datahist_Empty, std::string label,
+  double POT[], CryoVertex CryoVertex_type,
+  int order, TCanvas * cE)
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCNuPionIncStyle );
 
@@ -849,7 +879,8 @@ void Plot_VectexCVAndErrorWITHDATA(
   histFullMC->GetYaxis()->CenterTitle();
   histFullMC->GetYaxis()->SetTitleSize(0.038);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
 
   char total_title[1024];
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
@@ -879,7 +910,8 @@ void Plot_VectexCVAndErrorWITHDATA(
   histEmptyMC->GetYaxis()->CenterTitle();
   histEmptyMC->GetYaxis()->SetTitleSize(0.038);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Empty, histEmptyMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Empty, histEmptyMC, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
 
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
   mnvPlotter.AddHistoTitle(total_title, .04);
@@ -915,7 +947,8 @@ void Plot_VectexCVAndErrorWITHDATA(
   histFullMC->GetYaxis()->CenterTitle();
   histFullMC->GetYaxis()->SetTitleSize(0.038);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale,
+    "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
 
   mnvPlotter.AddHistoTitle(total_title, .04);
@@ -977,7 +1010,8 @@ void Plot_SecTRKCVAndErrorWITHDATA(
   //histFullMC->GetYaxis()->SetTitleOffset(offset);
   //histFullMC->GetXaxis()->SetTitleOffset(offset);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
 
   char total_title[1024];
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
@@ -1006,7 +1040,8 @@ void Plot_SecTRKCVAndErrorWITHDATA(
   histEmptyMC->GetYaxis()->CenterTitle();
   histEmptyMC->GetYaxis()->SetTitleSize(0.038);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Empty, histEmptyMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Empty, histEmptyMC,
+     mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
 
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
   mnvPlotter.AddHistoTitle(total_title, .04);
@@ -1043,7 +1078,8 @@ void Plot_SecTRKCVAndErrorWITHDATA(
   //histFullMC->GetYaxis()->SetTitleOffset(offset);
   //histFullMC->GetXaxis()->SetTitleOffset(offset);
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist_Full, histFullMC,
+    mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   sprintf(total_title, "%s  %s", FILLED.c_str(), MuonVarType.c_str());
 
   mnvPlotter.AddHistoTitle(total_title, .04);
@@ -1057,9 +1093,11 @@ void Plot_SecTRKCVAndErrorWITHDATA(
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void DrawStack_Material(bool my_debug, TFile *inputFile,  CryoVertex Vertex_type,
-   ME_helium_Playlists PlayList, int doShape, int logScale, const char* title,
-MnvPlotter *plot, TCanvas *can, const char *pdf)
+void DrawStack_Material(
+  bool my_debug, TFile *inputFile,
+  CryoVertex Vertex_type, ME_helium_Playlists PlayList,
+  int doShape, int logScale, const char* title,
+  MnvPlotter *plot, TCanvas *can, const char *pdf)
 {
 
   // set up legend, assuming this function only ever plots oodles of stacked histograms
@@ -1157,9 +1195,12 @@ MnvPlotter *plot, TCanvas *can, const char *pdf)
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void DrawStack_Interaction(bool my_debug, TFile *inputFile,  CryoVertex Vertex_type ,
-ME_helium_Playlists PlayList , int doShape, int logScale, const char* title,
-MnvPlotter *plot, TCanvas *can, const char *pdf)
+void DrawStack_Interaction(
+  bool my_debug, TFile *inputFile,
+  CryoVertex Vertex_type,
+  ME_helium_Playlists PlayList,
+  int doShape, int logScale, const char* title,
+  MnvPlotter *plot, TCanvas *can, const char *pdf)
 {
 
   // set up legend, assuming this function only ever plots oodles of stacked histograms
@@ -1258,12 +1299,16 @@ MnvPlotter *plot, TCanvas *can, const char *pdf)
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
 void DrawStack_Particle(
   bool my_debug, TFile *inputFile,
-  CryoVertex Vertex_type, ME_helium_Playlists PlayList,
-  int doShape, int logScale, const char* title,
-  MnvPlotter *plot, TCanvas *can, const char *pdf){
+  CryoVertex Vertex_type,
+  ME_helium_Playlists PlayList,
+  int doShape,
+  int logScale,
+  const char* title,
+  MnvPlotter *plot,
+  TCanvas *can, const char *pdf)
+  {
 
     // set up legend, assuming this function only ever plots oodles of stacked histograms
     double x1, x2, y1, y2;
@@ -1301,56 +1346,59 @@ void DrawStack_Particle(
       const std::string histName = key->GetName();
       //std::cout<<"HistName = " << histName << std::endl;
 
-for(auto Particle: Particle_vector){auto ParticleName = GetNameParticle(Particle);//end of loop
+      for(auto Particle: Particle_vector){auto ParticleName = GetNameParticle(Particle);//end of loop
 
-  if(histName.find((Var_Name + "_particle_"+ ParticleName)) != std::string::npos  ){
+        if(histName.find((Var_Name + "_particle_"+ ParticleName)) != std::string::npos  ){
 
-    std::cout<<" Total = " <<  Var_Name + "_particle_"+ ParticleName<< std::endl;
-    std::cout<<" Total(Key) = " << histName<< std::endl;
-    hist_total = dynamic_cast< MnvH1D*>(((TKey*)key)->ReadObj());
+          std::cout<<" Total = " <<  Var_Name + "_particle_"+ ParticleName<< std::endl;
+          std::cout<<" Total(Key) = " << histName<< std::endl;
+          hist_total = dynamic_cast< MnvH1D*>(((TKey*)key)->ReadObj());
 
-  }
-  else if(histName.find((ParticleName+"_"+ Var_Name + "_particle")) != std::string::npos) //Then this is a NeutrinoEnergy histogram for some material
-  {
-    std::cout<<"Inside else IF  = " << ParticleName+"_"+ Var_Name + "_particle"<<std::endl;
+        }
+        else if(histName.find((ParticleName+"_"+ Var_Name + "_particle")) != std::string::npos) //Then this is a NeutrinoEnergy histogram for some material
+        {
+          std::cout<<"Inside else IF  = " << ParticleName+"_"+ Var_Name + "_particle"<<std::endl;
 
-    auto hist = dynamic_cast<MnvH1D*>(((TKey*)key)->ReadObj());
-    hist -> SetFillColor(CCNuPionIncPlotting::fill_colors[fillCol]);
-    hist -> SetLineColor(CCNuPionIncPlotting::fill_colors[fillCol]);
-    hist -> SetFillStyle(1001);
-    hist -> SetLineWidth(1);
-    fillCol++;
-    if(hist == nullptr) //nullptr is the same as NULL effectively, but it does some cool type conversion for std::unique_ptr<>
-    {
-      std::cerr << histName << " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " << histName << "...\n";
+          auto hist = dynamic_cast<MnvH1D*>(((TKey*)key)->ReadObj());
+          hist -> SetFillColor(CCNuPionIncPlotting::fill_colors[fillCol]);
+          hist -> SetLineColor(CCNuPionIncPlotting::fill_colors[fillCol]);
+          hist -> SetFillStyle(1001);
+          hist -> SetLineWidth(1);
+          fillCol++;
+          if(hist == nullptr)
+          //nullptr is the same as NULL effectively, but it does some cool type conversion for std::unique_ptr<>
+          {
+            std::cerr << histName <<
+             " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " <<
+              histName << "...\n";
+          }
+          hist->Scale(1,"width");
+          mystack[0]->Add(hist); //This might want you to derefence hist first
+          int n = ParticleName.length();
+          char char_array[n + 1];
+          strcpy(char_array, ParticleName.c_str());
+          legend->AddEntry(hist, char_array);
+        }
+      }
     }
-    hist->Scale(1,"width");
-    mystack[0]->Add(hist); //This might want you to derefence hist first
-    int n = ParticleName.length();
-    char char_array[n + 1];
-    strcpy(char_array, ParticleName.c_str());
-    legend->AddEntry(hist, char_array);
-  }
-}
-}
-legend->AddEntry(hist_total, "Total");
-hist_total->SetMaximum(hist_total->GetMaximum() * 1.45);
-int n = xaxislabel.length();
-char xtitle[n+1];
-strcpy(xtitle, xaxislabel.c_str());
-hist_total->GetXaxis()->SetTitle(xtitle);
-hist_total->GetYaxis()->SetTitle("NEvents");
-hist_total->GetXaxis()->CenterTitle();
-hist_total->GetXaxis()->SetTitleSize(0.038);
-hist_total->Scale(1.0,"width");
-hist_total->Draw("HIST");
-mystack[0]->Draw("HIST SAME");
-legend->Draw();
+    legend->AddEntry(hist_total, "Total");
+    hist_total->SetMaximum(hist_total->GetMaximum() * 1.45);
+    int n = xaxislabel.length();
+    char xtitle[n+1];
+    strcpy(xtitle, xaxislabel.c_str());
+    hist_total->GetXaxis()->SetTitle(xtitle);
+    hist_total->GetYaxis()->SetTitle("NEvents");
+    hist_total->GetXaxis()->CenterTitle();
+    hist_total->GetXaxis()->SetTitleSize(0.038);
+    hist_total->Scale(1.0,"width");
+    hist_total->Draw("HIST");
+    mystack[0]->Draw("HIST SAME");
+    legend->Draw();
 
-plot->AddHistoTitle(FinalTitle, .04);
-plot->WritePreliminary("TL", .035, 0, 0, false);
+    plot->AddHistoTitle(FinalTitle, .04);
+    plot->WritePreliminary("TL", .035, 0, 0, false);
 
-can -> Print(pdf);
+    can -> Print(pdf);
 
 
 }//ENd of DrawStack_paricle
@@ -1359,12 +1407,14 @@ can -> Print(pdf);
 //
 /////////////////////////////////////////////////////////////////////////////////
 void DrawStack_secTrk_Particle_FUll_EMPTY(
-  bool my_debug, TFile *inputFile_FULL, TFile *inputFile_EMPTY,
-  Pot_MapList POT_MC, SecondTrkVar second_Trk_type,
+  bool my_debug, TFile *inputFile_FULL,
+  TFile *inputFile_EMPTY, Pot_MapList POT_MC,
+  SecondTrkVar second_Trk_type,
   ME_helium_Playlists PlayListFULL,
   ME_helium_Playlists PlayListEmpty,
   int doShape, int logScale, std::string Hist_name_addON,
-  MnvPlotter *plot, TCanvas *can, const char *pdf){
+  MnvPlotter *plot, TCanvas *can, const char *pdf)
+  {
 
     // set up legend, assuming this function only ever plots oodles of stacked histograms
     double x1, x2, y1, y2;
@@ -1409,7 +1459,7 @@ void DrawStack_secTrk_Particle_FUll_EMPTY(
     TObject *keyEMPTY;
 
 
-std::cout<<"first Loop "<<std::endl;
+    std::cout<<"first Loop "<<std::endl;
 
     while((key=Iter()))
     {
@@ -1438,7 +1488,9 @@ std::cout<<"first Loop "<<std::endl;
           fillCol++;
           if(hist == nullptr) //nullptr is the same as NULL effectively, but it does some cool type conversion for std::unique_ptr<>
           {
-            std::cerr << histName << " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " << histName << "...\n";
+            std::cerr << histName <<
+            " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " <<
+             histName << "...\n";
           }
 
           //hist->Scale(1,"width");
@@ -1453,7 +1505,7 @@ std::cout<<"first Loop "<<std::endl;
       }
     }
 
-std::cout<<"2nd Loop "<<std::endl;
+    std::cout<<"2nd Loop "<<std::endl;
 
     while((keyEMPTY=Iter_empty()))
     {
@@ -1492,21 +1544,18 @@ std::cout<<"2nd Loop "<<std::endl;
     }
 
 
-if(EMPTY_HISTS_vector.size()!=FULL_HISTS_vector.size()){std::cout<<"size BAD"<<std::endl;}
-else{std::cout<<"Size of vectors good "<<std::endl;}
-std::cout<<"3rd Loop "<<std::endl;
+    if(EMPTY_HISTS_vector.size()!=FULL_HISTS_vector.size())
+    {std::cout<<"size BAD"<<std::endl;}
+    else{std::cout<<"Size of vectors good "<<std::endl;}
+    std::cout<<"3rd Loop "<<std::endl;
 
-for(int i=0; i != FULL_HISTS_vector.size(); i++){
-  //auto ParticleName = GetNameParticle(Particle_vector[i+1]);
-  EMPTY_HISTS_vector[i]->Scale(POT_scale_toFULL);
-  FULL_HISTS_vector[i]->Add(EMPTY_HISTS_vector[i],-1);
-  FULL_HISTS_vector[i]->Scale(1,"width");
-  mystack[0]->Add(FULL_HISTS_vector[i]);
-
-}
-
-
-
+    for(int i=0; i != FULL_HISTS_vector.size(); i++){
+      //auto ParticleName = GetNameParticle(Particle_vector[i+1]);
+      EMPTY_HISTS_vector[i]->Scale(POT_scale_toFULL);
+      FULL_HISTS_vector[i]->Add(EMPTY_HISTS_vector[i],-1);
+      FULL_HISTS_vector[i]->Scale(1,"width");
+      mystack[0]->Add(FULL_HISTS_vector[i]);
+    }
     hist_totalEMPTY->Scale(POT_scale_toFULL);
     hist_totalFULL->Add(hist_totalEMPTY,-1);
 
@@ -1530,7 +1579,7 @@ for(int i=0; i != FULL_HISTS_vector.size(); i++){
      can -> Print(pdf);
 
 
-}//ENd of DrawStack_paricle
+   }//ENd of DrawStack_paricle
 
 /////////////////////////////////////////////////////////////////////////////////
 //
@@ -1674,7 +1723,8 @@ std::cout<<"2nd Loop "<<std::endl;
           fillCol++;
           if(hist == nullptr) //nullptr is the same as NULL effectively, but it does some cool type conversion for std::unique_ptr<>
           {
-            std::cerr << histName << " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " << histName << "...\n";
+            std::cerr << histName << " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " <<
+            histName << "...\n";
           }
 
 
@@ -1685,22 +1735,22 @@ std::cout<<"2nd Loop "<<std::endl;
     }
 
 
-if(EMPTY_HISTS_vector.size()!=FULL_HISTS_vector.size()){std::cout<<"size BAD"<<std::endl;}
-else{std::cout<<"Size of vectors good "<<std::endl;}
-std::cout<<"3rd Loop "<<std::endl;
+    if(EMPTY_HISTS_vector.size()!=FULL_HISTS_vector.size())
+    {std::cout<<"size BAD"<<std::endl;}
 
-for(int i=0; i != FULL_HISTS_vector.size(); i++){
-  //auto ParticleName = GetNameParticle(Particle_vector[i+1]);
+    else{std::cout<<"Size of vectors good "<<std::endl;}
+    std::cout<<"3rd Loop "<<std::endl;
 
-  EMPTY_HISTS_vector[i]->Scale(POT_scale_toFULL);
-  FULL_HISTS_vector[i]->Add(EMPTY_HISTS_vector[i],-1);
-  FULL_HISTS_vector[i]->Scale(POT_scale_toFULL_MC_ToDATA);
-  FULL_HISTS_vector[i]->Scale(1,"width");
-  mystack[0]->Add(FULL_HISTS_vector[i]);
+    for(int i=0; i != FULL_HISTS_vector.size(); i++){
+      //auto ParticleName = GetNameParticle(Particle_vector[i+1]);
 
-}
+      EMPTY_HISTS_vector[i]->Scale(POT_scale_toFULL);
+      FULL_HISTS_vector[i]->Add(EMPTY_HISTS_vector[i],-1);
+      FULL_HISTS_vector[i]->Scale(POT_scale_toFULL_MC_ToDATA);
+      FULL_HISTS_vector[i]->Scale(1,"width");
+      mystack[0]->Add(FULL_HISTS_vector[i]);
 
-
+    }
 
     hist_totalEMPTY->Scale(POT_scale_toFULL);
     hist_totalFULL->Add(hist_totalEMPTY,-1);
@@ -1719,7 +1769,8 @@ for(int i=0; i != FULL_HISTS_vector.size(); i++){
       datahist_FULL->Scale(1.0,"width");
       datahist_FULL->SetMarkerStyle(20);
       datahist_FULL->SetMarkerSize(1.25);
-      if(hist_totalFULL->GetMaximum() > datahist_FULL->GetMaximum()){hist_totalFULL->SetMaximum(hist_totalFULL->GetMaximum() * 1.45);}
+      if(hist_totalFULL->GetMaximum() > datahist_FULL->GetMaximum())
+      {hist_totalFULL->SetMaximum(hist_totalFULL->GetMaximum() * 1.45);}
       else{hist_totalFULL->SetMaximum(datahist_FULL->GetMaximum() * 1.45);}
 
       hist_totalFULL->Draw("HIST");
@@ -1855,97 +1906,101 @@ void DrawStack_Muon_Particle_FUll_EMPTY_WITHDATA(
     }
   }
 
-std::cout<<"2nd Loop "<<std::endl;
+  std::cout<<"2nd Loop "<<std::endl;
 
-while((keyEMPTY=Iter_empty()))
-{
-  const std::string histName = keyEMPTY->GetName();
-  //std::cout<<"HistName = " << histName << std::endl;
-  for(auto Particle: Particle_vector){auto ParticleName = GetNameParticle(Particle);//end of loop
-    //  std::cout<<"Loop2 Particle ="<<Particle<<std::endl;
-    if(histName.find((Var_Name + "_interaction_"+ ParticleName)) != std::string::npos  ){
+  while((keyEMPTY=Iter_empty()))
+  {
+    const std::string histName = keyEMPTY->GetName();
+    //std::cout<<"HistName = " << histName << std::endl;
+    for(auto Particle: Particle_vector){auto ParticleName = GetNameParticle(Particle);//end of loop
+      //  std::cout<<"Loop2 Particle ="<<Particle<<std::endl;
+      if(histName.find((Var_Name + "_interaction_"+ ParticleName)) != std::string::npos  ){
 
-      std::cout<<" Total = " <<  Var_Name + "_particle_"+ ParticleName<< std::endl;
-      std::cout<<" Total(Key) = " << histName<< std::endl;
-      hist_totalEMPTY = dynamic_cast< MnvH1D*>(((TKey*)keyEMPTY)->ReadObj());
+        std::cout<<" Total = " <<  Var_Name + "_particle_"+ ParticleName<< std::endl;
+        std::cout<<" Total(Key) = " << histName<< std::endl;
+        hist_totalEMPTY = dynamic_cast< MnvH1D*>(((TKey*)keyEMPTY)->ReadObj());
 
-    }
-    else if(histName.find((ParticleName+"_"+ Var_Name + "_particle")) != std::string::npos) //Then this is a NeutrinoEnergy histogram for some material
-    {
-      std::cout<<"Inside else IF  = " << ParticleName+"_"+ Var_Name + "_particle"<<std::endl;
-
-      auto hist = dynamic_cast<MnvH1D*>(((TKey*)keyEMPTY)->ReadObj());
-      hist -> SetFillColor(CCNuPionIncPlotting::fill_colors[fillCol]);
-      hist -> SetLineColor(CCNuPionIncPlotting::fill_colors[fillCol]);
-      hist -> SetFillStyle(1001);
-      hist -> SetLineWidth(1);
-      fillCol++;
-      if(hist == nullptr) //nullptr is the same as NULL effectively, but it does some cool type conversion for std::unique_ptr<>
-      {
-        std::cerr << histName << " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " << histName << "...\n";
       }
+      else if(histName.find((ParticleName+"_"+ Var_Name + "_particle")) != std::string::npos) //Then this is a NeutrinoEnergy histogram for some material
+      {
+        std::cout<<"Inside else IF  = " << ParticleName+"_"+ Var_Name + "_particle"<<std::endl;
 
-      EMPTY_HISTS_vector.push_back(hist);
+        auto hist = dynamic_cast<MnvH1D*>(((TKey*)keyEMPTY)->ReadObj());
+        hist -> SetFillColor(CCNuPionIncPlotting::fill_colors[fillCol]);
+        hist -> SetLineColor(CCNuPionIncPlotting::fill_colors[fillCol]);
+        hist -> SetFillStyle(1001);
+        hist -> SetLineWidth(1);
+        fillCol++;
+        if(hist == nullptr) //nullptr is the same as NULL effectively, but it does some cool type conversion for std::unique_ptr<>
+        {
+          std::cerr << histName << " is not a TH1, but it is a neutrinoEnergy histogram!  Skipping " << histName << "...\n";
+        }
 
+        EMPTY_HISTS_vector.push_back(hist);
+
+      }
     }
   }
-}
 
 
-if(EMPTY_HISTS_vector.size()!=FULL_HISTS_vector.size()){std::cout<<"size BAD"<<std::endl;}
-else{std::cout<<"Size of vectors good "<<std::endl;}
-std::cout<<"3rd Loop "<<std::endl;
-//int count=0;
+  if(EMPTY_HISTS_vector.size()!=FULL_HISTS_vector.size()){std::cout<<"size BAD"<<std::endl;}
+  else{std::cout<<"Size of vectors good "<<std::endl;}
+  std::cout<<"3rd Loop "<<std::endl;
+  //int count=0;
 
 
-for(int i=0; i != FULL_HISTS_vector.size(); i++){
-  //auto ParticleName = GetNameParticle(Particle_vector[i+1]);
-  EMPTY_HISTS_vector[i]->Scale(POT_scale_toFULL);
-  FULL_HISTS_vector[i]->Add(EMPTY_HISTS_vector[i],-1);
-  FULL_HISTS_vector[i]->Scale(POT_scale_toFULL_MC_ToDATA);
-  FULL_HISTS_vector[i]->Scale(1,"width");
-  mystack[0]->Add(FULL_HISTS_vector[i]);
-}
+  for(int i=0; i != FULL_HISTS_vector.size(); i++){
+    //auto ParticleName = GetNameParticle(Particle_vector[i+1]);
+    EMPTY_HISTS_vector[i]->Scale(POT_scale_toFULL);
+    FULL_HISTS_vector[i]->Add(EMPTY_HISTS_vector[i],-1);
+    FULL_HISTS_vector[i]->Scale(POT_scale_toFULL_MC_ToDATA);
+    FULL_HISTS_vector[i]->Scale(1,"width");
+    mystack[0]->Add(FULL_HISTS_vector[i]);
+  }
 
 
-hist_totalEMPTY->Scale(POT_scale_toFULL);
-hist_totalFULL->Add(hist_totalEMPTY,-1);
-hist_totalFULL->Scale(POT_scale_toFULL_MC_ToDATA);
-hist_totalFULL->Scale(1.0,"width");
-legend->AddEntry(hist_totalFULL, "Total");
+  hist_totalEMPTY->Scale(POT_scale_toFULL);
+  hist_totalFULL->Add(hist_totalEMPTY,-1);
+  hist_totalFULL->Scale(POT_scale_toFULL_MC_ToDATA);
+  hist_totalFULL->Scale(1.0,"width");
+  legend->AddEntry(hist_totalFULL, "Total");
 
-int n = xaxislabel.length();
-char xtitle[n+1];
-strcpy(xtitle, xaxislabel.c_str());
-hist_totalFULL->GetXaxis()->SetTitle(xtitle);
-hist_totalFULL->GetYaxis()->SetTitle("NEvents");
-hist_totalFULL->GetXaxis()->CenterTitle();
-hist_totalFULL->GetXaxis()->SetTitleSize(0.038);
+  int n = xaxislabel.length();
+  char xtitle[n+1];
+  strcpy(xtitle, xaxislabel.c_str());
+  hist_totalFULL->GetXaxis()->SetTitle(xtitle);
+  hist_totalFULL->GetYaxis()->SetTitle("NEvents");
+  hist_totalFULL->GetXaxis()->CenterTitle();
+  hist_totalFULL->GetXaxis()->SetTitleSize(0.038);
 
-datahist_FULL->Scale(1.0,"width");
-datahist_FULL->SetMarkerStyle(20);
-datahist_FULL->SetMarkerSize(1.25);
-if(hist_totalFULL->GetMaximum() > datahist_FULL->GetMaximum()){hist_totalFULL->SetMaximum(hist_totalFULL->GetMaximum() * 1.45);}
-else{hist_totalFULL->SetMaximum(datahist_FULL->GetMaximum() * 1.45);}
+  datahist_FULL->Scale(1.0,"width");
+  datahist_FULL->SetMarkerStyle(20);
+  datahist_FULL->SetMarkerSize(1.25);
+  if(hist_totalFULL->GetMaximum() > datahist_FULL->GetMaximum())
+  {hist_totalFULL->SetMaximum(hist_totalFULL->GetMaximum() * 1.45);}
 
-hist_totalFULL->Draw("HIST");
-mystack[0]->Draw("HIST SAME");
-datahist_FULL->Draw(" SAME");
-legend->Draw();
+  else{hist_totalFULL->SetMaximum(datahist_FULL->GetMaximum() * 1.45);}
 
-plot->AddHistoTitle(FinalTitle, .04);
-plot->WritePreliminary("TL", .035, 0, 0, false);
-can -> Print(pdf);
+  hist_totalFULL->Draw("HIST");
+  mystack[0]->Draw("HIST SAME");
+  datahist_FULL->Draw(" SAME");
+  legend->Draw();
+
+  plot->AddHistoTitle(FinalTitle, .04);
+  plot->WritePreliminary("TL", .035, 0, 0, false);
+  can -> Print(pdf);
 
 }//ENd of DrawStack_paricle
 
 //////////////////////////////////////////////////////////////////////////////
 //////
 //////////////////////////////////////////////////////////////////////////////
-
 void DrawCVAndError_FromTFile(
   TFile *inputFile, char *histoName,
-  char *histotitle ,std::string xaxislabel, std::string label){
+  char *histotitle,
+  std::string xaxislabel,
+  std::string label)
+  {
   std::cout<<"trying HisName = "<< histoName<<std::endl;
   MnvH1D *hist = (MnvH1D*)inputFile -> Get(histoName);
   std::string yaxislabel = "Nevents";
@@ -1973,14 +2028,13 @@ void DrawCVAndError_FromTFile(
 
 
 }
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-
-void DrawCVAndError_FromTFile(bool PrintallErrors ,TFile *inputFile,
-     char *histoName, char *histotitle ,std::string xaxislabel, std::string label)
+void DrawCVAndError_FromTFile(
+  bool PrintallErrors, TFile *inputFile,
+  char *histoName, char *histotitle,
+  std::string xaxislabel, std::string label)
 {
   std::cout<<"trying HisName = "<< histoName<<std::endl;
   MnvH1D *hist = (MnvH1D*)inputFile -> Get(histoName);
@@ -2004,7 +2058,8 @@ void DrawCVAndError_FromTFile(bool PrintallErrors ,TFile *inputFile,
   std::vector<bool> Print_Vector = Print_Systematics(0);
   mnvPlotter.legend_n_columns = 2;
   // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
-  PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(), &cE, &mnvPlotter,true,PrintallErrors);
+  PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(),
+   &cE, &mnvPlotter,true,PrintallErrors);
   mnvPlotter.legend_n_columns = 1;
 
 
@@ -2016,7 +2071,7 @@ void DrawCVAndError_FromTFile(bool PrintallErrors ,TFile *inputFile,
 
 void DrawCVAndError_FromHistPointer(
   MnvH1D *hist_input, char *histotitle,
-   std::string xaxislabel, std::string yaxislabel,
+  std::string xaxislabel, std::string yaxislabel,
   std::string label, bool doBinwidth, bool MakeXaxisLOG)
 {
 
@@ -2044,7 +2099,8 @@ void DrawCVAndError_FromHistPointer(
 
   mnvPlotter.draw_normalized_to_bin_width=false;
 
-  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   mnvPlotter.AddHistoTitle(histotitle, .035);
   std::string plotname = Form("%s",label.c_str());
   mnvPlotter.MultiPrint(&cE, plotname, "pdf");
@@ -2053,7 +2109,8 @@ void DrawCVAndError_FromHistPointer(
   mnvPlotter.axis_title_offset_y = 1.2;
   mnvPlotter.legend_text_size = mnvPlotter.legend_text_size * .8;
   // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
-  PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(), &cE, &mnvPlotter,true,false);
+  PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(),
+   &cE, &mnvPlotter,true,false);
   mnvPlotter.legend_n_columns = 1;
 
 
@@ -2070,7 +2127,8 @@ void DrawCVAndError_FromHistPointer(
 //////////////////////////////////////////////////////////////////////////////
 void DrawCovarientMatrix_FromHistPointer(
   MnvH1D *hist, char *histotitle,
-  std::string xaxislabel, std::string yaxislabel, std::string pdf_label)
+  std::string xaxislabel, std::string yaxislabel,
+  std::string pdf_label)
 {
 
   TCanvas *can = new TCanvas("DrawCovarientMatrix_FromHistPointer:Can");
@@ -2104,9 +2162,6 @@ delete can;
 //delete mnvPlotter;
 
 }
-
-
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -2116,7 +2171,8 @@ void DrawCVAndError_FromHistPointer(
   MnvH1D *hist_inputBackground, MnvH1D* datahist_inputBackground,
   char *histotitle, std::string xaxislabel, std::string yaxislabel,
   std::string label, bool doBinwidth, bool MakeXaxisLOG,
-  bool printErrors, double Ymax, bool PrintALLerrorGroups){
+  bool printErrors, double Ymax, bool PrintALLerrorGroups)
+  {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   MnvH1D *hist = (MnvH1D *)hist_input->Clone(uniq());
@@ -2202,13 +2258,13 @@ if(Ymax==-99){
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-
 void DrawCVAndError_FromHistPointer(
   MnvH1D *hist_input, MnvH1D* datahist_input,
   char *histotitle, std::string xaxislabel, std::string yaxislabel,
   std::string label, bool doBinwidth,
-  bool MakeXaxisLOG, bool printErrors, double Ymax, bool PrintALLerrorGroups){
+  bool MakeXaxisLOG, bool printErrors,
+  double Ymax, bool PrintALLerrorGroups)
+  {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   MnvH1D *hist = (MnvH1D *)hist_input->Clone(uniq());
@@ -2246,7 +2302,8 @@ void DrawCVAndError_FromHistPointer(
     datahist->Scale(1,"width");
     hist->Scale(1,"width");
   }
-  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   mnvPlotter.AddHistoTitle(histotitle);
   std::string plotname = Form("%s",label.c_str());
   mnvPlotter.MultiPrint(&cE, plotname, "pdf");
@@ -2262,7 +2319,8 @@ void DrawCVAndError_FromHistPointer(
     mnvPlotter.axis_maximum = .3;
     mnvPlotter.axis_minimum = 0;
     // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
-    PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(), &cE, &mnvPlotter, true, PrintALLerrorGroups);
+    PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(),
+     &cE, &mnvPlotter, true, PrintALLerrorGroups);
     mnvPlotter.legend_n_columns = 1;
   }
 
@@ -2278,13 +2336,12 @@ void DrawCVAndError_FromHistPointer(
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-
 void DrawCVAndError_FromHistPointer(
   MnvH1D *hist_input, char *histotitle,
   std::string xaxislabel, std::string yaxislabel,
   std::string label, bool doBinwidth,
-  bool MakeXaxisLOG, bool printErrors, double Ymax){
+  bool MakeXaxisLOG, bool printErrors, double Ymax)
+  {
 
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     MnvH1D *hist = (MnvH1D *)hist_input->Clone(uniq());
@@ -2320,7 +2377,8 @@ void DrawCVAndError_FromHistPointer(
     mnvPlotter.axis_draw_grid_y = true;
     mnvPlotter.draw_normalized_to_bin_width=false;
     if(doBinwidth==true){hist->Scale(1,"width");}
-    mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+    mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL",
+    useHistTitles, NULL, NULL, false, statPlusSys);
     mnvPlotter.AddHistoTitle(histotitle,.038);
     mnvPlotter.WritePreliminary("TR", .03, 0, 0, false);
     std::string plotname = Form("%s",label.c_str());
@@ -2389,7 +2447,8 @@ void DrawCVAndError_FromHistPointer_FluxRatio(
     mnvPlotter.axis_draw_grid_y = true;
     mnvPlotter.draw_normalized_to_bin_width=false;
     if(doBinwidth==true){hist->Scale(1,"width");}
-    mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+    mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale,
+       "TL", useHistTitles, NULL, NULL, false, statPlusSys);
     mnvPlotter.AddHistoTitle(histotitle,.038);
     mnvPlotter.WritePreliminary("TR", .03, 0, 0, false);
     std::string plotname = Form("%s",label.c_str());
@@ -2403,7 +2462,8 @@ void DrawCVAndError_FromHistPointer_FluxRatio(
       mnvPlotter.axis_label_size = 0.03;
       mnvPlotter.axis_maximum = .3;
       mnvPlotter.axis_minimum = 0;
-      PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(), &cE, &mnvPlotter,true,false);
+      PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(),
+       &cE, &mnvPlotter,true,false);
       mnvPlotter.legend_n_columns = 1;
     }
 
@@ -2421,8 +2481,9 @@ void DrawCVAndError_FromHistPointer_FluxRatio(
 void DrawCVAndError_FromHistPointer(
   MnvH1D *hist_input, char *histotitle,
   std::string xaxislabel, std::string yaxislabel,
-  std::string label, bool doBinwidth, bool MakeXaxisLOG, double maxY)
-{
+  std::string label, bool doBinwidth,
+  bool MakeXaxisLOG, double maxY)
+  {
     MnvH1D *hist = (MnvH1D *)hist_input->Clone(uniq());
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -2446,7 +2507,8 @@ void DrawCVAndError_FromHistPointer(
 
   mnvPlotter.draw_normalized_to_bin_width=false;
   if(doBinwidth==true){hist->Scale(1,"width");}
-  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   mnvPlotter.AddHistoTitle(histotitle);
   std::string plotname = Form("%s",label.c_str());
   mnvPlotter.MultiPrint(&cE, plotname, "pdf");
@@ -2476,7 +2538,8 @@ void DrawCVAndError_FromHistPointer(
 void DrawCVAndError_FromHistPointer(
   MnvH1D *hist_input, char *histotitle,
   std::string xaxislabel, std::string yaxislabel,
-  std::string label, bool doBinwidth, bool MakeXaxisLOG, bool MakeYaxisLOG)
+  std::string label, bool doBinwidth,
+  bool MakeXaxisLOG, bool MakeYaxisLOG)
 {
     MnvH1D *hist = (MnvH1D *)hist_input->Clone(uniq());
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -2629,15 +2692,17 @@ void DrawCVAndError_FromHIST(bool PrintALLerrorGroups,
 
     if(doBinwidth==true){mnvPlotter.draw_normalized_to_bin_width= false;}
   }
-
   /////////////////////////////////////////////////////////////////////////////////
   //
   /////////////////////////////////////////////////////////////////////////////////
 
-  void DrawCVAndError_FromHIST(bool PrintALLerrorGroups , MnvH1D *hist_input, char *histotitle ,std::string xaxislabel,std::string yaxislabel,
-    std::string pdf_name, bool Setgrid , bool doBinwidth, bool SetYlimits,  double Ymin,  double Ymax ,const double cut_location,
-     const double y1_arrow, const double y2_arrow, const double arrow_length,  const std::string arrow_direction  )
-    {
+  void DrawCVAndError_FromHIST(bool PrintALLerrorGroups, MnvH1D *hist_input,
+    char *histotitle ,std::string xaxislabel,std::string yaxislabel,
+    std::string pdf_name, bool Setgrid , bool doBinwidth, bool SetYlimits,
+    double Ymin,  double Ymax ,const double cut_location,
+    const double y1_arrow, const double y2_arrow, const double arrow_length,
+    const std::string arrow_direction)
+  {
 
       MnvH1D *hist = (MnvH1D *)hist_input->Clone(uniq());
       PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -2769,8 +2834,11 @@ void DrawCVAndError_FromHIST_withGaussianPeak(
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawCVAndError_FromHIST_withFit(MnvH1D *hist, char *histotitle ,std::string xaxislabel,std::string yaxislabel,
-        std::string pdf_name, bool Setgrid, bool PrintErrors , bool PrintallErrorGroups )
+void DrawCVAndError_FromHIST_withFit(
+  MnvH1D *hist, char *histotitle,
+  std::string xaxislabel, std::string yaxislabel,
+  std::string pdf_name, bool Setgrid,
+  bool PrintErrors , bool PrintallErrorGroups )
 {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -2864,7 +2932,7 @@ void DrawCVAndError_FromHIST_withFit_Npoly(
   MnvH1D *hist_input, char *histotitle,
   std::string xaxislabel,std::string yaxislabel,
   std::string pdf_name, bool Setgrid,
-  char *functionName , const int N_funtion, char *Print_pars )
+  char *functionName, const int N_funtion, char *Print_pars )
   {
   MnvH1D *hist =(PlotUtils::MnvH1D*)hist_input->Clone("hist");
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -4555,7 +4623,6 @@ void DrawCVAndError_FromHIST_withFit(
     cE.Closed();
 
   }
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
@@ -4574,7 +4641,6 @@ void FillFitParms(TF1 *gfit, GaussianFitsParms &FitParms ){
 /////////////////////////////////////////////////////////////////////////////
 //////
 //////////////////////////////////////////////////////////////////////////////
-
 void DrawCVAndError_From2HIST_withFit(
   MnvH1D *hist_total, MnvH1D *histHelium,
   MnvH1D *histnonHelium, char *histotitle ,
@@ -4750,7 +4816,8 @@ void DrawCVAndError_From2HIST_withFit(
   if(PrintErrors==true){
     mnvPlotter.legend_n_columns = 2;
     // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
-    PlotErrorSummaryNew(histHelium, plotname, histotitle, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(histHelium, plotname, histotitle,
+      xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
     mnvPlotter.legend_n_columns = 1;
   }
 
@@ -4759,16 +4826,17 @@ void DrawCVAndError_From2HIST_withFit(
   cE.Closed();
 
 }
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
 
 void DrawCVAndError_From2HIST(
-  MnvH1D *hist_total, MnvH1D *histHelium, MnvH1D *histnonHelium,
-  char *histotitle ,std::string xaxislabel,std::string yaxislabel,
+  MnvH1D *hist_total, MnvH1D *histHelium,
+  MnvH1D *histnonHelium, char *histotitle,
+  std::string xaxislabel,std::string yaxislabel,
   std::string pdf_name, bool Setgrid , bool PrintErrors,
-  bool PrintallErrorGroups , bool BinWidthNorm , double Ymax , bool setLogY)
+  bool PrintallErrorGroups , bool BinWidthNorm,
+  double Ymax , bool setLogY)
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -4860,11 +4928,14 @@ void DrawCVAndError_From2HIST(
     // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
     char ErrorTitles[1024];
     sprintf(ErrorTitles , "%s [Helium] ",histotitle );
-    PlotErrorSummaryNew(histHelium, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(histHelium, plotname, ErrorTitles,
+       xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
     sprintf(ErrorTitles , "%s [nonHelium] ",histotitle );
-    PlotErrorSummaryNew(histnonHelium, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(histnonHelium, plotname, ErrorTitles,
+       xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
     sprintf(ErrorTitles , "%s [Total] ",histotitle );
-    PlotErrorSummaryNew(hist_total, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(hist_total, plotname, ErrorTitles,
+       xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
 
     mnvPlotter.legend_n_columns = 1;
   }
@@ -4936,7 +5007,8 @@ void DrawCVAndError_From6HIST_RECO_vs_TRUE(
   int nbins_Helium = histHelium_TRUE->GetNbinsX();
   int nbins_nonHelium = histnonHelium_TRUE->GetNbinsX();
   int nbins_total = hist_total_TRUE->GetNbinsX();
-  if (nbins_Helium!=nbins_nonHelium ||nbins_nonHelium != nbins_total ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
+  if (nbins_Helium!=nbins_nonHelium ||nbins_nonHelium != nbins_total )
+  {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
 
 
   if(BinWidthNorm== true){
@@ -5009,7 +5081,8 @@ void DrawCVAndError_From6HIST_RECO_vs_TRUE(
   bool dataAsPoints =false;
   bool allSolidLines = true;
   bool leaveStyleAlone = true;
-  mnvPlotter.DrawDataMCVariations(datahist, &m_hist_array , 1.0, "TL", dataAsPoints, allSolidLines, leaveStyleAlone, false );
+  mnvPlotter.DrawDataMCVariations(datahist, &m_hist_array , 1.0,
+     "TL", dataAsPoints, allSolidLines, leaveStyleAlone, false );
 
 
   mnvPlotter.AddHistoTitle(histotitle, .028);
@@ -5022,11 +5095,14 @@ void DrawCVAndError_From6HIST_RECO_vs_TRUE(
     // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
     char ErrorTitles[1024];
     sprintf(ErrorTitles , "%s [Helium] ",histotitle );
-    PlotErrorSummaryNew(histHelium_TRUE, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(histHelium_TRUE, plotname, ErrorTitles,
+       xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
     sprintf(ErrorTitles , "%s [nonHelium] ",histotitle );
-    PlotErrorSummaryNew(histnonHelium_TRUE, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(histnonHelium_TRUE, plotname, ErrorTitles,
+       xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
     sprintf(ErrorTitles , "%s [Total] ",histotitle );
-    PlotErrorSummaryNew(hist_total_TRUE, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(hist_total_TRUE, plotname, ErrorTitles,
+       xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
 
     mnvPlotter.legend_n_columns = 1;
   }
@@ -5036,14 +5112,14 @@ void DrawCVAndError_From6HIST_RECO_vs_TRUE(
   cE.Closed();
 
 }
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
 void DrawCVAndError_From2HIST(
   MnvH1D *hist_1_input, char *legend_1_title,
   MnvH1D *hist_2_input, char *legend_2_title,
-    char *histotitle ,std::string xaxislabel, std::string yaxislabel,
+    char *histotitle ,std::string xaxislabel,
+     std::string yaxislabel,
    std::string pdf_name, bool Setgrid, bool PrintErrors,
   bool PrintallErrorGroups, bool BinWidthNorm,
    double Ymax, bool setLogY,  bool setLogX)
@@ -5083,29 +5159,26 @@ gPad->SetLogx();
     hist_1->SetMaximum(Ymax);
     hist_2->SetMaximum(Ymax);
   }
-else{
-double max1 = hist_1->GetMaximum();
-double max2 = hist_2->GetMaximum();
+  else{
+    double max1 = hist_1->GetMaximum();
+    double max2 = hist_2->GetMaximum();
 
-if(max1 > max2){
-  hist_1->SetMaximum(max1* 1.25);
-  hist_2->SetMaximum(max1* 1.25);
+    if(max1 > max2){
+      hist_1->SetMaximum(max1* 1.25);
+      hist_2->SetMaximum(max1* 1.25);
 
-}
-else{
-  hist_1->SetMaximum(max2* 1.25);
-  hist_2->SetMaximum(max2* 1.25);
+    }
+    else{
+      hist_1->SetMaximum(max2* 1.25);
+      hist_2->SetMaximum(max2* 1.25);
 
-}
+    }
 
-}
+  }
 
 
   int nbins_1 = hist_1->GetNbinsX();
   int nbins_2 = hist_2->GetNbinsX();
-
-  //if (nbins_1!=nbins_2 ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
-
 
   if(BinWidthNorm== true){
     hist_1->Scale(1,"width");
@@ -5152,9 +5225,11 @@ else{
     // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
     char ErrorTitles[1024];
     sprintf(ErrorTitles , "%s [%s] ",histotitle, legend_1_title );
-    PlotErrorSummaryNew(hist_1, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(hist_1, plotname, ErrorTitles, xaxislabel.c_str(),
+     &cE, &mnvPlotter,true, PrintallErrorGroups);
     sprintf(ErrorTitles , "%s [%s] ",histotitle, legend_2_title );
-    PlotErrorSummaryNew(hist_2, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(hist_2, plotname, ErrorTitles, xaxislabel.c_str(),
+     &cE, &mnvPlotter,true, PrintallErrorGroups);
 
     mnvPlotter.legend_n_columns = 1;
   }
@@ -5170,7 +5245,7 @@ else{
 //////
 //////////////////////////////////////////////////////////////////////////////
 void DrawCVAndError_From5HIST(
-  MnvH1D *hist_1_input, char *legend_1_title ,
+  MnvH1D *hist_1_input, char *legend_1_title,
   MnvH1D *hist_2_input,char *legend_2_title,
   MnvH1D *hist_3_input,char *legend_3_title,
   MnvH1D *hist_4_input,char *legend_4_title,
@@ -5410,8 +5485,6 @@ else{
   int nbins_1 = hist_1->GetNbinsX();
   int nbins_2 = hist_2->GetNbinsX();
 
-  //if (nbins_1!=nbins_2 ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
-
 
   if(BinWidthNorm== true){
     hist_1->Scale(1,"width");
@@ -5473,7 +5546,8 @@ else{
   bool dataAsPoints =false;
   bool allSolidLines = true;
   bool leaveStyleAlone = true;
-  mnvPlotter.DrawDataMCVariations(datahist, &m_hist_array , 1.0, "TL", dataAsPoints, allSolidLines, leaveStyleAlone, false );
+  mnvPlotter.DrawDataMCVariations(datahist, &m_hist_array , 1.0,
+     "TL", dataAsPoints, allSolidLines, leaveStyleAlone, false );
 
   mnvPlotter.AddHistoTitle(histotitle, .028);
   mnvPlotter.WritePreliminary("TR", .03, 0, 0, false);
@@ -5485,9 +5559,11 @@ else{
     // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
     char ErrorTitles[1024];
     sprintf(ErrorTitles , "%s [%s] ",histotitle, legend_1_title );
-    PlotErrorSummaryNew(hist_1, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(hist_1, plotname, ErrorTitles, xaxislabel.c_str(), &cE,
+     &mnvPlotter,true, PrintallErrorGroups);
     sprintf(ErrorTitles , "%s [%s] ",histotitle, legend_2_title );
-    PlotErrorSummaryNew(hist_2, plotname, ErrorTitles, xaxislabel.c_str(), &cE, &mnvPlotter,true, PrintallErrorGroups);
+    PlotErrorSummaryNew(hist_2, plotname, ErrorTitles, xaxislabel.c_str(), &cE,
+     &mnvPlotter,true, PrintallErrorGroups);
 
     mnvPlotter.legend_n_columns = 1;
   }
@@ -5628,7 +5704,6 @@ else{
   int nbins_1 = hist_1->GetNbinsX();
   int nbins_2 = hist_2->GetNbinsX();
 
-  //if (nbins_1!=nbins_2 ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
 
 
   if(BinWidthNorm== true){
@@ -5741,10 +5816,16 @@ else{
   cE.Closed();
 
 }
-
-void DrawCVAndError_From2HIST(TH1D *hist_1_input, char *legend_1_title ,TH1D *hist_2_input,
-   char *legend_2_title,  char *histotitle ,std::string xaxislabel, std::string yaxislabel,
-   std::string pdf_name, bool Setgrid, bool BinWidthNorm, double Ymax , bool setLogY )
+//////////////////////////////////////////////////////////////////////////////
+//////
+//////////////////////////////////////////////////////////////////////////////
+void DrawCVAndError_From2HIST(
+  TH1D *hist_1_input, char *legend_1_title,
+  TH1D *hist_2_input, char *legend_2_title,
+   char *histotitle ,std::string xaxislabel,
+   std::string yaxislabel,
+   std::string pdf_name, bool Setgrid,
+   bool BinWidthNorm, double Ymax , bool setLogY )
 {
 
   TH1D *hist_1 = (TH1D *)hist_1_input->Clone("");
@@ -5794,7 +5875,6 @@ else{
   int nbins_1 = hist_1->GetNbinsX();
   int nbins_2 = hist_2->GetNbinsX();
 
-  //if (nbins_1!=nbins_2 ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
 
 
   if(BinWidthNorm== true){
@@ -6135,9 +6215,6 @@ else{
   int nbins_1 = hist_1->GetNbinsX();
   int nbins_2 = hist_2->GetNbinsX();
 
-  //if (nbins_1!=nbins_2 ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
-
-
   if(BinWidthNorm== true){
     hist_1->Scale(1.0,"width");
     hist_2->Scale(1.0,"width");
@@ -6162,62 +6239,10 @@ else{
   mnvPlotter.AddHistoTitle(histotitle, .028);
   mnvPlotter.WritePreliminary("TR", .03, 0, 0, false);
   std::string plotname = Form("%s",pdf_name.c_str());
-  //cE->Update();
 
 
-  //Float_t rightmax = 1.1*Ymax;
-  //Float_t scale = gPad->GetUymax()/rightmax;
-
-  //TPad *pad2 = new TPad("pad2","pad2",0,0,1,1);
-  //pad2->SetLeftMargin(0.1);
-  //pad2->SetRightMargin(0.1);
-  //pad2->SetFillColor(0);
-  //pad2->SetFillStyle(0);
-  //pad2->Draw();
-  //pad2->cd();
-
-
-
-  //hist_3->GetXaxis()->SetRange(0,20);
-
-  //hist_1->Scale(scale);
-  //hist_2->Scale(scale);
   gPad->SetLogy();
-
-
-
-//
-//  cE->Update();
-//  TGaxis *axis = new TGaxis(gPad->GetUxmax(),gPad->GetUymin(),
-//  gPad->GetUxmax(), gPad->GetUymax(),0,hist_3->GetMaximum(),510,"+L");
-
-//  pad2->SetLogy();
-  //std::cout << "pad address: " << pad2 << std::endl;
-  //pad2->cd();
-
-
-
-
-//  axis->SetLineColor(6);
-//  axis->SetTextColor(6);
-//  axis->SetMoreLogLabels(kTRUE);
-//  axis->SetTitle(Form("%s",yaxislabel_right.c_str()));
-//  axis->SetTitleOffset(1.5);
-//  axis->SetTitleSize(0.04);
-//  axis->SetLabelSize(0.03);
-//  axis->Draw();
-
-  //pad1->cd();
-
-
-
-
   mnvPlotter.MultiPrint(cE, plotname, "pdf");
-
-
-
-
-
 
 
   if (setLogY==true){gPad->SetLogy(0);}
@@ -6225,12 +6250,19 @@ else{
   cE->Closed();
 
 }
+//////////////////////////////////////////////////////////////////////////////
+//////
+//////////////////////////////////////////////////////////////////////////////
 
-
-void DrawCVAndError_From_R_2HIST_LHist_test(MnvH1D *hist_1_input, char *legend_1_title ,MnvH1D *hist_2_input,
-   char *legend_2_title, MnvH1D *hist_3_input,
-      char *legend_3_title, char *histotitle ,std::string xaxislabel, std::string yaxislabel,std::string yaxislabel_right,
-   std::string pdf_name, bool Setgrid, bool BinWidthNorm, double Ymax ,double Ymin , bool setLogY, bool setLogY_right )
+void DrawCVAndError_From_R_2HIST_LHist_test(
+  MnvH1D *hist_1_input, char *legend_1_title,
+  MnvH1D *hist_2_input, char *legend_2_title,
+  MnvH1D *hist_3_input, char *legend_3_title,
+  char *histotitle ,std::string xaxislabel,
+   std::string yaxislabel, std::string yaxislabel_right,
+   std::string pdf_name, bool Setgrid,
+   bool BinWidthNorm, double Ymax, double Ymin,
+   bool setLogY, bool setLogY_right )
 {
 
   MnvH1D *hist_1 = (MnvH1D *)hist_1_input->Clone("");
@@ -6353,7 +6385,7 @@ void DrawCVAndError_From5HIST(
   char *histotitle ,std::string xaxislabel,
   std::string yaxislabel,
    std::string pdf_name, bool Setgrid,
-    bool BinWidthNorm, double Ymax , bool setLogY )
+    bool BinWidthNorm, double Ymax , bool setLogY)
 {
 
   MnvH1D *hist_Data = (MnvH1D *)hist_Data_input->Clone(uniq());
@@ -6429,7 +6461,8 @@ void DrawCVAndError_From5HIST(
   int nbins_1 = hist_1->GetNbinsX();
   int nbins_2 = hist_2->GetNbinsX();
 
-  if (nbins_1!=nbins_2 ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
+  if (nbins_1!=nbins_2 )
+  {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
 
 
 
@@ -6560,7 +6593,9 @@ else{
   int nbins_1 = hist_1->GetNbinsX();
   int nbins_2 = hist_2->GetNbinsX();
 
-  if (nbins_1!=nbins_2 ) {std::cout<< "ERROR - The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<< std::endl; assert(false);}
+  if (nbins_1!=nbins_2 )
+  {std::cout<< "ERROR -  The Number of bins aren't the same for hist in DrawCVAndError_From2HIST_withFit"<<
+   std::endl; assert(false);}
 
 
   if(BinWidthNorm== true){
@@ -6624,7 +6659,8 @@ void DrawCVAndError_FromHIST(MnvH1D *hist,
   //hist->Scale(1,"width");
   if (LogX==true){gPad->SetLogx(1);}
   else if (LogX==false){gPad->SetLogy(1);}
-  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale, "TL", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(datahist, hist, mcScale,
+     "TL", useHistTitles, NULL, NULL, false, statPlusSys);
   //mnvPlotter.DrawMCWithErrorBand(hist); //I think that this call only shows stat errors.
   mnvPlotter.AddHistoTitle(histotitle);
   mnvPlotter.WritePreliminary("TR", .03, 0, 0, false);
@@ -6635,7 +6671,8 @@ void DrawCVAndError_FromHIST(MnvH1D *hist,
 
   mnvPlotter.legend_n_columns = 2;
   // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
-  PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(), &cE, &mnvPlotter,true,false);
+  PlotErrorSummaryNew(hist, plotname, histotitle, xaxislabel.c_str(),
+   &cE, &mnvPlotter,true,false);
   mnvPlotter.legend_n_columns = 1;
 
 
@@ -7424,7 +7461,8 @@ void Draw2DHist_warpFit(MnvH2D *hist_input,
 
 
 
-  Double_t f2params[npar] = {par0,par1,par2,par3,par4,par5,par6,par7,par8,par9}; // ,par10,par11,par12,par13,par14,par10,par11,par12,par13,par14
+  Double_t f2params[npar] = {par0,par1,par2,par3,par4,par5,par6,par7,par8,par9};
+  // ,par10,par11,par12,par13,par14,par10,par11,par12,par13,par14
 //  Double_t f2params[npar] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
 
@@ -7502,7 +7540,8 @@ void Draw2DHist_warpFit(MnvH2D *hist_input,
   //double par12 = 1;
   //double par13 = .35;
   //double par14 = 1;
-  Double_t f2params[npar] = {par0,par1,par2,par3,par4,par5,par6,par7,par8,par9}; // ,par10,par11,par12,par13,par14,par10,par11,par12,par13,par14
+  Double_t f2params[npar] = {par0,par1,par2,par3,par4,par5,par6,par7,par8,par9};
+  // ,par10,par11,par12,par13,par14,par10,par11,par12,par13,par14
 
 
    TF2 *f2 = new TF2("f2",Gaussianfun3,Xmin,Xmax,Ymin,Ymax, npar);
@@ -7887,11 +7926,12 @@ void Draw2DHist_warpFit2DGaussian_joint(MnvH2D *hist_input,
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
-void Draw2DHist_warpFit_show(MnvH2D *hist_input,
-   const char* xaxislabel,const char* yaxislabel,
-                const char* Title,
-                const char* pdf,
-                TCanvas *can, MnvPlotter *plot)
+void Draw2DHist_warpFit_show(
+  MnvH2D *hist_input,
+  const char* xaxislabel,const char* yaxislabel,
+  const char* Title,
+  const char* pdf,
+  TCanvas *can, MnvPlotter *plot)
 {
   MnvH2D *hist =  (PlotUtils::MnvH2D*)hist_input->Clone("hist");
 
@@ -7940,7 +7980,8 @@ void Draw2DHist_warpFit_show(MnvH2D *hist_input,
 
 
 
-  Double_t f2params[npar] = {par0,par1,par2,par3,par4,par5,par6,par7,par8,par9}; // ,par10,par11,par12,par13,par14
+  Double_t f2params[npar] = {par0,par1,par2,par3,par4,par5,par6,par7,par8,par9};
+  // ,par10,par11,par12,par13,par14
   //  Double_t f2params[npar] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
 
   Double_t f2params_Get[npar];
@@ -7988,12 +8029,13 @@ void Draw2DHist_warpFit_show(MnvH2D *hist_input,
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
-void Draw2DHist_warpFit_show(MnvH2D *hist_input,
-   const char* xaxislabel,const char* yaxislabel,
-                const char* Title,
-                const char* pdf,
-                TCanvas *can, MnvPlotter *plot, Double_t *pars)
-{
+void Draw2DHist_warpFit_show(
+  MnvH2D *hist_input,
+  const char* xaxislabel,const char* yaxislabel,
+  const char* Title,
+  const char* pdf,
+  TCanvas *can, MnvPlotter *plot, Double_t *pars)
+  {
   MnvH2D *hist =  (PlotUtils::MnvH2D*)hist_input->Clone("hist");
 
   string TotalTitle = string(Title);
@@ -8042,10 +8084,6 @@ void Draw2DHist_warpFit_show(MnvH2D *hist_input,
 
    can->Closed();
 
-
-
-
-
 }//end of 2D draw function
 ////////////////////////////////////////////////////////////////////////////////
 //////
@@ -8069,7 +8107,8 @@ Double_t Gaussianfun3(Double_t *x, Double_t *par) {
 //////
 ////////////////////////////////////////////////////////////////////////////////
 Double_t WarpingFunctionPZ_PT_GeV(Double_t *x, Double_t *par) {
-  Double_t inputpar[10]={1.09156, 1.3852, 2.12451, 0.140716, 0.253279, 1.31382, 13.7064, 9.94762, 1.35258, 1.22424};
+  Double_t inputpar[10]={1.09156, 1.3852, 2.12451, 0.140716, 0.253279, 1.31382,
+     13.7064, 9.94762, 1.35258, 1.22424};
   return Gaussianfun3(x, inputpar);
 }
 ////////////////////////////////////////////////////////////////////////////////
@@ -8085,6 +8124,7 @@ double WarpingFunctionPZ_PT_GeV(double True_PZ, double True_PT,Double_t *par) {
   Double_t x[2]; x[0]= True_PZ; x[1]= True_PT;
   return Gaussianfun3(x, par);
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
@@ -8302,10 +8342,15 @@ return  WarpingFunction_DAISY_poly3_Theta_Deg(y,par);
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
-void Draw2DHist_MvR(MnvH2D *hist, const char* xaxislabel,const char* yaxislabel,char* zaxislabel,
-                const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plot,
-                 std::vector<double> BigAxisX, std::vector<double> BigAxisY,
-                std::vector<double> BigAxisX_small, std::vector<double> BigAxisY_small, bool setcolorMap)
+void Draw2DHist_MvR(
+  MnvH2D *hist, const char* xaxislabel,
+  const char* yaxislabel,char* zaxislabel,
+  const char* Title, const char* pdf,
+  TCanvas *can, MnvPlotter *plot,
+  std::vector<double> BigAxisX,
+  std::vector<double> BigAxisY,
+  std::vector<double> BigAxisX_small,
+  std::vector<double> BigAxisY_small, bool setcolorMap)
 {
 
   string TotalTitle = string(Title);
@@ -8388,8 +8433,11 @@ if(setcolorMap==true){gStyle->SetPalette(kGreenPink);}
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
-void Draw2DHist(TH2D *hist,  char* xaxislabel, char* yaxislabel,char* zaxislabel,
-                 char* Title,  char* pdf, TCanvas *can, MnvPlotter *plot)
+void Draw2DHist(
+  TH2D *hist,  char* xaxislabel,
+  char* yaxislabel,char* zaxislabel,
+  char* Title,  char* pdf,
+  TCanvas *can, MnvPlotter *plot)
 {
 
   std::cout<<"inside this function"<< std::endl;
@@ -8423,8 +8471,11 @@ void Draw2DHist(TH2D *hist,  char* xaxislabel, char* yaxislabel,char* zaxislabel
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
-void DrawMnvH2D(MnvH2D *hist,  char* xaxislabel, char* yaxislabel,char* zaxislabel,
-                 char* Title,  char* pdf, TCanvas *can, MnvPlotter *plot, bool setMiniumTrue)
+void DrawMnvH2D(
+  MnvH2D *hist,  char* xaxislabel,
+   char* yaxislabel,char* zaxislabel,
+   char* Title,  char* pdf,
+   TCanvas *can, MnvPlotter *plot, bool setMiniumTrue)
 {
 
   std::cout<<"inside this function"<< std::endl;
@@ -8459,8 +8510,11 @@ void DrawMnvH2D(MnvH2D *hist,  char* xaxislabel, char* yaxislabel,char* zaxislab
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
-void Draw2DHistFit(MnvH2D *hist, const char* xaxislabel,const char* yaxislabel,
-                const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plot)
+void Draw2DHistFit(
+  MnvH2D *hist, const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title, const char* pdf,
+  TCanvas *can, MnvPlotter *plot)
 {
   string TotalTitle = string(Title);
   gStyle->SetPalette(kCool);
@@ -8488,8 +8542,10 @@ void Draw2DHistFit(MnvH2D *hist, const char* xaxislabel,const char* yaxislabel,
 //////
 ////////////////////////////////////////////////////////////////////////////////
 
-void Draw2DHist_withEllipse(MnvH2D *hist,  char* xaxislabel, char* yaxislabel, char* zaxislabel,
-                 char* Title,  char* pdf, TCanvas *can, MnvPlotter *plot , double r1 , double r2)
+void Draw2DHist_withEllipse(MnvH2D *hist,
+  char* xaxislabel, char* yaxislabel, char* zaxislabel,
+  char* Title,  char* pdf, TCanvas *can,
+  MnvPlotter *plot , double r1 , double r2)
 {
   string TotalTitle = string(Title);
   gStyle->SetPalette(kGreenPink);
@@ -8530,9 +8586,11 @@ void Draw2DHist_withEllipse(MnvH2D *hist,  char* xaxislabel, char* yaxislabel, c
 //////
 ////////////////////////////////////////////////////////////////////////////////
 
-void Draw2DHist_TFILE(TFile *inputFile, const char* histoName, const char *Title,
-   const char* xaxislabel,const char* yaxislabel,
-  const char* pdf, TCanvas *can, MnvPlotter *plot, bool PrintText)
+void Draw2DHist_TFILE(TFile *inputFile, const char* histoName,
+  const char *Title,
+  const char* xaxislabel,const char* yaxislabel,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plot, bool PrintText)
   {
     gStyle->SetPalette(kBird);
     std::cout<<"trying 2D HisName  = "<< histoName<<std::endl;
@@ -8614,12 +8672,15 @@ void Draw2DHist_TFILE(TFile *inputFile, const char* histoName, const char *Title
   }//end of 2D draw function
 
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-void Draw2DHist_hist(MnvH2D *hist_input, const char *Title, const char* xaxislabel,
-  const char* yaxislabel, const char* pdf, TCanvas *can, MnvPlotter *plot)
+void Draw2DHist_hist(
+  MnvH2D *hist_input, const char *Title,
+  const char* xaxislabel,
+  const char* yaxislabel, const char* pdf,
+  TCanvas *can, MnvPlotter *plot)
   {
 
   gStyle->SetPalette(kBird);
@@ -8691,12 +8752,15 @@ void Draw2DHist_hist(MnvH2D *hist_input, const char *Title, const char* xaxislab
 
   }//end of 2D draw function
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-void Draw2DHist_hist_notext(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
-         const char* pdf, TCanvas *can, MnvPlotter *plot, bool includeFlows)
+void Draw2DHist_hist_notext(
+  MnvH2D *hist_input, const char *Title,
+   const char* xaxislabel,const char* yaxislabel,
+   const char* pdf, TCanvas *can,
+   MnvPlotter *plot, bool includeFlows)
 {
 
   MnvH2D *hist = (PlotUtils::MnvH2D*)hist_input->Clone("hist");
@@ -8726,13 +8790,15 @@ void Draw2DHist_hist_notext(MnvH2D *hist_input, const char *Title, const char* x
 
 }//end of 2D draw function
 
-///////////////////
-///
-///////////////////
-
-void Draw2DHist_Migration_TFILE(TFile *inputFile, const char* histoName,
-  const char *Title, const char* xaxislabel,const char* yaxislabel,
-  const char* pdf_label, TCanvas *can, MnvPlotter *plot, bool PrintText)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw2DHist_Migration_TFILE(
+  TFile *inputFile, const char* histoName,
+  const char *Title, const char* xaxislabel,
+  const char* yaxislabel,
+  const char* pdf_label, TCanvas *can,
+  MnvPlotter *plot, bool PrintText)
   {
     gStyle->SetPalette(kCool);
     gStyle->SetPaintTextFormat("g");
@@ -8816,14 +8882,16 @@ void Draw2DHist_Migration_TFILE(TFile *inputFile, const char* histoName,
 
   }//end of 2D draw function
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
-
-  void Draw2DHist_Migration_TFILE_FULL_EMPTY(TFile *inputFile_FULL,
-                                             TFile *inputFile_EMPTY, double MCscale,
-     const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
-    const char* pdf_label, TCanvas *can, MnvPlotter *plot, bool PrintText)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw2DHist_Migration_TFILE_FULL_EMPTY(
+    TFile *inputFile_FULL,
+    TFile *inputFile_EMPTY, double MCscale,
+    const char* histoName, const char *Title,
+    const char* xaxislabel,const char* yaxislabel,
+    const char* pdf_label, TCanvas *can,
+    MnvPlotter *plot, bool PrintText)
     {
       gStyle->SetPalette(kCool);
       gStyle->SetPaintTextFormat("g");
@@ -9057,12 +9125,14 @@ void Draw2DHist_Migration_TFILE(TFile *inputFile, const char* histoName,
 
     }//end of 2D draw function
 
-    ////////////////////////////////////////////////////
-    //////
-    ////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////
+    //
+    /////////////////////////////////////////////////////////////////////////////////
 
-void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
-     const char* xaxislabel, const char* yaxislabel,  const char *zaxislabel,
+void Draw2DHist_Migration_Histpointer(
+  MnvH2D *hist, const char *Title,
+  const char* xaxislabel, const char* yaxislabel,
+  const char *zaxislabel,
   const char* pdf_label, TCanvas *can, MnvPlotter *plot )
   {
     gStyle->SetPalette(kCool);
@@ -9090,9 +9160,13 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
 
 
   }//end o
-
-  void Draw2DHist_Migration_Histpointer(MnvH2D *hist, std::string Title_string,
-       std::string xaxislabel_string, std::string yaxislabel_string,  std::string zaxislabel_string,
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
+  void Draw2DHist_Migration_Histpointer(
+    MnvH2D *hist, std::string Title_string,
+    std::string xaxislabel_string, std::string yaxislabel_string,
+    std::string zaxislabel_string,
     std::string pdf_label_string, TCanvas *can, MnvPlotter *plot)
     {
       const char* pdf_label = pdf_label_string.c_str();
@@ -9106,14 +9180,16 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
     pdf_label, can, plot);
 
     }//end o
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
 
-  void Draw2DHist_HistpointernoText(MnvH2D *hist, const char *Title,
-       const char* xaxislabel, const char* yaxislabel,  const char *zaxislabel,
-    const char* pdf_label, TCanvas *can, MnvPlotter *plot)
-    {
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw2DHist_HistpointernoText(
+  MnvH2D *hist, const char *Title,
+  const char* xaxislabel, const char* yaxislabel,
+  const char *zaxislabel,
+  const char* pdf_label, TCanvas *can, MnvPlotter *plot)
+  {
       gStyle->SetPalette(kCool);
       bool includeFlows = true;
 
@@ -9137,11 +9213,13 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
 
     }//end o
 
-    ////////////////////////////////////////////////////
-    //////
-    ////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-  void SetUpMigration_BybinN(TH2D &hist, bool includeFlows, double markersize, const char*Ztitle){
+  void SetUpMigration_BybinN(
+    TH2D &hist, bool includeFlows,
+     double markersize, const char*Ztitle){
 
     Int_t nbins = includeFlows ? hist.GetNbinsX()+2 : hist.GetNbinsX();
     hist.SetMarkerSize(markersize);
@@ -9165,11 +9243,13 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
     hist.SetMarkerColor(kBlack);
   }
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
-
-  void SetUpMigration_BybinN(MnvH2D &hist, bool includeFlows, double markersize, const char*Ztitle){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void SetUpMigration_BybinN(
+  MnvH2D &hist, bool includeFlows,
+  double markersize, const char*Ztitle)
+  {
 
     Int_t nbins = includeFlows ? hist.GetNbinsX()+2 : hist.GetNbinsX();
     hist.SetMarkerSize(markersize);
@@ -9193,11 +9273,15 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
     hist.SetMarkerColor(kBlack);
   }
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-  void SetUpMigration(TH2D &hist, bool includeFlows, double markersize, const char*Xaxis, const char*Yaxis, const char*Ztitle){
+  void SetUpMigration(
+    TH2D &hist, bool includeFlows,
+    double markersize, const char*Xaxis,
+    const char*Yaxis, const char*Ztitle)
+    {
 
     hist.SetMarkerSize(markersize);
     hist.GetXaxis()->CenterTitle();
@@ -9220,11 +9304,14 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
     hist.SetMarkerColor(kBlack);
   }
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-  void SetUpMigration(MnvH2D &hist, bool includeFlows, double markersize, const char*Xaxis, const char*Yaxis, const char*Ztitle){
+  void SetUpMigration(
+    MnvH2D &hist, bool includeFlows,
+    double markersize, const char*Xaxis,
+    const char*Yaxis, const char*Ztitle){
 
     hist.SetMarkerSize(markersize);
     hist.GetXaxis()->CenterTitle();
@@ -9245,12 +9332,14 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
     hist.SetMarkerColor(kBlack);
   }
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-  void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector,
-      const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog)
+  void Draw_TGraphs_fitParams(
+    std::vector<GaussianFitsParms> GaussianFits_values_Resolution_vector,
+    const char* pdf_label, char *histotitle,
+    TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog)
   {
 
     std::string TotalTitle = string(histotitle);
@@ -9287,14 +9376,16 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
 
   }
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-  void Draw_TGraphs_fitParams(std::vector<GaussianFitsParms> GaussianFits_helium,
-                           std::vector<GaussianFitsParms> GaussianFits_nonhelium,
-                               std::vector<GaussianFitsParms> GaussianFits_total,
-    const char* pdf_label, char *histotitle, TCanvas *cE, MnvPlotter *mnvPlotter,
+  void Draw_TGraphs_fitParams(
+    std::vector<GaussianFitsParms> GaussianFits_helium,
+    std::vector<GaussianFitsParms> GaussianFits_nonhelium,
+    std::vector<GaussianFitsParms> GaussianFits_total,
+    const char* pdf_label, char *histotitle,
+    TCanvas *cE, MnvPlotter *mnvPlotter,
     bool Xlog ,bool Ylog , bool setGrid , char *Playlist)
   {
 
@@ -9389,13 +9480,16 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
   }
 
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-  void Draw_TGraphs_NEvent_FidiucalCut(std::vector<NEvent_FidiucalCut> NEvent_FidiucalCut_vector,
-      const char* pdf_label, char *histotitle, const char *playlist, TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog)
-  {
+  void Draw_TGraphs_NEvent_FidiucalCut(
+    std::vector<NEvent_FidiucalCut> NEvent_FidiucalCut_vector,
+    const char* pdf_label, char *histotitle,
+    const char *playlist, TCanvas *cE,
+       MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog)
+       {
 
     std::string TotalTitle = string(histotitle);
     std::vector<double> X_axis_CutValue;
@@ -9491,12 +9585,15 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
   }
 
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-  void Draw_TGraphs_NEventONLY_FidiucalCut(std::vector<NEvent_FidiucalCut> NEvent_FidiucalCut_vector,
-      const char* pdf_label, char *histotitle, const char *playlist, TCanvas *cE, MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog)
+  void Draw_TGraphs_NEventONLY_FidiucalCut(
+    std::vector<NEvent_FidiucalCut> NEvent_FidiucalCut_vector,
+    const char* pdf_label, char *histotitle,
+    const char *playlist, TCanvas *cE,
+    MnvPlotter *mnvPlotter, bool Xlog ,bool Ylog)
   {
 
     std::string TotalTitle = string(histotitle);
@@ -9542,11 +9639,13 @@ void Draw2DHist_Migration_Histpointer(MnvH2D *hist, const char *Title,
 
   }
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
+void Draw2DHist_histWithTProfile(
+  MnvH2D *hist_input, const char *Title,
+  const char* xaxislabel,const char* yaxislabel,
   const char* pdf, TCanvas *can, MnvPlotter *plot)
   {
 
@@ -9578,8 +9677,12 @@ void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const ch
     can->Closed();
 
   }//end of 2D draw function
-
-  void Draw2DHist_histWithTProfile_Y(MnvH2D *hist_input, const char *Title, const char* xaxislabel,const char* yaxislabel,
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
+  void Draw2DHist_histWithTProfile_Y(
+    MnvH2D *hist_input, const char *Title,
+     const char* xaxislabel,const char* yaxislabel,
     const char* pdf, TCanvas *can, MnvPlotter *plot)
     {
 
@@ -9613,13 +9716,15 @@ void Draw2DHist_histWithTProfile(MnvH2D *hist_input, const char *Title, const ch
     }//end of 2D draw function
 
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_input,
-  const char *Title, const char* xaxislabel,const char* yaxislabel,
-  const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY )
+void Draw_XDistribution_PerBinWithGaussFit_2DHist(
+  MnvH2D *hist_input, const char *Title,
+  const char* xaxislabel,const char* yaxislabel,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plot, bool Setgrid, Double_t maxY )
 {
 
   char hist_Title[1024];
@@ -9676,10 +9781,17 @@ void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_input,
 
 }//end of Function
 
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_input_total, MnvH2D *hist_input_Helium,
-  MnvH2D *hist_input_NonHelium, const char *Title, const char* xaxislabel,const char* yaxislabel,
-  const char* pdf, char *Playlist, TCanvas *can, MnvPlotter *plot, bool Setgrid, Double_t maxY , bool LogX, bool LogY ){
+void Draw_XDistribution_PerBinWithGaussFit_2DHist(
+  MnvH2D *hist_input_total, MnvH2D *hist_input_Helium,
+  MnvH2D *hist_input_NonHelium, const char *Title,
+  const char* xaxislabel,const char* yaxislabel,
+  const char* pdf, char *Playlist, TCanvas *can,
+  MnvPlotter *plot, bool Setgrid, Double_t maxY,
+  bool LogX, bool LogY ){
 
     char hist_Title[1024];
     MnvH2D *hist_helium = (PlotUtils::MnvH2D*)hist_input_Helium->Clone("hist_helium");
@@ -9779,18 +9891,21 @@ void Draw_XDistribution_PerBinWithGaussFit_2DHist(MnvH2D *hist_input_total, MnvH
 
       }//end of Function
 
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-
-void Draw_YDistribution_PerBin_2DHist_Purity_Efficiency(MnvH2D *hist_input_Numerator,
-                                                        MnvH2D *hist_input_Denominator,
-                                                        MnvH2D *hist_input_Total,
-                                                        MnvH2D *hist_input_Helium_RECO,
-                                                        MnvH2D *hist_input_NonHelium_RECO,
-const char *Title, const char* xaxislabel,const char* yaxislabel, const char* playlist,
-const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoCuts, double maxY_TruthCuts , bool LogX, bool LogY ){
+void Draw_YDistribution_PerBin_2DHist_Purity_Efficiency(
+  MnvH2D *hist_input_Numerator,
+  MnvH2D *hist_input_Denominator,
+  MnvH2D *hist_input_Total,
+  MnvH2D *hist_input_Helium_RECO,
+  MnvH2D *hist_input_NonHelium_RECO,
+  const char *Title, const char* xaxislabel,
+  const char* yaxislabel, const char* playlist,
+  const char* pdf, TCanvas *can, MnvPlotter *plot,
+  bool Setgrid, double maxY_recoCuts,
+  double maxY_TruthCuts , bool LogX, bool LogY ){
 
   char hist_Title[1024];
   MnvH2D *hist_helium = (PlotUtils::MnvH2D*)hist_input_Helium_RECO->Clone("hist_helium");
@@ -9900,19 +10015,22 @@ const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoC
 
   }//end of Function
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
 
-
-void Draw_YDistribution_PerBin_2DHist_Purity_Efficiency(MnvH2D *hist_input_Numerator,
-                                                        MnvH2D *hist_input_Denominator,
-                                                        MnvH2D *hist_input_Total,
-                                                        MnvH2D *hist_input_Helium_RECO,
-                                                        MnvH2D *hist_input_NonHelium_RECO,
-                                                        MnvH2D *hist_input_Efficiency,
-const char *Title, const char* xaxislabel,const char* yaxislabel, const char* playlist,
-const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoCuts, double maxY_TruthCuts, bool LogX, bool LogY ){
+void Draw_YDistribution_PerBin_2DHist_Purity_Efficiency(
+  MnvH2D *hist_input_Numerator,
+  MnvH2D *hist_input_Denominator,
+  MnvH2D *hist_input_Total,
+  MnvH2D *hist_input_Helium_RECO,
+  MnvH2D *hist_input_NonHelium_RECO,
+  MnvH2D *hist_input_Efficiency,
+  const char *Title, const char* xaxislabel,
+  const char* yaxislabel, const char* playlist,
+  const char* pdf, TCanvas *can, MnvPlotter *plot,
+  bool Setgrid, double maxY_recoCuts,
+  double maxY_TruthCuts, bool LogX, bool LogY ){
 
   char hist_Title[1024];
   MnvH2D *hist_helium = (PlotUtils::MnvH2D*)hist_input_Helium_RECO->Clone("hist_helium");
@@ -10053,17 +10171,19 @@ const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoC
   }//end of Function
 
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-
-void Draw_YDistribution_PerBin_2DHist(MnvH2D *hist_input_Total,
-                                      MnvH2D *hist_input_Helium_RECO,
-                                      MnvH2D *hist_input_NonHelium_RECO,
- const char *Title, const char* xaxislabel,const char* yaxislabel, const char* playlist,
- const char* pdf, TCanvas *can, MnvPlotter *plot, bool Setgrid, double maxY_recoCuts,
- bool LogX, bool LogY ){
+void Draw_YDistribution_PerBin_2DHist(
+  MnvH2D *hist_input_Total,
+  MnvH2D *hist_input_Helium_RECO,
+  MnvH2D *hist_input_NonHelium_RECO,
+  const char *Title, const char* xaxislabel,
+  const char* yaxislabel, const char* playlist,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plot, bool Setgrid, double maxY_recoCuts,
+  bool LogX, bool LogY ){
 
    char hist_Title[1024];
    MnvH2D *hist_helium = (PlotUtils::MnvH2D*)hist_input_Helium_RECO->Clone("hist_helium");
@@ -10148,47 +10268,49 @@ void Draw_YDistribution_PerBin_2DHist(MnvH2D *hist_input_Total,
 
    }//end of Function
 
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw2DHist_NumberFigures_TFILE(
+  TFile *inputFile,
+  const char* histoName,
+  const char *Title,
+  const char* xaxislabel,
+  const char* yaxislabel,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plot)
+  {
 
-   ////////////////////////////////////////////////////
-   //////
-   ////////////////////////////////////////////////////
+    std::cout<<"trying 2D HisName  = "<< histoName<<std::endl;
 
+    TH2D *h_mig = (TH2D*)inputFile -> Get(histoName);
 
-   void Draw2DHist_NumberFigures_TFILE(TFile *inputFile,
-     const char* histoName, const char *Title, const char* xaxislabel,const char* yaxislabel,
-     const char* pdf, TCanvas *can, MnvPlotter *plot){
+    TH2D *h_mig_rowNorm = (TH2D*)h_mig->Clone("h_mig_rowNorm");
+    rowNormalize(*h_mig_rowNorm);
+    TH2D *h_mig_ColNorm = (TH2D*)h_mig->Clone("h_mig_ColNorm");
+    colNormalize(*h_mig_ColNorm);
 
-       std::cout<<"trying 2D HisName  = "<< histoName<<std::endl;
+    string TotalTitle = string(Title);
+    char Full_title[1024];
+    DrawMagration_heatMap(h_mig,xaxislabel,yaxislabel,Title,pdf,can,plot);
 
-       TH2D *h_mig = (TH2D*)inputFile -> Get(histoName);
+    sprintf(Full_title, "%s (Row Norm)",Title);
+    DrawMagration_heatMap(h_mig_rowNorm,xaxislabel,yaxislabel,Full_title,pdf,can,plot);
 
-       TH2D *h_mig_rowNorm = (TH2D*)h_mig->Clone("h_mig_rowNorm");
-       rowNormalize(*h_mig_rowNorm);
-       TH2D *h_mig_ColNorm = (TH2D*)h_mig->Clone("h_mig_ColNorm");
-       colNormalize(*h_mig_ColNorm);
+    sprintf(Full_title, "%s (Col) Norm)",Title);
+    DrawMagration_heatMap(h_mig_ColNorm,xaxislabel,yaxislabel,Full_title,pdf,can,plot);
+  }//end of 2D draw function
 
-       string TotalTitle = string(Title);
-       char Full_title[1024];
-       DrawMagration_heatMap(h_mig,xaxislabel,yaxislabel,Title,pdf,can,plot);
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-       sprintf(Full_title, "%s (Row Norm)",Title);
-       DrawMagration_heatMap(h_mig_rowNorm,xaxislabel,yaxislabel,Full_title,pdf,can,plot);
-
-       sprintf(Full_title, "%s (Col) Norm)",Title);
-       DrawMagration_heatMap(h_mig_ColNorm,xaxislabel,yaxislabel,Full_title,pdf,can,plot);
-
-
-
-
-     }//end of 2D draw function
-
-     ////////////////////////////////////////////////////
-     //////
-     ////////////////////////////////////////////////////
-
-void DrawMagration_heatMap(TH2D *h_migration_input, const char* xaxislabel,const char* yaxislabel,
-   const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter , bool includeFlows  )
-{
+void DrawMagration_heatMap(
+  TH2D *h_migration_input, const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title, const char* pdf,
+  TCanvas *can, MnvPlotter *plotter , bool includeFlows  )
+  {
   TH2D *h_migration = (TH2D*)h_migration_input->Clone("h_migration");
 
   int first_bin = includeFlows ? 0 : 1;
@@ -10254,12 +10376,16 @@ void DrawMagration_heatMap(TH2D *h_migration_input, const char* xaxislabel,const
   can->Print(pdf);
 }//end of function
 
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, bool includeFlows )
+void DrawMagration_heatMap(
+  MnvH2D *h_mig,
+  const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title, const char* pdf,
+   TCanvas *can, MnvPlotter *plotter, bool includeFlows )
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -10334,10 +10460,16 @@ void DrawMagration_heatMap(MnvH2D *h_mig, const char* xaxislabel,const char* yax
   plotter->AddHistoTitle(Title, .04);
   can->Print(pdf);
 }//end of function
-////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-void DrawMagration_heatMap_LabelBinNumber(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, bool includeFlows )
+void DrawMagration_heatMap_LabelBinNumber(
+  MnvH2D *h_mig, const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plotter, bool includeFlows )
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -10416,12 +10548,17 @@ void DrawMagration_heatMap_LabelBinNumber(MnvH2D *h_mig, const char* xaxislabel,
 
 
 
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel, const char* yaxislabel,
-   const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, bool includeFlows, const char* zaxislabel )
+void DrawMagration_heatMap_noText(
+  MnvH2D *h_mig, const char* xaxislabel,
+  const char* yaxislabel,
+   const char* Title,
+   const char* pdf, TCanvas *can,
+   MnvPlotter *plotter,
+   bool includeFlows, const char* zaxislabel )
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -10501,12 +10638,18 @@ void DrawMagration_heatMap_noText(MnvH2D *h_mig, const char* xaxislabel, const c
   can->Print(pdf);
 }//end of function
 
-//////////////////////////////////////////////////
-/////
-/////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-void DrawStack_Vertex_Material_FUll_EMPTY_WITHDATA(bool my_debug, TFile *inputFile_FULL,TFile *inputFile_EMPTY,TFile *inputFile_DATA_FULL,TFile *inputFile_DATA_EMPTY, Pot_MapList POT_MC ,Pot_MapList POT_DATA ,CryoVertex CryroVertex_type,ME_helium_Playlists PlayListFULL , ME_helium_Playlists PlayListEmpty,int doShape,
-  int logScale, std::string Hist_name_addON, MnvPlotter *plot, TCanvas *can, const char *pdf){
+void DrawStack_Vertex_Material_FUll_EMPTY_WITHDATA(
+  bool my_debug, TFile *inputFile_FULL, TFile *inputFile_EMPTY,
+  TFile *inputFile_DATA_FULL,TFile *inputFile_DATA_EMPTY,
+  Pot_MapList POT_MC ,Pot_MapList POT_DATA ,
+  CryoVertex CryroVertex_type,ME_helium_Playlists PlayListFULL,
+  ME_helium_Playlists PlayListEmpty,int doShape,
+  int logScale, std::string Hist_name_addON,
+  MnvPlotter *plot, TCanvas *can, const char *pdf){
 
     // set up legend, assuming this function only ever plots oodles of stacked histograms
     double x1, x2, y1, y2;
@@ -10804,15 +10947,19 @@ for(int i=0; i != FULL_HISTS_vector.size(); i++){
 
 
 }//ENd of DrawStack_paricle
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
-
-void DrawCVAndError_FromTFile(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,  char *histoName_MC,
-  TFile *inputFile_DATAFULL,TFile *inputFile_DATAEMPTY, char *histoName_Data,
-  Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA, bool TrueifFullelseEmpty, char *histotitle,
-  std::string xaxislabel, std::string label, bool DoBinwidthNorm, bool doSmallerrorgrounps,
+void DrawCVAndError_FromTFile(
+  TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,
+  char *histoName_MC,
+  TFile *inputFile_DATAFULL,TFile *inputFile_DATAEMPTY,
+  char *histoName_Data,
+  Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA,
+  bool TrueifFullelseEmpty, char *histotitle,
+  std::string xaxislabel, std::string label,
+  bool DoBinwidthNorm, bool doSmallerrorgrounps,
   std::string units, int Print_Error ,bool Debug)
 {    //helium_Status kEMPTY, kFULL;
 
@@ -10906,14 +11053,6 @@ void DrawCVAndError_FromTFile(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,
   else  if (fullOrEmpty == 2) {sprintf(emptyFull, " (F-E) ");}
 
 
-  //plot->DecodeLegendPosition(x1, y1, x2, y2, "R", 2, 2, .03);
-  //mnvPlotter.DecodeLegendPosition(x1, y1, x2, y2, "R", .5, 10, .025);
-  //TLegend *legend = new TLegend(x1 - .05, y1 + .1, x2 + .05, y2 + .1);
-  //TLegend *legend = new TLegend(x1 - .02, y1+.31 , x2 +.06 , y2 + .42  );
-  //legend->SetNColumns(1);
-  //legend->SetTextSize(.03);
-  //legend->SetFillColor(0);
-
   char ytitle[100];
   char xaxislabel_char[xaxislabel.length()+1];
   strcpy( xaxislabel_char,xaxislabel.c_str());
@@ -10927,36 +11066,34 @@ void DrawCVAndError_FromTFile(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,
   char total_title[1024];
   sprintf(total_title, "%s[%s] %s", histotitle, emptyFull," (POT Norm) ");
 
-           //if(DoBinwidthNorm==true){
-          //   hist_a->Scale(1.0,"width");
-          //   hist_b->Scale(1.0,"width");
-          // }
+  Draw_DataWITHMC_SingleHistinput_withRatio(hist_a, hist_b,
+    " ", label, total_title, "",
+    xaxislabel_char,  ytitle, DoBinwidthNorm, MakeXaxisLOG);
 
-           Draw_DataWITHMC_SingleHistinput_withRatio(hist_a, hist_b,
-            " ", label, total_title, "",
-            xaxislabel_char,  ytitle, DoBinwidthNorm, MakeXaxisLOG);
+    if (fullOrEmpty == 2) {
+      hist_a -> Clear();
+      hist_ap1 -> Clear();
+      hist_b -> Clear();
+      hist_bp1 -> Clear();
+    }
+    cE.Closed();
+  }
 
-           if (fullOrEmpty == 2) {
-             hist_a -> Clear();
-             hist_ap1 -> Clear();
-             hist_b -> Clear();
-             hist_bp1 -> Clear();
-           }
-           cE.Closed();
-         }
+}
 
-       }
-
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
-
-
-void DrawCVAndError_FromTFile(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,  char *histoName_MC ,
-                            TFile *inputFile_DATAFULL, TFile *inputFile_DATAEMPTY, char *histoName_Data,
-                            Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA, bool TrueifFullelseEmpty, char *histotitle,
-                            std::string xaxislabel, std::string label, bool DoBinwidthNorm, bool doSmallerrorgrounps, std::string units,
-                            int Print_Error, bool Debug, bool Makelogx, bool Makelogy )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawCVAndError_FromTFile(
+  TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,
+    char *histoName_MC,
+    TFile *inputFile_DATAFULL, TFile *inputFile_DATAEMPTY,
+    char *histoName_Data,
+    Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA,
+    bool TrueifFullelseEmpty, char *histotitle,
+    std::string xaxislabel, std::string label, bool DoBinwidthNorm,
+    bool doSmallerrorgrounps, std::string units,
+    int Print_Error, bool Debug, bool Makelogx, bool Makelogy )
  {    //helium_Status kEMPTY, kFULL;
 
    std::vector<bool> Print_Vector = Print_Systematics(Print_Error);
@@ -11061,7 +11198,8 @@ sprintf(total_title, "%s [%s]", histotitle, emptyFull);
 
 Draw_DataWITHMC_SingleHistinput_withRatio(hist_a, hist_b,
   " ", label, total_title, units,
-  xaxislabel_char,  ytitle, DoBinwidthNorm, MakeXaxisLOG, PotScaler_data, PotScaler_MC, doSmallerrorgrounps);
+  xaxislabel_char,  ytitle, DoBinwidthNorm,
+  MakeXaxisLOG, PotScaler_data, PotScaler_MC, doSmallerrorgrounps);
 
   if (fullOrEmpty == 2) {
     hist_a -> Clear();
@@ -11075,13 +11213,12 @@ Draw_DataWITHMC_SingleHistinput_withRatio(hist_a, hist_b,
 }
 
 
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
-
-
-
-void DrawRatio_FromTFile(TFile *inputFile_numerator, TFile *inputFile_demonator,  char *histoName_num, char *histoName_dem ,char *histotitle,
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawRatio_FromTFile(
+  TFile *inputFile_numerator, TFile *inputFile_demonator,
+  char *histoName_num, char *histoName_dem ,char *histotitle,
   std::string xaxislabel, std::string pdf_label, std::string units)
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCompactStyle);
@@ -11156,13 +11293,15 @@ void DrawRatio_FromTFile(TFile *inputFile_numerator, TFile *inputFile_demonator,
 
   }
 
-  ////////////////////////////////////////////////////
-  //////
-  ////////////////////////////////////////////////////
-
-void Draw2DRatio_FromTFile(TFile *inputFile_numerator, TFile *inputFile_demonator,char *histoName_num,char *histoName_dem,
-                           char *num_labelname_y,char *dem_labelname_y, char *num_labelname_x, char *dem_labelname_x,
-                           char *histotitle, const char* pdf,TCanvas *can, MnvPlotter *plot)
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
+void Draw2DRatio_FromTFile(
+  TFile *inputFile_numerator, TFile *inputFile_demonator,
+  char *histoName_num,char *histoName_dem,
+  char *num_labelname_y, char *dem_labelname_y,
+  char *num_labelname_x, char *dem_labelname_x,
+  char *histotitle, const char* pdf,TCanvas *can, MnvPlotter *plot)
 {    //helium_Status kEMPTY, kFULL;
 
   std::cout<<"Making ratio for  = "<< histoName_num<<std::endl;
@@ -11185,8 +11324,15 @@ void Draw2DRatio_FromTFile(TFile *inputFile_numerator, TFile *inputFile_demonato
 
 }
 
-
-Hist_phyiscs_map Make_Physics_distribution_map_FromTFile(TFile *inputTFile, char *histoName_MC , bool UsePotScaling, double POTScale, ME_helium_Playlists playlist, bool IsRecoOrTruth ){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+Hist_phyiscs_map Make_Physics_distribution_map_FromTFile(
+  TFile *inputTFile,
+  char *histoName_MC,
+  bool UsePotScaling,
+  double POTScale, ME_helium_Playlists playlist,
+  bool IsRecoOrTruth ){
 
   auto cryoTank_status = GetPlaylist_HeliumStatus(playlist);
   char Stack_Name_material[1024];
@@ -11230,8 +11376,13 @@ Hist_phyiscs_map Make_Physics_distribution_map_FromTFile(TFile *inputTFile, char
 
 
 }
-
-Hist_phyiscs_map_withtrack Make_Physics_withTrack_distribution_map_FromTFile(TFile *inputTFile, char *histoName_MC , bool UsePotScaling, double POTScale, ME_helium_Playlists playlist, bool IsRecoOrTruth ){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+Hist_phyiscs_map_withtrack Make_Physics_withTrack_distribution_map_FromTFile(
+  TFile *inputTFile, char *histoName_MC ,
+  bool UsePotScaling, double POTScale,
+  ME_helium_Playlists playlist, bool IsRecoOrTruth ){
 
   auto cryoTank_status = GetPlaylist_HeliumStatus(playlist);
   char Stack_Name_material[1024];
@@ -11261,35 +11412,33 @@ Hist_phyiscs_map_withtrack Make_Physics_withTrack_distribution_map_FromTFile(TFi
       *inputTFile, std::string(Stack_Name_interaction)),
       "MC_Stack_Interaction");
 
-      PlotUtils::HistFolio<PlotUtils::MnvH1D> MC_Stack_Track(
-        PlotUtils::LoadHistFolioFromFile<PlotUtils::MnvH1D>(
-          *inputTFile, std::string(Stack_Name_track)),
-          "MC_Stack_track");
+  PlotUtils::HistFolio<PlotUtils::MnvH1D> MC_Stack_Track(
+    PlotUtils::LoadHistFolioFromFile<PlotUtils::MnvH1D>(
+      *inputTFile, std::string(Stack_Name_track)),
+      "MC_Stack_track");
 
+  auto MC_Stack_Material_array = MC_Stack_Material.GetHistArray();
+  auto MC_Stack_Particle_array = MC_Stack_Particle.GetHistArray();
+  auto MC_Stack_Interaction_array = MC_Stack_Interaction.GetHistArray();
+  auto MC_Stack_Track_array = MC_Stack_Track.GetHistArray();
 
+  std::vector<Material_Map> Material_Map_vector = Material_vector( &MC_Stack_Material_array, false, 1.0);
+  std::vector<Interaction_Map> Interaction_Map_vector = Interaction_vector( &MC_Stack_Interaction_array, false, 1.0);
+  std::vector<Particle_Map> Particle_Map_vector = Particle_vector( &MC_Stack_Particle_array, false, 1.0);
+  std::vector<Track_Map> Track_Map_vector = Track_vector( &MC_Stack_Track_array, false, 1.0);
 
-      auto MC_Stack_Material_array = MC_Stack_Material.GetHistArray();
-      auto MC_Stack_Particle_array = MC_Stack_Particle.GetHistArray();
-      auto MC_Stack_Interaction_array = MC_Stack_Interaction.GetHistArray();
-      auto MC_Stack_Track_array = MC_Stack_Track.GetHistArray();
+  Hist_phyiscs_map_withtrack HisMap_Return_stuct{histoName_MC,playlist,cryoTank_status,IsRecoOrTruth,Particle_Map_vector,Material_Map_vector,Interaction_Map_vector, Track_Map_vector};
 
-      std::vector<Material_Map> Material_Map_vector = Material_vector( &MC_Stack_Material_array, false, 1.0);
-      std::vector<Interaction_Map> Interaction_Map_vector = Interaction_vector( &MC_Stack_Interaction_array, false, 1.0);
-      std::vector<Particle_Map> Particle_Map_vector = Particle_vector( &MC_Stack_Particle_array, false, 1.0);
-      std::vector<Track_Map> Track_Map_vector = Track_vector( &MC_Stack_Track_array, false, 1.0);
-
-
-      Hist_phyiscs_map_withtrack HisMap_Return_stuct{histoName_MC,playlist,cryoTank_status,IsRecoOrTruth,Particle_Map_vector,Material_Map_vector,Interaction_Map_vector, Track_Map_vector};
-
-
-
-      return HisMap_Return_stuct;
-
-
+  return HisMap_Return_stuct;
 
 }
-
-Hist_map_track Make_Track_distribution_map_FromTFile(TFile *inputTFile, char *histoName , bool UsePotScaling, double POTScale, ME_helium_Playlists playlist, bool IsRecoOrTruth , bool isData ){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+Hist_map_track Make_Track_distribution_map_FromTFile(
+  TFile *inputTFile, char *histoName , bool UsePotScaling,
+  double POTScale, ME_helium_Playlists playlist,
+  bool IsRecoOrTruth , bool isData ){
 
   auto cryoTank_status = GetPlaylist_HeliumStatus(playlist);
 
@@ -11332,15 +11481,19 @@ Hist_map_track Make_Track_distribution_map_FromTFile(TFile *inputTFile, char *hi
 
 }
 
-
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
-
-
-void DrawSTACKfromHistFilio_FromTFile(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,  char *histoName_MC ,
-  TFile *inputFile_DATAFULL,TFile *inputFile_DATAEMPTY, char *histoName_Data, Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA, bool TrueifFullelseEmpty, char *histotitle,
-  std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, bool doSmallerrorgrounps, std::string units, StackType STACKTYPE, bool Debug )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawSTACKfromHistFilio_FromTFile(
+  TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,
+  char *histoName_MC,
+  TFile *inputFile_DATAFULL,TFile *inputFile_DATAEMPTY,
+  char *histoName_Data, Pot_MapStatusList POT_MC,
+  Pot_MapStatusList POT_DATA, bool TrueifFullelseEmpty,
+  char *histotitle,
+  std::string xaxislabel, std::string pdf_label,
+  bool DoBinwidthNorm, bool doSmallerrorgrounps,
+  std::string units, StackType STACKTYPE, bool Debug )
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     //PlotUtils::MnvPlotter mnvPlotter();
@@ -11617,11 +11770,15 @@ void DrawSTACKfromHistFilio_FromTFile(TFile *inputFile_MCFULL, TFile *inputFile_
   cE.Closed();
 
 }
-
-///////////////////////////////////////////////////////////////////////////////
-
-void DrawSTACK_FORDATAONLY_fromHistFilio_FromTFile( TFile *inputFile_DATAFULL,TFile *inputFile_DATAEMPTY, char *histoName_Data, Pot_MapStatusList POT_DATA, bool TrueifFullelseEmpty, char *histotitle,
-  std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawSTACK_FORDATAONLY_fromHistFilio_FromTFile(
+  TFile *inputFile_DATAFULL,TFile *inputFile_DATAEMPTY,
+  char *histoName_Data, Pot_MapStatusList POT_DATA,
+  bool TrueifFullelseEmpty, char *histotitle,
+  std::string xaxislabel, std::string pdf_label,
+  bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug )
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     //PlotUtils::MnvPlotter mnvPlotter();
@@ -11890,15 +12047,17 @@ void DrawSTACK_FORDATAONLY_fromHistFilio_FromTFile( TFile *inputFile_DATAFULL,TF
   cE.Closed();
 
 }
-
-////////////////////////////////////////////////////
-//////
-////////////////////////////////////////////////////
-
-
-void DrawSTACKfromHistFilio_FromTFileNoData(TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,  char *histoName_MC ,
-  Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA, char *histotitle, std::string xaxislabel, std::string pdf_label,
-   bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug, bool SetMaximum, double Maximum_group  )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawSTACKfromHistFilio_FromTFileNoData(
+  TFile *inputFile_MCFULL, TFile *inputFile_MCEMPTY,
+  char *histoName_MC ,
+  Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA,
+  char *histotitle, std::string xaxislabel, std::string pdf_label,
+   bool DoBinwidthNorm, std::string units,
+   StackType STACKTYPE, bool Debug,
+   bool SetMaximum, double Maximum_group )
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     //PlotUtils::MnvPlotter mnvPlotter();
@@ -12140,12 +12299,13 @@ void DrawSTACKfromHistFilio_FromTFileNoData(TFile *inputFile_MCFULL, TFile *inpu
   cE.Closed();
 
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-void DrawSINGLESTACKMCHistFilio_FromTFile(TFile *inputFile_MCinput,  char *histoName_MC ,
-  char *histotitle, std::string xaxislabel, std::string pdf_label,
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawSINGLESTACKMCHistFilio_FromTFile(
+  TFile *inputFile_MCinput,  char *histoName_MC ,
+  char *histotitle, std::string xaxislabel,
+  std::string pdf_label,
   bool DoBinwidthNorm, bool Debug )
   {    //helium_Status kEMPTY, kFULL;
     //PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCompactStyle);
@@ -12253,8 +12413,12 @@ mnvPlotter.MultiPrint(&cE, plotname, "pdf");
 cE.Closed();
 
 }
-
-void Draw_FourFitRegion_CryoTank(std::string pdf, TCanvas *can, MnvPlotter *plot)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_FourFitRegion_CryoTank(
+  std::string pdf, TCanvas *can,
+   MnvPlotter *plot)
 {
   can->Clear();
   std::string Title;
@@ -12369,7 +12533,9 @@ delete EndDSCap;
 
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
 void SetLineForCryoPlots(TGraph &Tg_result, int color){
 
@@ -12380,12 +12546,17 @@ void SetLineForCryoPlots(TGraph &Tg_result, int color){
 
 }
 
-
-
-
-void Draw2DHist_Full_Empty_TFILE(TFile *inputFile_Full,TFile *inputFile_Empty, const char* histoName,
-  Pot_MapList POT_MC, ME_helium_Playlists PlayListFULL, ME_helium_Playlists PlayListEmpty,
-  const char *Title, const char* xaxislabel,const char* yaxislabel, const char* pdf,
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw2DHist_Full_Empty_TFILE(
+  TFile *inputFile_Full,TFile *inputFile_Empty,
+  const char* histoName,
+  Pot_MapList POT_MC,
+  ME_helium_Playlists PlayListFULL,
+  ME_helium_Playlists PlayListEmpty,
+  const char *Title, const char* xaxislabel,
+  const char* yaxislabel, const char* pdf,
   TCanvas *can, MnvPlotter *plot)
 {
   std::cout<<"trying 2D HisName  = "<< histoName<<std::endl;
@@ -12660,8 +12831,14 @@ void MakeTrue_interactionPlots(std::vector <Trajector> input_vector,const char* 
 
 }//end of function;
 
-
-void MakeTrue_interactionPlots_WithRECOtrajector(std::vector <Trajector> input_vector, std::vector <Trajector_withTrueEnergyFraction> input_vector_RECO,const char* Playlist ,double Spaceingcm ,const char* pdf, TCanvas *can, MnvPlotter *plot)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void MakeTrue_interactionPlots_WithRECOtrajector(
+  std::vector <Trajector> input_vector,
+  std::vector <Trajector_withTrueEnergyFraction> input_vector_RECO,
+  const char* Playlist ,double Spaceingcm ,
+  const char* pdf, TCanvas *can, MnvPlotter *plot)
 {
   char pdf_mid[1024];
   char pdf_start[1024];
@@ -12772,15 +12949,7 @@ void MakeTrue_interactionPlots_WithRECOtrajector(std::vector <Trajector> input_v
       char Particle_name_char[Particle_name.length()+1];
       strcpy(Particle_name_char,Particle_name.c_str());
       auto KE = dog.KE*.001;
-      //std::cout<< "PDG in plotting pdg:"<< dog.pdg <<std::endl;
-      //std::cout<< "PDG in plotting KE:"<< dog.KE <<std::endl;
-      //std::cout<< "PDG in plotting Xo:"<< dog.Xo <<std::endl;
-      //std::cout<< "PDG in plotting Yo:"<< dog.Yo <<std::endl;
-      //std::cout<< "PDG in plotting Zo:"<< dog.Zo <<std::endl;
 
-      //std::cout<< "PDG in plotting a"<< dog.a <<std::endl;
-      //std::cout<< "PDG in plotting b"<< dog.b <<std::endl;
-      //std::cout<< "PDG in plotting c"<< dog.c <<std::endl;
 
       if(dog.pdg==13)
       {
@@ -12817,15 +12986,6 @@ void MakeTrue_interactionPlots_WithRECOtrajector(std::vector <Trajector> input_v
       strcpy(Particle_name_char,Particle_name.c_str());
       auto KE = dog.KE*.001;
       auto TrueEnergyFraction = dog.TRUE_Efraction;
-      //std::cout<< "PDG in plotting pdg:"<< dog.pdg <<std::endl;
-      //std::cout<< "PDG in plotting KE:"<< dog.KE <<std::endl;
-      //std::cout<< "PDG in plotting Xo:"<< dog.Xo <<std::endl;
-      //std::cout<< "PDG in plotting Yo:"<< dog.Yo <<std::endl;
-      //std::cout<< "PDG in plotting Zo:"<< dog.Zo <<std::endl;
-
-      //std::cout<< "PDG in plotting a"<< dog.a <<std::endl;
-      //std::cout<< "PDG in plotting b"<< dog.b <<std::endl;
-      //std::cout<< "PDG in plotting c"<< dog.c <<std::endl;
 
       if(dog.pdg==13)
       {
@@ -12835,12 +12995,6 @@ void MakeTrue_interactionPlots_WithRECOtrajector(std::vector <Trajector> input_v
         PathVector_forParticle = MakeVectorofPath(dog, Spaceingcm, 1.0);
 
       }
-
-      //for(auto cat: PathVector_forParticle){
-        //std::cout<<"Printing RECO out vector = (x,y,z) = ("<<cat.x <<","<<cat.y<<","<<cat.z<<") "<<"\n";}
-      //std::cout<<"~~~~~~~~~~~~~~~"<<std::endl;
-
-
 
       TGraph  *Tg_x = Make_X_vs_Z_Tgraph_fromVector(PathVector_forParticle);
 
@@ -12881,15 +13035,7 @@ void MakeTrue_interactionPlots_WithRECOtrajector(std::vector <Trajector> input_v
       char Particle_name_char[Particle_name.length()+1];
       strcpy(Particle_name_char,Particle_name.c_str());
       auto KE = dog.KE*.001;
-      //std::cout<< "PDG in plotting pdg:"<< dog.pdg <<std::endl;
-      //std::cout<< "PDG in plotting KE:"<< dog.KE <<std::endl;
-      //std::cout<< "PDG in plotting Xo:"<< dog.Xo <<std::endl;
-      //std::cout<< "PDG in plotting Yo:"<< dog.Yo <<std::endl;
-      //std::cout<< "PDG in plotting Zo:"<< dog.Zo <<std::endl;
 
-      //std::cout<< "PDG in plotting a"<< dog.a <<std::endl;
-      //std::cout<< "PDG in plotting b"<< dog.b <<std::endl;
-      //std::cout<< "PDG in plotting c"<< dog.c <<std::endl;
       if(dog.pdg==13)
       {
         PathVector_forParticle = MakeVectorofPath(dog, Spaceingcm, .40);
@@ -12974,10 +13120,13 @@ void MakeTrue_interactionPlots_WithRECOtrajector(std::vector <Trajector> input_v
 
 
 }//end of function;
-////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-
-void MakeData_trajector(std::vector <Trajector_DATA> input_vector, const char* Playlist ,double Spaceingcm ,const char* pdf, TCanvas *can, MnvPlotter *plot)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void MakeData_trajector(
+  std::vector <Trajector_DATA> input_vector,
+  const char* Playlist ,double Spaceingcm,
+  const char* pdf, TCanvas *can, MnvPlotter *plot)
 {
   char pdf_mid[1024];
   char pdf_start[1024];
@@ -13297,18 +13446,15 @@ can->Print(pdf_mid);
 
 }//end loop
 
-
 can->Print(pdf_end);
-
-
 
 }//end of function;
 
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-std::vector<Particle_Map> Particle_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+std::vector<Particle_Map> Particle_vector(
+   TObjArray * Hists_vector, bool doPOTscaling, double scaler){
 
   std::vector<Particle_Map> output_vector;
 
@@ -13333,8 +13479,12 @@ std::vector<Particle_Map> Particle_vector( TObjArray * Hists_vector, bool doPOTs
 
 
 }
-
-std::vector<Material_Map> Material_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+std::vector<Material_Map> Material_vector(
+  TObjArray * Hists_vector,
+  bool doPOTscaling, double scaler){
 
   std::vector<Material_Map> output_vector;
 
@@ -13359,8 +13509,12 @@ std::vector<Material_Map> Material_vector( TObjArray * Hists_vector, bool doPOTs
 
 
 }
-
-std::vector<Interaction_Map> Interaction_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+std::vector<Interaction_Map> Interaction_vector(
+  TObjArray * Hists_vector,
+  bool doPOTscaling, double scaler){
 
   std::vector<Interaction_Map> output_vector;
 
@@ -13386,9 +13540,12 @@ std::vector<Interaction_Map> Interaction_vector( TObjArray * Hists_vector, bool 
   return output_vector;
 
 }
-
-
-std::vector<Track_Map> Track_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+std::vector<Track_Map> Track_vector(
+  TObjArray * Hists_vector,
+  bool doPOTscaling, double scaler){
   std::vector<Track_Map> output_vector;
 
   int lowBin = 0;
@@ -13412,9 +13569,14 @@ std::vector<Track_Map> Track_vector( TObjArray * Hists_vector, bool doPOTscaling
 
   return output_vector;
 }
-
-std::vector<VertexOptions_Map> vertexOption_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler){
-  std::vector<VertexOptions_Map> output_vector;
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+std::vector<VertexOptions_Map> vertexOption_vector(
+  TObjArray * Hists_vector,
+  bool doPOTscaling, double scaler)
+  {
+    std::vector<VertexOptions_Map> output_vector;
 
   int lowBin = 0;
   unsigned int nHists = Hists_vector->GetEntries();
@@ -13437,9 +13599,14 @@ std::vector<VertexOptions_Map> vertexOption_vector( TObjArray * Hists_vector, bo
 
   return output_vector;
 }
-
-std::vector<boolNTrack_Map> boolNTrack_vector( TObjArray * Hists_vector, bool doPOTscaling, double scaler){
-  std::vector<boolNTrack_Map> output_vector;
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+std::vector<boolNTrack_Map> boolNTrack_vector(
+  TObjArray * Hists_vector,
+  bool doPOTscaling, double scaler)
+  {
+    std::vector<boolNTrack_Map> output_vector;
 
   int lowBin = 0;
   unsigned int nHists = Hists_vector->GetEntries();
@@ -13463,12 +13630,14 @@ std::vector<boolNTrack_Map> boolNTrack_vector( TObjArray * Hists_vector, bool do
   return output_vector;
 }
 
-
-
-
-
-void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector ,
-  const char* Playlist, const char* title ,const char* pdf, TCanvas *can, MnvPlotter *plot){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawVertex_Cryotank_X_Y_R_Vs_Z(
+  std::vector<Vertex_XYZ> input_XYZ_vector ,
+  const char* Playlist, const char* title,
+  const char* pdf, TCanvas *can, MnvPlotter *plot)
+  {
 
   char pdf_mid[1024];
   char pdf_start[1024];
@@ -13584,9 +13753,15 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector ,
   //NEW
 
 }//end of function
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He ,std::vector<Vertex_XYZ> input_XYZ_vector_Al,
-  const char* Playlist, const char* title ,const char* pdf, TCanvas *can, MnvPlotter *plot){
+void DrawVertex_Cryotank_X_Y_R_Vs_Z(
+  std::vector<Vertex_XYZ> input_XYZ_vector_He,
+  std::vector<Vertex_XYZ> input_XYZ_vector_Al,
+  const char* Playlist, const char* title ,
+  const char* pdf, TCanvas *can, MnvPlotter *plot){
 
   char pdf_mid[1024];
   char pdf_start[1024];
@@ -13767,14 +13942,16 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z(std::vector<Vertex_XYZ> input_XYZ_vector_He 
   //NEW
 
 }//end of function
-
-
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 void DrawVertex_Cryotank_X_Y_R_Vs_Z_4regions(
   std::vector<Vertex_XYZ> input_XYZ_vectorupstream,
   std::vector<Vertex_XYZ> input_XYZ_vectorbarrel,
   std::vector<Vertex_XYZ> input_XYZ_vectordownstream,
   std::vector<Vertex_XYZ> input_XYZ_vectordownstreamconcave,
-  const char* Playlist, const char* title ,const char* pdf, TCanvas *can, MnvPlotter *plot){
+  const char* Playlist, const char* title,
+  const char* pdf, TCanvas *can, MnvPlotter *plot){
 
   char pdf_mid[1024];
   char pdf_start[1024];
@@ -14004,8 +14181,14 @@ void DrawVertex_Cryotank_X_Y_R_Vs_Z_4regions(
   //NEW
 
 }//end of function
-
-void DrawPieFigures(Hist_phyiscs_map Input_map,  const char* pdf, TCanvas *can, MnvPlotter *plotter, bool IsReco, bool MakCVS, const char* CVS_title ){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawPieFigures(
+  Hist_phyiscs_map Input_map,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plotter, bool IsReco,
+  bool MakCVS, const char* CVS_title ){
 
   std::string Data_type = String_Reco_orTruth(IsReco);
   std::string CVS_title_string = CVS_title;
@@ -14239,11 +14422,14 @@ cpie->Print(PrintLabel);
 
 }// End of FUnction
 
-
-
-
-void DrawPieFigures_Interaction(std::vector<Interaction_Map> Interaction_Map_vector,  const char* pdf,
-   TCanvas *can, MnvPlotter *plotter, bool IsReco, bool MakCVS, const char* CVS_title, std::string Title_i ){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawPieFigures_Interaction(
+  std::vector<Interaction_Map> Interaction_Map_vector,
+  const char* pdf, TCanvas *can, MnvPlotter *plotter,
+   bool IsReco, bool MakCVS,
+   const char* CVS_title, std::string Title_i ){
 
   std::string Data_type = String_Reco_orTruth(IsReco);
   std::string CVS_title_string = CVS_title;
@@ -14354,8 +14540,14 @@ cpie->Print(PrintLabel);
 
 }// End of FUnction
 
-
-void DrawPieFigures_withTrackType(Hist_phyiscs_map_withtrack Input_map,  const char* pdf, TCanvas *can, MnvPlotter *plotter, bool IsReco, bool MakCVS, const char* CVS_title, char * Title  ){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawPieFigures_withTrackType(
+  Hist_phyiscs_map_withtrack Input_map,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plotter, bool IsReco,
+  bool MakCVS, const char* CVS_title, char * Title  ){
 
   std::string Data_type = String_Reco_orTruth(IsReco);
   std::string CVS_title_string = CVS_title;
@@ -14543,10 +14735,6 @@ for ( unsigned int i = 0; i != n_size_track; ++i )
 }
 
 
-
-
-
-
 if(MakCVS==true){
   myfile_particle.close();
   myfile_material.close();
@@ -14668,8 +14856,15 @@ cpie->Print(PrintLabel);
 
 
 }// End of FUnction
-
-void Draw_TrackTypePieFigures(Hist_map_track Input_map,  const char* pdf, TCanvas *can, MnvPlotter *plotter, bool IsRecoOrData, bool MakCVS, const char* CVS_title , char * Title){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_TrackTypePieFigures(
+  Hist_map_track Input_map,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plotter, bool IsRecoOrData,
+  bool MakCVS, const char* CVS_title, char * Title)
+  {
 
   std::string Data_type = String_Reco_orData(IsRecoOrData);
   std::string CVS_title_string = CVS_title;
@@ -14914,13 +15109,17 @@ cpie->Print(PrintLabel);
 
 }// End of FUnction
 
-
-void DrawPie_Figures_EventCutRate(EventCut_Rate_STRUCT Input_EventStuct,  const char* pdf,
-  TCanvas *can, MnvPlotter *plotter, char * Title){
-
-
-  TCanvas *cpie = new TCanvas("cpie","TPie test",700,700);
-  std::vector<int> PieColors = {
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawPie_Figures_EventCutRate(
+  EventCut_Rate_STRUCT Input_EventStuct,
+  const char* pdf,
+  TCanvas *can, MnvPlotter *plotter,
+  char * Title)
+  {
+    TCanvas *cpie = new TCanvas("cpie","TPie test",700,700);
+    std::vector<int> PieColors = {
     TColor::GetColor("#EEFF00"), // neonyellow,
     TColor::GetColor("#DF00FF"), //'psychedelic Purple
     TColor::GetColor("#ffc922"), //'sunset yellow'
@@ -15161,10 +15360,14 @@ cpie->Print(PrintLabel);
 
 
 }// End of FUnction
-//////////////////////////////////////////////
-/////
-/////////////////////////////////////////////
-void Draw_MCHist_fromTFile(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCHist_fromTFile(
+  TFile *inputFile_MCinput,
+  char *histoName_MC, std::string pdf_label,
+  char *histotitle, char *xaxislabel,
+  char* yaxislabel, bool DoBinwidthNorm )
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -15194,13 +15397,17 @@ void Draw_MCHist_fromTFile(TFile *inputFile_MCinput,  char *histoName_MC, std::s
  cE.Closed();
 
 }
-
-
-
-
-void Draw_DataHist_fromTFile(TFile *inputFile_DatainputFULL, TFile *inputFile_DatainputEmpty,
-   char *histoName_data, char *Playlist_name_FULL, char *Playlist_name_EMPTY, std::string pdf_label,
-    char *histotitle, char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, Pot_MapStatusList POT_DATA )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataHist_fromTFile(
+  TFile *inputFile_DatainputFULL, TFile *inputFile_DatainputEmpty,
+  char *histoName_data,
+  char *Playlist_name_FULL,
+  char *Playlist_name_EMPTY, std::string pdf_label,
+  char *histotitle, char *xaxislabel,
+  char* yaxislabel, bool DoBinwidthNorm,
+  bool MakeXaxisLOG, Pot_MapStatusList POT_DATA )
 {
   double scale_to_FULL= POT_DATA[kFULL] / POT_DATA[kEMPTY];
 
@@ -15257,11 +15464,21 @@ gPad->SetLogx(0);
 
 
 }
-
-void Draw_DataWITHMC_Hist_fromTFile(TFile *inputFile_MCinputFULL, TFile *inputFile_MCinputEmpty, char *histoName_MC,
-  TFile *inputFile_DatainputFULL, TFile *inputFile_DatainputEmpty,char *histoName_data,
-  char *Playlist_name_FULL, char *Playlist_name_EMPTY, std::string pdf_label, char *histotitle,
-   char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_Hist_fromTFile(
+  TFile *inputFile_MCinputFULL,
+  TFile *inputFile_MCinputEmpty,
+  char *histoName_MC,
+  TFile *inputFile_DatainputFULL,
+  TFile *inputFile_DatainputEmpty,char *histoName_data,
+  char *Playlist_name_FULL,
+  char *Playlist_name_EMPTY,
+  std::string pdf_label, char *histotitle,
+  char *xaxislabel,char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG,
+  Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC )
 {
   double scale_to_FULL= POT_DATA[kFULL] / POT_DATA[kEMPTY];
 
@@ -15364,10 +15581,15 @@ void Draw_DataWITHMC_Hist_fromTFile(TFile *inputFile_MCinputFULL, TFile *inputFi
     gPad->SetLogx(0);
   }
 }
-
-void Draw_DataWITHMC_SingleHistinput(MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput(
+  MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
+  char *Playlist_name, std::string pdf_label,
+  char *histotitle, std::string units,
+  char *xaxislabel, char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG)
 {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -15430,7 +15652,8 @@ void Draw_DataWITHMC_SingleHistinput(MnvH1D *hist_MC_input, MnvH1D *hist_Data_in
     hist_MC->Scale(1,"width");
     hist_Data->Scale(1,"width");
   }
-  mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC, mcScale, "N", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC, mcScale,
+     "N", useHistTitles, NULL, NULL, false, statPlusSys);
 
   char chi_label[1024];
 
@@ -15462,11 +15685,14 @@ void Draw_DataWITHMC_SingleHistinput(MnvH1D *hist_MC_input, MnvH1D *hist_Data_in
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////
-void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-  char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG,
+void Draw_DataWITHMC_SingleHistinput_withRatio(
+  MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
+  char *Playlist_name, std::string pdf_label,
+  char *histotitle, std::string units,
+  char *xaxislabel, char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG,
   bool MakeYaxisLOG , bool drawAllErrorGroups )
-  {
+{
     PlotUtils::MnvH1D* hist_MC = (PlotUtils::MnvH1D*)hist_MC_input->Clone("hist_MC");
     PlotUtils::MnvH1D* hist_MC2 = (PlotUtils::MnvH1D*)hist_MC_input->Clone("hist_MC");
     PlotUtils::MnvH1D* hist_Data = (PlotUtils::MnvH1D*)hist_Data_input->Clone("hist_Data");
@@ -15564,7 +15790,8 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
     hist_Data->SetMaximum(max * 1.15);
     hist_MC->SetMaximum(max * 1.15);
 
-    mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC, mcScale, "N", useHistTitles, NULL, NULL, false, statPlusSys);
+    mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC,
+       mcScale, "N", useHistTitles, NULL, NULL, false, statPlusSys);
 
     char chi_label[1024];
 
@@ -15605,7 +15832,8 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
     mnvPlotter.axis_title_offset_x = 1;
     mnvPlotter.axis_maximum = .25;
     mnvPlotter.legend_text_size = mnvPlotter.legend_text_size*.7;
-    PlotErrorSummaryNew(hist_MC2, plotname, histotitle, xaxislabel_string.c_str(), &cE, &mnvPlotter,true, drawAllErrorGroups);
+    PlotErrorSummaryNew(hist_MC2, plotname, histotitle,
+      xaxislabel_string.c_str(), &cE, &mnvPlotter,true, drawAllErrorGroups);
     mnvPlotter.legend_n_columns = 1;
 
     cE.Closed();
@@ -15618,11 +15846,17 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
     }
 
   } // end of Function
-//////////////////////////////////////////////////////////////////////////////
-void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-  char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG,
-  bool MakeYaxisLOG,bool drawErrors, bool drawAllErrorGroups , double Ymax,
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput_withRatio(
+  MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
+  char *Playlist_name, std::string pdf_label,
+  char *histotitle, std::string units,
+  char *xaxislabel, char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG,
+  bool MakeYaxisLOG,bool drawErrors,
+  bool drawAllErrorGroups , double Ymax,
   double &ChiSqr_return, int &ndf_return)
   {
 
@@ -15711,7 +15945,8 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
     //mnvPlotter.axis_title_size_y = 0.08;
     mnvPlotter.axis_title_size_y = 0.037;
     mnvPlotter.axis_maximum = Ymax;
-    mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC, mcScale, "N", useHistTitles, NULL, NULL, false, statPlusSys);
+    mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC,
+       mcScale, "N", useHistTitles, NULL, NULL, false, statPlusSys);
 
     char chi_label[1024];
 
@@ -15746,7 +15981,8 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
     mnvPlotter.axis_title_size_y = 0.038;
     mnvPlotter.axis_label_size = 0.038;
 
-    PlotErrorSummaryNew(hist_MC, plotname, histotitle, xaxislabel_string.c_str(), &cE, &mnvPlotter,true, drawAllErrorGroups);
+    PlotErrorSummaryNew(hist_MC, plotname, histotitle,
+       xaxislabel_string.c_str(), &cE, &mnvPlotter,true, drawAllErrorGroups);
     mnvPlotter.legend_n_columns = 1;
   }
     cE.Closed();
@@ -15762,10 +15998,15 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
 
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG , bool drawAllErrorGroups )
+  /////////////////////////////////////////////////////////////////////////////////
+  //
+  /////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(
+  MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
+  char *Playlist_name, std::string pdf_label,
+  char *histotitle, std::string units,
+   char *xaxislabel, char* yaxislabel,
+   bool DoBinwidthNorm, bool MakeXaxisLOG, bool drawAllErrorGroups )
 {
   MnvH1D * hist_MC = (PlotUtils::MnvH1D*)hist_MC_input->Clone(uniq());
   MnvH1D * hist_MC2 = (PlotUtils::MnvH1D*)hist_MC_input->Clone(uniq());
@@ -15916,10 +16157,12 @@ else {max = hist_MC->GetMaximum();}
  //std::cout<< "off set y axis = "<< mnvPlotter.axis_title_offset_y<< std::endl;
  bool debug = false;
    sprintf(total_title, "[MC] %s", histotitle);
-  PlotErrorSummaryNew(hist_MC2, plotname, total_title, xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
+  PlotErrorSummaryNew(hist_MC2, plotname, total_title,
+     xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
 
   sprintf(total_title, "[DATA] %s", histotitle);
-  PlotErrorSummaryNew(hist_Data, plotname, total_title, xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
+  PlotErrorSummaryNew(hist_Data, plotname, total_title,
+     xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
 
   mnvPlotter.title_size = .06;
   mnvPlotter.legend_n_columns = 1;
@@ -15935,9 +16178,12 @@ else {max = hist_MC->GetMaximum();}
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG , bool drawAllErrorGroups , double MaxYvalue )
+void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(
+  MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
+  char *Playlist_name, std::string pdf_label,
+   char *histotitle, std::string units,
+   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm,
+    bool MakeXaxisLOG , bool drawAllErrorGroups , double MaxYvalue )
 {
   MnvH1D * hist_MC = (PlotUtils::MnvH1D*)hist_MC_input->Clone(uniq());
   MnvH1D * hist_MC2 = (PlotUtils::MnvH1D*)hist_MC_input->Clone(uniq());
@@ -16023,7 +16269,8 @@ if(hist_MC->GetMaximum() > hist_Data->GetMaximum()){max = hist_MC->GetMaximum();
 else {max = hist_Data->GetMaximum();}
 
   mnvPlotter.axis_maximum = MaxYvalue;
-  mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC, mcScale, "N", useHistTitles, NULL, NULL, false, statPlusSys);
+  mnvPlotter.DrawDataMCWithErrorBand(hist_Data, hist_MC,
+     mcScale, "N", useHistTitles, NULL, NULL, false, statPlusSys);
 
   char chi_label[1024];
 
@@ -16084,12 +16331,14 @@ else {max = hist_Data->GetMaximum();}
  //std::cout<< "off set y axis = "<< mnvPlotter.axis_title_offset_y<< std::endl;
  bool debug = false;
    sprintf(total_title, "[MC] %s", histotitle);
-  PlotErrorSummaryNew(hist_MC2, plotname, total_title, xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
+  PlotErrorSummaryNew(hist_MC2, plotname, total_title,
+     xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
 
  mnvPlotter.axis_maximum = .1;
 
   sprintf(total_title, "[DATA] %s", histotitle);
-  PlotErrorSummaryNew(hist_Data, plotname, total_title, xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
+  PlotErrorSummaryNew(hist_Data, plotname, total_title,
+     xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
 
   mnvPlotter.title_size = .06;
   mnvPlotter.legend_n_columns = 1;
@@ -16102,10 +16351,11 @@ else {max = hist_Data->GetMaximum();}
 
 
 } // end of Function
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(
+  MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
   TObjArray  *modelHist_input, char *Playlist_name,
   std::string pdf_label, char *histotitle, std::string units,
   char *xaxislabel, char* yaxislabel, bool MakeXaxisLOG  )
@@ -16210,42 +16460,18 @@ std::cout<<" Finshed cloning hist "<< std::endl;
   ///// Draw Ratio now
   /////////////////////////////////////////////////////////////
   cE.Clear();
-  //PlotUtils::MnvH1D*  hMC_nominal_model = (PlotUtils::MnvH1D*)modelHist_input->At(0)->Clone(uniq());
-  //hist_Data->Divide(hist_Data,hMC_nominal_model);
-  //legendRatio->AddEntry(hist_Data, "Data","lep");
-
-  //for (int iHist = 0; iHist < nVars; ++iHist) {
-
-  //  PlotUtils::MnvH1D*  hMC_Model_clone = (PlotUtils::MnvH1D*)modelHist_input->At(iHist)->Clone(uniq());
-  //  auto model_title = modelHist_input->At(iHist)->GetTitle();
-  //  hMC_Model_clone->Divide(hMC_Model_clone,hMC_nominal_model,1.0,1.0);
-  //  sprintf(chi_label, "%s /  Nominal ",model_title);
-  //  legendRatio->AddEntry(hMC_Model_clone, chi_label,"l");
-  //  modelHist_ratio->Add(hMC_Model_clone);
-  //}
-
-  //hist_Data->GetYaxis()->SetTitle("Ratio Hist / nominal Genie[mvnTune-V1]");
-  //mnvPlotter.DrawDataMCVariations(hist_Data,modelHist_ratio);
-
-  //legend -> Draw();
-  //mnvPlotter.WritePreliminary("TL", .03, 0, 0, false);
-  //sprintf(total_title, "Model Ratio: %s  [%s]", histotitle, Playlist_name);
-  //mnvPlotter.AddHistoTitle(total_title, .04);
-
-  //cE.Closed();
-
-  //if(MakeXaxisLOG==true){
-  //  gPad->SetLogx(0);
-  //}
-
 
 } // end of Function
-/////////////////////////////////////////////////////////////////////////////////////////////////
-void Draw_MCInteractions_FractionEvents( MnvH1D *h_elastic,
-   MnvH1D * h_2p2h,  MnvH1D *h_deltaRes, MnvH1D *h_heavierRes, MnvH1D *h_DISSIS,
-   MnvH1D *h_DISSoft, MnvH1D *h_DIShard,  MnvH1D *h_None,  MnvH1D *h_Other,
-    std::string pdf_label, char *histotitle,
-   char *xaxislabel, char* yaxislabel){
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCInteractions_FractionEvents(
+  MnvH1D *h_elastic, MnvH1D * h_2p2h,
+  MnvH1D *h_deltaRes, MnvH1D *h_heavierRes,
+  MnvH1D *h_DISSIS, MnvH1D *h_DISSoft,
+  MnvH1D *h_DIShard,  MnvH1D *h_None,  MnvH1D *h_Other,
+  std::string pdf_label, char *histotitle,
+  char *xaxislabel, char* yaxislabel){
 
      PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
      TCanvas cE("cE","cE", 800, 800);
@@ -16311,124 +16537,130 @@ void Draw_MCInteractions_FractionEvents( MnvH1D *h_elastic,
 
    }
 
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCInteractions_FractionEvents(
+  MnvH1D *h_Total, MnvH1D *h_elastic,
+  MnvH1D * h_2p2h,  MnvH1D *h_deltaRes,
+  MnvH1D *h_heavierRes, MnvH1D *h_DISSIS,
+  MnvH1D *h_DISSoft,    MnvH1D *h_DIShard,
+  MnvH1D *h_None,       MnvH1D *h_Other,
+  std::string pdf_label, char *histotitle,
+  char *xaxislabel, char* yaxislabel)
+  {
 
-   void Draw_MCInteractions_FractionEvents( MnvH1D *h_Total, MnvH1D *h_elastic,
-      MnvH1D * h_2p2h,  MnvH1D *h_deltaRes, MnvH1D *h_heavierRes, MnvH1D *h_DISSIS,
-      MnvH1D *h_DISSoft, MnvH1D *h_DIShard,  MnvH1D *h_None,  MnvH1D *h_Other,
-       std::string pdf_label, char *histotitle,
-      char *xaxislabel, char* yaxislabel){
+    PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
+    TCanvas cE("cE","cE", 800, 800);
 
-        PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
-        TCanvas cE("cE","cE", 800, 800);
+    std::vector<int> Helium9_colorScheme = {
+      TColor::GetColor("#F1B6DA"),//pink 11
+      TColor::GetColor("#DF00FF"), //'psychedelic Purple1
+      TColor::GetColor(43,206,72 ), //green 2
+      TColor::GetColor("#87CEEB"),//'skyblue' 3
+      TColor::GetColor("#0859C6"), //blue 4
+      TColor::GetColor("#de5c22"), // organgish,5
+      TColor::GetColor("#ffc922"), //'sunset yellow'6
+      TColor::GetColor("#25b5af"), // teal
+      TColor::GetColor("#FF0800"),//2 candy Apple7
+      TColor::GetColor("#800000"),  // Maroon
+      TColor::GetColor("#90AD1C"),//8
+      TColor::GetColor("#BABABA"), //Gray 9
+      TColor::GetColor("#00FFFF"),//'aqua' 10
+      TColor::GetColor("#AAF0D1"), // mint green
+      TColor::GetColor(kRed),//'Jade' 12
+      TColor::GetColor("#FAFAD2"),  // LightGoldenRodYellow 13
 
-        std::vector<int> Helium9_colorScheme = {
-          TColor::GetColor("#F1B6DA"),//pink 11
-          TColor::GetColor("#DF00FF"), //'psychedelic Purple1
-          TColor::GetColor(43,206,72 ), //green 2
-          TColor::GetColor("#87CEEB"),//'skyblue' 3
-          TColor::GetColor("#0859C6"), //blue 4
-          TColor::GetColor("#de5c22"), // organgish,5
-          TColor::GetColor("#ffc922"), //'sunset yellow'6
-          TColor::GetColor("#25b5af"), // teal
-          TColor::GetColor("#FF0800"),//2 candy Apple7
-          TColor::GetColor("#800000"),  // Maroon
-          TColor::GetColor("#90AD1C"),//8
-          TColor::GetColor("#BABABA"), //Gray 9
-          TColor::GetColor("#00FFFF"),//'aqua' 10
-          TColor::GetColor("#AAF0D1"), // mint green
-          TColor::GetColor(kRed),//'Jade' 12
-          TColor::GetColor("#FAFAD2"),  // LightGoldenRodYellow 13
-
-          TColor::GetColor("#555555"),  // dark grey 15
-          TColor::GetColor(0, 153, 143 ), //turquoise 16
-          TColor::GetColor("#654522"), // yellowishbrown, 17
-          TColor::GetColor("#8db600"), // yellowgreen, 18
-          TColor::GetColor("#D3D3D3"),  //'lightgrey' 19
-          TColor::GetColor("#90AD1C"), // 20
-          TColor::GetColor("#CCDDAA"), //21
-          TColor::GetColor(kMagenta), //22
-          TColor::GetColor("#EEFF00") // neonyellow,0
-        };
-                TObjArray  mcHists_Breakdown;
-
-
-        MnvH1D *h_Total_clone = (PlotUtils::MnvH1D*)h_Total->Clone("h_elastic_clone");
-
-        MnvH1D *h_elastic_clone = (PlotUtils::MnvH1D*)h_elastic->Clone("h_elastic_clone");
-        MnvH1D *h_2p2h_clone = (PlotUtils::MnvH1D*)h_2p2h->Clone("h_2p2h_clone");
-        MnvH1D *h_deltaRes_clone = (PlotUtils::MnvH1D*)h_deltaRes->Clone("h_deltaRes_clone");
-        MnvH1D *h_heavierRes_clone = (PlotUtils::MnvH1D*)h_heavierRes->Clone("h_heavierRes_clone");
-        MnvH1D *h_DISSIS_clone = (PlotUtils::MnvH1D*)h_DISSIS->Clone("h_DISSIS_clone");
-        MnvH1D *h_DISSoft_clone = (PlotUtils::MnvH1D*)h_DISSoft->Clone("h_DISSoft_clone");
-        MnvH1D *h_DIShard_clone = (PlotUtils::MnvH1D*)h_DIShard->Clone("h_DIShard_clone");
-        MnvH1D *h_None_clone = (PlotUtils::MnvH1D*)h_None->Clone("h_None_clone");
-        MnvH1D *h_Other_clone = (PlotUtils::MnvH1D*)h_Other->Clone("h_Other_clone");
-        h_Other_clone->Add(h_None_clone);
-
-        mcHists_Breakdown.Add(h_Other_clone);
-        mcHists_Breakdown.Add(h_deltaRes_clone);
-        mcHists_Breakdown.Add(h_heavierRes_clone);
-        mcHists_Breakdown.Add(h_DISSIS_clone);
-        mcHists_Breakdown.Add(h_DISSoft_clone);
-        mcHists_Breakdown.Add(h_DIShard_clone);
-        mcHists_Breakdown.Add(h_2p2h_clone);
-        mcHists_Breakdown.Add(h_elastic_clone);
+      TColor::GetColor("#555555"),  // dark grey 15
+      TColor::GetColor(0, 153, 143 ), //turquoise 16
+      TColor::GetColor("#654522"), // yellowishbrown, 17
+      TColor::GetColor("#8db600"), // yellowgreen, 18
+      TColor::GetColor("#D3D3D3"),  //'lightgrey' 19
+      TColor::GetColor("#90AD1C"), // 20
+      TColor::GetColor("#CCDDAA"), //21
+      TColor::GetColor(kMagenta), //22
+      TColor::GetColor("#EEFF00") // neonyellow,0
+    };
+    TObjArray  mcHists_Breakdown;
 
 
+    MnvH1D *h_Total_clone = (PlotUtils::MnvH1D*)h_Total->Clone("h_elastic_clone");
+
+    MnvH1D *h_elastic_clone = (PlotUtils::MnvH1D*)h_elastic->Clone("h_elastic_clone");
+    MnvH1D *h_2p2h_clone = (PlotUtils::MnvH1D*)h_2p2h->Clone("h_2p2h_clone");
+    MnvH1D *h_deltaRes_clone = (PlotUtils::MnvH1D*)h_deltaRes->Clone("h_deltaRes_clone");
+    MnvH1D *h_heavierRes_clone = (PlotUtils::MnvH1D*)h_heavierRes->Clone("h_heavierRes_clone");
+    MnvH1D *h_DISSIS_clone = (PlotUtils::MnvH1D*)h_DISSIS->Clone("h_DISSIS_clone");
+    MnvH1D *h_DISSoft_clone = (PlotUtils::MnvH1D*)h_DISSoft->Clone("h_DISSoft_clone");
+    MnvH1D *h_DIShard_clone = (PlotUtils::MnvH1D*)h_DIShard->Clone("h_DIShard_clone");
+    MnvH1D *h_None_clone = (PlotUtils::MnvH1D*)h_None->Clone("h_None_clone");
+    MnvH1D *h_Other_clone = (PlotUtils::MnvH1D*)h_Other->Clone("h_Other_clone");
+    h_Other_clone->Add(h_None_clone);
+
+    mcHists_Breakdown.Add(h_Other_clone);
+    mcHists_Breakdown.Add(h_deltaRes_clone);
+    mcHists_Breakdown.Add(h_heavierRes_clone);
+    mcHists_Breakdown.Add(h_DISSIS_clone);
+    mcHists_Breakdown.Add(h_DISSoft_clone);
+    mcHists_Breakdown.Add(h_DIShard_clone);
+    mcHists_Breakdown.Add(h_2p2h_clone);
+    mcHists_Breakdown.Add(h_elastic_clone);
 
 
-      //  mcHists_Breakdown.Add(h_None_clone);
+    BinNormalizeTOFractionOF_Events_mvnH1D(mcHists_Breakdown);
+    double area = h_Total_clone->Integral(1,h_Total_clone->GetNbinsX());
+    h_Total_clone->Scale(1.0/area);
+    for(int i = 0 ; i < mcHists_Breakdown.GetEntries(); i++){
+
+      ((PlotUtils::MnvH1D*)mcHists_Breakdown.At(i))->SetFillStyle(1001);
+      //((PlotUtils::MnvH1D*)mcHists_Breakdown.At(i))->SetLineWidth(0);
+      ((PlotUtils::MnvH1D*)mcHists_Breakdown.At(i))->SetFillColor(Helium9_colorScheme.at(i));
 
 
-        BinNormalizeTOFractionOF_Events_mvnH1D(mcHists_Breakdown);
-        double area = h_Total_clone->Integral(1,h_Total_clone->GetNbinsX());
-        h_Total_clone->Scale(1.0/area);
-        for(int i = 0 ; i < mcHists_Breakdown.GetEntries(); i++){
+    }
 
-          ((PlotUtils::MnvH1D*)mcHists_Breakdown.At(i))->SetFillStyle(1001);
-          //((PlotUtils::MnvH1D*)mcHists_Breakdown.At(i))->SetLineWidth(0);
-          ((PlotUtils::MnvH1D*)mcHists_Breakdown.At(i))->SetFillColor(Helium9_colorScheme.at(i));
+    mnvPlotter.legend_n_columns = 5;
+    mnvPlotter.axis_title_size_x = 0.03;
+    mnvPlotter.axis_title_offset_y = 1.2;
+    mnvPlotter.axis_label_size =  0.028;
+    mnvPlotter.axis_title_size_y = 0.045;
+    mnvPlotter.axis_draw_grid_x = false;
+    mnvPlotter.axis_draw_grid_y = false;
+    mnvPlotter.axis_maximum = 1.2;
+    mnvPlotter.legend_text_size = .025;
+    //std::cout<<"mnvPlotter.legend_text_size = "<< mnvPlotter.legend_text_size<<std::endl;
+    //  PlotUtils::MnvH1D* datahist = new PlotUtils::MnvH1D("adsf", "", nbins, xmin, xmax);
+    h_Total_clone->SetTitle("Fractional");
+    //PlotUtils::MnvH1D* hmc = new PlotUtils::MnvH1D("adsf", "", nbins, xmin, xmax);
+    h_Total_clone->GetXaxis()->SetTitle(xaxislabel);
+    h_Total_clone->GetYaxis()->SetTitle(yaxislabel);
+    h_Total_clone->SetMaximum(mnvPlotter.axis_maximum);
+    std::string xaxislabel_string(xaxislabel);
+    mnvPlotter.mc_line_width = 0 ;
+    mnvPlotter.DrawDataStackedMC(h_Total_clone, &mcHists_Breakdown , 1.0, "TR", "", -1, -1, 1001, xaxislabel_string.c_str(), "Fraction of Events", false);
+    //mnvPlotter.DrawDataNonStackedMCWithErrorBand(datahist, hmc, mcHists_Breakdown, HeliumColors, useHistTitles, false, false);
 
+    mnvPlotter.AddHistoTitle(histotitle, .028);
+    mnvPlotter.WritePreliminary("TL", .03, -.08, 0.0, false);
+    //std::string plotname = Form("%s",pdf_label.c_str());
+    mnvPlotter.MultiPrint(&cE, pdf_label, "pdf");
+    cE.Closed();
 
-        }
+  }
 
-
-
-
-        mnvPlotter.legend_n_columns = 5;
-        mnvPlotter.axis_title_size_x = 0.03;
-        mnvPlotter.axis_title_offset_y = 1.2;
-        mnvPlotter.axis_label_size =  0.028;
-        mnvPlotter.axis_title_size_y = 0.045;
-        mnvPlotter.axis_draw_grid_x = false;
-        mnvPlotter.axis_draw_grid_y = false;
-        mnvPlotter.axis_maximum = 1.2;
-        mnvPlotter.legend_text_size = .025;
-        //std::cout<<"mnvPlotter.legend_text_size = "<< mnvPlotter.legend_text_size<<std::endl;
-      //  PlotUtils::MnvH1D* datahist = new PlotUtils::MnvH1D("adsf", "", nbins, xmin, xmax);
-      h_Total_clone->SetTitle("Fractional");
-        //PlotUtils::MnvH1D* hmc = new PlotUtils::MnvH1D("adsf", "", nbins, xmin, xmax);
-        h_Total_clone->GetXaxis()->SetTitle(xaxislabel);
-        h_Total_clone->GetYaxis()->SetTitle(yaxislabel);
-        h_Total_clone->SetMaximum(mnvPlotter.axis_maximum);
-        std::string xaxislabel_string(xaxislabel);
-        mnvPlotter.mc_line_width = 0 ;
-        mnvPlotter.DrawDataStackedMC(h_Total_clone, &mcHists_Breakdown , 1.0, "TR", "", -1, -1, 1001, xaxislabel_string.c_str(), "Fraction of Events", false);
-        //mnvPlotter.DrawDataNonStackedMCWithErrorBand(datahist, hmc, mcHists_Breakdown, HeliumColors, useHistTitles, false, false);
-
-        mnvPlotter.AddHistoTitle(histotitle, .028);
-        mnvPlotter.WritePreliminary("TL", .03, -.08, 0.0, false);
-        //std::string plotname = Form("%s",pdf_label.c_str());
-        mnvPlotter.MultiPrint(&cE, pdf_label, "pdf");
-        cE.Closed();
-
-      }
-
-
-void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection_Interactions(MnvH1D *hist_MC, MnvH1D *hist_Data, MnvH1D *h_elastic,
-   MnvH1D * h_2p2h,  MnvH1D *h_1pion, MnvH1D *h_DIS,  MnvH1D *h_None,  MnvH1D *h_Other,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG , bool drawAllErrorGroups , double POT_MC, double POT_DATA )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection_Interactions(
+  MnvH1D *hist_MC,    MnvH1D *hist_Data,
+  MnvH1D *h_elastic,  MnvH1D * h_2p2h,
+  MnvH1D *h_1pion,    MnvH1D *h_DIS,
+  MnvH1D *h_None,     MnvH1D *h_Other,
+  char *Playlist_name, std::string pdf_label,
+  char *histotitle, std::string units,
+  char *xaxislabel, char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG,
+  bool drawAllErrorGroups, double POT_MC, double POT_DATA )
 {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -16532,7 +16764,9 @@ std::vector<int> Helium9_colorScheme = {
 };
 mnvPlotter.axis_maximum = hist_MC->GetMaximum();
 mnvPlotter.axis_title_offset_y = .85;
-mnvPlotter.DrawDataNonStackedMCWithErrorBand(hist_Data, hist_MC, mcHists_Breakdown_input, Helium9_colorScheme, useHistTitles,statPlusSysDATA, statPlusSysMC);
+mnvPlotter.DrawDataNonStackedMCWithErrorBand(hist_Data, hist_MC,
+   mcHists_Breakdown_input, Helium9_colorScheme,
+    useHistTitles,statPlusSysDATA, statPlusSysMC);
 
 
   char chi_label[1024];
@@ -16595,11 +16829,13 @@ mnvPlotter.DrawDataNonStackedMCWithErrorBand(hist_Data, hist_MC, mcHists_Breakdo
  mnvPlotter.axis_label_size = 0.03;
  std::cout<< "off set y axis = "<< mnvPlotter.axis_title_offset_y<< std::endl;
  bool debug = false;
-  PlotErrorSummaryNew(hist_MC, plotname, histotitle, xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
+  PlotErrorSummaryNew(hist_MC, plotname, histotitle,
+     xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
 
   std::string plotnamedata = Form("[Data] %s",pdf_label.c_str());
 
-  PlotErrorSummaryNew(hist_Data, plotname, histotitle, xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
+  PlotErrorSummaryNew(hist_Data, plotname, histotitle,
+     xaxislabel_string.c_str(), &cE, &mnvPlotter,debug,drawAllErrorGroups);
 
   mnvPlotter.title_size = .06;
   mnvPlotter.legend_n_columns = 1;
@@ -16617,12 +16853,22 @@ mnvPlotter.DrawDataNonStackedMCWithErrorBand(hist_Data, hist_MC, mcHists_Breakdo
 
 
 
-
-void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection_Interactions_DISbreakdown(MnvH1D *hhist_MC, MnvH1D *hhist_Data, MnvH1D *hh_elastic,
-   MnvH1D * hh_2p2h,  MnvH1D *hh_deltaRes, MnvH1D *hh_heavierRes, MnvH1D *hh_DISSIS,MnvH1D *hh_DISSoft, MnvH1D *hh_DIShard,
-    MnvH1D *hh_None,  MnvH1D *hh_Other, char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG , bool drawAllErrorGroups , double POT_MC, double POT_DATA )
-{
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput_withRatioCrossSection_Interactions_DISbreakdown(
+  MnvH1D *hhist_MC, MnvH1D *hhist_Data,
+  MnvH1D *hh_elastic,  MnvH1D * hh_2p2h,
+  MnvH1D *hh_deltaRes, MnvH1D *hh_heavierRes,
+  MnvH1D *hh_DISSIS,MnvH1D *hh_DISSoft,
+  MnvH1D *hh_DIShard, MnvH1D *hh_None,
+  MnvH1D *hh_Other, char *Playlist_name,
+  std::string pdf_label, char *histotitle,
+  std::string units, char *xaxislabel,
+  char* yaxislabel, bool DoBinwidthNorm,
+  bool MakeXaxisLOG , bool drawAllErrorGroups,
+  double POT_MC, double POT_DATA )
+  {
 
    MnvH1D *hist_MC = (MnvH1D*)hhist_MC ->Clone("hist_MC");
    MnvH1D *hist_MC2 = (MnvH1D*)hhist_MC ->Clone("hist_MC2");
@@ -16893,10 +17139,16 @@ mnvPlotter.DrawDataStackedMCWithErrorBand(hist_Data, hist_MC, mcHists_Breakdown_
 
 } // end of Function
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-void Draw_DataWITHMC_SingleHistinput(MnvH1D *hist_MC, MnvH1D *hist_Data,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, double POT_data, double POT_MC)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput(
+  MnvH1D *hist_MC, MnvH1D *hist_Data,
+  char *Playlist_name, std::string pdf_label,
+  char *histotitle, std::string units,
+  char *xaxislabel, char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG,
+  double POT_data, double POT_MC)
 {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -16988,11 +17240,20 @@ void Draw_DataWITHMC_SingleHistinput(MnvH1D *hist_MC, MnvH1D *hist_Data,
 
 
 } // end of Function
-
-void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
-  char *Playlist_name, std::string pdf_label, char *histotitle, std::string units,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG,
-    double POT_data, double POT_MC ,  bool drawAllErrorGroups)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_DataWITHMC_SingleHistinput_withRatio(
+  MnvH1D *hist_MC_input, MnvH1D *hist_Data_input,
+  char *Playlist_name,
+  std::string pdf_label,
+  char *histotitle, std::string units,
+  char *xaxislabel,
+  char* yaxislabel, bool DoBinwidthNorm,
+  bool MakeXaxisLOG,
+  double POT_data,
+  double POT_MC,
+  bool drawAllErrorGroups)
 {
   MnvH1D *hist_MC = (MnvH1D *)hist_MC_input->Clone(uniq());
   MnvH1D* hist_Data = (MnvH1D *)hist_Data_input->Clone(uniq());
@@ -17103,7 +17364,8 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
   mnvPlotter.axis_minimum = 0;
  // PlotErrorSummary(hist, plotname, histotitle, xaxislabel.c_str(), &cE);
  std::string xaxislabel_string(xaxislabel);
-  PlotErrorSummaryNew(hist_MC, plotname, histotitle, xaxislabel_string.c_str(), &cE, &mnvPlotter,true,drawAllErrorGroups);
+  PlotErrorSummaryNew(hist_MC, plotname, histotitle,
+     xaxislabel_string.c_str(), &cE, &mnvPlotter,true,drawAllErrorGroups);
   mnvPlotter.legend_n_columns = 1;
 
   cE.Closed();
@@ -17115,18 +17377,22 @@ void Draw_DataWITHMC_SingleHistinput_withRatio(MnvH1D *hist_MC_input, MnvH1D *hi
 
 } // end of Function
 
-
-
-
-
-
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_Data_RECO_TRUTH_Hist_fromTFile( char *histoName_TRUTH,
-  TFile *inputFile_MCinputFULL, TFile *inputFile_MCinputEmpty, char *histoName_MC,
-  TFile *inputFile_DatainputFULL, TFile *inputFile_DatainputEmpty,char *histoName_data,
-  char *Playlist_name_FULL, char *Playlist_name_EMPTY, std::string pdf_label, char *histotitle,
-   char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC )
-{
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_Data_RECO_TRUTH_Hist_fromTFile(
+  char *histoName_TRUTH,
+  TFile *inputFile_MCinputFULL,
+  TFile *inputFile_MCinputEmpty,
+  char *histoName_MC,
+  TFile *inputFile_DatainputFULL,
+  TFile *inputFile_DatainputEmpty, char *histoName_data,
+  char *Playlist_name_FULL,
+  char *Playlist_name_EMPTY, std::string pdf_label, char *histotitle,
+  char *xaxislabel,char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG,
+  Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC )
+  {
   double scale_to_FULL= POT_DATA[kFULL] / POT_DATA[kEMPTY];
 
   double MC_scale_to_FULL = POT_DATA[kFULL] / POT_MC[kFULL];
@@ -17281,12 +17547,22 @@ void Draw_Data_RECO_TRUTH_Hist_fromTFile( char *histoName_TRUTH,
 
 
 }//END of Function
-///////////////////////////////////////////////////////////
-void Draw_Data_RECO_TRUTH_Hist_fromTFile_withConvolution( char *histoName_TRUTH,char *histoName_TRUTHConvolution,
-  TFile *inputFile_MCinputFULL, TFile *inputFile_MCinputEmpty, char *histoName_MC,
-  TFile *inputFile_DatainputFULL, TFile *inputFile_DatainputEmpty,char *histoName_data,
-  char *Playlist_name_FULL, char *Playlist_name_EMPTY, std::string pdf_label, char *histotitle,
-   char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_Data_RECO_TRUTH_Hist_fromTFile_withConvolution(
+  char *histoName_TRUTH,char *histoName_TRUTHConvolution,
+  TFile *inputFile_MCinputFULL,
+  TFile *inputFile_MCinputEmpty,
+  char *histoName_MC,
+  TFile *inputFile_DatainputFULL,
+  TFile *inputFile_DatainputEmpty,
+  char *histoName_data,
+  char *Playlist_name_FULL,
+  char *Playlist_name_EMPTY, std::string pdf_label, char *histotitle,
+   char *xaxislabel,char* yaxislabel,
+   bool DoBinwidthNorm, bool MakeXaxisLOG,
+   Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC )
 {
   double scale_to_FULL= POT_DATA[kFULL] / POT_DATA[kEMPTY];
 
@@ -17533,11 +17809,17 @@ void Draw_Data_RECO_TRUTH_Hist_fromTFile_withConvolution( char *histoName_TRUTH,
     gPad->SetLogx(0);
   }
 }//END of Function
-///////////////////////////////////////////////////////////////////////////////
-void Draw_Data_RECO_TRUTH_Hist_withConvolution_fromPointers(MnvH1D *hist_Data,
-   MnvH1D *hist_RECOMC, MnvH1D *hist_TRUTH_Convolution, MnvH1D *hist_TRUTH,
-  char *Playlist_name, std::string pdf_label, char *histotitle,char* playlist_status,
-   char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, double Ymax, double Convoluted_Mean, double Convoluted_stddev ,
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_Data_RECO_TRUTH_Hist_withConvolution_fromPointers(
+  MnvH1D *hist_Data, MnvH1D *hist_RECOMC,
+   MnvH1D *hist_TRUTH_Convolution, MnvH1D *hist_TRUTH,
+  char *Playlist_name, std::string pdf_label,
+  char *histotitle,char* playlist_status,
+   char *xaxislabel,char* yaxislabel,
+   bool DoBinwidthNorm, bool MakeXaxisLOG,
+   double Ymax, double Convoluted_Mean, double Convoluted_stddev,
    double &ChiSqrt_Truth_toRECO,
    double &ChiSqrt_Truth_toData,
    double &ChiSqrt_Reco_toData
@@ -17696,7 +17978,9 @@ char ytitle[100];
 
 
 }//END of Function
-///////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 void Draw_Data_RECO_TRUTH_Hist_withConvolutionRECO_fromPointers(
   MnvH1D *hist_Data,
   MnvH1D *hist_RECOMC,
@@ -17914,10 +18198,9 @@ void Draw_Data_RECO_TRUTH_Hist_withConvolutionRECO_fromPointers(
 
 }//END of Function
 
-
-
-
-
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 void Draw_Data_RECO_TRUTH_Hist_withConvolutionRECO_fromPointers(
   MnvH1D *hist_Data,
   MnvH1D *hist_RECOMC,
@@ -18133,10 +18416,16 @@ void Draw_Data_RECO_TRUTH_Hist_withConvolutionRECO_fromPointers(
 
 
 }//END of Function
-//////////////////////////////////////////////////////////////////////////////
-void Draw_Data_RECO_TRUTH_Hist_fromPointer( MnvH1D *histMC_TRUTH, MnvH1D *histMC_RECO,  MnvH1D *hist_Data,
-  char *Playlist_name, char* playlist_status, std::string pdf_label, char *histotitle,
-   char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG , double Ymax )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_Data_RECO_TRUTH_Hist_fromPointer(
+  MnvH1D *histMC_TRUTH, MnvH1D *histMC_RECO,
+  MnvH1D *hist_Data, char *Playlist_name,
+  char* playlist_status, std::string pdf_label,
+  char *histotitle, char *xaxislabel,
+  char* yaxislabel, bool DoBinwidthNorm,
+  bool MakeXaxisLOG , double Ymax )
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   mnvPlotter.axis_title_size_x = 0.09;
@@ -18244,10 +18533,14 @@ void Draw_Data_RECO_TRUTH_Hist_fromPointer( MnvH1D *histMC_TRUTH, MnvH1D *histMC
 
 }//END of Function
 
-
-////////////////////////////////////////////////////////////////////////////////
-void Draw_MCHist_fromTFile_SMEARING(TFile *inputFile_MCinput, char *histoName_MC_CV,
-   char *histoName_MC_shifts, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCHist_fromTFile_SMEARING(
+  TFile *inputFile_MCinput, char *histoName_MC_CV,
+   char *histoName_MC_shifts,
+   std::string pdf_label,
+   char *histotitle, char *xaxislabel,char* yaxislabel )
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -18267,45 +18560,43 @@ void Draw_MCHist_fromTFile_SMEARING(TFile *inputFile_MCinput, char *histoName_MC
   TLegend *legend = new TLegend (0.80,0.73,0.95,.88);
   mnvPlotter.DecodeLegendPosition(x1, y1, x2, y2, "R", 6.5, 6., .025);
 
-
- hist_CV->GetXaxis()->CenterTitle();
- hist_CV->GetYaxis()->CenterTitle();
- hist_CV->GetXaxis()->SetTitle(xaxislabel);
- hist_CV->GetYaxis()->SetTitle(yaxislabel);
- hist_CV->GetXaxis()->SetTitleSize(0.038);
- hist_CV->GetYaxis()->SetTitleSize(0.038);
- hist_CV->SetLineColor(kBlack);
- hist_CV->SetLineWidth(5);
- hist_pos->SetLineColor(kBlue);
- hist_neg->SetLineColor(kRed);
- hist_pos->SetLineWidth(5);
- hist_neg->SetLineWidth(5);
- hist_pos->SetLineStyle(2);
- hist_neg->SetLineStyle(2);
- hist_CV->SetMaximum(hist_neg->GetMaximum() * 1.25);
- legend->AddEntry(hist_CV, "CV");
- legend->AddEntry(hist_pos, "Pos shift");
- legend->AddEntry(hist_neg, "Neg shift");
- hist_CV->Draw("HIST");
- hist_pos->Draw("HIST same");
- hist_neg->Draw("HIST same");
- legend->Draw("same");
- char total_title[1024];
- sprintf(total_title, "%s", histotitle);
- mnvPlotter.AddHistoTitle(total_title, .04);
- mnvPlotter.WritePreliminary("TL", .035, 0, 0, false);
- std::string plotname = Form("%s",pdf_label.c_str());
- mnvPlotter.MultiPrint(&cE, plotname, "pdf");
- cE.Closed();
+  hist_CV->GetXaxis()->CenterTitle();
+  hist_CV->GetYaxis()->CenterTitle();
+  hist_CV->GetXaxis()->SetTitle(xaxislabel);
+  hist_CV->GetYaxis()->SetTitle(yaxislabel);
+  hist_CV->GetXaxis()->SetTitleSize(0.038);
+  hist_CV->GetYaxis()->SetTitleSize(0.038);
+  hist_CV->SetLineColor(kBlack);
+  hist_CV->SetLineWidth(5);
+  hist_pos->SetLineColor(kBlue);
+  hist_neg->SetLineColor(kRed);
+  hist_pos->SetLineWidth(5);
+  hist_neg->SetLineWidth(5);
+  hist_pos->SetLineStyle(2);
+  hist_neg->SetLineStyle(2);
+  hist_CV->SetMaximum(hist_neg->GetMaximum() * 1.25);
+  legend->AddEntry(hist_CV, "CV");
+  legend->AddEntry(hist_pos, "Pos shift");
+  legend->AddEntry(hist_neg, "Neg shift");
+  hist_CV->Draw("HIST");
+  hist_pos->Draw("HIST same");
+  hist_neg->Draw("HIST same");
+  legend->Draw("same");
+  char total_title[1024];
+  sprintf(total_title, "%s", histotitle);
+  mnvPlotter.AddHistoTitle(total_title, .04);
+  mnvPlotter.WritePreliminary("TL", .035, 0, 0, false);
+  std::string plotname = Form("%s",pdf_label.c_str());
+  mnvPlotter.MultiPrint(&cE, plotname, "pdf");
+  cE.Closed();
 
 }
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 
-
-
-
-
-
-TGraphErrors  *MakeTGraph_from_Mvn1HD(TFile *inputFile_MCinput,  char *histoName_MC)
+TGraphErrors  *MakeTGraph_from_Mvn1HD(
+  TFile *inputFile_MCinput,  char *histoName_MC)
 {
   MnvH1D *hist = (MnvH1D*)inputFile_MCinput -> Get(histoName_MC);
 
@@ -18343,8 +18634,11 @@ TGraphErrors *gr = new TGraphErrors(n,x,y,0,ey);
 return gr;
 
 }//end of function
-
-TGraphErrors  *MakeTGraph_from_Vectors(std::vector<double> Y_para,  std::vector<double> X_para)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+TGraphErrors  *MakeTGraph_from_Vectors(
+  std::vector<double> Y_para,  std::vector<double> X_para)
 {
 
   if(Y_para.size() != X_para.size()) {std::cout<<"Oops X and Y Bins are different sizes can't make TGraph"<< " | Y_para.size() = " << Y_para.size() << "  | X_para.size() = "<< X_para.size()<<std::endl; assert(false);  }
@@ -18368,10 +18662,13 @@ TGraphErrors *gr = new TGraphErrors(n,x,y,0,ey);
 return gr;
 
 }//end of function
-
-TGraph  *MakeTGraph_NOERRORS_from_Vectors(std::vector<double> Y_para,  std::vector<double> X_para)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+TGraph  *MakeTGraph_NOERRORS_from_Vectors(
+  std::vector<double> Y_para,
+  std::vector<double> X_para)
 {
-
   if(Y_para.size() != X_para.size()) {std::cout<<"Oops X and Y Bins are different sizes can't make TGraph"<< " | Y_para.size() = " << Y_para.size() << "  | X_para.size() = "<< X_para.size()<<std::endl; assert(false);  }
 
   double x[X_para.size()];
@@ -18391,8 +18688,13 @@ return gr;
 
 }//end of function
 
-
-TGraph* createTGraph(const std::vector<double> xValues, const std::vector<double> yValues) {
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+TGraph* createTGraph(
+  const std::vector<double> xValues,
+  const std::vector<double> yValues)
+  {
     int nPoints = xValues.size(); // Number of data points
     if (nPoints != yValues.size()) {
         // Check if the sizes of x and y vectors match
@@ -18410,12 +18712,13 @@ TGraph* createTGraph(const std::vector<double> xValues, const std::vector<double
 
     return graph;
 }
-
-
-
-TGraphErrors  *MakeTGraph_from_VectorsNoErrors(std::vector<double> Y_para,  std::vector<double> X_para)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+TGraphErrors  *MakeTGraph_from_VectorsNoErrors(
+  std::vector<double> Y_para,
+  std::vector<double> X_para)
 {
-
   if(Y_para.size() != X_para.size()) {std::cout<<"Oops X and Y Bins are different sizes can't make TGraph"<< " | Y_para.size() = " << Y_para.size() << "  | X_para.size() = "<< X_para.size()<<std::endl; assert(false);  }
 
   double x[X_para.size()];
@@ -18455,15 +18758,20 @@ TGraphErrors  *MakeTGraph_from_VectorsErrors(std::vector<double> Y_para, std::ve
 
   }
 
-
-
 TGraphErrors *gr = new TGraphErrors(n,x,y,0,ey);
 
 return gr;
 
 }//end of function
-
-void Draw_TGraph_fit(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_TGraph_fit(
+  TFile *inputFile_MCinput,
+  char *histoName_MC,
+  std::string pdf_label,
+  char *histotitle,
+  char *xaxislabel,char* yaxislabel)
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -18515,50 +18823,59 @@ void Draw_TGraph_fit(TFile *inputFile_MCinput,  char *histoName_MC, std::string 
 
 
 
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCHist_fromTFile_andFIT(
+  TFile *inputFile_MCinput,
+  char *histoName_MC,
+  std::string pdf_label,
+  char *histotitle,
+  char *xaxislabel,char* yaxislabel)
+  {
+    PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
+    TCanvas cE ("c1","c1");
+    std::cout<<"trying to draw 1D, HisName  = "<< histoName_MC<<std::endl;
+    MnvH1D *hist = (MnvH1D*)inputFile_MCinput -> Get(histoName_MC);
+    string TotalTitle = string(histotitle);
 
-void Draw_MCHist_fromTFile_andFIT(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel)
-{
-  PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
-  TCanvas cE ("c1","c1");
-  std::cout<<"trying to draw 1D, HisName  = "<< histoName_MC<<std::endl;
-  MnvH1D *hist = (MnvH1D*)inputFile_MCinput -> Get(histoName_MC);
-  string TotalTitle = string(histotitle);
+    double min,max;
+    min =  hist->GetXaxis()->GetXmin();
+    max =  hist->GetXaxis()->GetXmax();
+    TF1 *gfit = new TF1("Gaussian","gaus",min,max); // Create the fit function
+    gfit->SetParameters(500,hist->GetMean(),hist->GetRMS());
+    gfit->SetParNames("Constant","Mean_value","Sigma");
+    hist->Fit(gfit,"RQ");
+    gStyle->SetOptFit(1111);
 
-  double min,max;
-  min =  hist->GetXaxis()->GetXmin();
-  max =  hist->GetXaxis()->GetXmax();
-  TF1 *gfit = new TF1("Gaussian","gaus",min,max); // Create the fit function
-  //gStyle->SetOptFit(112);
-  //TF1 *gfit = new TF1("f", "[0]*TMath::Power(([1]/[2]),(x/[2]))*(TMath::Exp(-([1]/[2])))/TMath::Gamma((x/[2])+1.)", xmin, xmax);
-  //gfit->SetParameters(1, 1, 1); // you MUST set non-zero initial values for parameters
-   // define and "fill" the histogram
-  gfit->SetParameters(500,hist->GetMean(),hist->GetRMS());
-  gfit->SetParNames("Constant","Mean_value","Sigma");
-  hist->Fit(gfit,"RQ");
-  gStyle->SetOptFit(1111);
+    hist->GetXaxis()->CenterTitle();
+    hist->GetYaxis()->CenterTitle();
+    hist->GetXaxis()->SetTitle(xaxislabel);
+    hist->GetYaxis()->SetTitle(yaxislabel);
+    hist->GetXaxis()->SetTitleSize(0.038);
+    hist->GetYaxis()->SetTitleSize(0.038);
+    hist->SetLineColor(kBlue);
+    hist->SetFillColor(kRed);
+    hist->SetMaximum(hist->GetMaximum() * 1.25);
+    hist->Draw("Hist p e");
+    gfit->Draw("same");
 
-  hist->GetXaxis()->CenterTitle();
-  hist->GetYaxis()->CenterTitle();
-  hist->GetXaxis()->SetTitle(xaxislabel);
-  hist->GetYaxis()->SetTitle(yaxislabel);
-  hist->GetXaxis()->SetTitleSize(0.038);
-  hist->GetYaxis()->SetTitleSize(0.038);
-  hist->SetLineColor(kBlue);
-  hist->SetFillColor(kRed);
-  hist->SetMaximum(hist->GetMaximum() * 1.25);
-  hist->Draw("Hist p e");
-  gfit->Draw("same");
-
- char total_title[1024];
- sprintf(total_title, "%s", histotitle);
- mnvPlotter.AddHistoTitle(total_title, .04);
- mnvPlotter.WritePreliminary("TL", .035, 0, 0, false);
- std::string plotname = Form("%s",pdf_label.c_str());
- mnvPlotter.MultiPrint(&cE, plotname, "pdf");
- cE.Closed();
+    char total_title[1024];
+    sprintf(total_title, "%s", histotitle);
+    mnvPlotter.AddHistoTitle(total_title, .04);
+    mnvPlotter.WritePreliminary("TL", .035, 0, 0, false);
+    std::string plotname = Form("%s",pdf_label.c_str());
+    mnvPlotter.MultiPrint(&cE, plotname, "pdf");
+    cE.Closed();
 
 }
-void Draw_MCHist_WithErrorBands_fromTFile_andFIT(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel)
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCHist_WithErrorBands_fromTFile_andFIT(
+  TFile *inputFile_MCinput,  char *histoName_MC,
+  std::string pdf_label, char *histotitle,
+  char *xaxislabel,char* yaxislabel)
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -18654,8 +18971,13 @@ void Draw_MCHist_WithErrorBands_fromTFile_andFIT(TFile *inputFile_MCinput,  char
 
 
 }
-
-void Draw_MCHist_withErrorSys_fromTFile(TFile *inputFile_MCinput,  char *histoName_MC, std::string pdf_label, char *histotitle, char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCHist_withErrorSys_fromTFile(
+  TFile *inputFile_MCinput,  char *histoName_MC,
+  std::string pdf_label, char *histotitle,
+  char *xaxislabel,char* yaxislabel, bool DoBinwidthNorm )
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -18701,8 +19023,16 @@ void Draw_MCHist_withErrorSys_fromTFile(TFile *inputFile_MCinput,  char *histoNa
 
 
 }
-void Draw_MCHist_withErrorSys_fromTFile(TFile *inputFile_MCFull,TFile *inputFile_MCEmpty,  char *histoName_MC,
-  Pot_MapStatusList POT_MC, Pot_MapStatusList POT_DATA , std::string pdf_label, char *histotitle, char *xaxislabel,
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_MCHist_withErrorSys_fromTFile(
+  TFile *inputFile_MCFull,TFile *inputFile_MCEmpty,
+  char *histoName_MC,
+  Pot_MapStatusList POT_MC,
+  Pot_MapStatusList POT_DATA,
+  std::string pdf_label,
+  char *histotitle, char *xaxislabel,
   char* yaxislabel, bool DoBinwidthNorm )
 {
 
@@ -18790,10 +19120,18 @@ void Draw_MCHist_withErrorSys_fromTFile(TFile *inputFile_MCFull,TFile *inputFile
 }// End of function
 
 
-
-void Draw_RATIO_fromTFiles(TFile *inputFile_Top,  char *histoName_Top, char *histoName_TopLabel ,
-  TFile *inputFile_Bottom,  char *histoName_Bottom,char *histoName_BottomLabel, char *histoName_Ratio, std::string pdf_label,
-   char *histotitle, char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_RATIO_fromTFiles(
+  TFile *inputFile_Top,  char *histoName_Top,
+  char *histoName_TopLabel,
+  TFile *inputFile_Bottom,
+  char *histoName_Bottom,
+  char *histoName_BottomLabel,
+  char *histoName_Ratio, std::string pdf_label,
+  char *histotitle, char *xaxislabel,
+  char* yaxislabel, bool DoBinwidthNorm )
 {
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -18956,46 +19294,9 @@ void Draw_RATIO_fromTFiles(TFile *inputFile_Top,  char *histoName_Top, char *his
   if(DoBinwidthNorm==true)  gPad->SetLogx(0);
 
 }
-/*
-void DrawConvolutedGassian_SingleFit(TFile *input_TFile,  char *histoName, char *histoName_Label , std::string pdf_label,
-   char *histotitle, char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm,
-    double MinY, double MaxY, double FitRange_lowX, double FitRange_highX){
-
-      PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
-      TCanvas cE ("c1","c1");
-      TLegend *legend = new TLegend (0.65,0.70,0.95,.88);
-      double x1,y1,x2,y2;
-      mnvPlotter.DecodeLegendPosition(x1, y1, x2, y2, "R", 6.5, 6., .025);
-
-      std::cout<<"trying to Fit with Covoluted Gassian; HistName  = "<< histoName<<std::endl;
-      std::cout<<"Fit in Range (xlow, xhigh)  = "(<<FitRange_lowX <<","<< FitRange_highX<<")"<<std::endl;
-      char total_title[1024];
-
-      MnvH1D *h = (MnvH1D*)input_TFile -> Get(histoName);
-      // make a th1D clone of this object
-      TH1F *hist = (TH1F*)h->Clone("hist");
-
-      SetHist(hist, xaxislabel , yaxislabel);
-
-
-
-
-
-      hist->Fit("f");
-      hist->Draw("EP");
-
-
-      legend->Draw("SAME");
-      sprintf(total_title, "%s", histotitle);
-      mnvPlotter.AddHistoTitle(total_title, .04);
-      mnvPlotter.WritePreliminary("TL", .035, 0, 0, false);
-      std::string plotname1 = Form("%s",pdf_label.c_str());
-      mnvPlotter.MultiPrint(&cE, plotname1, "pdf");
-
-
-
-}//end of function
-*/
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
 void MakeCVS_from_hist(TFile *input_TFile,  char *histoName, char *histoName_Label ){
 
   MnvH1D *h = (MnvH1D*)input_TFile -> Get(histoName);
@@ -19005,17 +19306,24 @@ void MakeCVS_from_hist(TFile *input_TFile,  char *histoName, char *histoName_Lab
 
 }//end of function
 
-
-void MakeCVS_from_HISTS(char *histoName_TRUTH, TFile *inputFile_MCinputFULL, TFile *inputFile_MCinputEmpty, char *histoName_MC,
-  TFile *inputFile_DatainputFULL, TFile *inputFile_DatainputEmpty,char *histoName_data,
-  char *Playlist_name_FULL, char *Playlist_name_EMPTY, char *File_Title, char *varibleName, Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC ){
-
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void MakeCVS_from_HISTS(
+  char *histoName_TRUTH,
+  TFile *inputFile_MCinputFULL,
+  TFile *inputFile_MCinputEmpty,
+  char *histoName_MC,
+  TFile *inputFile_DatainputFULL,
+  TFile *inputFile_DatainputEmpty,
+  char *histoName_data, char *Playlist_name_FULL,
+  char *Playlist_name_EMPTY,
+  char *File_Title, char *varibleName,
+  Pot_MapStatusList POT_DATA, Pot_MapStatusList POT_MC )
+  {
     double scale_to_FULL= POT_DATA[kFULL] / POT_DATA[kEMPTY];
-
     double MC_scale_to_FULL = POT_DATA[kFULL] / POT_MC[kFULL];
-
     double MC_EMPTYscale_to_FULL = POT_DATA[kFULL] / POT_MC[kEMPTY];
-
 
     MnvH1D *hist_FULL = (MnvH1D*)inputFile_DatainputFULL -> Get(histoName_data);
     std::cout<<"Finished Full  = "<<histoName_data<<std::endl;
@@ -19255,16 +19563,23 @@ void MakeCVS_from_HISTS(char *histoName_TRUTH, TFile *inputFile_MCinputFULL, TFi
         myfile.close();
 }//end of function
 
-
-
-
-void DrawFULLStat_CV_SystematicErr( ME_playlist_TFileMAP FullMCMap,     Pot_MapList FullMC_scalerMap,
-                                    ME_playlist_TFileMAP EmptyMCMap,   Pot_MapList EmptyMC_scalerMap,
-                                    ME_playlist_TFileMAP FullDataMap,  Pot_MapList FullData_scalerMap,
-                                    ME_playlist_TFileMAP EmptyDataMap, Pot_MapList EmptyData_scalerMap,
-   char *histoName_MC ,char *histoName_data, std::string units, std::string pdf_label, char* hist_title,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG, bool MakeYaxisLOG, bool DrawallErrorGroups
- )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawFULLStat_CV_SystematicErr(
+  ME_playlist_TFileMAP FullMCMap,
+  Pot_MapList FullMC_scalerMap,
+  ME_playlist_TFileMAP EmptyMCMap,
+  Pot_MapList EmptyMC_scalerMap,
+  ME_playlist_TFileMAP FullDataMap,
+  Pot_MapList FullData_scalerMap,
+  ME_playlist_TFileMAP EmptyDataMap,
+  Pot_MapList EmptyData_scalerMap,
+  char *histoName_MC ,char *histoName_data,
+  std::string units, std::string pdf_label, char* hist_title,
+  char *xaxislabel, char* yaxislabel,
+  bool DoBinwidthNorm, bool MakeXaxisLOG,
+  bool MakeYaxisLOG, bool DrawallErrorGroups)
 {
  PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
 
@@ -19384,12 +19699,19 @@ DrawCVAndError_FromHistPointer(catMC->second, playlist_title, xaxislabel_string,
 
 
 
-void DrawFULLStatCOMBINED_CV_SystematicErr(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_POTMap,
-                                    ME_playlist_TFileMAP EmptyMCMap,       Pot_MapList EmptyMC_POTMap,
-                                    ME_playlist_TFileMAP FullDataMap,      Pot_MapList FullData_POTMap,
-                                    ME_playlist_TFileMAP EmptyDataMap,     Pot_MapList EmptyData_POTMap,
-   char *histoName_MC ,char *histoName_data, std::string units, std::string pdf_label, char* hist_title,
-   char *xaxislabel, char* yaxislabel, bool DoBinwidthNorm, bool MakeXaxisLOG,bool DrawallErrorGroups
+void DrawFULLStatCOMBINED_CV_SystematicErr(
+  ME_playlist_TFileMAP FullMCMap,
+  Pot_MapList FullMC_POTMap,
+  ME_playlist_TFileMAP EmptyMCMap,
+  Pot_MapList EmptyMC_POTMap,
+  ME_playlist_TFileMAP FullDataMap,
+  Pot_MapList FullData_POTMap,
+  ME_playlist_TFileMAP EmptyDataMap,
+  Pot_MapList EmptyData_POTMap,
+  char *histoName_MC ,char *histoName_data,
+   std::string units, std::string pdf_label, char* hist_title,
+   char *xaxislabel, char* yaxislabel,
+   bool DoBinwidthNorm, bool MakeXaxisLOG,bool DrawallErrorGroups
  )
 {
  PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
@@ -19536,14 +19858,22 @@ FULL_EmptyMC_Hist->Add(Empty_MC_Hist_clone,-1);
 
 }//end of function
 
-
-
-void DrawSTACKfromHistFilio_FULLStats(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_scalerMap,
-                                     ME_playlist_TFileMAP EmptyMCMap,  Pot_MapList EmptyMC_scalerMap,
-                                     ME_playlist_TFileMAP FullDataMap, Pot_MapList FullData_scalerMap,
-                                     ME_playlist_TFileMAP EmptyDataMap, Pot_MapList EmptyData_scalerMap,
-                                    char *histoName_MC , char *histoName_Data, char *histotitle,
-  std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawSTACKfromHistFilio_FULLStats(
+  ME_playlist_TFileMAP FullMCMap,
+  Pot_MapList FullMC_scalerMap,
+  ME_playlist_TFileMAP EmptyMCMap,
+  Pot_MapList EmptyMC_scalerMap,
+  ME_playlist_TFileMAP FullDataMap,
+  Pot_MapList FullData_scalerMap,
+  ME_playlist_TFileMAP EmptyDataMap,
+  Pot_MapList EmptyData_scalerMap,
+  char *histoName_MC, char *histoName_Data,
+  char *histotitle, std::string xaxislabel,
+  std::string pdf_label, bool DoBinwidthNorm,
+  std::string units, StackType STACKTYPE, bool Debug )
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     //PlotUtils::MnvPlotter mnvPlotter();
@@ -19744,13 +20074,23 @@ typename std::map<ME_helium_Playlists, double>::const_iterator Scalecat;
 
 
 }
-
-void DrawSTACKfromHistFilio_FULLStatsCOMBINED(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_POTMap,
-                                     ME_playlist_TFileMAP EmptyMCMap,         Pot_MapList EmptyMC_POTMap,
-                                     ME_playlist_TFileMAP FullDataMap,        Pot_MapList FullData_POTMap,
-                                     ME_playlist_TFileMAP EmptyDataMap,       Pot_MapList EmptyData_POTMap,
-                                    char *histoName_MC , char *histoName_Data, char *histotitle,
-  std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug, bool MakeYaxisLOG )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawSTACKfromHistFilio_FULLStatsCOMBINED(
+  ME_playlist_TFileMAP FullMCMap,
+  Pot_MapList FullMC_POTMap,
+  ME_playlist_TFileMAP EmptyMCMap,
+  Pot_MapList EmptyMC_POTMap,
+  ME_playlist_TFileMAP FullDataMap,
+  Pot_MapList FullData_POTMap,
+  ME_playlist_TFileMAP EmptyDataMap,
+  Pot_MapList EmptyData_POTMap,
+  char *histoName_MC, char *histoName_Data,
+  char *histotitle,
+  std::string xaxislabel, std::string pdf_label,
+  bool DoBinwidthNorm, std::string units,
+  StackType STACKTYPE, bool Debug, bool MakeYaxisLOG )
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     mnvPlotter.legend_n_columns = 2;
@@ -19957,10 +20297,17 @@ return ;
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-void DrawSTACKfromHistFilio_COMBINED(ME_playlist_TFileMAP MCMap, double POTScale_MC_To_DATA,
-                                     ME_playlist_TFileMAP DataMap, double POTScale_Data_To_DATA,
-                                    char *histoName_MC , char *histoName_Data, char *histotitle,
-  std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug, bool MakeYaxisLOG )
+void DrawSTACKfromHistFilio_COMBINED(
+  ME_playlist_TFileMAP MCMap,
+  double POTScale_MC_To_DATA,
+  ME_playlist_TFileMAP DataMap,
+  double POTScale_Data_To_DATA,
+  char *histoName_MC, char *histoName_Data,
+  char *histotitle,
+  std::string xaxislabel, std::string pdf_label,
+  bool DoBinwidthNorm,
+  std::string units, StackType STACKTYPE,
+  bool Debug, bool MakeYaxisLOG )
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     mnvPlotter.legend_n_columns = 2;
@@ -20031,15 +20378,13 @@ typename std::map<ME_helium_Playlists, PlotUtils::HistFolio<PlotUtils::MnvH1D>>:
 //typename std::map<ME_helium_Playlists, PlotUtils::HistFolio<PlotUtils::MnvH1D>>::const_iterator HistFoliobird;
 //typename std::map<ME_helium_Playlists, PlotUtils::MnvH1D*>::const_iterator dogData;
 
-   auto CombinedFULL = (HistFolio_PlaylistMap.begin()->second).GetHistArray();
+auto CombinedFULL = (HistFolio_PlaylistMap.begin()->second).GetHistArray();
 
-  for(HistFoliocat = HistFolio_PlaylistMap.begin(); HistFoliocat != HistFolio_PlaylistMap.end(); ++HistFoliocat)
-  {
-
-    if(HistFoliocat->first != HistFolio_PlaylistMap.begin()->first ){
-      auto Full_MC_Stack_array = (HistFoliocat->second).GetHistArray();
-      AddFirst_toSecond_MnvH1D_Arrays(CombinedFULL, Full_MC_Stack_array );
-
+for(HistFoliocat = HistFolio_PlaylistMap.begin(); HistFoliocat != HistFolio_PlaylistMap.end(); ++HistFoliocat)
+{
+  if(HistFoliocat->first != HistFolio_PlaylistMap.begin()->first ){
+    auto Full_MC_Stack_array = (HistFoliocat->second).GetHistArray();
+    AddFirst_toSecond_MnvH1D_Arrays(CombinedFULL, Full_MC_Stack_array );
   }
 
 
@@ -20102,13 +20447,22 @@ return ;
 }
 
 
-
-void DrawNonSTACKfromHistFilio_FULLStatsCOMBINED(ME_playlist_TFileMAP FullMCMap, Pot_MapList FullMC_POTMap,
-                                     ME_playlist_TFileMAP EmptyMCMap,         Pot_MapList EmptyMC_POTMap,
-                                     ME_playlist_TFileMAP FullDataMap,        Pot_MapList FullData_POTMap,
-                                     ME_playlist_TFileMAP EmptyDataMap,       Pot_MapList EmptyData_POTMap,
-                                    char *histoName_MC , char *histoName_Data, char *histotitle,
-  std::string xaxislabel, std::string pdf_label, bool DoBinwidthNorm, std::string units, StackType STACKTYPE, bool Debug )
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawNonSTACKfromHistFilio_FULLStatsCOMBINED(
+  ME_playlist_TFileMAP FullMCMap,
+  Pot_MapList FullMC_POTMap,
+  ME_playlist_TFileMAP EmptyMCMap,
+  Pot_MapList EmptyMC_POTMap,
+  ME_playlist_TFileMAP FullDataMap,
+  Pot_MapList FullData_POTMap,
+  ME_playlist_TFileMAP EmptyDataMap,
+  Pot_MapList EmptyData_POTMap,
+  char *histoName_MC , char *histoName_Data, char *histotitle,
+  std::string xaxislabel, std::string pdf_label,
+  bool DoBinwidthNorm, std::string units,
+  StackType STACKTYPE, bool Debug )
   {    //helium_Status kEMPTY, kFULL;
     PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
     mnvPlotter.legend_n_columns = 2;
@@ -20299,12 +20653,20 @@ mnvPlotter.MultiPrint(&cE, plotname, "pdf");
 }
 
 
-/////////////////////////////////////////
-void Draw_2D_Panel_MC_andData_frompointer(MnvH2D *hist_Data, MnvH2D *hist_MC,
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void Draw_2D_Panel_MC_andData_frompointer(
+  MnvH2D *hist_Data, MnvH2D *hist_MC,
   char *histotitle, std::string xaxislabel,
-   std::string yaxislabel,const char *Zaxislabel , double max_x, double max_y,
-    char *pdf_label, bool doBinwidth, bool MakeXaxisLOG,
-    double x_projectionTxtsize, double y_projectionTxtsize, bool doMultipliers ){
+  std::string yaxislabel,const char *Zaxislabel,
+  double max_x, double max_y,
+  char *pdf_label, bool doBinwidth,
+  bool MakeXaxisLOG,
+  double x_projectionTxtsize,
+  double y_projectionTxtsize,
+  bool doMultipliers )
+  {
 
       bool setMaxY = false;
       double headroom = 1.5;
@@ -20355,7 +20717,8 @@ void Draw_2D_Panel_MC_andData_frompointer(MnvH2D *hist_Data, MnvH2D *hist_MC,
   //std::vector<double> multipliers_y = GetScales_2d(histAndOpts, false);
   std::vector<double> multipliers_y =GetScales(histAndOpts, false, max_y, 1.2);
   //std::vector<double> multipliers_y =GetScales(histAndOpts,MaxY*1.1, 1.0);
-  GridCanvas* gc_y=plotYAxis1D(histAndOpts, xaxislabel, yaxislabel, doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
+  GridCanvas* gc_y=plotYAxis1D(histAndOpts, xaxislabel, yaxislabel,
+     doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
   gc_y->SetYLabel_Size(.015);
   gc_y->SetXLabel_Size(.025);
   double MaxY = gc_y->GetPadMax();
@@ -20381,7 +20744,8 @@ void Draw_2D_Panel_MC_andData_frompointer(MnvH2D *hist_Data, MnvH2D *hist_MC,
   //std::vector<double> multipliers_x =GetScales(histAndOpts,MaxY*1.1, 1.0);
   //std::vector<double> multipliers_x = GetScales_2d(histAndOpts,  true);
   //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
-  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel, xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsizec
+  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel, xaxislabel,
+     doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsizec
   // Set the y range manually. Can also use gc3->Remax() to guess automatically
   gc_x->SetYLabel_Size(.015);
   gc_x->SetXLabel_Size(.025);
@@ -20406,7 +20770,9 @@ void Draw_2D_Panel_MC_andData_frompointer(MnvH2D *hist_Data, MnvH2D *hist_MC,
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown_E_theta(MnvH2D *hist_Data, MnvH2D *hist_MC,
+void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown_E_theta(
+  MnvH2D *hist_Data,
+  MnvH2D *hist_MC,
   MnvH2D *hist_MC_QE,
   MnvH2D *hist_MC_HeavierRES,
   MnvH2D *hist_MC_deltaRES,
@@ -20419,9 +20785,12 @@ void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown_E_theta(MnvH2D *hist_Data
   bool DataStat_SysError,
   bool MC_Stat_SysError,
   char *histotitle, std::string xaxislabel,
-  std::string yaxislabel,const char *Zaxislabel , double max_x, double max_y, bool setMaxY,
+  std::string yaxislabel,const char *Zaxislabel,
+  double max_x, double max_y, bool setMaxY,
   char *pdf_label, bool doBinwidth, bool MakeXaxisLOG,
-  double x_projectionTxtsize, double y_projectionTxtsize, bool doMultipliers, bool MakeRatio){
+  double x_projectionTxtsize,
+  double y_projectionTxtsize,
+  bool doMultipliers, bool MakeRatio){
 
 //bool setMaxY = true;
 double headroom = 1.5;
@@ -20541,7 +20910,7 @@ std::vector<std::pair<TH2*, const char*> > histAndOpts;
   if(DataStat_SysError==true) { histAndOpts.push_back(std::make_pair(data_1,"graph ep"));}
 
 
-  }
+}
 
 else{
 
@@ -20581,7 +20950,8 @@ leg->AddEntry(h_NONE,       "NONE" , "l");
   // I think if getscales is tru do Y projection if false do x projection
   //std::vector<double> multipliers_y = GetScales(histAndOpts, true, true);
   std::vector<double> multipliers_y = GetScales_2d(histAndOpts, false);
-  GridCanvas* gc_y=plotYAxis1D(histAndOpts, xaxislabel, yaxislabel, doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
+  GridCanvas* gc_y=plotYAxis1D(histAndOpts, xaxislabel,
+     yaxislabel, doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
   gc_y->SetYLabel_Size(.025);
   gc_y->SetXLabel_Size(.03);
   double MaxY = gc_y->GetPadMax();
@@ -20605,7 +20975,8 @@ leg->AddEntry(h_NONE,       "NONE" , "l");
   //std::vector<double> multipliers_x = GetScales(histAndOpts, false, true);
   std::vector<double> multipliers_x = GetScales_2d(histAndOpts,  true);
   //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
-  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel, xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsizec
+  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel,
+     xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsizec
   // Set the y range manually. Can also use gc3->Remax() to guess automatically
   gc_x->SetYLabel_Size(.025);
   gc_x->SetXLabel_Size(.03);
@@ -20631,7 +21002,8 @@ leg->AddEntry(h_NONE,       "NONE" , "l");
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown(MnvH2D *hist_Data, MnvH2D *hist_MC,
+void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown(
+  MnvH2D *hist_Data, MnvH2D *hist_MC,
   MnvH2D *hist_MC_QE,
   MnvH2D *hist_MC_HeavierRES,
   MnvH2D *hist_MC_deltaRES,
@@ -20644,9 +21016,11 @@ void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown(MnvH2D *hist_Data, MnvH2D
   bool DataStat_SysError,
   bool MC_Stat_SysError,
   char *histotitle, std::string xaxislabel,
-  std::string yaxislabel,const char *Zaxislabel , double max_x, double max_y, bool setMaxY,
+  std::string yaxislabel, const char *Zaxislabel,
+  double max_x, double max_y, bool setMaxY,
   char *pdf_label, bool doBinwidth, bool MakeXaxisLOG,
-  double x_projectionTxtsize, double y_projectionTxtsize, bool doMultipliers, bool MakeRatio){
+  double x_projectionTxtsize, double y_projectionTxtsize,
+  bool doMultipliers, bool MakeRatio){
 
 //bool setMaxY = true;
 double headroom = 1.5;
@@ -20804,7 +21178,8 @@ leg->AddEntry(h_NONE,       "NONE" , "l");
   // I think if getscales is tru do Y projection if false do x projection
   //std::vector<double> multipliers_y = GetScales(histAndOpts, true, true);
   std::vector<double> multipliers_y = GetScales_2d(histAndOpts, false);
-  GridCanvas* gc_y=plotYAxis1D(histAndOpts, xaxislabel, yaxislabel, doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
+  GridCanvas* gc_y=plotYAxis1D(histAndOpts, xaxislabel, yaxislabel,
+    doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
   gc_y->SetYLabel_Size(.025);
   gc_y->SetXLabel_Size(.03);
   double MaxY = gc_y->GetPadMax();
@@ -20828,7 +21203,8 @@ leg->AddEntry(h_NONE,       "NONE" , "l");
   //std::vector<double> multipliers_x = GetScales(histAndOpts, false, true);
   std::vector<double> multipliers_x = GetScales_2d(histAndOpts,  true);
   //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
-  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel, xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsizec
+  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel,
+    xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsizec
   // Set the y range manually. Can also use gc3->Remax() to guess automatically
   gc_x->SetYLabel_Size(.025);
   gc_x->SetXLabel_Size(.03);
@@ -20854,7 +21230,9 @@ leg->AddEntry(h_NONE,       "NONE" , "l");
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown(MnvH2D *hist_Data, MnvH2D *hist_MC,
+void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown(
+  MnvH2D *hist_Data,
+  MnvH2D *hist_MC,
   MnvH2D *hist_MC_QE,
   MnvH2D *hist_MC_HeavierRES,
   MnvH2D *hist_MC_deltaRES,
@@ -20867,11 +21245,17 @@ void Draw_2D_Panel_MC_andData_frompointer_DISbreakdown(MnvH2D *hist_Data, MnvH2D
   bool DataStat_SysError,
   bool MC_Stat_SysError,
   char *histotitle, std::string xaxislabel,
-  std::string yaxislabel,const char *Zaxislabel , double max_x, double max_y, bool setMaxY,
-  char *pdf_label, bool doBinwidth, bool MakeXaxisLOG,
-  double x_projectionTxtsize, double y_projectionTxtsize, bool doMultipliers, std::vector<double> YMultipliers, std::vector<double> XMultipliers){
+  std::string yaxislabel, const char *Zaxislabel,
+  double max_x, double max_y,
+  bool setMaxY, char *pdf_label,
+  bool doBinwidth, bool MakeXaxisLOG,
+  double x_projectionTxtsize, double y_projectionTxtsize,
+  bool doMultipliers,
+  std::vector<double> YMultipliers,
+  std::vector<double> XMultipliers)
+  {
 
-double headroom = 1.5;
+  double headroom = 1.5;
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   myPlotStyle();
   TH1::SetDefaultSumw2();
@@ -21348,7 +21732,8 @@ double headroom = 1.5;
   // I think if getscales is tru do Y projection if false do x projection
   //std::vector<double> multipliers_x = GetScales(histAndOpts, false, true);
   //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
-  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel, xaxislabel, doMultipliers ? &XMultipliers[0] : NULL, doBinwidth); // , x_projectionTxtsizec
+  GridCanvas* gc_x=plotXAxis1D(histAndOpts, yaxislabel,
+    xaxislabel, doMultipliers ? &XMultipliers[0] : NULL, doBinwidth); // , x_projectionTxtsizec
   // Set the y range manually. Can also use gc3->Remax() to guess automatically
   gc_x->SetYLabel_Size(.025);
   gc_x->SetXLabel_Size(.03);
@@ -21374,11 +21759,16 @@ double headroom = 1.5;
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_2D_Panel_MC_Only_frompointer(MnvH2D *hist, char *histotitle,
-   char *legend_title, std::string xaxislabel, std::string Xunits,
-   std::string yaxislabel, std::string Yunits,  std::string Zaxislabel ,
-   double headroom, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG,
-    double x_projectionTxtsize, double y_projectionTxtsize,   bool doMultipliers ){
+void Draw_2D_Panel_MC_Only_frompointer(
+  MnvH2D *hist, char *histotitle,
+  char *legend_title, std::string xaxislabel,
+  std::string Xunits, std::string yaxislabel,
+  std::string Yunits,  std::string Zaxislabel ,
+  double headroom, char *pdf_label,
+  bool doBinwidth, bool MakeXaxisLOG,
+  double x_projectionTxtsize, double y_projectionTxtsize,
+  bool doMultipliers )
+  {
 
       PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
       myPlotStyle();
@@ -21411,7 +21801,8 @@ void Draw_2D_Panel_MC_Only_frompointer(MnvH2D *hist, char *histotitle,
       //std::vector<double> multipliers_y = GetScales(histAndOpts_MC, true, true);
       std::vector<double> multipliers_y = GetScales(histAndOpts_MC, true, true);
     //  std::reverse(multipliers_y.begin(), multipliers_y.end());
-      GridCanvas* gc_y=plotYAxis1D(histAndOpts_MC, xaxislabel, yaxislabel, doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
+      GridCanvas* gc_y=plotYAxis1D(histAndOpts_MC, xaxislabel, yaxislabel,
+         doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
       gc_y->SetYLabel_Size(.025);
       gc_y->SetXLabel_Size(.03);
       double MaxY = gc_y->GetPadMax();
@@ -21440,7 +21831,8 @@ void Draw_2D_Panel_MC_Only_frompointer(MnvH2D *hist, char *histotitle,
       std::vector<double> multipliers_x = GetScales(histAndOpts_MC, false, true);
       //std::reverse(multipliers_x.begin(), multipliers_x.end());
       //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
-      GridCanvas* gc_x=plotXAxis1D(histAndOpts_MC, yaxislabel, xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsize
+      GridCanvas* gc_x=plotXAxis1D(histAndOpts_MC, yaxislabel, xaxislabel,
+         doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsize
       // Set the y range manually. Can also use gc3->Remax() to guess automatically
       gc_x->SetYLabel_Size(.025);
       gc_x->SetXLabel_Size(.03);
@@ -21469,112 +21861,121 @@ void Draw_2D_Panel_MC_Only_frompointer(MnvH2D *hist, char *histotitle,
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_2D_Panel_MC_Only_frompointer_WithErrorBand(MnvH2D *hist, char *histotitle,
-   char *legend_title, std::string xaxislabel, std::string Xunits,
-   std::string yaxislabel, std::string Yunits,  std::string Zaxislabel ,
-   double headroom, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG,
-    double x_projectionTxtsize, double y_projectionTxtsize,   bool doMultipliers ){
+void Draw_2D_Panel_MC_Only_frompointer_WithErrorBand(
+  MnvH2D *hist, char *histotitle,
+  char *legend_title, std::string xaxislabel,
+   std::string Xunits, std::string yaxislabel,
+   std::string Yunits,  std::string Zaxislabel,
+  double headroom, char *pdf_label,
+  bool doBinwidth, bool MakeXaxisLOG,
+  double x_projectionTxtsize,
+  double y_projectionTxtsize,   bool doMultipliers )
+{
+  PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
+  myPlotStyle();
+  TH1::SetDefaultSumw2();
+  gStyle->SetErrorX(0);
+  gStyle->SetEndErrorSize(2);
 
-      PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
-      myPlotStyle();
-      TH1::SetDefaultSumw2();
-      gStyle->SetErrorX(0);
-      gStyle->SetEndErrorSize(2);
+  TH2* mc_hist = new TH2D(hist->GetCVHistoWithStatError());
+  TH2* mcTotalError =new TH2D(hist->GetCVHistoWithError());
+  mcTotalError->SetLineColor(kRed);
+  mcTotalError->SetLineWidth(2);
+  mcTotalError->SetFillColorAlpha(kRed, 0.5);
+  mcTotalError->SetFillStyle(3144);
 
-      TH2* mc_hist = new TH2D(hist->GetCVHistoWithStatError());
-      TH2* mcTotalError =new TH2D(hist->GetCVHistoWithError());
-      mcTotalError->SetLineColor(kRed);
-      mcTotalError->SetLineWidth(2);
-      mcTotalError->SetFillColorAlpha(kRed, 0.5);
-      mcTotalError->SetFillStyle(3144);
+  mc_hist->SetLineColor(kRed);
+  mc_hist->SetLineWidth(2);
+  std::vector<std::pair<TH2*, const char*> > histAndOpts_MC;
 
-      mc_hist->SetLineColor(kRed);
-      mc_hist->SetLineWidth(2);
-      std::vector<std::pair<TH2*, const char*> > histAndOpts_MC;
+  histAndOpts_MC.push_back(std::make_pair(mcTotalError,       "graphe3"));
+  histAndOpts_MC.push_back(std::make_pair(mc_hist,"hist"));
 
-      histAndOpts_MC.push_back(std::make_pair(mcTotalError,       "graphe3"));
-      histAndOpts_MC.push_back(std::make_pair(mc_hist,"hist"));
+  TLegend* leg=new TLegend(0.7, 0.08, 0.9, 0.32);
+  leg->SetFillStyle(0);
+  leg->SetBorderSize(0);
+  leg->SetTextSize(0.03);
+  leg->AddEntry(mc_hist, legend_title, "l");
 
-      TLegend* leg=new TLegend(0.7, 0.08, 0.9, 0.32);
-      leg->SetFillStyle(0);
-      leg->SetBorderSize(0);
-      leg->SetTextSize(0.03);
-      leg->AddEntry(mc_hist, legend_title, "l");
+  TLegend* leg2=new TLegend(0.7, 0.08, 0.9, 0.32);
+  leg2->SetFillStyle(0);
+  leg2->SetBorderSize(0);
+  leg2->SetTextSize(0.03);
+  leg2->AddEntry(mc_hist, legend_title, "l");
 
-      TLegend* leg2=new TLegend(0.7, 0.08, 0.9, 0.32);
-      leg2->SetFillStyle(0);
-      leg2->SetBorderSize(0);
-      leg2->SetTextSize(0.03);
-      leg2->AddEntry(mc_hist, legend_title, "l");
+  //bool doMultipliers=true;
 
-      //bool doMultipliers=true;
+  // I think if getscales is tru do Y projection if false do x projection
+  //std::vector<double> multipliers_y = GetScales(histAndOpts_MC, true, true);
+  std::vector<double> multipliers_y = GetScales(histAndOpts_MC, true, true);
+  //  std::reverse(multipliers_y.begin(), multipliers_y.end());
+  GridCanvas* gc_y=plotYAxis1D(histAndOpts_MC, xaxislabel,
+    yaxislabel, doMultipliers ? &multipliers_y[0] : NULL,
+    y_projectionTxtsize, doBinwidth);
+    gc_y->SetYLabel_Size(.025);
+    gc_y->SetXLabel_Size(.03);
+    double MaxY = gc_y->GetPadMax();
+    gc_y->SetYLimits(0,MaxY*headroom);
 
-      // I think if getscales is tru do Y projection if false do x projection
-      //std::vector<double> multipliers_y = GetScales(histAndOpts_MC, true, true);
-      std::vector<double> multipliers_y = GetScales(histAndOpts_MC, true, true);
-    //  std::reverse(multipliers_y.begin(), multipliers_y.end());
-      GridCanvas* gc_y=plotYAxis1D(histAndOpts_MC, xaxislabel, yaxislabel, doMultipliers ? &multipliers_y[0] : NULL, y_projectionTxtsize, doBinwidth);
-      gc_y->SetYLabel_Size(.025);
-      gc_y->SetXLabel_Size(.03);
-      double MaxY = gc_y->GetPadMax();
-      gc_y->SetYLimits(0,MaxY*headroom);
+    std::string Zaxislabel_stringY;
+    if(doBinwidth==true)Zaxislabel_stringY = Zaxislabel + " /[" + Yunits + "]";
+    else Zaxislabel_stringY = Zaxislabel;
+    char Zaxislabel_stringY_char[Zaxislabel_stringY.length()+1];
+    strcpy( Zaxislabel_stringY_char,Zaxislabel_stringY.c_str());
+    gc_y->SetYTitle(Zaxislabel_stringY_char);
+    //gc_y->SetLogx(0);
+    gc_y->SetGridx();
+    if(MakeXaxisLOG==true) gc_y->SetLogx(1);
+    char total_title[1024];
+    sprintf(total_title, " %s [Yproj]", histotitle);
 
-      std::string Zaxislabel_stringY;
-      if(doBinwidth==true)Zaxislabel_stringY = Zaxislabel + " /[" + Yunits + "]";
-      else Zaxislabel_stringY = Zaxislabel;
-      char Zaxislabel_stringY_char[Zaxislabel_stringY.length()+1];
-      strcpy( Zaxislabel_stringY_char,Zaxislabel_stringY.c_str());
-      gc_y->SetYTitle(Zaxislabel_stringY_char);
-      //gc_y->SetLogx(0);
-      gc_y->SetGridx();
-      if(MakeXaxisLOG==true) gc_y->SetLogx(1);
-      char total_title[1024];
-      sprintf(total_title, " %s [Yproj]", histotitle);
+    mnvPlotter.AddHistoTitle(total_title, .035);
+    if(MakeXaxisLOG==true) gc_y->SetLogx(1);
+    gc_y->Modified();
+    leg->Draw("SAME");
+    gc_y->Print(pdf_label);
 
-      mnvPlotter.AddHistoTitle(total_title, .035);
-      if(MakeXaxisLOG==true) gc_y->SetLogx(1);
-      gc_y->Modified();
-      leg->Draw("SAME");
-      gc_y->Print(pdf_label);
-
-      /////////////////////////////////////////////////////////
-      // I think if getscales is tru do Y projection if false do x projection
-      std::vector<double> multipliers_x = GetScales(histAndOpts_MC, false, true);
-      //std::reverse(multipliers_x.begin(), multipliers_x.end());
-      //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
-      GridCanvas* gc_x=plotXAxis1D(histAndOpts_MC, yaxislabel, xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsize
+    /////////////////////////////////////////////////////////
+    // I think if getscales is tru do Y projection if false do x projection
+    std::vector<double> multipliers_x = GetScales(histAndOpts_MC, false, true);
+    //std::reverse(multipliers_x.begin(), multipliers_x.end());
+    //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
+    GridCanvas* gc_x=plotXAxis1D(histAndOpts_MC, yaxislabel,
+      xaxislabel, doMultipliers ? &multipliers_x[0] : NULL, doBinwidth); // , x_projectionTxtsize
       // Set the y range manually. Can also use gc3->Remax() to guess automatically
-      gc_x->SetYLabel_Size(.025);
-      gc_x->SetXLabel_Size(.03);
-      double MaxX = gc_x->GetPadMax();
-      gc_x->SetYLimits(0,MaxX*headroom);
-      std::string Zaxislabel_stringX;
-      if(doBinwidth==true)Zaxislabel_stringX = Zaxislabel + "/[" + Xunits + "]";
-      else Zaxislabel_stringX = Zaxislabel;
-      char Zaxislabel_stringX_char[Zaxislabel_stringX.length()+1];
-      strcpy( Zaxislabel_stringX_char,Zaxislabel_stringX.c_str());
-      gc_x->SetYTitle(Zaxislabel_stringX_char);
-      //if(MakeXaxisLOG==true) gc_x->SetLogx(0);
-      sprintf(total_title, " %s [Xproj]", histotitle);
-      mnvPlotter.AddHistoTitle(total_title, .038);
-      //gc_x->SetYTitle(yaxisUNITS);
-      if(MakeXaxisLOG==true) gc_x->SetLogx(1);
-      gc_x->SetGridx();
-      gc_x->Modified();
-      leg2->Draw("SAME");
-      gc_x->Print(pdf_label);
+    gc_x->SetYLabel_Size(.025);
+    gc_x->SetXLabel_Size(.03);
+    double MaxX = gc_x->GetPadMax();
+    gc_x->SetYLimits(0,MaxX*headroom);
+    std::string Zaxislabel_stringX;
+    if(doBinwidth==true)Zaxislabel_stringX = Zaxislabel + "/[" + Xunits + "]";
+    else Zaxislabel_stringX = Zaxislabel;
+    char Zaxislabel_stringX_char[Zaxislabel_stringX.length()+1];
+    strcpy( Zaxislabel_stringX_char,Zaxislabel_stringX.c_str());
+    gc_x->SetYTitle(Zaxislabel_stringX_char);
+    //if(MakeXaxisLOG==true) gc_x->SetLogx(0);
+    sprintf(total_title, " %s [Xproj]", histotitle);
+    mnvPlotter.AddHistoTitle(total_title, .038);
+    //gc_x->SetYTitle(yaxisUNITS);
+    if(MakeXaxisLOG==true) gc_x->SetLogx(1);
+    gc_x->SetGridx();
+    gc_x->Modified();
+    leg2->Draw("SAME");
+    gc_x->Print(pdf_label);
 
-      delete gc_x;
-      delete gc_y;
+    delete gc_x;
+    delete gc_y;
 
 }//end of function
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void Draw_2D_Panel_MC_Only_frompointer_XProjection(MnvH2D *hist,
-  char *histotitle, char *legend_title, std::string xaxislabel,
-   std::string yaxislabel, const char *Zaxislabel ,
-  double max_x, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG){
+void Draw_2D_Panel_MC_Only_frompointer_XProjection(
+  MnvH2D *hist, char *histotitle,
+  char *legend_title, std::string xaxislabel,
+  std::string yaxislabel, const char *Zaxislabel,
+  double max_x, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG)
+{
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   myPlotStyle();
   TH1::SetDefaultSumw2();
@@ -21603,7 +22004,6 @@ void Draw_2D_Panel_MC_Only_frompointer_XProjection(MnvH2D *hist,
   /////////////////////////////////////////////////////////
   // I think if getscales is tru do Y projection if false do x projection
   std::vector<double> multipliers_x = GetScales(histAndOpts_MC, false, true);
-  //if(MakeXaxisLOG==true) gc_x->SetLogy(0);
   GridCanvas* gc_x=plotXAxis1D(histAndOpts_MC, yaxislabel, xaxislabel, doMultipliers ? &multipliers_x[0] : NULL);
   // Set the y range manually. Can also use gc3->Remax() to guess automatically
   gc_x->SetYLimits(0,max_x);
@@ -21625,14 +22025,19 @@ delete gc_x;
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void Draw_2D_Panel_MC_Only_frompointer_YProjection(MnvH2D *hist, char *histotitle,
-  char *legend_title, std::string xaxislabel, std::string yaxislabel,
-  const char *Zaxislabel, double max_y, char *pdf_label, bool doBinwidth, bool MakeXaxisLOG){
-  PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
-  myPlotStyle();
-  TH1::SetDefaultSumw2();
-  gStyle->SetErrorX(0);
-  gStyle->SetEndErrorSize(2);
+void Draw_2D_Panel_MC_Only_frompointer_YProjection(
+  MnvH2D *hist, char *histotitle,
+  char *legend_title, std::string xaxislabel,
+  std::string yaxislabel,
+  const char *Zaxislabel,
+  double max_y, char *pdf_label,
+  bool doBinwidth, bool MakeXaxisLOG)
+  {
+    PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
+    myPlotStyle();
+    TH1::SetDefaultSumw2();
+    gStyle->SetErrorX(0);
+    gStyle->SetEndErrorSize(2);
 
 
   TH2* mc_hist=new TH2D(hist->GetCVHistoWithStatError());
@@ -21674,10 +22079,81 @@ void Draw_2D_Panel_MC_Only_frompointer_YProjection(MnvH2D *hist, char *histotitl
   delete gc_y;
 }//end of function
 ///////////////////////////////////////////////////
-void DrawTGraph(TGraphErrors *g_TGraph, const char* xaxislabel,const char* yaxislabel,
-   const char* Title, const char* legend_Title,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG ){
+void DrawTGraph(
+  TGraphErrors *g_TGraph,
+  const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title,
+  const char* legend_Title,
+  const char* pdf,
+  TCanvas *can, MnvPlotter *plot,
+  bool MakeXaxisLOG, bool MakeYaxisLOG )
+{
   double x1, x2, y1, y2;
+
+  plot->DecodeLegendPosition(x1, y1, x2 , y2, "TR", 6.5, 6., .025);
+  TLegend *legend = new TLegend (x1+.05, y1+.15, x2,y2);
+
+  if(MakeXaxisLOG==true){
+    gPad->SetLogx();
+  }
+  if(MakeYaxisLOG==true){
+    gPad->SetLogy();
+  }
+
+  string TotalTitle = string(Title);
+
+  g_TGraph -> SetTitle("");
+  g_TGraph -> GetXaxis() -> SetTitle(xaxislabel);
+  g_TGraph -> GetYaxis() -> SetTitle(yaxislabel);
+  g_TGraph -> GetXaxis() -> CenterTitle();
+  g_TGraph -> GetYaxis() -> CenterTitle();
+  g_TGraph -> GetXaxis() -> SetTitleSize(0.038);
+  g_TGraph -> GetYaxis() -> SetTitleSize(0.038);
+
+  g_TGraph -> SetLineColor(2);
+  g_TGraph -> SetMarkerColor(2);
+  g_TGraph->GetXaxis()->SetNdivisions(30, kTRUE);
+  g_TGraph->GetYaxis()->SetNdivisions(25, kTRUE);
+  g_TGraph->GetYaxis()->SetLabelSize(0.025);
+  g_TGraph->GetXaxis()->SetLabelSize(0.015);
+  g_TGraph -> Draw("AP");
+
+  legend -> SetTextSize(0.025);
+  legend -> SetFillColor(0);
+  legend -> AddEntry(g_TGraph, legend_Title, "P");
+  legend -> Draw();
+  plot -> AddHistoTitle(TotalTitle.c_str() , .04);
+  plot -> WritePreliminary("TL", .035, 0, 0, false);
+
+  gPad->Update();
+  can->Modified();
+  can->Print(pdf);
+  can->Closed();
+
+
+  if(MakeXaxisLOG==true){
+    gPad->SetLogx(0);
+  }
+  if(MakeYaxisLOG==true){
+    gPad->SetLogy(0);
+  }
+
+   return;
+
+ }
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+
+void DrawTGraph(
+  TGraph *g_TGraph,
+  const char* xaxislabel, const char* yaxislabel,
+  const char* Title, const char* legend_Title,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG )
+  {
+    double x1, x2, y1, y2;
 
     plot->DecodeLegendPosition(x1, y1, x2 , y2, "TR", 6.5, 6., .025);
     TLegend *legend = new TLegend (x1+.05, y1+.15, x2,y2);
@@ -21702,8 +22178,6 @@ void DrawTGraph(TGraphErrors *g_TGraph, const char* xaxislabel,const char* yaxis
     g_TGraph -> SetLineColor(2);
     g_TGraph -> SetMarkerColor(2);
     //TAxis *Xaxis = g_TGraph->GetXaxis();
-    g_TGraph->GetXaxis()->SetNdivisions(30, kTRUE);
-    g_TGraph->GetYaxis()->SetNdivisions(25, kTRUE);
     g_TGraph->GetYaxis()->SetLabelSize(0.025);
     g_TGraph->GetXaxis()->SetLabelSize(0.015);
    //TCanvas *optcan = new TCanvas("optcan");
@@ -21738,77 +22212,20 @@ return;
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-void DrawTGraph(TGraph *g_TGraph, const char* xaxislabel,const char* yaxislabel,
-   const char* Title, const char* legend_Title,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG ){
-  double x1, x2, y1, y2;
-
-    plot->DecodeLegendPosition(x1, y1, x2 , y2, "TR", 6.5, 6., .025);
-    TLegend *legend = new TLegend (x1+.05, y1+.15, x2,y2);
-
-    if(MakeXaxisLOG==true){
-      gPad->SetLogx();
-    }
-    if(MakeYaxisLOG==true){
-      gPad->SetLogy();
-    }
-
-    string TotalTitle = string(Title);
-
-    g_TGraph -> SetTitle("");
-    g_TGraph -> GetXaxis() -> SetTitle(xaxislabel);
-    g_TGraph -> GetYaxis() -> SetTitle(yaxislabel);
-    g_TGraph -> GetXaxis() -> CenterTitle();
-    g_TGraph -> GetYaxis() -> CenterTitle();
-    g_TGraph -> GetXaxis() -> SetTitleSize(0.038);
-    g_TGraph -> GetYaxis() -> SetTitleSize(0.038);
-
-    g_TGraph -> SetLineColor(2);
-    g_TGraph -> SetMarkerColor(2);
-    //TAxis *Xaxis = g_TGraph->GetXaxis();
-    g_TGraph->GetYaxis()->SetLabelSize(0.025);
-    g_TGraph->GetXaxis()->SetLabelSize(0.015);
-   //TCanvas *optcan = new TCanvas("optcan");
-   g_TGraph -> Draw("AP");
-
-   legend -> SetTextSize(0.025);
-   legend -> SetFillColor(0);
-   legend -> AddEntry(g_TGraph, legend_Title, "P");
-   legend -> Draw();
-   plot -> AddHistoTitle(TotalTitle.c_str() , .04);
-   plot -> WritePreliminary("TL", .035, 0, 0, false);
-
-
-
-   gPad->Update();
-   can->Modified();
-   can->Print(pdf);
-   can->Closed();
-
-
-   if(MakeXaxisLOG==true){
-     gPad->SetLogx(0);
-   }
-   if(MakeYaxisLOG==true){
-     gPad->SetLogy(0);
-   }
-
-
-
-
-return;
-
-}
-/////////////////////////////////////////////////////////////////////////////////
-//
-/////////////////////////////////////////////////////////////////////////////////
-
-
-void DrawTGraph_GaussianFit(TGraph *g_TGraph, const char* xaxislabel,const char* yaxislabel,
-   const char* Title, const char* legend_Title,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG, double MinXfit, double MaxXfit ){
-  double x1, x2, y1, y2;
+void DrawTGraph_GaussianFit(
+  TGraph *g_TGraph,
+  const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title,
+  const char* legend_Title,
+  const char* pdf,
+  TCanvas *can,
+  MnvPlotter *plot,
+  bool MakeXaxisLOG,
+  bool MakeYaxisLOG,
+  double MinXfit, double MaxXfit )
+  {
+    double x1, x2, y1, y2;
 
     plot->DecodeLegendPosition(x1, y1, x2 , y2, "TR", 6.5, 6., .025);
     TLegend *legend = new TLegend (x1+.05, y1+.15, x2,y2);
@@ -21886,10 +22303,19 @@ return;
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void DrawTGraph_PolyFit(TGraph *g_TGraph, const char* xaxislabel,const char* yaxislabel,
-   const char* Title, const char* legend_Title,const char* legend_Title_fit,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG, double MinXfit, double MaxXfit, char *functionName  ){
-  double x1, x2, y1, y2;
+void DrawTGraph_PolyFit(
+  TGraph *g_TGraph,
+  const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title,
+  const char* legend_Title,
+  const char* legend_Title_fit,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plot, bool MakeXaxisLOG,
+  bool MakeYaxisLOG, double MinXfit,
+  double MaxXfit, char *functionName)
+  {
+    double x1, x2, y1, y2;
 
     plot->DecodeLegendPosition(x1, y1, x2 , y2, "R", 6.5, 6., .025);
     TLegend *legend = new TLegend (x1-.06, y1-.2, x2+.01, y2-.2);
@@ -21963,13 +22389,8 @@ void DrawTGraph_PolyFit(TGraph *g_TGraph, const char* xaxislabel,const char* yax
    sprintf(label, "#lambda = %.2f ", maxElem);
    legend -> AddEntry((TObject*)0, label, "");
    sprintf(label, "#chi^{2}/ndf = %.2f / %i = %.2f ", chi_2,ndf,chi_ndf);
-      legend -> AddEntry((TObject*)0, label, "");
+   legend -> AddEntry((TObject*)0, label, "");
    legend -> Draw();
-
-
-     //TPaveStats *st = (TPaveStats*)gfit->FindObject("stats");
-     //st->SetY1NDC(.6);
-     //st->SetY2NDC(.85);
 
      gStyle->SetOptFit(1111);
      gfit->Draw("same l");
@@ -21989,8 +22410,6 @@ void DrawTGraph_PolyFit(TGraph *g_TGraph, const char* xaxislabel,const char* yax
    }
 
 
-
-
 return;
 
 }
@@ -21998,77 +22417,83 @@ return;
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void DrawTGraph_withArrow(TGraphErrors *g_TGraph, const char* xaxislabel,const char* yaxislabel, const char* Title,const char* legend_Title,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG, const double cut_location,
-    const double y1_arrow, const double y2_arrow, const double arrow_length,  const std::string arrow_direction ){
+void DrawTGraph_withArrow(
+  TGraphErrors *g_TGraph,
+  const char* xaxislabel, const char* yaxislabel,
+  const char* Title,const char* legend_Title,
+  const char* pdf, TCanvas *can, MnvPlotter *plot,
+  bool MakeXaxisLOG, bool MakeYaxisLOG,
+  const double cut_location,
+  const double y1_arrow, const double y2_arrow,
+  const double arrow_length, const std::string arrow_direction )
+{
   double x1, x2, y1, y2;
 
-    plot->DecodeLegendPosition(x1, y1, x2 , y2, "TR", 6.5, 6., .025);
-    TLegend *legend = new TLegend (x1+.05, y1+.15, x2,y2);
+  plot->DecodeLegendPosition(x1, y1, x2 , y2, "TR", 6.5, 6., .025);
+  TLegend *legend = new TLegend (x1+.05, y1+.15, x2,y2);
 
-    if(MakeXaxisLOG==true){
-      gPad->SetLogx();
-    }
-    if(MakeYaxisLOG==true){
-      gPad->SetLogy();
-    }
+  if(MakeXaxisLOG==true){
+    gPad->SetLogx();
+  }
+  if(MakeYaxisLOG==true){
+    gPad->SetLogy();
+  }
 
-    string TotalTitle = string(Title);
+  string TotalTitle = string(Title);
 
-    g_TGraph -> SetTitle("");
-    g_TGraph -> GetXaxis() -> SetTitle(xaxislabel);
-    g_TGraph -> GetYaxis() -> SetTitle(yaxislabel);
-    g_TGraph -> GetXaxis() -> CenterTitle();
-    g_TGraph -> GetYaxis() -> CenterTitle();
-    g_TGraph -> GetXaxis() -> SetTitleSize(0.038);
-    g_TGraph -> GetYaxis() -> SetTitleSize(0.038);
-    double max = g_TGraph->GetHistogram()->GetMaximum()*1.25;
-    g_TGraph -> SetMaximum(max);
-    g_TGraph -> SetLineColor(2);
-    g_TGraph -> SetMarkerColor(2);
-    //TAxis *Xaxis = g_TGraph->GetXaxis();
-    g_TGraph->GetXaxis()->SetNdivisions(30, kTRUE);
-    g_TGraph->GetYaxis()->SetNdivisions(25, kTRUE);
-    g_TGraph->GetYaxis()->SetLabelSize(0.025);
-    g_TGraph->GetXaxis()->SetLabelSize(0.015);
-   //TCanvas *optcan = new TCanvas("optcan");
-   g_TGraph -> Draw("AP");
+  g_TGraph -> SetTitle("");
+  g_TGraph -> GetXaxis() -> SetTitle(xaxislabel);
+  g_TGraph -> GetYaxis() -> SetTitle(yaxislabel);
+  g_TGraph -> GetXaxis() -> CenterTitle();
+  g_TGraph -> GetYaxis() -> CenterTitle();
+  g_TGraph -> GetXaxis() -> SetTitleSize(0.038);
+  g_TGraph -> GetYaxis() -> SetTitleSize(0.038);
+  double max = g_TGraph->GetHistogram()->GetMaximum()*1.25;
+  g_TGraph -> SetMaximum(max);
+  g_TGraph -> SetLineColor(2);
+  g_TGraph -> SetMarkerColor(2);
+  //TAxis *Xaxis = g_TGraph->GetXaxis();
+  g_TGraph->GetXaxis()->SetNdivisions(30, kTRUE);
+  g_TGraph->GetYaxis()->SetNdivisions(25, kTRUE);
+  g_TGraph->GetYaxis()->SetLabelSize(0.025);
+  g_TGraph->GetXaxis()->SetLabelSize(0.015);
+  //TCanvas *optcan = new TCanvas("optcan");
+  g_TGraph -> Draw("AP");
 
-   legend -> SetTextSize(0.025);
-   legend -> SetFillColor(0);
-   legend -> AddEntry(g_TGraph, legend_Title, "P");
-   legend -> Draw();
+  legend -> SetTextSize(0.025);
+  legend -> SetFillColor(0);
+  legend -> AddEntry(g_TGraph, legend_Title, "P");
+  legend -> Draw();
 
-   plot ->AddCutArrow(cut_location, y1_arrow,  y2_arrow,  arrow_length, arrow_direction);
-   plot -> AddHistoTitle(TotalTitle.c_str() , .04);
-   plot -> WritePreliminary("TL", .035, 0, 0, false);
+  plot ->AddCutArrow(cut_location, y1_arrow,  y2_arrow,  arrow_length, arrow_direction);
+  plot -> AddHistoTitle(TotalTitle.c_str() , .04);
+  plot -> WritePreliminary("TL", .035, 0, 0, false);
 
-   gPad->Update();
-   can->Modified();
-   can->Print(pdf);
-   can->Closed();
-
-
-   if(MakeXaxisLOG==true){
-     gPad->SetLogx(0);
-   }
-   if(MakeYaxisLOG==true){
-     gPad->SetLogy(0);
-   }
+  gPad->Update();
+  can->Modified();
+  can->Print(pdf);
+  can->Closed();
 
 
-
-
-return;
+  if(MakeXaxisLOG==true){
+    gPad->SetLogx(0);
+  }
+  if(MakeYaxisLOG==true){
+    gPad->SetLogy(0);
+  }
+  return;
 
 }
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void Draw1DFit_withBand(std::vector<double> Axis_X, std::vector<double> Axis_Y,  char* xaxislabel, char* yaxislabel,
-    char* Title, char* pdf, TCanvas *can, MnvPlotter *plot){
+void Draw1DFit_withBand(
+  std::vector<double> Axis_X,
+  std::vector<double> Axis_Y,
+  char* xaxislabel, char* yaxislabel,
+  char* Title, char* pdf,
+  TCanvas *can, MnvPlotter *plot){
 
       //TCanvas cE ("c1","c1");
 
@@ -22137,21 +22562,6 @@ void Draw1DFit_withBand(std::vector<double> Axis_X, std::vector<double> Axis_Y, 
      sprintf(Fit ,     "c=%.2f #pm %.3f",c, c_error );
      legend->AddEntry((TObject*)0, Fit, ""); // to put fit param
 
-
-    //TH1D *hint = new TH1D("hint", "hint",  Axis_X.size()-1, Axis_X.data());
-    //(TVirtualFitter::GetFitter())->GetConfidenceIntervals(hint);
-    //Now the "hint" hisstogram has the fitted function values as the
-    //bin contents and the confidence intervals as bin errors
-    //hint->SetStats(false);
-    //hint->SetFillColorAlpha(kRed, 0.60);
-    //hint->SetMarkerStyle(1);
-    //hint->Draw("e3 sames");
-    //parabola->Draw("Same");
-
-    //hist->Fit("parabola_1");
-    //hist->Fit("parabola_2");
-    //parabola_1->Draw("Same");
-    //parabola_2->Draw("Same");
     line->Draw("SAME");
     legend->SetTextSize(0.02);
     legend->Draw("same");
@@ -22166,14 +22576,18 @@ void Draw1DFit_withBand(std::vector<double> Axis_X, std::vector<double> Axis_Y, 
     }
 
 
-    /////////////////////////////////////////////////////////////////////////////////
-    //
-    /////////////////////////////////////////////////////////////////////////////////
-
-void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, const char* xaxislabel,const char* yaxislabel,
-   const char* Title,const char* legend_Title1,const char* legend_Title2,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG, bool doMax ){
-     double x1, x2, y1, y2;
+/////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawTGraph(
+  TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2,
+  const char* xaxislabel,const char* yaxislabel,
+  const char* Title, const char* legend_Title1,
+  const char* legend_Title2, const char* pdf,
+  TCanvas *can, MnvPlotter *plot,
+  bool MakeXaxisLOG, bool MakeYaxisLOG, bool doMax )
+  {
+    double x1, x2, y1, y2;
 
      plot->DecodeLegendPosition(x1, y1, x2, y2, "TR", 6.5, 6., .025);
      TLegend *legend = new TLegend (x1 , y1 + .1, x2 + .1 , y2 );
@@ -22259,9 +22673,14 @@ return;
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void DrawTGraph(TGraph *g_TGraph1, TGraph *g_TGraph2, const char* xaxislabel,const char* yaxislabel,
-   const char* Title,const char* legend_Title1,const char* legend_Title2,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG, bool doMax ){
+void DrawTGraph(
+  TGraph *g_TGraph1, TGraph *g_TGraph2,
+  const char* xaxislabel, const char* yaxislabel,
+  const char* Title, const char* legend_Title1,
+  const char* legend_Title2, const char* pdf,
+  TCanvas *can, MnvPlotter *plot,
+  bool MakeXaxisLOG, bool MakeYaxisLOG, bool doMax )
+  {
      double x1, x2, y1, y2;
 
      plot->DecodeLegendPosition(x1, y1, x2, y2, "TR", 6.5, 6., .025);
@@ -22355,10 +22774,18 @@ return;
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, TGraphErrors *g_TGraph3, const char* xaxislabel,const char* yaxislabel,
-   const char* Title,const char* legend_Title1, const char* legend_Title2, const char* legend_Title3,
-   const char* pdf, TCanvas *can, MnvPlotter *plot, bool MakeXaxisLOG, bool MakeYaxisLOG , bool setGrid , bool doMax ){
-     double x1, x2, y1, y2;
+void DrawTGraph(
+  TGraphErrors *g_TGraph1,
+  TGraphErrors *g_TGraph2,
+  TGraphErrors *g_TGraph3,
+  const char* xaxislabel, const char* yaxislabel,
+  const char* Title, const char* legend_Title1,
+  const char* legend_Title2, const char* legend_Title3,
+  const char* pdf, TCanvas *can, MnvPlotter *plot,
+  bool MakeXaxisLOG, bool MakeYaxisLOG,
+  bool setGrid , bool doMax )
+  {
+    double x1, x2, y1, y2;
 
      plot->DecodeLegendPosition(x1, y1, x2, y2, "TR", 6.5, 6., .025);
      TLegend *legend = new TLegend (x1, y1+.05 , x2, y2);
@@ -22457,26 +22884,44 @@ void DrawTGraph(TGraphErrors *g_TGraph1, TGraphErrors *g_TGraph2, TGraphErrors *
 return;
 
 }
-
-void DrawPie_Figures_EventCutRate(TFile *inputFile_TRUTHBranch,  char* TGraphName_TRUTHBranch,
-  TFile *inputFile_RECOBranch,  char* TGraphName_RECOBranch_TRUE ,  char* TGraphName_RECOBranch_TRUE_RECO,
-  ME_helium_Playlists playlist, ME_helium_Status Crytank_status,  const char* pdf,
-  TCanvas *can, MnvPlotter *plotter, char * Title){
-
-    EventCut_Rate_STRUCT EventCut_Rate_STRUCT;
-
-    MakeEventCut_Rate_STRUCT_fromTFiles(EventCut_Rate_STRUCT, inputFile_TRUTHBranch,  TGraphName_TRUTHBranch,
-      inputFile_RECOBranch, TGraphName_RECOBranch_TRUE , TGraphName_RECOBranch_TRUE_RECO, playlist,  Crytank_status);
-
-      DrawPie_Figures_EventCutRate(EventCut_Rate_STRUCT,  pdf,can, plotter,  Title);
-}
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
+void DrawPie_Figures_EventCutRate(
+  TFile *inputFile_TRUTHBranch,
+  char* TGraphName_TRUTHBranch,
+  TFile *inputFile_RECOBranch,
+  char* TGraphName_RECOBranch_TRUE,
+  char* TGraphName_RECOBranch_TRUE_RECO,
+  ME_helium_Playlists playlist,
+  ME_helium_Status Crytank_status,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plotter, char * Title)
+  {
 
-void DrawCVAndError_eff_purity_EOM_ERROR(MnvH1D *hist_eff,  MnvH1D *hist_pur, char *histotitle ,std::string xaxislabel,
-const char *pdf, bool doBinwidth, double Ymax , std::vector<double> BinsEdges_vector){
+    EventCut_Rate_STRUCT EventCut_Rate_STRUCT;
+
+    MakeEventCut_Rate_STRUCT_fromTFiles(
+      EventCut_Rate_STRUCT,
+      inputFile_TRUTHBranch,
+      TGraphName_TRUTHBranch,
+      inputFile_RECOBranch,
+      TGraphName_RECOBranch_TRUE,
+      TGraphName_RECOBranch_TRUE_RECO,
+      playlist,  Crytank_status);
+
+      DrawPie_Figures_EventCutRate(EventCut_Rate_STRUCT,  pdf,can, plotter,  Title);
+  }
+
+    /////////////////////////////////////////////////////////////////////////////////
+//
+/////////////////////////////////////////////////////////////////////////////////
+void DrawCVAndError_eff_purity_EOM_ERROR(
+  MnvH1D *hist_eff,  MnvH1D *hist_pur,
+  char *histotitle ,std::string xaxislabel,
+  const char *pdf, bool doBinwidth,
+  double Ymax, std::vector<double> BinsEdges_vector)
+  {
 
   PlotUtils::MnvPlotter mnvPlotter(PlotUtils::kCCInclusiveHeliumStyle);
   TCanvas cE ("c1","c1");
@@ -22565,54 +23010,45 @@ const char *pdf, bool doBinwidth, double Ymax , std::vector<double> BinsEdges_ve
 
 
 }
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
+void Draw_2DPlotFromVectors(
+  std::vector<double> Xaxis,
+  std::vector<double> Yaxis,
+  std::vector<double> Zaxis,
+  char *histotitle, char* xaxislabel,
+  char* yaxislabel, char* zaxislabel,
+  MnvPlotter *plot ,TCanvas *can, char *pdf )
+  {
 
-void Draw_2DPlotFromVectors(std::vector<double> Xaxis, std::vector<double> Yaxis,
-  std::vector<double> Zaxis,char *histotitle, char* xaxislabel,  char* yaxislabel, char* zaxislabel,
-  MnvPlotter *plot ,TCanvas *can, char *pdf ){
-
-
-if (Xaxis.size() != Yaxis.size() ||  Xaxis.size() != Zaxis.size() ){
-  std::cout<< " input vectors for Draw_2DPlotFromVectors are of different sizes, this makes no sence something is wrong "<< std::endl; assert(false);
-}
-can->SetGrid();
-TGraph2D *g = new TGraph2D();
-//TH2D *h = new TH2D("h","", Xaxis.size()-1, Xaxis.data(), Yaxis.size()-1, Yaxis.data());
-
-
-for (unsigned int i = 0; i<Xaxis.size(); i++) {
-g->SetPoint(i,Xaxis.at(i),Yaxis.at(i),Zaxis.at(i));
-}
-
-/*
-int count=0;
-for(int j = 0; j < Yaxis.size(); ++j ){
-  for(int i = 0; i < Xaxis.size(); ++i ){
-      h->SetBinContent(i, j, Zaxis.at(count));
-      count++;
-  }
-}
-*/
-//g->SetHistogram(h);
-g->Draw("PCOL");
-g->GetXaxis()->SetTitle(xaxislabel);
-g->GetYaxis()->SetTitle(yaxislabel);
-g->GetZaxis()->SetTitle(zaxislabel);
+    if (Xaxis.size() != Yaxis.size() ||  Xaxis.size() != Zaxis.size() ){
+      std::cout<< " input vectors for Draw_2DPlotFromVectors are of different sizes, this makes no sence something is wrong "<< std::endl; assert(false);
+    }
+    can->SetGrid();
+    TGraph2D *g = new TGraph2D();
+    //TH2D *h = new TH2D("h","", Xaxis.size()-1, Xaxis.data(), Yaxis.size()-1, Yaxis.data());
 
 
-plot -> AddHistoTitle(histotitle , .03);
-//plot -> WritePreliminary("TL", .035, 0, 0, false);
-gPad->Update();
-can->Modified();
-can->Print(pdf);
-
-//Draw2DHist(h, xaxislabel,  yaxislabel, zaxislabel, histotitle, pdf, can, plot);
+    for (unsigned int i = 0; i<Xaxis.size(); i++) {
+      g->SetPoint(i,Xaxis.at(i),Yaxis.at(i),Zaxis.at(i));
+    }
 
 
-can->Clear();
+
+    g->Draw("PCOL");
+    g->GetXaxis()->SetTitle(xaxislabel);
+    g->GetYaxis()->SetTitle(yaxislabel);
+    g->GetZaxis()->SetTitle(zaxislabel);
+
+
+    plot -> AddHistoTitle(histotitle , .03);
+    //plot -> WritePreliminary("TL", .035, 0, 0, false);
+    gPad->Update();
+    can->Modified();
+    can->Print(pdf);
+
+    can->Clear();
 
 }
 
@@ -22620,7 +23056,6 @@ can->Clear();
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
 
 void Draw_inputTranswarpHist_fromPointers(
   MnvH1D *h_data,
@@ -22705,7 +23140,8 @@ std::cout<<"Inside::Draw_inputTranswarpHist_fromPointers "<<std::endl;
 
     double binwidth_title = h_Data->GetBinWidth(5);
     sprintf(ytitle, "NEvents / [%.2f %s] ", binwidth_title , yaxislabel_units);
-    if(AreaNorm_todata==true){sprintf(ytitle, "NEvents [AreaNorm to Data] / [%.2f %s] ", binwidth_title , yaxislabel_units);}
+    if(AreaNorm_todata==true){sprintf(ytitle, "NEvents [AreaNorm to Data] / [%.2f %s] ",
+     binwidth_title , yaxislabel_units);}
   }
 
   else{
@@ -22845,9 +23281,13 @@ std::cout<<"Inside::Draw_inputTranswarpHist_fromPointers "<<std::endl;
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-void Draw_TransWarp_converage(MnvH2D *hist2D, MnvH1D *hist1D_mean,  MnvH1D *hist1D_median, int var_ndf ,  char* xaxislabel, char* yaxislabel, char* zaxislabel,
-                 char* Title,  char* pdf, TCanvas *can, MnvPlotter *plot , double SetZMax , bool MakeLogY )
+void Draw_TransWarp_converage(
+  MnvH2D *hist2D, MnvH1D *hist1D_mean,
+  MnvH1D *hist1D_median, int var_ndf,
+  char* xaxislabel, char* yaxislabel,
+  char* zaxislabel, char* Title,
+  char* pdf, TCanvas *can,
+  MnvPlotter *plot , double SetZMax, bool MakeLogY )
 {
   string TotalTitle = string(Title);
   gStyle->SetPalette(kCool);
@@ -22970,11 +23410,13 @@ void Draw_TransWarp_converage(MnvH2D *hist2D, MnvH1D *hist1D_mean,  MnvH1D *hist
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-
-void test2(char * pdf, MnvH2D *hist2D  ){
-std::cout<<"inside test2"<<std::endl;
-  TCanvas *c1 = new TCanvas("c1","c1",200,10,700,500);
-  c1->cd();
+void test2(
+  char * pdf,
+  MnvH2D *hist2D  )
+  {
+    std::cout<<"inside test2"<<std::endl;
+    TCanvas *c1 = new TCanvas("c1","c1",200,10,700,500);
+    c1->cd();
     // Make a test histogram
     TH2F *h1 = new TH2F("h1","h1",40,-4,4,40,-4,4);
     Double_t a,b;
@@ -23031,10 +23473,10 @@ std::cout<<"inside test2"<<std::endl;
     Double_t TM = Ya*(to/(bm+to));
     null->Range(x1-LM,yf-BM,x2+RM,y2+TM);
 
-std::cout<<"x1-LM = " << x1-LM << std::endl;
-std::cout<<"yf-BM = " << yf-BM << std::endl;
-std::cout<<"x2+RM = " << x2+RM << std::endl;
-std::cout<<"y2+TM = " << y2+TM << std::endl;
+    std::cout<<"x1-LM = " << x1-LM << std::endl;
+    std::cout<<"yf-BM = " << yf-BM << std::endl;
+    std::cout<<"x2+RM = " << x2+RM << std::endl;
+    std::cout<<"y2+TM = " << y2+TM << std::endl;
 
 
 
@@ -23070,8 +23512,11 @@ std::cout<<"y2+TM = " << y2+TM << std::endl;
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawMagration_heatMap_Label(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, int rownormtype)
+void DrawMagration_heatMap_Label(
+  MnvH2D *h_mig, const char* xaxislabel,
+  const char* yaxislabel, const char* Title,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plotter, int rownormtype)
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -23136,8 +23581,11 @@ void DrawMagration_heatMap_Label(MnvH2D *h_mig, const char* xaxislabel,const cha
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawMagration_heatMap_Label(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, int rownormtype, double Zmax)
+void DrawMagration_heatMap_Label(
+  MnvH2D *h_mig, const char* xaxislabel,
+  const char* yaxislabel, const char* Title,
+  const char* pdf, TCanvas *can,
+  MnvPlotter *plotter, int rownormtype, double Zmax)
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -23203,8 +23651,12 @@ void DrawMagration_heatMap_Label(MnvH2D *h_mig, const char* xaxislabel,const cha
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawMagration_heatMap_LabelBinNumber(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter)
+void DrawMagration_heatMap_LabelBinNumber(
+  MnvH2D *h_mig, const char* xaxislabel,
+  const char* yaxislabel,
+  const char* Title,
+  const char* pdf,
+  TCanvas *can, MnvPlotter *plotter)
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -23274,9 +23726,12 @@ void DrawMagration_heatMap_LabelBinNumber(MnvH2D *h_mig, const char* xaxislabel,
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawMagration_heatMap_LabelBinNumber_new(MnvH2D *h_mig,  const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter,
-   MnvH2D *h_binning ,int bini, int binningtype, int rownormtype, double text_size )
+void DrawMagration_heatMap_LabelBinNumber_new(
+  MnvH2D *h_mig,  const char* xaxislabel,
+  const char* yaxislabel, const char* Title,
+  const char* pdf, TCanvas *can, MnvPlotter *plotter,
+  MnvH2D *h_binning, int bini, int binningtype,
+  int rownormtype, double text_size )
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -23356,8 +23811,11 @@ void DrawMagration_heatMap_LabelBinNumber_new(MnvH2D *h_mig,  const char* xaxisl
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawMagration_heatMap_Mig(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter)
+void DrawMagration_heatMap_Mig(
+  MnvH2D *h_mig,
+  const char* xaxislabel, const char* yaxislabel,
+  const char* Title, const char* pdf,
+  TCanvas *can, MnvPlotter *plotter)
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -23417,8 +23875,11 @@ void DrawMagration_heatMap_Mig(MnvH2D *h_mig, const char* xaxislabel,const char*
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawMagration_heatMap_MigBinN(MnvH2D *h_mig, const char* xaxislabel,const char* yaxislabel,
-  const char* Title, const char* pdf, TCanvas *can, MnvPlotter *plotter, int rownormtype)
+void DrawMagration_heatMap_MigBinN(
+  MnvH2D *h_mig,
+  const char* xaxislabel,const char* yaxislabel,
+  const char* Title, const char* pdf,
+  TCanvas *can, MnvPlotter *plotter, int rownormtype)
 {
 
   TH2D *h_migration = (TH2D*)h_mig->Clone("h_migration");
@@ -23482,10 +23943,15 @@ void DrawMagration_heatMap_MigBinN(MnvH2D *h_mig, const char* xaxislabel,const c
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////
-void DrawMagration_heatMap_MigBinN(MnvH2D* h_mig, const char* xaxislabel, const char* yaxislabel,
-    TCanvas* can, MnvPlotter* plotter, MnvH2D* h_binning, int bini, int binningtype,
-    int rownormtype, double text_size_label, double marker_size_label, double setMax)
-{
+void DrawMagration_heatMap_MigBinN(
+  MnvH2D* h_mig, const char* xaxislabel,
+  const char* yaxislabel, TCanvas* can,
+  MnvPlotter* plotter,
+  MnvH2D* h_binning,
+  int bini, int binningtype,
+  int rownormtype, double text_size_label,
+  double marker_size_label, double setMax)
+  {
 
     TH2D* h_migration = (TH2D*)h_mig->Clone("h_migration");
 
@@ -23542,11 +24008,12 @@ void DrawMagration_heatMap_MigBinN(MnvH2D* h_mig, const char* xaxislabel, const 
     tmp->GetZaxis()->SetLabelSize(0.015);
     tmp->SetNdivisions(510);
     tmp->DrawCopy("colz text");
-    drawBinRange_Red(h_binning, binningtype, bini, xaxislabel, text_size_label, ".2f", true);
+    drawBinRange_Red(h_binning, binningtype,
+       bini, xaxislabel, text_size_label, ".2f", true);
     //h_mig->Draw("COLZ");
     //plotter->AddHistoTitle(Title, .04);
 
-} //end of function
+  } //end of function
 /////////////////////////////////////////////////////////////////////////////////
 //
 /////////////////////////////////////////////////////////////////////////////////

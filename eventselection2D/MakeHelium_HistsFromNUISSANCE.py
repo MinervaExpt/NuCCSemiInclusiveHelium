@@ -21,19 +21,27 @@ pdg_Pion_pos = 211
 Mmu = 105.6583745/1000;
 
 MostCommonChargedParticle = [pdg_Proton, pdg_Pion_neg, pdg_Pion_pos, -13]
-NeutralPartile_cantbe2ndtrkParticle = [pdg_Pi0, pdg_neutron, pdg_antineutron, pdg_Genie_bindingE, pdg_Sigma0, pdg_antiSigma0, pdg_Lambda0, pdg_antiLambda0, pdg_Nu_e, pdg_Nu_mu, pdg_Photon]
+
+NeutralPartile_cantbe2ndtrkParticle = [pdg_Pi0, pdg_neutron, pdg_antineutron,
+pdg_Genie_bindingE, pdg_Sigma0, pdg_antiSigma0, pdg_Lambda0, pdg_antiLambda0,
+ pdg_Nu_e, pdg_Nu_mu, pdg_Photon]
+
+
 
 # Cut Values
 SecondTrkAngle = 55
+Output_fileName = "CrossSection_G18_10a_02_11a_new10"
 
-Output_fileName = "CrossSection_G18_02a_02_11a_new10"
 
 RootFluxFile = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/CCQENuInclusiveME/ana/plot_macros_pub/CrossSections/NuWro/nuwro_flux_rw.root"
+
+
 
 #/pnfs/minerva/persistent/Models/GENIE/Medium_Energy/FHC/v3_0_6/nuclear_trackerFlux/G18_02a_02_11a/helium/flat_GENIE_tune_G18_02a_02_11a_50M.root
 #/pnfs/minerva/persistent/Models/GENIE/Medium_Energy/FHC/v3_0_6/nuclear_trackerFlux/G18_02b_02_11a/helium/flat_GENIE_tune_G18_02b_02_11a_50M.root
 #/pnfs/minerva/persistent/Models/GENIE/Medium_Energy/FHC/v3_0_6/nuclear_trackerFlux/G18_10a_02_11a/helium/flat_GENIE_tune_G18_10a_02_11a_50M.root
 #/pnfs/minerva/persistent/Models/GENIE/Medium_Energy/FHC/v3_0_6/nuclear_trackerFlux/G18_10b_02_11a/helium/flat_GENIE_tune_G18_10b_02_11a_50M.root
+
 
 
 def MakeKinetic_vector(Etotal, pdg_input):
@@ -156,7 +164,7 @@ def IsGood2ndTrkKETheshold(pdg, Etotal, DataBase):
     else : return False
 
 def IsGood2ndAngle(angle):
-    if angle < SecondTrkAngle: return True
+    if angle < SecondTrkAngle and angle > 0.0: return True
     else: return False
 
 
@@ -184,6 +192,16 @@ myE = ROOT.TH1D("E","E",len(Ebins)-1,array.array("d",Ebins))
 myAngle = ROOT.TH1D("Angle","Angle",len(Anglebins)-1,array.array("d",Anglebins))
 mypzpt = ROOT.TH2D("ptpz","ptpz",len(pZ2Dbins)-1, array.array("d",pZ2Dbins), len(pt2Dbins)-1,array.array("d",pt2Dbins))
 myE_angle = ROOT.TH2D("E_angle","E_angle",len(E2Dbins)-1, array.array("d",E2Dbins), len(Anglebins)-1, array.array("d",Anglebins))
+
+mypt_2 = ROOT.TH1D("pt_extraFactor","pt",len(ptbins)-1,array.array("d",ptbins))
+mypz_2 = ROOT.TH1D("pz_extraFactor","pz",len(pzbins)-1,array.array("d",pzbins))
+myE_2 = ROOT.TH1D("E_extraFactor","E",len(Ebins)-1,array.array("d",Ebins))
+myAngle_2 = ROOT.TH1D("Angle_extraFactor","Angle",len(Anglebins)-1,array.array("d",Anglebins))
+mypzpt_2 = ROOT.TH2D("ptpz_extraFactor","ptpz",len(pZ2Dbins)-1, array.array("d",pZ2Dbins), len(pt2Dbins)-1,array.array("d",pt2Dbins))
+myE_angle_2 = ROOT.TH2D("E_angle_extraFactor","E_angle",len(E2Dbins)-1, array.array("d",E2Dbins), len(Anglebins)-1, array.array("d",Anglebins))
+
+
+
 
 inputrw = ROOT.TFile(RootFluxFile)
 rwhist = inputrw.Get("flux2")
@@ -213,12 +231,23 @@ for index, e in enumerate(mytree):
     muonAngle =ROOT.TMath.ACos(coslep) * 180.0/3.14159
     #print("Muon Angle is : {}".format(muonAngle))
     #print("Muon KE is : {}".format(KE))
-    mypt.Fill(Pt,fScaleFactor_fluxcorrected)
-    mypz.Fill(Pl,fScaleFactor_fluxcorrected)
-    mypzpt.Fill(Pl,Pt,fScaleFactor_fluxcorrected)
-    myAngle.Fill(muonAngle,fScaleFactor_fluxcorrected)
-    myE.Fill(KE,fScaleFactor_fluxcorrected)
-    myE_angle.Fill(KE,muonAngle,fScaleFactor_fluxcorrected)
+
+    mypt.Fill(Pt,fScaleFactor)
+    mypz.Fill(Pl,fScaleFactor)
+    mypzpt.Fill(Pl,Pt,fScaleFactor)
+    myAngle.Fill(muonAngle,fScaleFactor)
+    myE.Fill(KE,fScaleFactor)
+    myE_angle.Fill(KE,muonAngle,fScaleFactor)
+
+
+    mypt_2.Fill(Pt,fScaleFactor_fluxcorrected)
+    mypz_2.Fill(Pl,fScaleFactor_fluxcorrected)
+    mypzpt_2.Fill(Pl,Pt,fScaleFactor_fluxcorrected)
+    myAngle_2.Fill(muonAngle,fScaleFactor_fluxcorrected)
+    myE_2.Fill(KE,fScaleFactor_fluxcorrected)
+    myE_angle_2.Fill(KE,muonAngle,fScaleFactor_fluxcorrected)
+
+
 
 #mypt.Scale(1./mytree.GetNtrees())
 #mypz.Scale(1./mytree.GetNtrees())
@@ -237,7 +266,14 @@ myAngle.Write()
 myE.Write()
 myE_angle.Write()
 
+mypt_2.Write()
+mypz_2.Write()
 
+mypzpt_2.Write()
+myAngle_2.Write()
+myE_2.Write()
+myE_angle_2.Write()
 
+print('FINISHED')
 
 #Remember to bin-width normalize before plotting!

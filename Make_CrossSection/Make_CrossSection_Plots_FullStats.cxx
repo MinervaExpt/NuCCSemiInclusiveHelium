@@ -544,23 +544,28 @@ CrossSection_MnvH1D_Map Generate_CrossSection_Hist_Map(TFile& file, CrossSection
 }
 
 
-Migration_MnvH2D_Map Generate_CrossSection_Mig_Hist_Map(TFile& file, std::vector<MuonVar> muon_vector){
-  Migration_MnvH2D_Map Hist_Map;
-  for(auto Muon:muon_vector){
-    auto mig_type = Migration_muonType(Muon);
-    std::string Name = GetMuonVarHistName(Muon) + "_Mig";
-    auto hist_2D = Get2DHist(file, Name );
-    Hist_Map.insert(std::make_pair(mig_type, hist_2D));
+Migration_MnvH2D_Map Generate_CrossSection_Mig_Hist_Map(
+  TFile& file, std::vector<MuonVar> muon_vector){
+    Migration_MnvH2D_Map Hist_Map;
 
-  }
+    for(auto Muon:muon_vector){
+      auto mig_type = Migration_muonType(Muon);
+      std::string Name = GetMuonVarHistName(Muon) + "_Mig";
+      auto hist_2D = Get2DHist(file, Name );
+      Hist_Map.insert(std::make_pair(mig_type, hist_2D));
+
+    }
 
     return Hist_Map;
 }
 
 
-void MakeCrossSectionPlots_Interaction(CrossSection_MnvH1D_Map CrossSection_map, CrossSection_MnvH1D_Map CrossSection_mapEmpty,
-  std::string cross_section_units, std::string pdf,bool MakeXaxisLOG,bool doBinwidth ,
-  MuonVar MuonVar, char *Playlist_name, double POT_Data, double POT_MC, Genie_Models Modelinputs){
+void MakeCrossSectionPlots_Interaction(CrossSection_MnvH1D_Map CrossSection_map,
+  CrossSection_MnvH1D_Map CrossSection_mapEmpty,
+  std::string cross_section_units, std::string pdf,
+  bool MakeXaxisLOG,bool doBinwidth ,
+  MuonVar MuonVar, char *Playlist_name,
+  double POT_Data, double POT_MC, Genie_Models Modelinputs){
 
 
 std::cout<<"Inside MakeCrossSectionPlots " << std::endl;
@@ -789,7 +794,8 @@ Draw_DataWITHMC_SingleHistinput_withRatio(CrossSection_map[True_crosssection], C
 
 Modelinputs.intializeTFileMap();
 Modelinputs.intializeTH1DMap();
-Modelinputs.ScaleTH1DHists(1/Scale);
+
+
 double Area = CrossSection_map[True_crosssection]->Integral();
 std::cout<<"Modelinputs.ModelHistMap_1D.size() = "<< Modelinputs.ModelHistMap_th1D.size()<<std::endl;
 TH1D*  hMC_Model_nominal =  (TH1D*)CrossSection_map[True_crosssection]->Clone(uniq());
@@ -835,7 +841,7 @@ std::vector<int> Helium9_colorScheme = {
 //                                            X_axis_char, crossSection_y_axis_char, dontBinwidthNorm, MakeXaxisLOG,
 //                                            false, false);
 
-if(MuonVar!=kAngleWRTB){
+//if(MuonVar!=kAngleWRTB){
 
 //per Nucleon
 
@@ -844,23 +850,36 @@ if(MuonVar!=kAngleWRTB){
 //hMC_Model_G18_02b_02_11a->Scale(.25);
 //hMC_Model_G18_10b_02_11a->Scale(.25);
 
+//hMC_Model_G18_02a_02_11a->Scale(1/4);
+//hMC_Model_G18_10a_02_11a->Scale(1/4);
+//hMC_Model_G18_02b_02_11a->Scale(1/4);
+//hMC_Model_G18_10b_02_11a->Scale(1/4);
 
-  hMC_Model_G18_02a_02_11a->Scale(1,"width");
-  hMC_Model_G18_10a_02_11a->Scale(1,"width");
-  hMC_Model_G18_02b_02_11a->Scale(1,"width");
-  hMC_Model_G18_10b_02_11a->Scale(1,"width");
+
+hMC_Model_G18_02a_02_11a->Scale(1,"width");
+hMC_Model_G18_10a_02_11a->Scale(1,"width");
+hMC_Model_G18_02b_02_11a->Scale(1,"width");
+hMC_Model_G18_10b_02_11a->Scale(1,"width");
+
+hMC_Model_G18_02a_02_11a->Scale(1/Scale);
+hMC_Model_G18_10a_02_11a->Scale(1/Scale);
+hMC_Model_G18_02b_02_11a->Scale(1/Scale);
+hMC_Model_G18_10b_02_11a->Scale(1/Scale);
 
 // I think i have to bin width normalize
-DrawCVAndError_From5HIST(CrossSection_map[Data_crosssection], "Data",
-                              hMC_Model_nominal, "Minerva v1",
-                              hMC_Model_G18_02a_02_11a, "GENIE: G18_02a_02_11a",
-                              hMC_Model_G18_10a_02_11a, "GENIE: G18_10a_02_11a",
-                              hMC_Model_G18_02b_02_11a, "GENIE: G18_02b_02_11a",
-                              hMC_Model_G18_10b_02_11a, "GENIE: G18_10b_02_11a",
-                              Helium9_colorScheme,
-                              "Model Comparson" ,X_axis, crossSection_y_axis,
-   pdf, false, dontBinwidthNorm, -99 , false);
-}
+DrawCVAndError_From5HIST(
+  CrossSection_map[Data_crosssection], "Data",
+  hMC_Model_nominal, "Minerva v1",
+  hMC_Model_G18_02a_02_11a, "GENIE: G18_02a_02_11a",
+  hMC_Model_G18_10a_02_11a, "GENIE: G18_10a_02_11a",
+  hMC_Model_G18_02b_02_11a, "GENIE: G18_02b_02_11a",
+  hMC_Model_G18_10b_02_11a, "GENIE: G18_10b_02_11a",
+  Helium9_colorScheme,
+  "Model Comparson" ,X_axis, crossSection_y_axis,
+  pdf, false, dontBinwidthNorm, -99 , false);
+
+
+//}
 
 
 

@@ -338,10 +338,15 @@ for(int petal = 0; petal < DaisyNumber; petal++ ){
     Draw2DHist_warpFit(DATA_DAISY_muonPT_PZ[petal],"P_{Z}", "P_{T}",Title_Warp ,
      text_title_pdf2, can, mnv_plotter, fit_parms_text);
 
-    Double_t* pars = readFile(fit_parms_text, 10);
+    Double_t* pars = readFile(fit_parms_text, size);
 
-    Draw2DHist_warpFit(DATA_DAISY_muonPT_PZ[petal],"P_{Z}", "P_{T}",Title_Warp ,
-     text_title_pdf2, can, mnv_plotter, fit_parms_text,pars );
+    sprintf(Title_Warp, "Fitted Function: Ratio #frac{data}{MC} Daisy Num: %i", petal );
+
+    //Draw2DHist_warpFit(DATA_DAISY_muonPT_PZ[petal],"P_{Z}", "P_{T}",Title_Warp ,
+    // text_title_pdf2, can, mnv_plotter, fit_parms_text,pars );
+
+    Draw2DHist_warpFit_show(DATA_DAISY_muonPT_PZ[petal],"P_{Z}", "P_{T}",Title_Warp ,
+      text_title_pdf2, can, mnv_plotter, pars);
 
 
 

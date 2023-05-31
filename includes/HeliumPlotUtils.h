@@ -1342,6 +1342,8 @@ Double_t WarpingFunctionPZ_PT_GeV(Double_t *x, Double_t *par);
 //============================================================================
 double WarpingFunctionPZ_PT_GeV(double True_PZ, double True_PT);
 //============================================================================
+double WarpingFunctionPZ_PT_GeV(double True_PZ, double True_PT,Double_t *par);
+//============================================================================
 Double_t WarpingFunctionPZ_GeV(Double_t *x, Double_t *par);
 //============================================================================
 double WarpingFunction_Daisy_PZ_GeV(double TruePZ, Double_t *par );
