@@ -1,7 +1,7 @@
 import ROOT
 import array
 import sys
-
+import re
 
 pdg_Pi0 = 111
 pdg_neutron = 2112
@@ -30,7 +30,6 @@ pdg_Genie_bindingE, pdg_Sigma0, pdg_antiSigma0, pdg_Lambda0, pdg_antiLambda0,
 
 # Cut Values
 SecondTrkAngle = 55
-Output_fileName = "CrossSection_G18_10a_02_11a_new10"
 
 
 RootFluxFile = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/CCQENuInclusiveME/ana/plot_macros_pub/CrossSections/NuWro/nuwro_flux_rw.root"
@@ -42,6 +41,23 @@ RootFluxFile = "/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/CCQ
 #/pnfs/minerva/persistent/Models/GENIE/Medium_Energy/FHC/v3_0_6/nuclear_trackerFlux/G18_10a_02_11a/helium/flat_GENIE_tune_G18_10a_02_11a_50M.root
 #/pnfs/minerva/persistent/Models/GENIE/Medium_Energy/FHC/v3_0_6/nuclear_trackerFlux/G18_10b_02_11a/helium/flat_GENIE_tune_G18_10b_02_11a_50M.root
 
+def extract_value(string):
+    pattern = r'GENIE_tune_([A-Za-z0-9_]+)'
+    match = re.search(pattern, string)
+    if match:
+        return match.group(1)
+    else:
+        return None
+
+#def extract_value(string):
+#    start_index = string.find("GENIE_tune_")
+#    if start_index != -1:
+#        start_index += len("GENIE_tune_")
+#        end_index = string.find("/", start_index)
+#        if end_index != -1:
+#            return string[start_index:end_index]
+#    return None
+
 
 
 def MakeKinetic_vector(Etotal, pdg_input):
@@ -50,7 +66,7 @@ def MakeKinetic_vector(Etotal, pdg_input):
     for E, pdg  in zip(Etotal, pdg_input):
         particle = pdg.GetParticle(pdg)
         mass = particle.Mass()  # Mass in GeV/c^2
-        KE = ROOT.TMath.Sqrt(E * E - mass * mass)
+        KE =  E - mass
         result.append(KE)
 
     return result
@@ -109,7 +125,7 @@ def isHeliumLike_with2fsp_withAtleast1chargeParcle_Angle(mytree, Database):
         #momomentum.SetE(Efsp[p]);
         if(pdg[p]==13): n_muon+=1
         elif(pdg[p] in MostCommonChargedParticle and IsGood2ndTrkKETheshold(pdg[p], Efsp[p], Database) and IsGood2ndAngle(momomentum.Theta()*180/3.1415)): n_2ndTrkType+=1
-        elif(momomentum.Theta()*180/3.1415 < SecondTrkAngle) : n_2ndTrkType+=1
+        elif(momomentum.Theta()*180/3.1415 < SecondTrkAngle and momomentum.Theta()*180/3.1415 > 0.0) : n_2ndTrkType+=1
 
     if(n_muon == 1 and n_2ndTrkType >= 1 ) : return True
     else : return False
@@ -145,7 +161,7 @@ def isGoodHeliumMuon(mytree):
     #<20 degree muon
     #2 to 50 muonE
     TotalE = mytree.ELep
-    KE = ROOT.TMath.Sqrt(TotalE * TotalE - Mmu * Mmu)
+    KE =  TotalE - Mmu
     goodMuonMom   = KE > 2 and KE < 50
     angle = ROOT.TMath.ACos(mytree.CosLep) * 180.0/3.14159
     goodMuonAngle = angle > 0.0 and angle < 12.0
@@ -157,7 +173,10 @@ def isGoodHeliumMuon(mytree):
 def IsGood2ndTrkKETheshold(pdg, Etotal, DataBase):
     particle = DataBase.GetParticle(pdg)
     mass = particle.Mass()  # Mass in GeV/c^2
-    KE_GeV = ROOT.TMath.Sqrt(Etotal * Etotal - mass * mass)
+
+    #KE_GeV = ROOT.TMath.Sqrt(Etotal * Etotal - mass * mass)
+    KE_GeV = Etotal - mass
+    #print("pdg = {pdg} , mass = {mass} ,  KE = {KE_GeV}" , pdg , mass, KE_GeV  )
     if pdg==pdg_Proton and KE_GeV > .105 : return True
     elif abs(pdg) == pdg_Pion_pos and KE_GeV > .060 : return True
     elif pdg == -13 and KE_GeV > .060 : return True
@@ -168,8 +187,14 @@ def IsGood2ndAngle(angle):
     else: return False
 
 
-#Output_fileName = sys.argv[2]
-print("Trying to write to file: %s", Output_fileName)
+outFileName = sys.argv[1]
+output_fileName = extract_value(outFileName)
+new_suffix = "_new10.root"
+FileName = "GENIE_tune_" + output_fileName.replace("_50M", new_suffix)
+
+
+print("Going to write to this file: {}".format(FileName))
+
 mytree = ROOT.TChain("FlatTree_VARS")
 for filename in sys.argv[1:]:
   mytree.Add(filename)
@@ -256,8 +281,7 @@ for index, e in enumerate(mytree):
 #myE.Scale(1./mytree.GetNtrees())
 #myE_angle.Scale(1./mytree.GetNtrees())
 
-outFileName = Output_fileName + ".root"
-myoutput = ROOT.TFile(outFileName,"RECREATE")
+myoutput = ROOT.TFile(FileName,"RECREATE")
 mypt.Write()
 mypz.Write()
 

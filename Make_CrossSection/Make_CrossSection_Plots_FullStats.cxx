@@ -47,9 +47,9 @@ auto PlaylistME_CrossSection_GENIE_version_Path = "/minerva/app/users/cnguyen/cm
 //Different Models
 
 auto GENIE_G18_02a_02_11a_playlistPath ="/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/eventselection2D/CrossSection_G18_02a_02_11a_new10.root";
-auto GENIE_G18_10a_02_11a_playlistPath ="/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/eventselection2D/CrossSection_G18_10b_02_11a_new10.root";
-auto GENIE_G18_02b_02_11a_playlistPath ="/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/eventselection2D/CrossSection_G18_10a_02_11a_new10.root";
-auto GENIE_G18_10b_02_11a_playlistPath ="/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/eventselection2D/CrossSection_G18_02b_02_11a_new10.root";
+auto GENIE_G18_10b_02_11a_playlistPath ="/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/eventselection2D/CrossSection_G18_10b_02_11a_new10.root";
+auto GENIE_G18_10a_02_11a_playlistPath ="/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/eventselection2D/CrossSection_G18_10a_02_11a_new10.root";
+auto GENIE_G18_02b_02_11a_playlistPath ="/minerva/app/users/cnguyen/cmtuser/Minerva_v22r1p1Helium_GIT/NuCCSemiInclusiveHelium/eventselection2D/CrossSection_G18_02b_02_11a_new10.root";
 
 Model_RootPathMAP Model_Paths;
 Model_Paths.insert(std::make_pair(kME_GENIE_G18_02a_02_11a,GENIE_G18_02a_02_11a_playlistPath));

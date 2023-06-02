@@ -854,14 +854,23 @@ CombinedHist_MuonPT.h_Data_Signal->Add(CombinedHist_MuonPT.h_RECO_BG,-1);
 CombinedHist_MuonTheta.h_Data_Signal->Add(CombinedHist_MuonTheta.h_RECO_BG,-1);
 
 
+
+CombinedHist_MuonE.h_RECO_Signal->Add(CombinedHist_MuonE.h_RECO_BG,-1);
+CombinedHist_MuonPZ.h_RECO_Signal->Add(CombinedHist_MuonPZ.h_RECO_BG,-1);
+CombinedHist_MuonPT.h_RECO_Signal->Add(CombinedHist_MuonPT.h_RECO_BG,-1);
+CombinedHist_MuonTheta.h_RECO_Signal->Add(CombinedHist_MuonTheta.h_RECO_BG,-1);
 ////////////////////////////////////////////////////////////////////////////////
 // 2D
 ////////////////////////////////////////////////////////////////////////////////
 CombinedHist_MuonPT_PZ.h_Data_Signal->AddMissingErrorBandsAndFillWithCV(*CombinedHist_MuonPT_PZ.h_RECO_BG);
 CombinedHist_MuonPT_PZ.h_Data_Signal->Add(CombinedHist_MuonPT_PZ.h_RECO_BG,-1);
+CombinedHist_MuonPT_PZ.h_RECO->Add(CombinedHist_MuonPT_PZ.h_RECO_BG,-1);
 
-
-
+CombinedHist_MuonE.h_RECO_Signal->Clone()->Write("h_MuonE_Tracker_RECO_BG_Subtracted");
+CombinedHist_MuonPZ.h_RECO_Signal->Clone()->Write("h_MuonPZ_Tracker_RECO_BG_Subtracted");
+CombinedHist_MuonPT.h_RECO_Signal->Clone()->Write("h_MuonPT_Tracker_RECO_BG_Subtracted");
+CombinedHist_MuonTheta.h_RECO_Signal->Clone()->Write("h_MuonTheta_Tracker_RECO_BG_Subtracted");
+CombinedHist_MuonPT_PZ.h_RECO->Clone()->Write("h_MuonPT_PZ_Tracker_RECO_BG_Subtracted");
 
 
 

@@ -8120,7 +8120,18 @@ Double_t WarpingFunctionPZ_PT_GeV_Daisy(Double_t *x, Double_t *par) {
 ////////////////////////////////////////////////////////////////////////////////
 //////
 ////////////////////////////////////////////////////////////////////////////////
-double WarpingFunctionPZ_PT_GeV(double True_PZ, double True_PT,Double_t *par) {
+double WarpingFunctionPZ_PT_GeV(double True_PZ, double True_PT, Double_t *par) {
+  Double_t x[2]; x[0]= True_PZ; x[1]= True_PT;
+  double returnvalue = Gaussianfun3(x, par);
+  return returnvalue;
+
+}
+////////////////////////////////////////////////////////////////////////////////
+//////
+////////////////////////////////////////////////////////////////////////////////
+double WarpingFunctionPZ_PT_GeV(double True_PZ, double True_PT) {
+  Double_t par[10]={1.09156, 1.3852, 2.12451, 0.140716, 0.253279, 1.31382,
+     13.7064, 9.94762, 1.35258, 1.22424};
   Double_t x[2]; x[0]= True_PZ; x[1]= True_PT;
   return Gaussianfun3(x, par);
 }

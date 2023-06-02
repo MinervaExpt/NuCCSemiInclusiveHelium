@@ -70,6 +70,10 @@ auto CrossSection2D_Daisy = "../Make_CrossSection/CrossSection_MasterAnaDev_2D_D
 TFile *TFile2D = new TFile(CrossSection2D_Daisy);
 
 
+auto CrossSection_Combined = "../Make_CrossSection/CrossSection_MasterAnaDev.root";
+TFile *TFile1D_combined = new TFile(CrossSection_Combined);
+
+
 std::map<int, MnvH1D*> RECO_DAISY_muonPZ;
 std::map<int, MnvH1D*> DATA_DAISY_muonPZ;
 
@@ -141,6 +145,13 @@ DATA_DAISY_muonPT_PZ.insert(std::make_pair(petal, h_2Dhistptpz_DATA));
 
 
 }
+
+
+
+
+
+
+
 
 
 
@@ -351,6 +362,161 @@ for(int petal = 0; petal < DaisyNumber; petal++ ){
 
 
 }
+
+
+
+
+
+
+//
+
+
+
+
+
+//PlotUtils::MnvH2D* h_1DhistPT_PZ_RECO_Combined =  Get2DHist(*TFile1D_combined,"h_MuonPT_PZ_Tracker_Data_BG_Subtracted");
+//h_1DhistPT_PZ_DATA_Combined->Divide(h_1DhistPT_PZ_DATA_Combined, h_1DhistPT_PZ_RECO_Combined);
+
+
+
+PlotUtils::MnvH1D* h_1DhistPZ_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPZ_Tracker_Data_BG_Subtracted");
+PlotUtils::MnvH1D* h_1DhistPZ_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPZ_Tracker_RECO_BG_Subtracted");
+
+auto clone_PZ2 = (MnvH1D*)h_1DhistPZ_RECO_Combined ->Clone("clone_PZ2");
+clone_PZ2->Scale(1,"width");
+SetMaxMC_reco = 1.25*clone_PZ2->GetMaximum();
+
+Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(h_1DhistPZ_DATA_Combined,h_1DhistPZ_RECO_Combined,
+  Title_Warp, pdf, "Input For Warp", "GeV/c", "P_{Z}", "NEvent",
+  doBinwidth, MakeXaxisLOG,  false, SetMaxMC_reco);
+
+h_1DhistPZ_DATA_Combined->Divide(h_1DhistPZ_DATA_Combined, h_1DhistPZ_RECO_Combined);
+
+sprintf(fit_par, "PZ_data_poly3_Combined.txt" );
+DrawCVAndError_FromHIST_withFit_Npoly(h_1DhistPZ_DATA_Combined,
+   Title_Warp ,"P_{Z} [GeV/c]","Ratio #frac{data}{MC}",
+text_title_pdf5, true, "pol 3" , 3 , fit_par);
+
+Double_t* parspz = readFile(fit_par, size);
+
+DrawCVAndError_FromHIST_withFit_3poly_PZ_Daisy(h_1DhistPZ_DATA_Combined, Title_Warp,
+  "P_{Z} [GeV]","Ratio #frac{data}{MC}", pdf, true,parspz);
+
+
+PlotUtils::MnvH1D* h_1DhistPT_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPT_Tracker_Data_BG_Subtracted");
+PlotUtils::MnvH1D* h_1DhistPT_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPT_Tracker_RECO_BG_Subtracted");
+
+auto clone_PT2 = (MnvH1D*)h_1DhistPT_RECO_Combined ->Clone("clone_PT2");
+clone_PT2->Scale(1,"width");
+SetMaxMC_reco = 1.25*clone_PT2->GetMaximum();
+
+sprintf(Title_Warp, "BG subtracted Combined" );
+Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(h_1DhistPT_RECO_Combined,h_1DhistPT_DATA_Combined,
+  Title_Warp, pdf, "Input For Warp", "GeV/c", "P_{T}", "NEvent",
+  doBinwidth, MakeXaxisLOG,  false, SetMaxMC_reco);
+
+h_1DhistPT_DATA_Combined->Divide(h_1DhistPT_DATA_Combined, h_1DhistPT_RECO_Combined);
+
+sprintf(fit_par, "PT_data_poly3_Combined.txt" );
+DrawCVAndError_FromHIST_withFit_Npoly(h_1DhistPT_DATA_Combined,
+   Title_Warp ,"P_{T} [GeV/c]","Ratio #frac{data}{MC}",
+text_title_pdf5, true, "pol 3" , 3 , fit_par);
+
+
+Double_t* parspt = readFile(fit_par, size);
+
+DrawCVAndError_FromHIST_withFit_3poly_PT_Daisy(h_1DhistPT_DATA_Combined, Title_Warp,
+  "P_{T} [GeV]","Ratio #frac{data}{MC}", pdf, true,parspt);
+
+
+PlotUtils::MnvH1D* h_1DhistE_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonE_Tracker_Data_BG_Subtracted");
+PlotUtils::MnvH1D* h_1DhistE_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonE_Tracker_RECO_BG_Subtracted");
+
+auto clone_E2 = (MnvH1D*)h_1DhistE_RECO_Combined ->Clone("clone_E2");
+clone_E2->Scale(1,"width");
+SetMaxMC_reco = 1.25*clone_E2->GetMaximum();
+
+sprintf(Title_Warp, "BG subtracted Combined " );
+Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(h_1DhistE_RECO_Combined,h_1DhistE_DATA_Combined,
+  Title_Warp, pdf, "Input For Warp", "GeV", "E_{#mu}", "NEvent",
+  doBinwidth, MakeXaxisLOG,  false, SetMaxMC_reco);
+
+h_1DhistE_DATA_Combined->Divide(h_1DhistE_DATA_Combined, h_1DhistE_RECO_Combined);
+
+sprintf(fit_par, "E_data_poly3_Combined.txt" );
+DrawCVAndError_FromHIST_withFit_Npoly(h_1DhistE_DATA_Combined,
+   Title_Warp ,"E_{#mu} [GeV]","Ratio #frac{data}{MC}",
+text_title_pdf5, true, "pol 3" , 3 , fit_par);
+
+Double_t* parsE = readFile(fit_par, size);
+
+DrawCVAndError_FromHIST_withFit_3poly_E_Daisy(h_1DhistE_DATA_Combined, Title_Warp,
+  "E_{#mu} [GeV]","Ratio #frac{data}{MC}",
+        pdf, true, parsE );
+
+
+
+
+PlotUtils::MnvH1D* h_1DhistTheta_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonTheta_Tracker_Data_BG_Subtracted");
+PlotUtils::MnvH1D* h_1DhistTheta_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonTheta_Tracker_RECO_BG_Subtracted");
+
+auto clone_theta2 = (MnvH1D*)h_1DhistTheta_RECO_Combined ->Clone("clone_theta2");
+clone_theta2->Scale(1,"width");
+SetMaxMC_reco = 1.25*clone_theta2->GetMaximum();
+
+sprintf(Title_Warp, "BG subtracted Combined " );
+Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(
+  h_1DhistTheta_RECO_Combined, h_1DhistTheta_DATA_Combined,
+  Title_Warp, pdf, "Input For Warp", "Deg", "#theta_{#mu}", "NEvent",
+  doBinwidth, MakeXaxisLOG,  false, SetMaxMC_reco);
+
+h_1DhistTheta_DATA_Combined->Divide(h_1DhistTheta_DATA_Combined, h_1DhistTheta_RECO_Combined);
+
+sprintf(fit_par, "Theta_data_poly3_Combined.txt" );
+DrawCVAndError_FromHIST_withFit_Npoly(h_1DhistTheta_DATA_Combined,
+   Title_Warp ,"theta_{#mu} [Deg]","Ratio #frac{data}{MC}",
+text_title_pdf5, true, "pol 3" , 3 , fit_par);
+
+Double_t* pars = readFile(fit_par, size);
+ DrawCVAndError_FromHIST_withFit_3poly_theta_Daisy(
+   h_1DhistTheta_DATA_Combined, Title_Warp,"#theta_{#mu} [Deg]",
+      "Ratio #frac{data}{MC}",pdf, true, pars );
+//h_1DhistPT_PZ_DATA_Combined
+
+
+
+
+PlotUtils::MnvH2D* h_1DhistPT_PZ_DATA_Combined =  Get2DHist(*TFile1D_combined,"h_MuonPT_PZ_Tracker_Data_BG_Subtracted");
+PlotUtils::MnvH2D* h_1DhistPT_PZ_RECO_Combined =  Get2DHist(*TFile1D_combined,"h_MuonPT_PZ_Tracker_RECO_BG_Subtracted");
+
+PlotDataMC_ErrorBand2D_ProjY(h_1DhistPT_PZ_DATA_Combined, h_1DhistPT_PZ_RECO_Combined,
+  text_title_pdf2, Title_Warp ,  "P_{T}", "P_{Z}",   "Event Selection / [GeV/c]^{2}",
+  99, false,  true, XMultipliers,
+  true , true , true,  false, .03);
+
+PlotDataMC_ErrorBand2D_ProjX(h_1DhistPT_PZ_DATA_Combined, h_1DhistPT_PZ_RECO_Combined,
+  text_title_pdf2, Title_Warp ,  "P_{Z}", "P_{T}",   "Event Selection / [GeV/c]^{2}",
+  99, false,  true, XMultipliers,
+  true , true , true,  false, .03);
+
+h_1DhistPT_PZ_DATA_Combined->Divide(h_1DhistPT_PZ_DATA_Combined,h_1DhistPT_PZ_RECO_Combined);
+
+  sprintf(fit_parms_text, "PT_PZ_Fit_parms_Combined.txt" );
+
+  Draw2DHist_warpFit(h_1DhistPT_PZ_DATA_Combined,"P_{Z}", "P_{T}",Title_Warp ,
+   text_title_pdf2, can, mnv_plotter, fit_parms_text);
+
+  Double_t* pars2d = readFile(fit_parms_text, size);
+
+  sprintf(Title_Warp, "Fitted Function(Combined): Ratio #frac{data}{MC}" );
+
+  //Draw2DHist_warpFit(DATA_DAISY_muonPT_PZ[petal],"P_{Z}", "P_{T}",Title_Warp ,
+  // text_title_pdf2, can, mnv_plotter, fit_parms_text,pars );
+
+  Draw2DHist_warpFit_show(h_1DhistPT_PZ_DATA_Combined,"P_{Z}", "P_{T}",Title_Warp ,
+    text_title_pdf2, can, mnv_plotter, pars2d);
+
+
 
 
 
