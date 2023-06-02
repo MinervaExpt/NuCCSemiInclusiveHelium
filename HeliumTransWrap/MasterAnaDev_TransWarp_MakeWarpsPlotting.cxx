@@ -366,23 +366,10 @@ for(int petal = 0; petal < DaisyNumber; petal++ ){
 
 
 
-
-
-//
-
-
-
-
-
-//PlotUtils::MnvH2D* h_1DhistPT_PZ_RECO_Combined =  Get2DHist(*TFile1D_combined,"h_MuonPT_PZ_Tracker_Data_BG_Subtracted");
-//h_1DhistPT_PZ_DATA_Combined->Divide(h_1DhistPT_PZ_DATA_Combined, h_1DhistPT_PZ_RECO_Combined);
-
-
-
 PlotUtils::MnvH1D* h_1DhistPZ_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPZ_Tracker_Data_BG_Subtracted");
 PlotUtils::MnvH1D* h_1DhistPZ_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPZ_Tracker_RECO_BG_Subtracted");
-
-auto clone_PZ2 = (MnvH1D*)h_1DhistPZ_RECO_Combined ->Clone("clone_PZ2");
+sprintf(Title_Warp, "Combined BG Subtracted, Fitted Function: Ratio #frac{data}{MC} " );
+auto clone_PZ2 = (MnvH1D*)h_1DhistPZ_DATA_Combined ->Clone("clone_PZ2");
 clone_PZ2->Scale(1,"width");
 SetMaxMC_reco = 1.25*clone_PZ2->GetMaximum();
 
@@ -406,7 +393,7 @@ DrawCVAndError_FromHIST_withFit_3poly_PZ_Daisy(h_1DhistPZ_DATA_Combined, Title_W
 PlotUtils::MnvH1D* h_1DhistPT_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPT_Tracker_Data_BG_Subtracted");
 PlotUtils::MnvH1D* h_1DhistPT_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonPT_Tracker_RECO_BG_Subtracted");
 
-auto clone_PT2 = (MnvH1D*)h_1DhistPT_RECO_Combined ->Clone("clone_PT2");
+auto clone_PT2 = (MnvH1D*)h_1DhistPT_DATA_Combined ->Clone("clone_PT2");
 clone_PT2->Scale(1,"width");
 SetMaxMC_reco = 1.25*clone_PT2->GetMaximum();
 
@@ -432,7 +419,7 @@ DrawCVAndError_FromHIST_withFit_3poly_PT_Daisy(h_1DhistPT_DATA_Combined, Title_W
 PlotUtils::MnvH1D* h_1DhistE_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonE_Tracker_Data_BG_Subtracted");
 PlotUtils::MnvH1D* h_1DhistE_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonE_Tracker_RECO_BG_Subtracted");
 
-auto clone_E2 = (MnvH1D*)h_1DhistE_RECO_Combined ->Clone("clone_E2");
+auto clone_E2 = (MnvH1D*)h_1DhistE_DATA_Combined ->Clone("clone_E2");
 clone_E2->Scale(1,"width");
 SetMaxMC_reco = 1.25*clone_E2->GetMaximum();
 
@@ -460,11 +447,11 @@ DrawCVAndError_FromHIST_withFit_3poly_E_Daisy(h_1DhistE_DATA_Combined, Title_War
 PlotUtils::MnvH1D* h_1DhistTheta_DATA_Combined =  Get1DHist(*TFile1D_combined,"h_MuonTheta_Tracker_Data_BG_Subtracted");
 PlotUtils::MnvH1D* h_1DhistTheta_RECO_Combined =  Get1DHist(*TFile1D_combined,"h_MuonTheta_Tracker_RECO_BG_Subtracted");
 
-auto clone_theta2 = (MnvH1D*)h_1DhistTheta_RECO_Combined ->Clone("clone_theta2");
+auto clone_theta2 = (MnvH1D*)h_1DhistTheta_DATA_Combined ->Clone("clone_theta2");
 clone_theta2->Scale(1,"width");
 SetMaxMC_reco = 1.25*clone_theta2->GetMaximum();
 
-sprintf(Title_Warp, "BG subtracted Combined " );
+
 Draw_DataWITHMC_SingleHistinput_withRatioCrossSection(
   h_1DhistTheta_RECO_Combined, h_1DhistTheta_DATA_Combined,
   Title_Warp, pdf, "Input For Warp", "Deg", "#theta_{#mu}", "NEvent",

@@ -102,7 +102,7 @@ def isHeliumLike_with2fsp_with2ndTrkMeets_KEthreshold_Angle(mytree):
     if(n_muon == 1 and n_2ndTrkType > 0 ) : return True
     else : return False
 
-def isHeliumLike_with2fsp_withAtleast1chargeParcle_Angle(mytree, Database):
+def isHeliumLike_with2fsp_withAtleast1chargeParticle_AndAngleCut(mytree, Database):
 
     #need 1 muon and NoneNeutral 2nd Trk with angle less than 60 and if p,pi, muon+ need to meet threshold
     n_muon   = 0
@@ -161,7 +161,7 @@ def isGoodHeliumMuon(mytree):
     #<20 degree muon
     #2 to 50 muonE
     TotalE = mytree.ELep
-    KE =  TotalE - Mmu
+    KE =  TotalE #- Mmu
     goodMuonMom   = KE > 2 and KE < 50
     angle = ROOT.TMath.ACos(mytree.CosLep) * 180.0/3.14159
     goodMuonAngle = angle > 0.0 and angle < 12.0
@@ -175,7 +175,8 @@ def IsGood2ndTrkKETheshold(pdg, Etotal, DataBase):
     mass = particle.Mass()  # Mass in GeV/c^2
 
     #KE_GeV = ROOT.TMath.Sqrt(Etotal * Etotal - mass * mass)
-    KE_GeV = Etotal - mass
+    #KE_GeV = Etotal - mass
+    KE_GeV = Etotal
     #print("pdg = {pdg} , mass = {mass} ,  KE = {KE_GeV}" , pdg , mass, KE_GeV  )
     if pdg==pdg_Proton and KE_GeV > .105 : return True
     elif abs(pdg) == pdg_Pion_pos and KE_GeV > .060 : return True
@@ -236,10 +237,10 @@ dataBase_pdg = ROOT.TDatabasePDG.Instance()
 for index, e in enumerate(mytree):
 #for e in mytree:
     if index % 200000 == 0 : print('Event: ' + str(index/10000) + " 10K")
-    #if (isInclusiveFHC(e) and isGoodHeliumMuon(e) and isHeliumLike_with2fsp_withAtleast1chargeParcle_Angle(e, dataBase_pdg)): continue
+    #if (isInclusiveFHC(e) and isGoodHeliumMuon(e) and isHeliumLike_with2fsp_withAtleast1chargeParticle_AndAngleCut(e, dataBase_pdg)): continue
     if not (isInclusiveFHC(e)): continue;
     if not (isGoodHeliumMuon(e)): continue;
-    if not (isHeliumLike_with2fsp_withAtleast1chargeParcle_Angle(e, dataBase_pdg)): continue;
+    if not (isHeliumLike_with2fsp_withAtleast1chargeParticle_AndAngleCut(e, dataBase_pdg)): continue;
 
     coslep = e.CosLep
     elep= e.ELep
@@ -252,7 +253,7 @@ for index, e in enumerate(mytree):
 
     muonmom = getMuonMomentum(mytree)
     TotalE = mytree.ELep
-    KE = ROOT.TMath.Sqrt(TotalE * TotalE - Mmu * Mmu)
+    KE =  TotalE - Mmu
     muonAngle =ROOT.TMath.ACos(coslep) * 180.0/3.14159
     #print("Muon Angle is : {}".format(muonAngle))
     #print("Muon KE is : {}".format(KE))
